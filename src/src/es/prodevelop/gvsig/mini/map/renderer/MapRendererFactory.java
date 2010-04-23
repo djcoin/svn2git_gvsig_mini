@@ -62,7 +62,7 @@ public class MapRendererFactory {
 	public static MapRenderer getMapRenderer(String layerTitle, String[] layerProps) {
 		MapRenderer renderer = null;
 		try {
-			int rendererType = Integer.valueOf(layerProps[0]).intValue();
+			int rendererType = Integer.valueOf(layerProps[0]).intValue();			
 			switch (rendererType) {
 			case MapRenderer.EQUATOR_RENDERER:
 				logger.debug("EQUATOR_RENDERER " + layerTitle);

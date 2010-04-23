@@ -73,26 +73,29 @@ import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * A MapOverlay that manages draw of NameFinder MultiPoint
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class NameFinderOverlay extends MapOverlay {
-	
+
 	private int indexPOI = -1;
-	
+
 	public NameFinderOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
 		log.setClientID(this.toString());
 	}
 
-	private final static Logger log = LoggerFactory.getLogger(NameFinderOverlay.class);
+	private final static Logger log = LoggerFactory
+			.getLogger(NameFinderOverlay.class);
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		try {
 			final ViewPort vp = maps.map.vp;
-			final Extent extent = vp.calculateExtent(maps.mapWidth, maps.mapHeight, maps.getMRendererInfo().getCenter());
+			final Extent extent = vp.calculateExtent(maps.mapWidth,
+					maps.mapHeight, maps.getMRendererInfo().getCenter());
 			if (maps.map.nameds != null) {
 				maps.geomDrawer.drawN(maps.map.nameds, c, extent, vp);
 			}
@@ -103,17 +106,17 @@ public class NameFinderOverlay extends MapOverlay {
 
 	@Override
 	protected void onDrawFinished(Canvas c, TileRaster maps) {
-		
+
 	}
 
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
 			boolean found = false;
-			final NamedMultiPoint nameds = getTileRaster().map.nameds; 
+			final NamedMultiPoint nameds = getTileRaster().map.nameds;
 			if (nameds == null)
 				return null;
-			int distance = 99999;
+			long distance = Long.MAX_VALUE;
 			int nearest = -1;
 
 			Named p;
@@ -125,26 +128,33 @@ public class NameFinderOverlay extends MapOverlay {
 						new double[] { p.projectedCoordinates.getX(),
 								p.projectedCoordinates.getY() });
 
+//				log.debug("coordinates to pixel: " + coords[0] + "," + coords[1]);
+				
 				pix = new Pixel(coords[0], coords[1]);
-				int newDistance = pix.distance(new Pixel(pixel.getX(), pixel.getY()));
+				long newDistance = pix.distance(new Pixel(pixel.getX(), pixel
+						.getY()));
+//				log.debug("distance: " + newDistance);
 
-				if (newDistance < distance) {
+				if (newDistance >= 0 && newDistance < distance) {
 					distance = newDistance;
 					nearest = i;
 				}
 			}
 
-			if (distance > ResourceLoader.MAX_DISTANCE)
+			if (distance > ResourceLoader.MAX_DISTANCE && distance >= 0)
 				nearest = -1;
 
 			if (nearest != -1) {
 				indexPOI = nearest;
-				return new Feature((Point) nameds.getPoint(nearest).clone());				
+				Named n = (Named) nameds.getPoint(nearest);
+				log.debug("found: " + n.toString());
+				return new Feature(new Point(n.projectedCoordinates.getX(),
+						n.projectedCoordinates.getY()));
 			} else {
 				indexPOI = -1;
 				return null;
-				
-			}			
+
+			}
 		} catch (Exception e) {
 			log.error(e);
 			return null;
@@ -152,21 +162,21 @@ public class NameFinderOverlay extends MapOverlay {
 	}
 
 	@Override
-	public ItemContext getItemContext() {		
+	public ItemContext getItemContext() {
 		return new POIContext(getTileRaster().map);
-	}	
-	
+	}
+
 	@Override
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
 		try {
-			super.onSingleTapUp(e, osmtile);			
-			
+			super.onSingleTapUp(e, osmtile);
+
 			if (indexPOI == -1)
 				return false;
 			else {
 				Message m = Message.obtain();
 				m.what = Map.SHOW_TOAST;
-				m.obj = ((Named)getTileRaster().map.nameds.getPoint(indexPOI)).description;
+				m.obj = ((Named) getTileRaster().map.nameds.getPoint(indexPOI)).description;
 				getTileRaster().map.getMapHandler().sendMessage(m);
 			}
 			return true;
@@ -175,11 +185,11 @@ public class NameFinderOverlay extends MapOverlay {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void destroy() {
 		try {
-			
+
 		} catch (Exception e) {
 			log.error(e);
 		}

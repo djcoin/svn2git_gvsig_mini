@@ -255,6 +255,23 @@ public class Layers {
 	public Hashtable getLayers() {
 		return properties;
 	}
+	
+	private String getLayerKeyFromName(String layerName) {
+		try {
+			Enumeration keys = properties.keys();
+			
+			String key = null;
+			while(keys.hasMoreElements()) {
+				key = keys.nextElement().toString();
+				if (key.contains(layerName))
+					return key;
+			}
+			return layerName;			
+		} catch (Exception e) {
+			logger.error(e);
+			return null;
+		}
+	}
 
 	/**
 	 * Instantiates a MapRenderer
@@ -265,7 +282,7 @@ public class Layers {
 	public MapRenderer getRenderer(String layerTitle) throws IOException {
 		MapRenderer renderer = null;
 		try {
-			String layer = properties.get(layerTitle).toString();
+			String layer = properties.get(getLayerKeyFromName(layerTitle)).toString(); 
 			String[] layerProps = layer.split(",");
 			final int size = layerProps.length;
 

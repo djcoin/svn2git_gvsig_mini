@@ -113,4 +113,17 @@ public class QuadkeyRenderer extends OSMMercatorRenderer {
 			return null;
 		}
 	}
+	
+	@Override
+	public void centerOnBBox() {
+		this.center = this.getExtent().getCenter();
+		this.setZoomLevel(1);		
+	}
+	
+	@Override
+	public void setZoomLevel(int zoomLevel) {
+		if (zoomLevel == 0) 
+			zoomLevel = 1;
+		super.setZoomLevel(zoomLevel);
+	}
 }

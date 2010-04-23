@@ -327,7 +327,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
-			double x = (this.mLocation.getLongitudeE6() / 1E6);
+			log.debug("get Nearest feature viewsimplelocationoverlay: " + pixel.toString());
+			double x = (this.mLocation.getLongitudeE6() / 1E6); 
 			double y = (this.mLocation.getLatitudeE6() / 1E6);
 
 			if (x == 0 && y == 0)
@@ -340,11 +341,15 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 					.getMRendererInfo().getSRS()));
 
 			es.prodevelop.gvsig.mini.geom.Point p = new es.prodevelop.gvsig.mini.geom.Point(
-					x, y);
-			tileRaster.getMRendererInfo().reprojectGeometryCoordinates(p,
-					"EPSG:4326");
+					co[0], co[1]);
+			log.debug("pixel to coordinates: " + p.toString());
+//			tileRaster.getMRendererInfo().reprojectGeometryCoordinates(p,
+//					"EPSG:4326");
 			int[] pxy = tileRaster.getMRendererInfo().toPixels(co);
-			if (pixel.distance(new Pixel(pxy[0], pxy[1])) < ResourceLoader.MAX_DISTANCE) {
+			log.debug("coordinates to pixel: " + pxy[0] + "," + pxy[1]);
+			final long distance = pixel.distance(new Pixel(pxy[0], pxy[1]));
+			log.debug("distance location overlay: " + distance);
+			if (distance < ResourceLoader.MAX_DISTANCE && distance >= 0) {
 				return new Feature(p);
 			}
 			return null;

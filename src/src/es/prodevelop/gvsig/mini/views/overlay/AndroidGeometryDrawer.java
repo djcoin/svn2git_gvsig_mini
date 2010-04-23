@@ -322,6 +322,8 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			lastRoutePixel = new Pixel(lastPixel[0], lastPixel[1]);
 
 			final int size = pixelsRoute.size();
+			Pixel tempPixel = new Pixel(0,0);
+			double[] tempCoords = new double[]{0,0};
 
 			if ((oldFirstRoutePixel != null)
 					&& (oldFirstRoutePixel.getX() - firstRoutePixel.getX()) == (oldLastRoutePixel
@@ -337,6 +339,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 									.getY())));
 				}
 			}
+			
 
 			else if ((oldLastRoutePixel == null)
 					|| (oldLastRoutePixel.getX() != lastRoutePixel.getX())
@@ -344,9 +347,13 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				if (pixelsRoute != null)
 					pixelsRoute.clear();
 				for (int i = 0; i < length; i++) {
-					int[] pix = renderer.toPixels(new double[] { xCoords[i],
-							yCoords[i] });
-					pixelsRoute.add(new Pixel(pix[0], pix[1]));
+					tempCoords[0] = xCoords[i];
+					tempCoords[1] = yCoords[i];
+					int[] pix = renderer.toPixels(tempCoords);	
+					tempPixel = new Pixel(pix[0], pix[1]);
+//					tempPixel.setX(pix[0]);
+//					tempPixel.setY(pix[1]);
+					pixelsRoute.add(tempPixel);
 				}
 			}
 

@@ -56,9 +56,10 @@ import es.prodevelop.gvsig.mini.wms.WMSCancellable;
 
 /**
  * MapRenderer for WMS servers
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class WMSRenderer extends TMSRenderer {
 
@@ -97,8 +98,11 @@ public class WMSRenderer extends TMSRenderer {
 
 	/**
 	 * Instantiates a WMSRenderer. @see Layers and layers.txt
-	 * @param props The properties of the WMSRenderer
-	 * @param layerName The name of the layer
+	 * 
+	 * @param props
+	 *            The properties of the WMSRenderer
+	 * @param layerName
+	 *            The name of the layer
 	 * @return A WMSRenderer
 	 */
 	public static WMSRenderer getWMSRenderer(String[] props, String layerName) {
@@ -154,7 +158,7 @@ public class WMSRenderer extends TMSRenderer {
 	public String getTileURLString(int[] tileID, int zoomLevel) {
 		try {
 			// logger.debug("tile: " + tileID[0] + ", " + tileID[1]);
-			WMSStatus status = new WMSStatus();
+			final WMSStatus status = new WMSStatus();			
 			if (layers.length > 1) {
 				final int length = layers.length;
 				for (int i = 0; i < length; i++) {
@@ -181,11 +185,11 @@ public class WMSRenderer extends TMSRenderer {
 			status.setWidth(this.getMAPTILE_SIZEPX());
 			status.setHeight(this.getMAPTILE_SIZEPX());
 
-			StringBuffer req = new StringBuffer();
+			final StringBuffer req = new StringBuffer();
 			status.setDisconnectedServerURL(this.getBASEURL());
-//			String info = FMapWMSDriverFactory.getFMapDriverForURL(
-//					new URL(this.getBASEURL())).getFeatureInfo(status, 0, 0,
-//					10, this.neverCanceled);
+			// String info = FMapWMSDriverFactory.getFMapDriverForURL(
+			// new URL(this.getBASEURL())).getFeatureInfo(status, 0, 0,
+			// 10, this.neverCanceled);
 			req.append(this.getBASEURL());
 			String symbol = "?";
 			if (this.getBASEURL().charAt(this.getBASEURL().length() - 1) == '?') {
@@ -203,8 +207,8 @@ public class WMSRenderer extends TMSRenderer {
 	}
 
 	protected String getPartialQuery(WMSStatus status) {
-		String fmt = status.getFormat();
-		StringBuffer req = new StringBuffer();
+		final String fmt = status.getFormat();
+		final StringBuffer req = new StringBuffer();
 		req.append("LAYERS=" + Utilities.Vector2CS(status.getLayerNames()))
 				.append("&SRS=" + status.getSrs()).append(
 						"&BBOX=" + status.getExtent().getMinX() + ",").append(
