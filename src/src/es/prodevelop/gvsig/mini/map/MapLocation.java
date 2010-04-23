@@ -72,17 +72,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.widget.EditText;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.namefinder.NameFinder;
-import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
+import es.prodevelop.gvsig.mini.location.Config;
+import es.prodevelop.gvsig.mini.location.LocationHandler;
+import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.util.Utils;
-import es.prodevelop.osami.location.LocationHandler;
-import es.prodevelop.osami.location.LocationTimer;
-import es.prodevelop.osami.start.Config;
 
 /**
  * A Base Activity which Handles LocationProvider events and Sensor events

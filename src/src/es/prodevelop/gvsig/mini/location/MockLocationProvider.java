@@ -1,0 +1,199 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2009 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es 
+ *   author Ruben Blanco rblanco@prodevelop.es 
+ *   
+ */
+
+package es.prodevelop.gvsig.mini.location;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import es.prodevelop.gvsig.mini.location.Config;
+
+import net.sf.microlog.core.Level;
+import net.sf.microlog.core.Logger;
+import net.sf.microlog.core.LoggerFactory;
+
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
+
+public class MockLocationProvider extends Thread {
+
+	private final static Logger logger = LoggerFactory
+			.getLogger(MockLocationProvider.class);
+	private List<String> data;
+	public static LocationManager locationManager;
+	private String mocLocationProvider;
+	private Location lastLocation;
+	private boolean stop = false;
+	public boolean isAlive = true;
+	public boolean repeat = false;
+	
+	public static MockLocationProvider mockProvider;
+	
+	public MockLocationProvider(LocationManager locationManager,
+			String mocLocationProvider, List data) throws IOException {
+
+		this.locationManager = locationManager;
+		this.mocLocationProvider = mocLocationProvider;
+		this.data = data;
+		try {
+			// Config.getInstance().setLogLevel(logger);
+			logger.setLevel(Level.DEBUG);
+		} catch (NoSuchFieldError e) {
+			logger.error("Constructor: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Sends locations to LocationListeners registered
+	 * 
+	 * @param period
+	 *            The period of time between updates
+	 * @param equals
+	 *            True if the locations are all the same lat/lon
+	 */
+	public void updateLocationsPeriodically(int period, boolean equals) {
+		try {
+			for (String str : data) {
+				if (stop)
+					return;
+
+				try {
+					// while (stop) {
+					Thread.sleep(period);
+					// }
+				} catch (InterruptedException e) {
+
+					e.printStackTrace();
+				}
+
+				if (repeat) {
+					if (lastLocation != null) {
+						lastLocation.setTime(System.currentTimeMillis());
+						locationManager.setTestProviderLocation(
+								mocLocationProvider, lastLocation);
+					}						
+				} else {
+					// if (/*!equals || */lastLocation == null) {
+					// Set one position
+					String[] parts = str.split(",");
+					Double latitude = Double.valueOf(parts[0]);
+					Double longitude = Double.valueOf(parts[1]);
+					Double altitude = Double.valueOf(parts[2]);
+					Location location = new Location(mocLocationProvider);
+					location.setLatitude(latitude);
+					location.setLongitude(longitude);
+					location.setAltitude(altitude);
+
+					logger.debug(location.toString());
+					lastLocation = location;
+					// }
+
+					// set the time in the location. If the time on this
+					// location
+					// matches the time on the one in the previous set call, it
+					// will be
+					// ignored
+					lastLocation.setTime(System.currentTimeMillis());
+
+					locationManager.setTestProviderLocation(mocLocationProvider,
+							lastLocation);
+				}
+				
+			}
+			this.updateLocationsPeriodically(3000, true);
+		} catch (Exception e) {
+			logger.error("updateLocationsPeriodically" + e.getMessage());
+		} finally {
+			isAlive = false;
+		}
+	}
+
+	/**
+	 * Stops sending new locations
+	 * 
+	 * @param delay
+	 *            The delay of time from now when the stop will occur
+	 */
+	public void stopUpdating(int delay) {
+		try {
+			Thread.sleep(delay);
+			stop = true;
+		} catch (Exception e) {
+			logger.error("stopUpdating: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void run() {
+		this.updateLocationsPeriodically(3000, true);
+	}
+	
+	public static void startGPSMockLocationsSimulation(Context context, LocationManager manager) {
+		try {
+			logger.debug("startGPSMockLocationsSimulation");
+			List data = new ArrayList();
+			InputStream is = context.getAssets().open("mock_locations.txt");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			int i = 0;
+			while ((line = reader.readLine()) != null) {
+				data.add(line);
+				i++;
+			}
+			logger.debug(String.format("Found (%s) locations", i));
+
+			// Log.e(LOG_TAG, data.size() + " lines");
+
+			mockProvider = new MockLocationProvider(manager,
+					"gps", data);
+			manager.addTestProvider("gps", false, true, false, false, true, true, true, 0, 100);
+			manager.setTestProviderEnabled("gps", true);			
+			mockProvider.start();
+			logger.debug("MockProvider started");
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}		
+	}
+}

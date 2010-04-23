@@ -154,8 +154,8 @@ import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import es.prodevelop.osami.location.mock.MockLocationProvider;
-import es.prodevelop.osami.start.Config;
+import es.prodevelop.gvsig.mini.location.MockLocationProvider;
+import es.prodevelop.gvsig.mini.location.Config;
 
 /**
  * The main activity of the application. Consists on a RelativeLayout with some
