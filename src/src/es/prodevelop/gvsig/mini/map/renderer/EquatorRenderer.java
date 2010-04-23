@@ -146,10 +146,10 @@ public class EquatorRenderer extends OSMMercatorRenderer {
 		this.setZoomLevel(1);		
 	}
 	
-	@Override
-	public void setZoomLevel(int zoomLevel) {
-		if (zoomLevel == 0) 
-			zoomLevel = 1;
-		super.setZoomLevel(zoomLevel);
-	}
+//	@Override
+//	public void setZoomLevel(int zoomLevel) {
+//		if (zoomLevel == 0) 
+//			zoomLevel = 1;
+//		super.setZoomLevel(zoomLevel);
+//	}
 }
