@@ -1,0 +1,55 @@
+<project default="increment" basedir=".">
+
+	<target name="increment">
+
+		<propertyfile file="build.properties">
+			<entry key="build.number" type="int" operation="+" default="0" pattern="0"/>
+			<entry key="major.number" type="int" default="0" />
+		</propertyfile>
+		<property file="build.properties" />
+		<echo message="Build number is ${build.number}" />
+
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+			<classpath>
+				<pathelement location="./lib/ant-contrib.jar" />
+			</classpath>
+		</taskdef>		
+		
+		<math result="build" operation="mod" datatype="int" operand1="${build.number}" operand2="100" />
+		
+		<math result="minor" operation="divide" operand1="${build.number}" operand2="100" />
+		<echo message="Minor is ${minor}" />
+		<math result="minor.number" datatype="int" operation="floor" operand1="${minor}"  />		
+		<echo message="Minor number is ${minor.number}" />
+		
+
+		<!-- Set build number -->
+
+		<condition property="build.number.property.set">
+
+			<available file="build.number" />
+
+		</condition>
+
+
+
+		<!--- okay do our repalce thing on AndoridManifest.xml -->
+
+		<property name="android.version.code" value="android:versionCode=" />
+
+		<property name="android.version.name" value="android:versionName=" />
+
+		<replaceregexp file="AndroidManifest.xml" match="android:versionCode=(.*)" replace='${android.version.code}"${build.number}"' />
+
+		<replaceregexp file="AndroidManifest.xml" match="android:versionName=(.*)" replace='${android.version.name}"${major.number}.${minor.number}.${build}">' />
+
+
+
+
+
+
+
+
+
+	</target>
+	</project>

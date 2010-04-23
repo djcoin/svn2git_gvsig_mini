@@ -1,0 +1,49 @@
+gvSIG Mini © v. 0.1 
+26-nov-2009
+
+gvSIG Mini es un visor libre de mapas de libre acceso para teléfonos móviles Java y Android.
+
+gvSIG Mini se distribuye con licencia GNU/GPL v2. Para más detalles consultar el fichero license.txt.
+
+gvSIG Mini ha sido desarrollado por Prodevelop, S.L.
+
+Prodevelop, S.L.
+http://www.prodevelop.es
+e-mail: prode@prodevelop.es
+
+gvSIG Mini ha sido financiado por Prodevelop, S.L., el IMPIVA de la Generalitat Valenciana y Fondos FEDER de la Unión Europea.
+
+gvSIG Mini engloba dos productos: gvSIG Mini for Android, dirigido a teléfoos móviles con sistema operativo Android, y gvSIG Mini for Java, dirigido a teléfonos móviles que soportan aplicaciones Java CLDC 1.1 / MIDP 2.0.
+
+Las características comunes de la versión 0.1 incluyen:
+
+- Visualización de cartografía basada en tiles: OpenStreetMap, Yahoo Maps, Microsoft Bing, servicios WMS del ICC, etc.
+- Capas satélite, cartogafía renderizada e híbrida.
+- Navegación por el mapa: zoom in/out, desplazamiento drag&drop.
+- Mostrar posición actual del GPS.
+- Buscar puntos de interés (POI - Point Of Interest).
+- Búsqueda de direcciones.
+- Cálculo de ruta entre dos puntos.
+- Cacheado local de tiles visitados para acelaración y funcionamiento off-line.
+
+La versión gvSIG Mini para Java incluye también:
+
+- Cliente WMS.
+
+La versión gvSIG Mini para Android incluye también:
+
+- Cliente Tweetme.
+- Información tiempo meteorológico.
+- Uso de acelerómetro (zoom a mi posición actual).
+
+gvSIG Mini for Android usa estos iconos con restricciones o atribuiones de licencia
+
+- menu03.png http://www.kde-look.org/content/show.php?content=39988 GNU/GPL
+- Icon pack http://www.icons-land.com/gis-gps-map-icons.php 
+
+* Instrucciones para compilar en SDK 1.5
+
+- Renombrar la carpeta drawable-nodpi a drawable y borrar todas las que empiezan por drawable-*
+- Mover el contenido de la carpeta layout-nodpi a layout y borrar la carpeta layout-nodpi
+- Comentar en el AndroidManifest.xml la etiqueta <supports-screen>
+- Ir a las propiedades del proyecto, click en Android y forzar como target name, Android 1.5

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/gvSig mini compat/lib/kxml2-min-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/microlog-logger-android-2.2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/microlog-logger-core-2.1.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gvSig mini compat (trunk)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.gvsig.mini.remoteServices"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

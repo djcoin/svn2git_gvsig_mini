@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+    <string name="warning">Warning</string>
+    <string name="error">Errore</string>
+    <string name="cancel">Annullare</string>
+    <string name="please_wait">Per favore, attendere</string>
+    <string name="error_connecting_server">Errore: il server non è accesibile</string>
+    <string name="task_canceled">Processo annullato</string>
+    <string name="ok">Accetare</string>
+    <string name="back">Indietro</string>
+    <string name="server_busy">Il server è occupato</string>
+    <string name="search">Ricerca</string>
+    <string name="lat">lat</string>
+    <string name="lon">lon</string>
+    <string name="latitude">latitudine</string>
+    <string name="longitude">longitudine</string>                
+
+    <string name="LayersActivity_0">Layer</string>
+    <string name="LayersActivity_1">Nessuna scheda SD disponibile</string>
+    <string name="LayersActivity_2">Nessun file su</string>
+
+    <!-- File dove vengono descritti i layer disponibili -->
+    <string name="LayersActivity_3">Selezionare file di configurazione di layer</string>
+
+    <string name="LayersActivity_4">Il file di configurazione è stato caricato</string>
+    <string name="LayersActivity_5">File non caricato. Il percorso non esiste</string>
+    <string name="LayersActivity_6">Inserire URL del server WMS:</string>
+    <string name="LayersActivity_7">Scaricare elenco layer disponibili</string>
+    <string name="LayersActivity_8">Servizio di tile (TMS)</string>
+    <string name="LayersActivity_9">Layer WMS</string>
+    <string name="LayersActivity_10">Aggiungi layer...</string>
+    <string name="LayersActivity_11">Da server WMS</string>
+    <string name="LayersActivity_12">Scarica elenco layer disponibili...</string>
+    <string name="LayersActivity_13">Da file di configurazione</string>
+    <string name="LayersActivity_14">Carica file di configurazione da scheda SD...</string>        
+    
+    <string name="Map_0">Errore nella creazione della mappa</string>
+    <string name="Map_1">Nessun risultato trovato</string>
+    <string name="Map_2">Errore nel calcolo del percorso</string>
+    <string name="Map_3">Ricerca indirizzo</string>
+    <string name="Map_4">La mia posizione</string>
+    <string name="Map_5">Mappe/Layer</string>
+    <string name="Map_6">Modo Zoom rettangolo</string>
+    <string name="Map_7">Modo spostare</string>
+    <string name="Map_8">Dati meteo non trovati. Prova un\'altra zona oppure controlla la connessione internet</string>
+    <string name="Map_9">Toponimo sconosciuto</string>
+    <string name="Map_10">Dati meteo non disponibili per (%s)</string>    
+    <string name="Map_11">Dati meteo</string>
+    <string name="Map_12">Oggi</string>
+    <string name="Map_13">Percorso non trovato</string>
+    <string name="Map_14">Scaricando dati meteo...</string>
+    <string name="Map_15">Richiesta dati meteo annullata</string>
+    <string name="Map_16">Il server non riesce a calcolare il percorso. Cerca di modificare i punti inizio/fine...</string>
+    <string name="Map_17">In attesa della risposta del servizio NameFinder...</string>
+    <string name="Map_18">Calcolo di percorso annullato</string>
+    <string name="Map_19">Calcolando percorso...</string>
+    <string name="Map_20">Tweet inviato</string>
+    <string name="Map_21">Ricerca POI</string>
+    <string name="Map_22">Server non accessibile. Controlla la connessione internet</string>
+    
+    <string name="NameFinderActivity_0">Opzioni POI</string>
+    <string name="NameFinderActivity_1">Da qui</string>
+    <string name="NameFinderActivity_2">Fino a qui</string>
+    <string name="NameFinderActivity_3">Centrare la mappa</string>
+    
+    <string name="WMSLayersActivity_0">Aggiungi i layer selezionati</string>
+    <string name="WMSLayersActivity_1">Layer non supportato</string>
+    <string name="WMSLayersActivity_2">Formato non valido</string>
+    <string name="WMSLayersActivity_3">SRS non valido</string>
+    
+    <string name="MapLocation_0">Il GPS non è attivo</string>
+    <string name="MapLocation_1">Il GPS non è attivo. gvSIG Mini vuole attivare il GPS per mostrare la tua posizione sulla mappa. Vuoi attivare il GPS adesso?</string>
+    <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
+    
+    <string name="TweetMyLocationFunc_0">La mia posizione</string>
+    <string name="Utils_0">Select mail client</string>
+    
+    <string name="unknown">Sconosciuto</string>
+    <string name="alert_dialog_text_entry">Account Twitter</string>
+    <string name="alert_dialog_username">Nome:</string>
+    <string name="alert_dialog_password">Password:</string>
+    <string name="alert_dialog_cancel">Annullare</string>
+    <string name="alert_dialog_cache">Numero di livelli:</string>
+    <string name="alert_dialog_cache_title">Cache di tile</string>
+    <string name="alert_dialog_tweet">Tweet</string>
+    <string name="alert_dialog_start_cache">Inizia la scarica dei tile</string>
+    <string name="alert_dialog_text_search">Ricerca</string>
+    <string name="alert_dialog_text_cancel">Annulla</string>
+    <string name="alert_dialog_text_ok">Accettare</string>
+<!-- Missing prefs -->
+<string name="select_web_browser"></string>
+<string name="typeof"></string>
+<string name="select_mail_client"></string>
+<string name="download_tiles_02"></string>
+<string name="download_tiles_01"></string>
+<string name="download_tiles_03"></string>
+<string name="minitwitter"></string>
+<string name="Map_23"></string>
+<string name="share"></string>
+<string name="Map_Navigator"></string>
+</resources>

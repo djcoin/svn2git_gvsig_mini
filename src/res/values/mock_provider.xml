@@ -1,0 +1,9 @@
+<resources>
+    <string-array name="mock_provider_options">
+        <item>AVAILABLE</item>
+        <item>OUT_OF_SERVICE</item>
+        <item>TEMPORARILY_UNAVAILABLE</item>
+        <item>ENABLED</item>
+        <item>DISABLED</item>                
+    </string-array>
+</resources>

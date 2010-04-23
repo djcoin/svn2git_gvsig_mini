@@ -1,0 +1,17 @@
+server=talk.google.com
+user=testosami
+pass=osami123
+domain=gmail.com
+port=5222
+logLevel=1
+retryFail=50
+wakeTime=6000
+lastTime=60000
+gpsTimerDelay=6000
+to=osamixmpp@gmail.com
+userAddress=testosami@gmail.com
+userName=Alberto Romeu
+useNetworkLocation=0
+sendMessagePeriod=600000
+minTime=0
+minDistance=0

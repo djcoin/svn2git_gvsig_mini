@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="warning">Atención</string>
+    <string name="error">Error</string>
+    <string name="cancel">Cancelar</string>
+    <string name="please_wait">Por favor, espere</string>
+    <string name="error_connecting_server">Error al conectar con el servidor</string>
+    <string name="task_canceled">Tarea cancelada</string>
+    <string name="ok">Ok</string>
+    <string name="back">Volver</string>
+    <string name="server_busy">El servidor está ocupado</string>
+    <string name="search">Buscar</string>
+    <string name="lat">lat</string>
+    <string name="lon">lon</string>
+    <string name="latitude">latitud</string>
+    <string name="longitude">longitud</string>                
+    <string name="typeof">Geoposicionado usando</string> 
+    <string name="share">gvSIGmini Geo Share</string> 
+    <string name="portrait">Vertical</string>
+    <string name="landscape">Horizontal</string>
+    <string name="send_log">Enviar archivo de errores</string>
+    <string name="fatal_error">gvSIG Mini ha detectado un error. ¿Desea enviar el archivo de log a los desarrolladores para que puedan resolverlo?</string>   
+    
+    <string name="LayersActivity_0">Capas</string>
+    <string name="LayersActivity_1">No se detecta Tarjeta SD</string>
+    <string name="LayersActivity_2">No hay ficheros en</string>
+    <string name="LayersActivity_3">Elija un fichero de capas</string>
+    <string name="LayersActivity_4">Fichero de capas cargado con éxito</string>
+    <string name="LayersActivity_5">¡No se puede cargar el fichero! La ruta especificada no existe</string>
+    <string name="LayersActivity_6">Dirección URL del servidor WMS:</string>
+    <string name="LayersActivity_7">Get capabilities</string>
+    <string name="LayersActivity_8">Servicios de Mapas</string>
+    <string name="LayersActivity_9">Capas WMS</string>
+    <string name="LayersActivity_10">Añadir capa...</string>
+    <string name="LayersActivity_11">Desde servidor WMS</string>
+    <string name="LayersActivity_12">Pedir GetCapabilities...</string>
+    <string name="LayersActivity_13">Desde fichero de capas</string>
+    <string name="LayersActivity_14">Cargar fichero desde tarjeta SD...</string>        
+    
+    <string name="Map_0">Error al crear el mapa</string>
+    <string name="Map_1">No se han encontrado resultados</string>
+    <string name="Map_2">Error calculando la ruta</string>
+    <string name="Map_3">Buscar dirección</string>
+    <string name="Map_4">Mi Ubicación</string>
+    <string name="Map_5">Mapas/Capas</string>
+    <string name="Map_6">Modo Zoom Rectángulo</string>
+    <string name="Map_7">Modo Desplazamiento</string>
+    <string name="Map_8">Imposible obtener el tiempo, pruebe en otra ubicación. Compruebe la conexión a Internet</string>
+    <string name="Map_9">Sitio desconocido</string>
+    <string name="Map_10">La predicción del tiempo en (%s) no se encuentra disponible</string>    
+    <string name="Map_11">Predicción del tiempo</string>
+    <string name="Map_12">Hoy</string>
+    <string name="Map_13">No se ha encontrado la ruta</string>
+    <string name="Map_14">Obteniendo el tiempo...</string>
+    <string name="Map_15">Tarea cancelada</string>
+    <string name="Map_16">El servidor no puede calcular la ruta. Intente cambiar el punto de inicio o fin de ruta.</string>
+    <string name="Map_17">Esperando respuesta del servicio NameFinder...</string>
+    <string name="Map_18">Cálculo de ruta cancelado</string>
+    <string name="Map_19">Calculando ruta...</string>
+    <string name="Map_20">Tweet enviado</string>
+    <string name="Map_21">Buscar Punto de Interés</string>
+    <string name="Map_22">No se puede conectar con el servidor. Compruebe la conexión a Internet</string>
+    <string name="Map_24">No hay ningún proveedor de localización activo</string>
+    <string name="Map_25">Atención: Poca memoria</string>
+    <string name="Map_26">Desactivar GPS</string>
+    <string name="Map_27">Activar GPS</string>
+    <string name="Map_Navigator">Navegador</string>
+    <string name="not_ask">No volver a preguntar</string>
+        
+    <string name="NameFinderActivity_0">Opciones Punto de Interés</string>
+    <string name="NameFinderActivity_1">Desde aquí</string>
+    <string name="NameFinderActivity_2">Hasta aquí</string>
+    <string name="NameFinderActivity_3">Centrar en el mapa</string>
+    
+    <string name="WMSLayersActivity_0">Añadir capas seleccionadas</string>
+    <string name="WMSLayersActivity_1">La capa no es compatible</string>
+    <string name="WMSLayersActivity_2">Formato incompatible</string>
+    <string name="WMSLayersActivity_3">SRS incompatible</string>
+    
+    <string name="MapLocation_0">GPS desactivado</string>
+    <string name="MapLocation_1">El GPS se encuentra desactivado. gvSIG Mini necesita recibir su posición usando el GPS para mostrarla en el mapa. ¿Desea activar el GPS ahora?</string>
+    <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
+    
+    <string name="TweetMyLocationFunc_0">Mi Ubicación</string>
+    
+    
+	<string name="Utils_0">Select mail client</string>
+    
+    
+    
+    
+    
+    
+    <string name="unknown">Desconocida</string>
+    <string name="alert_dialog_text_entry">Cuenta Twitter</string>
+    <string name="alert_dialog_username">Nombre:</string>
+    <string name="alert_dialog_password">Contraseña:</string>
+    <string name="alert_dialog_cancel">Cancelar</string>
+    <string name="alert_dialog_cache">Número de niveles:</string>
+    <string name="alert_dialog_cache_title">Caché de Tiles</string>
+    <string name="alert_dialog_tweet">Tweet</string>
+    <string name="alert_dialog_start_cache">Empezar almacenando caché</string>
+    <string name="alert_dialog_text_search">Buscar</string>
+    <string name="alert_dialog_text_cancel">Cancelar</string>
+    <string name="alert_dialog_text_ok">Ok</string>
+    
+    <string name="download_tiles_01">Descargar Capas</string>
+    <string name="download_tiles_02">Vamos a abrir un navegador de internet para descargar el fichero "gvsigminilayers.gvtiles", selecciona una url para añadir nuevas capas automáticamente a gvSIGmini. También puedes añadir nuevas capas desde tu SDCard y lanzarlas con tu explorador de archivos.</string>
+    <string name="download_tiles_03">Fichero de Capas descargado</string>
+<!-- Missing prefs -->
+<string name="select_web_browser"></string>
+<string name="select_mail_client"></string>
+<string name="minitwitter"></string>
+<string name="Map_23"></string>
+</resources>

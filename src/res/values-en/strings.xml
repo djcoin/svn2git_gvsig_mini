@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+    <string name="warning">Warning</string>
+    <string name="error">Error</string>
+    <string name="cancel">Cancel</string>
+    <string name="please_wait">Please wait</string>
+    <string name="error_connecting_server">Error while connecting to the server</string>
+    <string name="task_canceled">Task canceled</string>
+    <string name="ok">OK</string>
+    <string name="back">Back</string>
+    <string name="server_busy">Server is busy</string>
+    <string name="search">Search</string>
+    <string name="lat">lat</string>
+    <string name="lon">lon</string>
+    <string name="latitude">latitude</string>
+    <string name="longitude">longitude</string>                
+    <string name="typeof">Geo using</string> 
+    <string name="share">gvSIGmini Geo Share</string> 
+    <string name="select_mail_client">Select mail client</string>
+    <string name="select_web_browser">Select web browser</string>  
+    <string name="minitwitter">gvSIGmini Twitter</string> 
+    <string name="not_ask">Don\'t ask again</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="send_log">Send exception log</string>
+    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
+    
+    <string name="LayersActivity_0">Layers</string>
+    <string name="LayersActivity_1">No SD card mounted</string>
+    <string name="LayersActivity_2">There are no files in</string>
+    <string name="LayersActivity_3">Select layers file</string>
+    <string name="LayersActivity_4">Layers file loaded successfully</string>
+    <string name="LayersActivity_5">Can't load file! The path you typed does not exist</string>
+    <string name="LayersActivity_6">Type WMS server URL:</string>
+    <string name="LayersActivity_7">Get capabilities</string>
+    <string name="LayersActivity_8">Tile map service</string>
+    <string name="LayersActivity_9">WMS layers</string>
+    <string name="LayersActivity_10">Add layer...</string>
+    <string name="LayersActivity_11">From WMS server</string>
+    <string name="LayersActivity_12">Requests GetCapabilities...</string>
+    <string name="LayersActivity_13">From layers file</string>
+    <string name="LayersActivity_14">Load a file from SD card...</string>        
+    
+    <string name="Map_0">Error while creating map</string>
+    <string name="Map_1">No results were found</string>
+    <string name="Map_2">Error while calculating route</string>
+    <string name="Map_3">Search address</string>
+    <string name="Map_4">My location</string>
+    <string name="Map_5">Maps/Layers</string>
+    <string name="Map_6">Zoom rectangle mode</string>
+    <string name="Map_7">Pan mode</string>
+    <string name="Map_8">Can't get weather. Check another location or maybe Internet connection is broken</string>
+    <string name="Map_9">Unknown place</string>
+    <string name="Map_10">The weather in (%s) is not available</string>    
+    <string name="Map_11">Weather</string>
+    <string name="Map_12">Today</string>
+    <string name="Map_13">Route has not been found</string>
+    <string name="Map_14">Getting weather...</string>
+    <string name="Map_15">Weather task canceled</string>
+    <string name="Map_16">Server can't calculate the route. Try to change the start or end point...</string>
+    <string name="Map_17">Waiting for NameFinder service response...</string>
+    <string name="Map_18">Route calculation canceled</string>
+    <string name="Map_19">Calculating route...</string>
+    <string name="Map_20">Tweet sent</string>
+    <string name="Map_21">Search POI</string>
+    <string name="Map_22">Can't connect to server. Check your Internet connection</string>
+    <string name="Map_23">Touch and hold on the screen to see more actions on a certain location</string>
+    <string name="Map_24">No location provider available yet</string>
+    <string name="Map_25">Warning: Low memory</string>
+    <string name="Map_26">Disable GPS</string>
+    <string name="Map_27">Enable GPS</string>
+    <string name="Map_Navigator">Navigator</string>
+    
+    <string name="NameFinderActivity_0">POI options</string>
+    <string name="NameFinderActivity_1">From here</string>
+    <string name="NameFinderActivity_2">To here</string>
+    <string name="NameFinderActivity_3">Center on map</string>
+    
+    <string name="WMSLayersActivity_0">Add selected layers</string>
+    <string name="WMSLayersActivity_1">The layer is not supported</string>
+    <string name="WMSLayersActivity_2">Invalid format</string>
+    <string name="WMSLayersActivity_3">Invalid SRS</string>
+    
+    <string name="MapLocation_0">GPS not enabled</string>
+    <string name="MapLocation_1">GPS is not enabled. gvSIG Mini needs to receive data from GPS device to properly show your location on the map. Would you like to enable GPS device now?</string>
+    <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
+    
+    <string name="TweetMyLocationFunc_0">My location</string>
+    
+    <string name="Utils_0">Select mail client</string>
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    <string name="unknown">Unknown</string>
+    <string name="alert_dialog_text_entry">Twitter Account</string>
+    <string name="alert_dialog_username">Name:</string>
+    <string name="alert_dialog_password">Password:</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="alert_dialog_cache">Number of levels:</string>
+    <string name="alert_dialog_cache_title">Tiles cache</string>
+    <string name="alert_dialog_tweet">Tweet</string>
+    <string name="alert_dialog_start_cache">Start caching</string>
+    <string name="alert_dialog_text_search">Search</string>
+    <string name="alert_dialog_text_cancel">Cancel</string>
+    <string name="alert_dialog_text_ok">OK</string>
+    
+    <string name="download_tiles_01">Download Layers</string>
+    <string name="download_tiles_02">We are opening an internet browser window for download the file "gvsigminilayers.gvtiles", tap url to add new layers to gvSIGmini. You can also add layers to your SDCard and execute them with your file Browser to add new layers.</string>
+    <string name="download_tiles_03">Layers File Downloaded</string>
+</resources>
