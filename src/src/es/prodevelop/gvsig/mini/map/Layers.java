@@ -261,10 +261,16 @@ public class Layers {
 			Enumeration keys = properties.keys();
 			
 			String key = null;
+			String temp = null;
 			while(keys.hasMoreElements()) {
-				key = keys.nextElement().toString();
-				if (key.contains(layerName))
-					return key;
+				try {
+					key = keys.nextElement().toString();
+					temp = key.substring(key.lastIndexOf("|")+ 1, key.length());
+					if (temp.equals(layerName))
+						return key;
+				} catch (Exception ignore) {
+					
+				}				
 			}
 			return layerName;			
 		} catch (Exception e) {
