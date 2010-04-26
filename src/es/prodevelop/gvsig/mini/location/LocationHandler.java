@@ -158,7 +158,7 @@ public class LocationHandler {
 		log.debug("LocationHandler stop");
 		try {
 			mLocationManager.removeUpdates(mGpsLocationListener);
-			networkLocationActivated = false;
+			gpsLocationActivated = false;
 			mGpsLocationListener = null;
 		} catch (IllegalArgumentException e) {
 			// Log.v(OpenSatNavConstants.LOG_TAG, "Ignoring: " + e);
@@ -166,7 +166,7 @@ public class LocationHandler {
 		}
 		try {
 			mLocationManager.removeUpdates(mNetworkLocationListener);
-			gpsLocationActivated = false;
+			networkLocationActivated = false;			
 			mNetworkLocationListener = null;
 		} catch (IllegalArgumentException e) {
 			// Log.v(OpenSatNavConstants.LOG_TAG, "Ignoring: " + e);
