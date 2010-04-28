@@ -90,9 +90,10 @@ import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * A Base Activity which Handles LocationProvider events and Sensor events
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public abstract class MapLocation extends Activity implements GeoUtils,
 		SensorEventListener, LocationListener {
@@ -104,18 +105,18 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 	public int mNumSatellites = NOT_SET;
 	private final static Logger log = LoggerFactory
 			.getLogger(MapLocation.class);
-//	private GPSManager manager;
+	// private GPSManager manager;
 	private LocationHandler locationHandler;
 
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			
+
 			String logFile = Utils.exitedCorrectly();
 			if (logFile != null) {
 				this.showSendLogDialog();
-			}			
-			
+			}
+
 			log.addAppender(new ConsoleAppender());
 			SDCardAppender appender = new SDCardAppender();
 			long milis = System.currentTimeMillis();
@@ -134,10 +135,14 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			Config.setContext(this);
 			log.setLevel(Utils.LOG_LEVEL);
-			locationHandler = new LocationHandler((LocationManager) getSystemService(Context.LOCATION_SERVICE), this, this);
-			locationHandler.setLocationTimer(new LocationTimer(locationHandler));
-//			manager = new GPSManager(getLocationManager(), this, this/*, true*/);
-//			manager.setGPSTask(new LocationTimer(manager));
+			locationHandler = new LocationHandler(
+					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
+					this, this);
+			locationHandler
+					.setLocationTimer(new LocationTimer(locationHandler));
+			// manager = new GPSManager(getLocationManager(), this, this/*,
+			// true*/);
+			// manager.setGPSTask(new LocationTimer(manager));
 			initLocation();
 			this.initializeSensor(this);
 		} catch (Exception e) {
@@ -173,12 +178,12 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			log.debug("initialize sensor");
 			SensorManager mSensorManager = (SensorManager) context
-					.getSystemService(Context.SENSOR_SERVICE);			
+					.getSystemService(Context.SENSOR_SERVICE);
 			mSensorManager.registerListener(this, mSensorManager
 					.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-					SensorManager.SENSOR_DELAY_NORMAL);			
+					SensorManager.SENSOR_DELAY_NORMAL);
 		} catch (Exception e) {
-			log.error(e);			
+			log.error(e);
 		}
 	}
 
@@ -209,7 +214,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 				log.debug("location handler start");
 				locationHandler.start();
 				this.setLocationHandlerEnabled(true);
-//				manager.initLocation();
+				// manager.initLocation();
 			}
 		} catch (Exception e) {
 			log.error(e);
@@ -233,7 +238,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 								int whichButton) {
 							try {
 								startActivity(new Intent(
-								"android.settings.LOCATION_SOURCE_SETTINGS"));
+										"android.settings.LOCATION_SOURCE_SETTINGS"));
 							} catch (Exception e) {
 								log.error(e);
 							}
@@ -252,7 +257,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			log.error(e);
 		}
 	}
-	
+
 	public void showDownloadDialog() {
 		try {
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -268,7 +273,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-							try {								
+							try {
 								Utils.downloadLayerFile(MapLocation.this);
 							} catch (Exception e) {
 								log.error(e);
@@ -288,233 +293,91 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			log.error(e);
 		}
 	}
-	
+
+	public void showDialogFromFile(String assetsFile, int id) {
+		try {
+			String license = "";
+			// String aFile = "about.txt";
+			InputStream is = this.getAssets().open(assetsFile);
+			try {
+				// Resources resources = getPackageManager()
+				// .getResourcesForApplication(packagename);
+
+				// Read in the license file as a big String
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(is));
+				// BufferedReader in
+				// = new BufferedReader(new InputStreamReader(
+				// resources.openRawResource(resourceid)));
+				String line;
+				StringBuilder sb = new StringBuilder();
+				try {
+					while ((line = input.readLine()) != null) { // Read line per
+																// line.
+						if (TextUtils.isEmpty(line)) {
+							// Empty line: Leave line break
+							sb.append("\n\n");
+						} else {
+							sb.append(line);
+							sb.append(" ");
+						}
+					}
+					license = sb.toString();
+				} catch (IOException e) {
+					// Should not happen.
+					e.printStackTrace();
+				}
+
+			} catch (Exception e) {
+				log.error(e);
+			}
+
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle(id);
+			ListView l = new ListView(this);
+			l.setAdapter(new LongTextAdapter(license));
+			l.setClickable(false);
+			l.setLongClickable(false);
+			l.setFocusable(false);
+			alert.setView(l);
+
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+
 	public void showAboutDialog() {
 		try {
-			TextView mLicenseText = null;
-			// Retrieve license from resource:
-			  String license = "";
-			  String aFile = "about.txt";
-			  InputStream is = this.getAssets().open(aFile);
-			  try {
-//			      Resources resources = getPackageManager()
-//			    .getResourcesForApplication(packagename);
-			      
-			      //Read in the license file as a big String
-			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
-//			      BufferedReader in
-//			         = new BufferedReader(new InputStreamReader(
-//			        resources.openRawResource(resourceid)));
-			      String line;
-			      StringBuilder sb = new StringBuilder();
-			      try {
-			       while ((line = input.readLine()) != null) { // Read line per line.
-			        if (TextUtils.isEmpty(line)) {
-			         // Empty line: Leave line break
-			         sb.append("\n\n");
-			        } else {
-			         sb.append(line);
-			         sb.append(" ");
-			        }
-			       }
-			       license = sb.toString();
-			      } catch (IOException e) {
-			       //Should not happen.
-			       e.printStackTrace();
-			      }
-			      
-			      
-			     } catch (Exception e) {
-			    		log.error(e);
-			     }
-			     
-			     
-//				mLicenseText.setText(license);
-			
-			
-			
-			
-			
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			// alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_28);
-			ListView l = new ListView(this);
-			l.setAdapter(new LongTextAdapter(license));
-			l.setClickable(false);
-			l.setLongClickable(false);
-			l.setFocusable(false);
-			alert.setView(l);
-//			TextView text = new TextView(this);
-//			text.setText(license);
-//			text.setScrollContainer(true);
-//			text.setVerticalScrollBarEnabled(true);
-//			text.setHorizontallyScrolling(true);
-//			text.setHorizontalScrollBarEnabled(true);
-//
-//		
-//			alert.setView(text);
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
+			this.showDialogFromFile("about.txt", R.string.Map_28);
 		} catch (Exception e) {
 			log.error(e);
 		}
 	}
-	
+
 	public void showLicense() {
 		try {
-			TextView mLicenseText = null;
-			// Retrieve license from resource:
-			  String license = "";
-			  String aFile = "license.txt";
-			  InputStream is = this.getAssets().open(aFile);
-			  try {
-//			      Resources resources = getPackageManager()
-//			    .getResourcesForApplication(packagename);
-			      
-			      //Read in the license file as a big String
-			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
-//			      BufferedReader in
-//			         = new BufferedReader(new InputStreamReader(
-//			        resources.openRawResource(resourceid)));
-			      String line;
-			      StringBuilder sb = new StringBuilder();
-			      try {
-			       while ((line = input.readLine()) != null) { // Read line per line.
-			        if (TextUtils.isEmpty(line)) {
-			         // Empty line: Leave line break
-			         sb.append("\n\n");
-			        } else {
-			         sb.append(line);
-			         sb.append(" ");
-			        }
-			       }
-			       license = sb.toString();
-			      } catch (IOException e) {
-			       //Should not happen.
-			       e.printStackTrace();
-			      }
-			      
-			     } catch (Exception e) {
-			    		log.error(e);
-			     }
-			     
-			     
-//				mLicenseText.setText(license);
-			
-			
-			
-			
-			
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			// alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_29);
-			ListView l = new ListView(this);
-			l.setAdapter(new LongTextAdapter(license));
-			l.setClickable(false);
-			l.setLongClickable(false);
-			l.setFocusable(false);
-			alert.setView(l);
-//			alert.setView(l);
-//			TextView text = new TextView(this);
-//			text.setText(license);
-//			text.setScrollContainer(true);
-//			text.setVerticalScrollBarEnabled(true);
-//
-//		
-//			alert.setView(text);
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
+			this.showDialogFromFile("license.txt", R.string.Map_29);			
 		} catch (Exception e) {
 			log.error(e);
 		}
 	}
+
 	public void showWhatsNew() {
 		try {
-			TextView mLicenseText = null;
-			// Retrieve license from resource:
-			  String license = "";
-			  String aFile = "whatsnew.txt";
-			  InputStream is = this.getAssets().open(aFile);
-			  try {
-//			      Resources resources = getPackageManager()
-//			    .getResourcesForApplication(packagename);
-			      
-			      //Read in the license file as a big String
-			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
-//			      BufferedReader in
-//			         = new BufferedReader(new InputStreamReader(
-//			        resources.openRawResource(resourceid)));
-			      String line;
-			      StringBuilder sb = new StringBuilder();
-			      try {
-			       while ((line = input.readLine()) != null) { // Read line per line.
-			        if (TextUtils.isEmpty(line)) {
-			         // Empty line: Leave line break
-			         sb.append("\n\n");
-			        } else {
-			         sb.append(line);
-			         sb.append(" ");
-			        }
-			       }
-			       license = sb.toString();
-			      } catch (IOException e) {
-			       //Should not happen.
-			       e.printStackTrace();
-			      }
-			      
-			     } catch (Exception e) {
-			    		log.error(e);
-			     }
-			     
-			     
-//				mLicenseText.setText(license);
-			
-			
-			
-			
-			
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			// alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_30);
-			ListView l = new ListView(this);
-			l.setAdapter(new LongTextAdapter(license));
-			l.setClickable(false);
-			l.setLongClickable(false);
-			l.setFocusable(false);
-			alert.setView(l);
-//			TextView text = new TextView(this);
-//			text.setText(license);
-//			text.setScrollContainer(true);
-//			text.setVerticalScrollBarEnabled(true);
-
-		
-
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
+			this.showDialogFromFile("whatsnew.txt", R.string.Map_30);			
 		} catch (Exception e) {
 			log.error(e);
 		}
 	}
-	
-	
+
 	public void showSendLogDialog() {
 		try {
 			log.debug("show send log dialog");
@@ -531,7 +394,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
 							try {
-								Utils.sendExceptionEmail(MapLocation.this);								
+								Utils.sendExceptionEmail(MapLocation.this);
 							} catch (Exception e) {
 								log.error(e);
 							}
@@ -580,22 +443,22 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		return new GPSPoint((int) (aLoc.getLatitude() * 1E6), (int) (aLoc
 				.getLongitude() * 1E6));
 	}
-	
+
 	public LocationHandler getLocationHandler() {
 		return this.locationHandler;
 	}
-	
+
 	/**
 	 * starts the LocationHandler
 	 */
 	public void enableGPS() {
-		try{
+		try {
 			this.initLocation();
 		} catch (Exception e) {
 			log.error(e);
 		}
 	}
-	
+
 	/**
 	 * Stops the location handler
 	 */
@@ -615,12 +478,11 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 	public boolean isLocationHandlerEnabled() {
 		return isLocationHandlerEnabled;
 	}
-	
-	private class LongTextAdapter extends BaseAdapter  {
-		
+
+	private class LongTextAdapter extends BaseAdapter {
+
 		String text = "hola";
-		
-		
+
 		public LongTextAdapter(String longText) {
 			this.text = longText;
 		}
@@ -649,10 +511,10 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			t.setText(text);
 			return t;
 		}
-		
+
 	}
 
-//	public GPSManager getGPSManager() {
-//		return this.manager;
-//	}
+	// public GPSManager getGPSManager() {
+	// return this.manager;
+	// }
 }

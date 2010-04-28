@@ -67,7 +67,7 @@ import es.prodevelop.gvsig.mini.util.Utils;
 /**
  * Class to manage the persistence of Layers. It feeds the LayersActivity class
  * 
- * @author aromeu 
+ * @author aromeu
  * @author rblanco
  * 
  */
@@ -82,7 +82,7 @@ public class Layers {
 	private static Hashtable<Integer, Vector> layers;
 
 	private final static String fileName = "layers.txt";
-	private static LayersSorter mLayersSorter; 
+	private static LayersSorter mLayersSorter;
 
 	/**
 	 * A singleton. Creates a new instance of layers and fill the properties
@@ -98,7 +98,7 @@ public class Layers {
 		try {
 			if (instance == null) {
 				instance = new Layers();
-				instance.setLayersSorter(new LayersSorter()); 
+				instance.setLayersSorter(new LayersSorter());
 				try {
 					File layerFile = new File(getBaseLayerFilePath());
 					boolean exists = layerFile.exists();
@@ -157,7 +157,7 @@ public class Layers {
 				} else {
 					logger.debug("load layers.txt from assets");
 					is = context.getAssets().open("layers.txt");
-				}	
+				}
 			} else {
 				logger.debug("filePath: " + filePath);
 				// if (properties == null)
@@ -178,7 +178,31 @@ public class Layers {
 			}
 
 			reader = new BufferedReader(new InputStreamReader(is));
+			boolean failed = parseLayersFile(reader);
+			if (failed) 
+				loadLayersAssets();
+				
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error("loadProperties: ", e);
+			throw e;
+		} finally {
+			Utils.closeStream(is);
+		}
+	}
+
+	private static void loadLayersAssets() throws Exception {
+		BufferedReader reader = null;
+		InputStream is = null;
+		try {
+
+			logger.debug("load layers.txt from assets");
+			is = context.getAssets().open("layers.txt");
+
+			reader = new BufferedReader(new InputStreamReader(is));
 			parseLayersFile(reader);
+
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -203,13 +227,14 @@ public class Layers {
 	}
 
 	/**
-	 * Adds a layer to the current properties. The layer String must be in the format
-	 * defined by the layers.txt file:
-	 * OPEN STREET MAP;0,http://a.tile.openstreetmap.org/,png,17,256
+	 * Adds a layer to the current properties. The layer String must be in the
+	 * format defined by the layers.txt file: OPEN STREET
+	 * MAP;0,http://a.tile.openstreetmap.org/,png,17,256
+	 * 
 	 * @param layer
 	 */
 	public static void addLayer(String layer) {
-		try {			
+		try {
 			String[] part = layer.split(";");
 			properties.put(part[0], part[1]);
 			Integer in = new Integer(part[1].substring(0, 1));
@@ -237,42 +262,56 @@ public class Layers {
 
 	/**
 	 * Reads the BufferedReader line to line and calls {@link #addLayer(String)}
+	 * 
 	 * @param reader
+	 * @return false if the version of the file is not correct
 	 */
-	public static void parseLayersFile(final BufferedReader reader) {
+	public static boolean parseLayersFile(final BufferedReader reader) {
+		boolean failed = false;
 		try {
 			String line = null;
+			int i = 0;
 			while ((line = reader.readLine()) != null) {
+				if (i == 0) {
+					if (line.compareToIgnoreCase(Utils.LAYERS_VERSION) != 0) {
+						failed = true;
+						break;
+					}
+				}
+				i++;
 				addLayer(line);
 			}
 		} catch (Exception e) {
 			logger.error("parseLayersFile: ", e);
+			failed = true;
 		} finally {
 			Utils.closeStream(reader);
+			return failed;
 		}
 	}
-	
+
 	public Hashtable getLayers() {
 		return properties;
 	}
-	
+
 	private String getLayerKeyFromName(String layerName) {
 		try {
 			Enumeration keys = properties.keys();
-			
+
 			String key = null;
 			String temp = null;
-			while(keys.hasMoreElements()) {
+			while (keys.hasMoreElements()) {
 				try {
 					key = keys.nextElement().toString();
-					temp = key.substring(key.lastIndexOf("|")+ 1, key.length());
+					temp = key
+							.substring(key.lastIndexOf("|") + 1, key.length());
 					if (temp.equals(layerName))
 						return key;
 				} catch (Exception ignore) {
-					
-				}				
+
+				}
 			}
-			return layerName;			
+			return layerName;
 		} catch (Exception e) {
 			logger.error(e);
 			return null;
@@ -281,14 +320,18 @@ public class Layers {
 
 	/**
 	 * Instantiates a MapRenderer
-	 * @param layerTitle The title of the layer
+	 * 
+	 * @param layerTitle
+	 *            The title of the layer
 	 * @return A MapRenderer
-	 * @throws IOException If the layers file has a bad format
+	 * @throws IOException
+	 *             If the layers file has a bad format
 	 */
 	public MapRenderer getRenderer(String layerTitle) throws IOException {
 		MapRenderer renderer = null;
 		try {
-			String layer = properties.get(getLayerKeyFromName(layerTitle)).toString(); 
+			String layer = properties.get(getLayerKeyFromName(layerTitle))
+					.toString();
 			String[] layerProps = layer.split(",");
 			final int size = layerProps.length;
 
@@ -312,11 +355,11 @@ public class Layers {
 	public static Hashtable getLayersForView() {
 		try {
 			Enumeration keys = layers.keys();
-			
+
 			Integer key = null;
 			Vector keyLayers = null;
-			while(keys.hasMoreElements()) {
-				key = (Integer)keys.nextElement();
+			while (keys.hasMoreElements()) {
+				key = (Integer) keys.nextElement();
 				keyLayers = layers.get(key);
 				keyLayers = mLayersSorter.sort(keyLayers);
 				layers.put(key, keyLayers);
@@ -328,10 +371,11 @@ public class Layers {
 	}
 
 	/**
-	 * Persists the Layers properties into a file in the directory:
-	 * SDDIR + File.separator + Utils.APP_DIR
-						+ File.separator + Utils.LAYERS_DIR
-	 * @param fileName The fileName
+	 * Persists the Layers properties into a file in the directory: SDDIR +
+	 * File.separator + Utils.APP_DIR + File.separator + Utils.LAYERS_DIR
+	 * 
+	 * @param fileName
+	 *            The fileName
 	 */
 	public static void persist(String fileName) {
 		BufferedWriter out = null;
@@ -360,6 +404,7 @@ public class Layers {
 				String layerTitle = null;
 				MapRenderer renderer = null;
 
+				out.write(Utils.LAYERS_VERSION + "\n");
 				while (keys.hasMoreElements()) {
 					try {
 						layerTitle = keys.nextElement().toString();
@@ -369,7 +414,7 @@ public class Layers {
 							if (renderer != null) {
 								logger.debug(layerTitle + " persisted");
 								out.write(renderer.toString() + "\n");
-							}	
+							}
 						}
 					} catch (Exception e) {
 						logger.error("error while writing: " + layerTitle);
@@ -391,9 +436,10 @@ public class Layers {
 	public static void persist() {
 		persist(fileName);
 	}
-	
+
 	/**
 	 * Sets the LayersSorter
+	 * 
 	 * @param aLayersSorter
 	 */
 	public void setLayersSorter(LayersSorter aLayersSorter) {

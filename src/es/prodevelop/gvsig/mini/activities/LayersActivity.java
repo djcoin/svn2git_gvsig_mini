@@ -346,7 +346,7 @@ public class LayersActivity extends ExpandableListActivity {
 			alert.setTitle(R.string.LayersActivity_6);
 			final EditText input = new EditText(this);
 //			input.setText("http://wms.globexplorer.com/gexservlets/wms");
-			input.setText("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
+//			input.setText("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
 //			input.setText("http://wms.larioja.org/request.asp?");
 			
 			// input

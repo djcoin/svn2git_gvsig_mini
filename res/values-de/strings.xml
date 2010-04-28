@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="error">Fehler</string>
-    <string name="cancel">Abbrechen</string>
-    <string name="please_wait">Warten Sie bitte</string>
-    <string name="error_connecting_server">Fehler bei der Verbindung zum Server</string>
-    <string name="task_canceled">Abgebrochene Aufgabe</string>
-    <string name="ok">OK</string>
-    <string name="back">Zurück</string>
-    <string name="server_busy">Der Server ist besetzt</string>
-    <string name="search">Suche</string>
-    <string name="lat">Breite</string>
-    <string name="lon">Länge</string>
-    <string name="latitude">Breite</string>
-    <string name="longitude">Länge</string>                
-    
-    
-    <string name="LayersActivity_0">Layers</string>
-    <string name="LayersActivity_1">Keine SD-Karte eingehängt</string>
-    <string name="LayersActivity_2">Es gibt keine Dateien in dem Pfad</string>
-    <string name="LayersActivity_3">Wählen Sie die Layers Datei aus</string>
-    <string name="LayersActivity_4">Layers Datei wurde erfolgreich geladen</string>
-    <string name="LayersActivity_5">Die Datei kann nicht geladen werden. Dieser Pfad existiert nicht</string>
-    <string name="LayersActivity_6">Geben Sie den WMS Server URL ein:</string>
-    <string name="LayersActivity_7">GetCapabilities</string>
-    <string name="LayersActivity_8">Tile map service</string>
-    <string name="LayersActivity_9">WMS layers</string>
-    <string name="LayersActivity_10">Layer  hinzufügen ...</string>
-    <string name="LayersActivity_11">Vom WMS Server</string>
-    <string name="LayersActivity_12">Anfragen GetCapabilities ...</string>
-    <string name="LayersActivity_13">Von Layers Dateien</string>
-    <string name="LayersActivity_14">Laden Sie eine Datei von der SD Karte ...</string>        
-    
-    <string name="Map_0">Fehler beim Erstellen der Karte</string>
-    <string name="Map_1">Es wurden keine Ergebnisse gefunden</string>
-    <string name="Map_2">Fehler bei der  Berechnung der Route </string>
-    <string name="Map_3">Adresse suchen</string>
-    <string name="Map_4">Mein Standort</string>
-    <string name="Map_5">Karten/Layers</string>
-    <string name="Map_6">Rechteck-Zoom</string>
-    <string name="Map_7">Verschiebe Modus</string>
-    <string name="Map_8">Wetterbericht nicht möglich. Prüfen  Sie einen anderen Standort oder vielleicht ist auch die Internet Verbindung  unterbrochen </string>
-    <string name="Map_9">Unbekannter Ort</string>
-    <string name="Map_10">Wetterbericht in (%s) is nicht verfügbar</string>    
+
+	<string name="error">Fehler</string>
+	<string name="cancel">Abbrechen</string>
+	<string name="please_wait">Warten Sie bitte</string>
+	<string name="error_connecting_server">Fehler bei der Verbindung zum Server</string>
+	<string name="task_canceled">Abgebrochene Aufgabe</string>
+	<string name="ok">OK</string>
+	<string name="back">Zurück</string>
+	<string name="server_busy">Der Server ist besetzt</string>
+	<string name="search">Suche</string>
+	<string name="lat">Breite</string>
+	<string name="lon">Länge</string>
+	<string name="latitude">Breite</string>
+	<string name="longitude">Länge</string>
+
+
+	<string name="LayersActivity_0">Layers</string>
+	<string name="LayersActivity_1">Keine SD-Karte eingehängt</string>
+	<string name="LayersActivity_2">Es gibt keine Dateien in dem Pfad</string>
+	<string name="LayersActivity_3">Wählen Sie die Layers Datei aus</string>
+	<string name="LayersActivity_4">Layers Datei wurde erfolgreich geladen
+	</string>
+	<string name="LayersActivity_5">Die Datei kann nicht geladen werden. Dieser Pfad
+		existiert nicht</string>
+	<string name="LayersActivity_6">Geben Sie den WMS Server URL ein:</string>
+	<string name="LayersActivity_7">GetCapabilities</string>
+	<string name="LayersActivity_8">Tile map service</string>
+	<string name="LayersActivity_9">WMS layers</string>
+	<string name="LayersActivity_10">Layer  hinzufügen ...</string>
+	<string name="LayersActivity_11">Vom WMS Server</string>
+	<string name="LayersActivity_12">Anfragen GetCapabilities ...</string>
+	<string name="LayersActivity_13">Von Layers Dateien</string>
+	<string name="LayersActivity_14">Laden Sie eine Datei von der SD Karte ...
+	</string>
+
+	<string name="Map_0">Fehler beim Erstellen der Karte</string>
+	<string name="Map_1">Es wurden keine Ergebnisse gefunden</string>
+	<string name="Map_2">Fehler bei der  Berechnung der Route </string>
+	<string name="Map_3">Adresse suchen</string>
+	<string name="Map_4">Mein Standort</string>
+	<string name="Map_5">Karten/Layers</string>
+	<string name="Map_6">Rechteck-Zoom</string>
+	<string name="Map_7">Verschiebe Modus</string>
+	<string name="Map_8">Wetterbericht nicht möglich. Prüfen 
+		Sie einen anderen Standort oder vielleicht ist auch die Internet
+		Verbindung unterbrochen </string>
+	<string name="Map_9">Unbekannter Ort</string>
+	<string name="Map_10">Wetterbericht in (%s) is nicht verfügbar</string>    
     <string name="Map_11">Wetterbericht</string>
     <string name="Map_12">Heute</string>
     <string name="Map_13">Die Route wurde nicht gefunden</string>
@@ -56,7 +61,7 @@
     <string name="Map_21">POI suchen</string>
     <string name="Map_22">Verbindung  zum Sever ist nicht möglich. Prüfen Sie  Ihre Internet Verbindung</string>
     <string name="Map_23">Verharren Sie auf dem Bildschirm, um weitere  Aktionen an bestimmten Standorten zu sehen</string>
-    <string name="Map_28"></string>
+    
     
     <string name="NameFinderActivity_0">POI Möglichkeiten</string>
     <string name="NameFinderActivity_1">Von hier</string>
@@ -87,17 +92,41 @@
     <string name="alert_dialog_text_search">Suchen </string>
     <string name="alert_dialog_text_cancel">Abbrechen </string>
     <string name="alert_dialog_text_ok">OK</string>
+    <string name="minitwitter">gvSIG Mini Twitter</string>
+    <string name="share">gvSIGmini geo share</string>
+	
+
+<string name="select_web_browser">Select web browser</string>
+<string name="typeof">Geolocated using</string>
+<string name="select_mail_client">Select mail client</string>
+ <string name="download_tiles_01">Download Layers</string>
+    <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIGmini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
+    <string name="download_tiles_03">Layers File Downloaded</string>
+    
+
+<string name="Map_Navigator">Navigator</string>
 <!-- Missing prefs -->
-<string name="select_web_browser"></string>
-<string name="typeof"></string>
-<string name="MapLocation_2"></string>
-<string name="select_mail_client"></string>
-<string name="download_tiles_02"></string>
-<string name="download_tiles_01"></string>
-<string name="download_tiles_03"></string>
-<string name="minitwitter"></string>
-<string name="share"></string>
-<string name="Map_Navigator"></string>
-<string name="Utils_0"></string>
-<string name="warning"></string>
+<string name="Map_24">No location provider available yet</string>
+    <string name="Map_25">Warning: Low memory</string>
+    <string name="Map_26">Disable GPS</string>
+    <string name="Map_27">Enable GPS</string>
+    <string name="Map_28">About</string>
+    <string name="Map_29">License</string>
+    <string name="Map_30">What is New</string>
+
+
+
+<!-- Missing prefs -->
+ <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
+<string name="Utils_0">Select mail client</string>
+<string name="warning">Warning</string>
+<!-- Missing prefs -->
+   <string name="not_ask">Don\'t ask again</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="send_log">Send exception log</string>
+    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
+
+
+
 </resources>

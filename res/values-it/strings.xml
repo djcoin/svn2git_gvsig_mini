@@ -58,8 +58,7 @@
     <string name="Map_19">Calcolando percorso...</string>
     <string name="Map_20">Tweet inviato</string>
     <string name="Map_21">Ricerca POI</string>
-    <string name="Map_22">Server non accessibile. Controlla la connessione internet</string>
-    <string name="Map_28"></string>
+    <string name="Map_22">Server non accessibile. Controlla la connessione internet</string>    
     
     <string name="NameFinderActivity_0">Opzioni POI</string>
     <string name="NameFinderActivity_1">Da qui</string>
@@ -90,15 +89,30 @@
     <string name="alert_dialog_text_search">Ricerca</string>
     <string name="alert_dialog_text_cancel">Annulla</string>
     <string name="alert_dialog_text_ok">Accettare</string>
+	
+	<!-- Missing prefs -->
+<string name="select_web_browser">Seleziona web browser</string>
+<string name="typeof">Geo usando</string>
+<string name="select_mail_client">Seleziona cliente mail</string>
+<string name="download_tiles_02">Stiamo iniziando il web browser per scaricare il file "gvsigminilayers.gvtiles". Premi sul link per aggiungere i nuovi layer a gvSIGmini. Puoi anche premere sul file "gvsigminilayers.gvtiles" se ce l'hai nella scheda SD.</string>
+<string name="download_tiles_01">Scarica i layer</string>
+<string name="download_tiles_03">File dei layer scaricato</string>
+<string name="minitwitter">gvSIGmini Twitter</string>
+<string name="Map_23">Premi a lungo sullo schermo per vedere le varie  opzioni associate.</string>
+<string name="share">gvSIGmini Geo Share</string>
+<string name="Map_Navigator">Navigatore</string>
 <!-- Missing prefs -->
-<string name="select_web_browser"></string>
-<string name="typeof"></string>
-<string name="select_mail_client"></string>
-<string name="download_tiles_02"></string>
-<string name="download_tiles_01"></string>
-<string name="download_tiles_03"></string>
-<string name="minitwitter"></string>
-<string name="Map_23"></string>
-<string name="share"></string>
-<string name="Map_Navigator"></string>
+<string name="Map_24">Nessun location provider disponibile</string>
+<string name="Map_25">Attenzione: Memoria disponibile scarsa</string>
+<string name="Map_26">Disattivare GPS</string>
+<string name="Map_27">Attivare GPS</string>
+<string name="fatal_error">Si è verificato un errore. Vuoi inviare il file di log agli sviluppatori per soluzionare il problema?</string>
+<string name="not_ask">Non chiedere di nuovo</string>
+<string name="portrait">Portrait</string>
+<string name="landscape">Landscape</string>
+<string name="send_log">Invia file di log</string>
+
+<string name="Map_30">Novità</string>
+<string name="Map_29">Licenza</string>
+<string name="Map_28">Informazioni su...</string>
 </resources>

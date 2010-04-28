@@ -1,3 +1,4 @@
+v0.2
 0|OPEN STREET MAP;0,http://a.tile.openstreetmap.org/,png,18,256
 1|OSMARENDER;0,http://tah.openstreetmap.org/Tiles/tile/,png,18,256
 2|Cloudmade;0,http://b.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/1/256/,png,18,256

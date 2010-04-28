@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="app_name">gvSIG Mini</string>
+    <string name="app_name_itemizedoverlay">gvSIG Mini 0.2.0</string>
     
     <string name="warning">Warning</string>
     <string name="error">Error</string>
@@ -32,7 +33,7 @@
     <string name="LayersActivity_2">There are no files in</string>
     <string name="LayersActivity_3">Select layers file</string>
     <string name="LayersActivity_4">Layers file loaded successfully</string>
-    <string name="LayersActivity_5">Can't load file! The path you typed does not exist</string>
+    <string name="LayersActivity_5">Can\'t load file! The path you typed does not exist</string>
     <string name="LayersActivity_6">Type WMS server URL:</string>
     <string name="LayersActivity_7">Get capabilities</string>
     <string name="LayersActivity_8">Tile map service</string>
@@ -51,7 +52,7 @@
     <string name="Map_5">Maps/Layers</string>
     <string name="Map_6">Zoom rectangle mode</string>
     <string name="Map_7">Pan mode</string>
-    <string name="Map_8">Can't get weather. Check another location or maybe Internet connection is broken</string>
+    <string name="Map_8">Can\'t get weather. Check another location or maybe Internet connection is broken</string>
     <string name="Map_9">Unknown place</string>
     <string name="Map_10">The weather in (%s) is not available</string>    
     <string name="Map_11">Weather</string>
@@ -59,20 +60,23 @@
     <string name="Map_13">Route has not been found</string>
     <string name="Map_14">Getting weather...</string>
     <string name="Map_15">Weather task canceled</string>
-    <string name="Map_16">Server can't calculate the route. Try to change the start or end point...</string>
+    <string name="Map_16">Server can\'t calculate the route. Try to change the start or end point...</string>
     <string name="Map_17">Waiting for NameFinder service response...</string>
     <string name="Map_18">Route calculation canceled</string>
     <string name="Map_19">Calculating route...</string>
     <string name="Map_20">Tweet sent</string>
     <string name="Map_21">Search POI</string>
-    <string name="Map_22">Can't connect to server. Check your Internet connection</string>
+    <string name="Map_22">Can\'t connect to server. Check your Internet connection</string>
     <string name="Map_23">Touch and hold on the screen to see more actions on a certain location</string>
     <string name="Map_24">No location provider available yet</string>
     <string name="Map_25">Warning: Low memory</string>
     <string name="Map_26">Disable GPS</string>
     <string name="Map_27">Enable GPS</string>
     <string name="Map_28">About</string>
+    <string name="Map_29">License</string>
+    <string name="Map_30">What is New</string>
     <string name="Map_Navigator">Navigator</string>
+    
     
     <string name="NameFinderActivity_0">POI options</string>
     <string name="NameFinderActivity_1">From here</string>
@@ -117,6 +121,6 @@
     <string name="alert_dialog_text_ok">OK</string>
     
     <string name="download_tiles_01">Download Layers</string>
-    <string name="download_tiles_02">We are opening an internet browser window for download the file "gvsigminilayers.gvtiles", tap url to add new layers to gvSIGmini. You can also add layers to your SDCard and execute them with your file Browser to add new layers.</string>
+    <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIGmini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
     <string name="download_tiles_03">Layers File Downloaded</string>
 </resources>
