@@ -52,7 +52,11 @@
 
 package es.prodevelop.gvsig.mini.map;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import net.sf.microlog.android.appender.SDCardAppender;
@@ -72,6 +76,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.location.Config;
@@ -280,6 +289,232 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		}
 	}
 	
+	public void showAboutDialog() {
+		try {
+			TextView mLicenseText = null;
+			// Retrieve license from resource:
+			  String license = "";
+			  String aFile = "about.txt";
+			  InputStream is = this.getAssets().open(aFile);
+			  try {
+//			      Resources resources = getPackageManager()
+//			    .getResourcesForApplication(packagename);
+			      
+			      //Read in the license file as a big String
+			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
+//			      BufferedReader in
+//			         = new BufferedReader(new InputStreamReader(
+//			        resources.openRawResource(resourceid)));
+			      String line;
+			      StringBuilder sb = new StringBuilder();
+			      try {
+			       while ((line = input.readLine()) != null) { // Read line per line.
+			        if (TextUtils.isEmpty(line)) {
+			         // Empty line: Leave line break
+			         sb.append("\n\n");
+			        } else {
+			         sb.append(line);
+			         sb.append(" ");
+			        }
+			       }
+			       license = sb.toString();
+			      } catch (IOException e) {
+			       //Should not happen.
+			       e.printStackTrace();
+			      }
+			      
+			      
+			     } catch (Exception e) {
+			    		log.error(e);
+			     }
+			     
+			     
+//				mLicenseText.setText(license);
+			
+			
+			
+			
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			// alert.setIcon(R.drawable.menu00);
+			alert.setTitle(R.string.Map_28);
+			ListView l = new ListView(this);
+			l.setAdapter(new LongTextAdapter(license));
+			l.setClickable(false);
+			l.setLongClickable(false);
+			l.setFocusable(false);
+			alert.setView(l);
+//			TextView text = new TextView(this);
+//			text.setText(license);
+//			text.setScrollContainer(true);
+//			text.setVerticalScrollBarEnabled(true);
+//			text.setHorizontallyScrolling(true);
+//			text.setHorizontalScrollBarEnabled(true);
+//
+//		
+//			alert.setView(text);
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+	
+	public void showLicense() {
+		try {
+			TextView mLicenseText = null;
+			// Retrieve license from resource:
+			  String license = "";
+			  String aFile = "license.txt";
+			  InputStream is = this.getAssets().open(aFile);
+			  try {
+//			      Resources resources = getPackageManager()
+//			    .getResourcesForApplication(packagename);
+			      
+			      //Read in the license file as a big String
+			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
+//			      BufferedReader in
+//			         = new BufferedReader(new InputStreamReader(
+//			        resources.openRawResource(resourceid)));
+			      String line;
+			      StringBuilder sb = new StringBuilder();
+			      try {
+			       while ((line = input.readLine()) != null) { // Read line per line.
+			        if (TextUtils.isEmpty(line)) {
+			         // Empty line: Leave line break
+			         sb.append("\n\n");
+			        } else {
+			         sb.append(line);
+			         sb.append(" ");
+			        }
+			       }
+			       license = sb.toString();
+			      } catch (IOException e) {
+			       //Should not happen.
+			       e.printStackTrace();
+			      }
+			      
+			     } catch (Exception e) {
+			    		log.error(e);
+			     }
+			     
+			     
+//				mLicenseText.setText(license);
+			
+			
+			
+			
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			// alert.setIcon(R.drawable.menu00);
+			alert.setTitle(R.string.Map_29);
+			ListView l = new ListView(this);
+			l.setAdapter(new LongTextAdapter(license));
+			l.setClickable(false);
+			l.setLongClickable(false);
+			l.setFocusable(false);
+			alert.setView(l);
+//			alert.setView(l);
+//			TextView text = new TextView(this);
+//			text.setText(license);
+//			text.setScrollContainer(true);
+//			text.setVerticalScrollBarEnabled(true);
+//
+//		
+//			alert.setView(text);
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+	public void showWhatsNew() {
+		try {
+			TextView mLicenseText = null;
+			// Retrieve license from resource:
+			  String license = "";
+			  String aFile = "whatsnew.txt";
+			  InputStream is = this.getAssets().open(aFile);
+			  try {
+//			      Resources resources = getPackageManager()
+//			    .getResourcesForApplication(packagename);
+			      
+			      //Read in the license file as a big String
+			      BufferedReader input =  new BufferedReader(new InputStreamReader(is));
+//			      BufferedReader in
+//			         = new BufferedReader(new InputStreamReader(
+//			        resources.openRawResource(resourceid)));
+			      String line;
+			      StringBuilder sb = new StringBuilder();
+			      try {
+			       while ((line = input.readLine()) != null) { // Read line per line.
+			        if (TextUtils.isEmpty(line)) {
+			         // Empty line: Leave line break
+			         sb.append("\n\n");
+			        } else {
+			         sb.append(line);
+			         sb.append(" ");
+			        }
+			       }
+			       license = sb.toString();
+			      } catch (IOException e) {
+			       //Should not happen.
+			       e.printStackTrace();
+			      }
+			      
+			     } catch (Exception e) {
+			    		log.error(e);
+			     }
+			     
+			     
+//				mLicenseText.setText(license);
+			
+			
+			
+			
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			// alert.setIcon(R.drawable.menu00);
+			alert.setTitle(R.string.Map_30);
+			ListView l = new ListView(this);
+			l.setAdapter(new LongTextAdapter(license));
+			l.setClickable(false);
+			l.setLongClickable(false);
+			l.setFocusable(false);
+			alert.setView(l);
+//			TextView text = new TextView(this);
+//			text.setText(license);
+//			text.setScrollContainer(true);
+//			text.setVerticalScrollBarEnabled(true);
+
+		
+
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+	
+	
 	public void showSendLogDialog() {
 		try {
 			log.debug("show send log dialog");
@@ -379,6 +614,42 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 	public boolean isLocationHandlerEnabled() {
 		return isLocationHandlerEnabled;
+	}
+	
+	private class LongTextAdapter extends BaseAdapter  {
+		
+		String text = "hola";
+		
+		
+		public LongTextAdapter(String longText) {
+			this.text = longText;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return text;
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public View getView(int arg0, View arg1, ViewGroup arg2) {
+			TextView t = new TextView(MapLocation.this);
+			t.setText(text);
+			return t;
+		}
+		
 	}
 
 //	public GPSManager getGPSManager() {

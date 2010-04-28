@@ -167,7 +167,7 @@ import es.prodevelop.gvsig.mini.location.Config;
  * 
  * Needs to be refactored
  * 
- * @author aromeu 
+ * @author aromeu
  * @author rblanco
  * 
  */
@@ -201,6 +201,9 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	private MenuItem mySearchDirection;
 	private MenuItem myDownloadLayers;
 	private MenuItem myGPSButton;
+	private MenuItem myAbout;
+	private MenuItem myWhats;
+	private MenuItem myLicense;
 	public Handler mHandler;
 	public static ViewPort vp;
 	int nearopt = 0;
@@ -595,8 +598,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			myLocationButton = pMenu.add(0, 2, 2, R.string.Map_4).setIcon(
 					R.drawable.menu_location);
 			pMenu.add(0, 3, 3, R.string.Map_5).setIcon(R.drawable.menu02);
-//			myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
-//					R.drawable.mv_rectangle);
+			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
+			// R.drawable.mv_rectangle);
 			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
 			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);
 			myDownloadLayers = pMenu.add(0, 5, 5, R.string.download_tiles_01)
@@ -604,8 +607,14 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			myNavigator = pMenu.add(0, 6, 6, R.string.Map_Navigator).setIcon(
 					R.drawable.menu_navigation).setEnabled(connection);
 			myGPSButton = pMenu.add(0, 7, 7, R.string.Map_26).setIcon(
+					R.drawable.menu_location).setCheckable(true).setChecked(
+					true);
+			myWhats = pMenu.add(0, 8, 8, R.string.Map_30).setIcon(
 					R.drawable.menu_location);
-
+			myLicense = pMenu.add(0, 9, 9, R.string.Map_29).setIcon(
+					R.drawable.menu_location);
+			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
+					R.drawable.menu_location);
 		} catch (Exception e) {
 			log.error("onCreateOptionsMenu: ", e);
 		}
@@ -709,12 +718,12 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 					// // osmap.switchPanMode();
 					//
 					// if (recenterOnGPS) {
-					//log.debug("recentering on GPS after check MyLocation on");
+					// log.debug("recentering on GPS after check MyLocation on");
 					// myLocation.setIcon(R.drawable.menu01);
 					//
 					// } else {
 					// log
-					//.debug("stop recentering on GPS after check MyLocation off"
+					// .debug("stop recentering on GPS after check MyLocation off"
 					// );
 					// myLocation.setIcon(R.drawable.menu01_2);
 					// }
@@ -778,7 +787,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 					myDownloadLayers.setEnabled(!recenterOnGPS);
 					mySearchDirection.setEnabled(!recenterOnGPS);
 					myGPSButton.setEnabled(!recenterOnGPS);
-					
+
 					if (!recenterOnGPS) {
 						log
 								.debug("recentering on GPS after check MyLocation on");
@@ -793,12 +802,12 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 					}
 					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
 					// ) {
-					//log.debug("recentering on GPS after check MyLocation on");
+					// log.debug("recentering on GPS after check MyLocation on");
 					// myNavigator.setIcon(R.drawable.menu_navigation_off);
 					//
 					// } else {
 					// log
-					//.debug("stop recentering on GPS after check MyLocation off"
+					// .debug("stop recentering on GPS after check MyLocation off"
 					// );
 					// myNavigator.setIcon(R.drawable.menu_navigation);
 					// }
@@ -831,8 +840,32 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			case 7:
 				if (this.isLocationHandlerEnabled()) {
 					disableGPS();
+					myGPSButton.setChecked(false);
 				} else {
 					enableGPS();
+					myGPSButton.setChecked(true);
+
+				}
+				break;
+			case 8:
+				try {
+					showWhatsNew();
+				} catch (Exception e) {
+					log.error("OpenWebsite: ", e);
+				}
+				break;
+			case 9:
+				try {
+					showLicense();
+				} catch (Exception e) {
+					log.error("OpenWebsite: ", e);
+				}
+				break;
+			case 10:
+				try {
+					showAboutDialog();
+				} catch (Exception e) {
+					log.error("OpenWebsite: ", e);
 				}
 				break;
 			default:
@@ -1712,8 +1745,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	/**
 	 * This class Handles messages from Functionalities
 	 * 
-	 * @author aromeu 
- * @author rblanco
+	 * @author aromeu
+	 * @author rblanco
 	 * 
 	 */
 	private class MapHandler extends Handler {
@@ -2671,7 +2704,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			log.error(e);
 		}
 	}
-	
+
 	/**
 	 * starts the LocationHandler
 	 */
@@ -2680,7 +2713,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		log.debug("enableGPS");
 		super.initLocation();
 		boolean enabled = this.isLocationHandlerEnabled();
-		try{
+		try {
 			this.myLocationButton.setEnabled(enabled);
 			this.myNavigator.setEnabled(enabled);
 			this.myGPSButton.setTitle(R.string.Map_26);
@@ -2688,7 +2721,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			log.error(e);
 		}
 	}
-	
+
 	/**
 	 * Stops the location handler
 	 */

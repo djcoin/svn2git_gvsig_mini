@@ -1,5 +1,5 @@
-gvSIG Mini © v. 0.1 
-26th-nov-2009
+gvSIG Mini © v. 0.2.0
+28th-apr-2010
 
 gvSIG Mini is a free viewer of free-access maps for Java and Android cellular phones.
 
@@ -15,7 +15,7 @@ gvSIG Mini has been funded by Prodevelop, S.L., IMPIVA Institue of Regioanl Gove
 
 gvSIG Mini comprises two products: gvSIG Mini for Android, aimed at cellular phone with Android operative system, and gvSIG Mini for Java, aimed at cellular phones that support Java CLDC 1.1 / MIDP 2.0 applications.
 
-Common features of version 0.1, are listed below:
+Common features of version 0.2, are listed below:
 
 - Tile based cartography displaying: OpenStreetMap, Yahoo Maps, Microsoft Bing, WMS-C services of ICC, etc.
 - Satellite layers, rendered maps and hybrid ones.

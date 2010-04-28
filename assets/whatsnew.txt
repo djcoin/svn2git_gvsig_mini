@@ -1,0 +1,102 @@
+gvSIG Mini Copyright v. 0.2.0
+
+v. 0.2.0
+
+--------
+
+New Features:
+
+* Support for WMS and WMS-C layers
+
+* Street View integration
+
+* Compass support
+
+* GPS, Cell and Network GeoLocation positioning
+
+* Precission of the position displayed on the map
+
+* Navigation Mode
+
+* Share your location: Twitter, SMS, Email, Facebook...
+
+* Compatible with Low and High Screen Resolutions
+
+* Speed download improvements
+
+* New layers added by default
+
+* Layer configuration downloader
+
+* QuickZoom: SlideBar or DoubleTap
+
+* Enable/disable GPS
+
+* Improved user interface
+
+* Context menu (with long press)
+
+* Android 2.1 support (now from 1.5 up to 2.1)
+
+
+Bugs fixed:
+
+* Catch OutOfMemoryErrors
+
+* Menu icon of "download layers" without text
+
+* Routes from/to POI don't run
+
+* gvSIG Mini icon not adapted to high resolution
+
+* Landscape mode does not show correctly the compass orientation
+
+* WMS layers (also TMS) don't save Route and POIS
+
+* When the screen orientation changes the map is zoomed out one level
+
+* Tweet my position with extra decimals
+
+* Change literal when No GPS is found
+
+* Increase max zoom levels in assets/layers.txt
+
+* The text with downloaded KBytes is no longer visible
+
+* Fixed zoom level doesn't work fine in navigation mode + search
+
+* NameFinder request does not time-out
+
+* Empty toasts at beginning
+
+* Black screen when no SD Card
+
+* Crash changing from vertical to horizontal position and back
+
+* Strange zoom in of the position icon when change layer
+
+* Layer changed when re-positioning the phone
+
+* My Location Off doesn't work
+
+* Tiles not cached
+
+* Red line when changing position
+
+* Position dissapears a while when changing phone's orientation
+
+* The zoom scale isn't visible any longer
+
+* Orientation change loses position
+
+* Change extension of tiles stored in the sd card
+
+* Bad tiling composition at 0 zoom level
+
+* Sporadic crash
+
+* Position hopping
+
+* Orientation flipping
+
+

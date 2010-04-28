@@ -1,0 +1,21 @@
+gvSIG Mini Copyright v. 0.2 
+28th-apr-2010
+
+gvSIG Mini is a free viewer of free-access maps for Java and Android cellular phones.
+
+gvSIG Mini is distributed with GNU/GPL v2 license. For more details, please see License option.
+
+gvSIG Mini has been developed by Prodevelop, S.L.
+
+Prodevelop, S.L.
+http://www.prodevelop.es/
+
+e-mail: prode@prodevelop.es
+
+gvSIG Mini has been funded by Prodevelop, S.L., IMPIVA Institute of Regional Government of Valencia and European Union FEDER funds.
+
+gvSIG Mini for Android uses these icons with license restrictions or attributions:
+
+- menu03.png http://www.kde-look.org/content/show.php?content=39988 GNU/GPL
+
+- Icon pack http://www.icons-land.com/gis-gps-map-icons.php 
