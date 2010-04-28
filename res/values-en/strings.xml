@@ -71,6 +71,7 @@
     <string name="Map_25">Warning: Low memory</string>
     <string name="Map_26">Disable GPS</string>
     <string name="Map_27">Enable GPS</string>
+    <string name="Map_28">About</string>
     <string name="Map_Navigator">Navigator</string>
     
     <string name="NameFinderActivity_0">POI options</string>

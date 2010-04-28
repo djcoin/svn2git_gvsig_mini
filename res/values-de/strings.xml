@@ -56,6 +56,7 @@
     <string name="Map_21">POI suchen</string>
     <string name="Map_22">Verbindung  zum Sever ist nicht möglich. Prüfen Sie  Ihre Internet Verbindung</string>
     <string name="Map_23">Verharren Sie auf dem Bildschirm, um weitere  Aktionen an bestimmten Standorten zu sehen</string>
+    <string name="Map_28"></string>
     
     <string name="NameFinderActivity_0">POI Möglichkeiten</string>
     <string name="NameFinderActivity_1">Von hier</string>
