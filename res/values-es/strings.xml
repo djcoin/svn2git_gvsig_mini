@@ -116,7 +116,7 @@
 <string name="minitwitter">gvSIGmini Twitter</string>
 <string name="Map_23">Dé un toque largo a la pantalla para ver las acciones disponibles sobre esa localización</string>
 <!-- Missing prefs -->
-<string name="Map_30">Licencia</string>
-<string name="Map_29">Qué hay nuevo</string>
+<string name="Map_30">Novedades</string>
+<string name="Map_29">Licencia</string>
 
 </resources>
