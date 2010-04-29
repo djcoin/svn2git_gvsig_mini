@@ -18,10 +18,10 @@
     <string name="latitude">latitude</string>
     <string name="longitude">longitude</string>                
     <string name="typeof">Geo using</string> 
-    <string name="share">gvSIGmini Geo Share</string> 
+    <string name="share">gvSIG Mini Geo Share</string> 
     <string name="select_mail_client">Select mail client</string>
     <string name="select_web_browser">Select web browser</string>  
-    <string name="minitwitter">gvSIGmini Twitter</string> 
+    <string name="minitwitter">gvSIG Mini Twitter</string> 
     <string name="not_ask">Don\'t ask again</string>
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
@@ -121,6 +121,6 @@
     <string name="alert_dialog_text_ok">OK</string>
     
     <string name="download_tiles_01">Download Layers</string>
-    <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIGmini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
+    <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIG Mini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
     <string name="download_tiles_03">Layers File Downloaded</string>
 </resources>

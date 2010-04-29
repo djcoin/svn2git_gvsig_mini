@@ -803,7 +803,7 @@ public class Twitter {
 		}
 	}
 
-	private String sourceApp = "gvSIGmini";
+	private String sourceApp = "gvSIG Mini";
 
 	private Integer pageNumber;
 

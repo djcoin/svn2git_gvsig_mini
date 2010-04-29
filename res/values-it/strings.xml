@@ -94,12 +94,12 @@
 <string name="select_web_browser">Seleziona web browser</string>
 <string name="typeof">Geo usando</string>
 <string name="select_mail_client">Seleziona cliente mail</string>
-<string name="download_tiles_02">Stiamo iniziando il web browser per scaricare il file "gvsigminilayers.gvtiles". Premi sul link per aggiungere i nuovi layer a gvSIGmini. Puoi anche premere sul file "gvsigminilayers.gvtiles" se ce l'hai nella scheda SD.</string>
+<string name="download_tiles_02">Stiamo iniziando il web browser per scaricare il file "gvsigminilayers.gvtiles". Premi sul link per aggiungere i nuovi layer a gvSIG Mini. Puoi anche premere sul file "gvsigminilayers.gvtiles" se ce l'hai nella scheda SD.</string>
 <string name="download_tiles_01">Scarica i layer</string>
 <string name="download_tiles_03">File dei layer scaricato</string>
-<string name="minitwitter">gvSIGmini Twitter</string>
+<string name="minitwitter">gvSIG Mini Twitter</string>
 <string name="Map_23">Premi a lungo sullo schermo per vedere le varie  opzioni associate.</string>
-<string name="share">gvSIGmini Geo Share</string>
+<string name="share">gvSIG Mini Geo Share</string>
 <string name="Map_Navigator">Navigatore</string>
 <!-- Missing prefs -->
 <string name="Map_24">Nessun location provider disponibile</string>

@@ -16,7 +16,7 @@
     <string name="latitude">latitud</string>
     <string name="longitude">longitud</string>                
     <string name="typeof">Geoposicionado usando</string> 
-    <string name="share">gvSIGmini Geo Share</string> 
+    <string name="share">gvSIG Mini Geo Share</string> 
     <string name="portrait">Vertical</string>
     <string name="landscape">Horizontal</string>
     <string name="send_log">Enviar archivo de errores</string>
@@ -65,7 +65,7 @@
     <string name="Map_25">Atención: Poca memoria</string>
     <string name="Map_26">Desactivar Ubicación</string>
     <string name="Map_27">Activar Ubicación</string>
-    <string name="Map_28">Sobre gvSIGmini</string>
+    <string name="Map_28">Sobre gvSIG Mini</string>
     <string name="Map_Navigator">Navegador</string>
     <string name="not_ask">No volver a preguntar</string>
         
@@ -107,13 +107,13 @@
     <string name="alert_dialog_text_ok">Ok</string>
     
     <string name="download_tiles_01">Descargar Capas</string>
-    <string name="download_tiles_02">Se va a abrir un navegador de Internet para descargar el fichero "gvsigminilayers.gvtiles", seleccione una url para añadir nuevas capas automáticamente a gvSIGmini. También puede añadir nuevas capas desde la SDCard y lanzarlas con el explorador de archivos.</string>
+    <string name="download_tiles_02">Se va a abrir un navegador de Internet para descargar el fichero "gvsigminilayers.gvtiles", seleccione una url para añadir nuevas capas automáticamente a gvSIG Mini. También puede añadir nuevas capas desde la SDCard y lanzarlas con el explorador de archivos.</string>
 
     <string name="download_tiles_03">Fichero de Capas descargado</string>
 <!-- Missing prefs -->
 <string name="select_web_browser">Seleccione explorador</string>
 <string name="select_mail_client">Seleccione cliente de correo</string>
-<string name="minitwitter">gvSIGmini Twitter</string>
+<string name="minitwitter">gvSIG Mini Twitter</string>
 <string name="Map_23">Mantenga el dedo sobre la pantalla para ver las acciones disponibles sobre esa localización</string>
 <!-- Missing prefs -->
 <string name="Map_30">Novedades</string>

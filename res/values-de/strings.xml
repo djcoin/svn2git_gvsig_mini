@@ -93,14 +93,14 @@
     <string name="alert_dialog_text_cancel">Abbrechen </string>
     <string name="alert_dialog_text_ok">OK</string>
     <string name="minitwitter">gvSIG Mini Twitter</string>
-    <string name="share">gvSIGmini geo share</string>
+    <string name="share">gvSIG Mini geo share</string>
 	
 
 <string name="select_web_browser">Wählen Sie Web-Browser</string>
 <string name="typeof">Geolocated mit</string>
 <string name="select_mail_client">Wählen Sie Mail-Client</string>
  <string name="download_tiles_01">Download Layers</string>
-    <string name="download_tiles_02">Ein Internet-Browser sein wird, um die Datei "gvsigminilayers.gvtiles" zu öffnen, tippen Sie auf den Link in der Browser, um neue Ebenen hinzuzufügen gvSIGmini. Sie können auch Schichten Dateien auf Ihren SDCard und führen Sie sie mit Ihren Datei-Browser, um neue Ebenen hinzuzufügen.</string>
+    <string name="download_tiles_02">Ein Internet-Browser sein wird, um die Datei "gvsigminilayers.gvtiles" zu öffnen, tippen Sie auf den Link in der Browser, um neue Ebenen hinzuzufügen gvSIG Mini. Sie können auch Schichten Dateien auf Ihren SDCard und führen Sie sie mit Ihren Datei-Browser, um neue Ebenen hinzuzufügen.</string>
     <string name="download_tiles_03">Ebenen-Datei heruntergeladen</string>
     
 
