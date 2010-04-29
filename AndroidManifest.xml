@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="es.prodevelop.gvsig.mini" android:versionName="0.02.332"
-	android:versionCode="332">
+	package="es.prodevelop.gvsig.mini" android:versionCode="13" android:versionName="0.2">
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
