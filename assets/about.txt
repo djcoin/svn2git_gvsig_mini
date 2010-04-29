@@ -19,3 +19,9 @@ gvSIG Mini for Android uses these icons with license restrictions or attribution
 - menu03.png http://www.kde-look.org/content/show.php?content=39988 GNU/GPL
 
 - Icon pack http://www.icons-land.com/gis-gps-map-icons.php 
+
+- menu_navigation http://www.woothemes.com/2009/02/wp-woothemes-ultimate-icon-set-first-release/
+
+- menu00 http://www.everaldo.com/
+
+- menu_download http://earam.deviantart.com/art/the-moonlight-31208162
