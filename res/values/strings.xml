@@ -70,8 +70,8 @@
     <string name="Map_23">Touch and hold on the screen to see more actions on a certain location</string>
     <string name="Map_24">No location provider available yet</string>
     <string name="Map_25">Warning: Low memory</string>
-    <string name="Map_26">Disable GPS</string>
-    <string name="Map_27">Enable GPS</string>
+    <string name="Map_26">Disable Location</string>
+    <string name="Map_27">Enable Location</string>
     <string name="Map_28">About</string>
     <string name="Map_29">License</string>
     <string name="Map_30">What is New</string>

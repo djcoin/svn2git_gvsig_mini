@@ -63,8 +63,8 @@
     <string name="Map_22">No se puede conectar con el servidor. Compruebe la conexión a Internet</string>
     <string name="Map_24">No hay ningún proveedor de localización activo</string>
     <string name="Map_25">Atención: Poca memoria</string>
-    <string name="Map_26">Desactivar GPS</string>
-    <string name="Map_27">Activar GPS</string>
+    <string name="Map_26">Desactivar Ubicación</string>
+    <string name="Map_27">Activar Ubicación</string>
     <string name="Map_28">Sobre gvSIGmini</string>
     <string name="Map_Navigator">Navegador</string>
     <string name="not_ask">No volver a preguntar</string>
