@@ -72,4 +72,5 @@
 
 	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission>
 
+<uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
 </manifest> 
