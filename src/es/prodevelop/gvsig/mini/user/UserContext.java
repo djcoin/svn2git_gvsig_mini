@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -42,6 +42,9 @@ package es.prodevelop.gvsig.mini.user;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import android.widget.Toast;
+import es.prodevelop.gvsig.mini.R;
 
 /**
  * Class for managing user context, like application usage along different sessions,
@@ -143,6 +146,26 @@ public class UserContext implements UserContextable{
 		this.lastExecScaleBar = 0;
 		return false;
 	}	
+	
+	/**
+	 * Gets a string to be displayed as a hint to the user	
+	 * The hints are based on the user past behaviour
+	 * @return ResId of the string to be displayed
+	 */
+	public int getHintMessage() {
+		if (!this.usedCircleMenu) {
+			// The Circle Context Menu (Roulette) has never been displayed,
+			// so let's give the user a hint about it
+			return R.string.Map_23;
+		} else if (!this.usedScaleBar) {
+			// The Zoom Scale Bar has never been displayed,
+			// so let's give the user a hint about it
+			return R.string.Map_31;
+		} else {
+			return 0;
+		}
+			
+	}
 	
 	/**
 	 * Gets if the context circle menu has been used at least once in any

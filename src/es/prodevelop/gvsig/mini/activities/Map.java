@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -342,11 +342,20 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			// if (isSaved) setContentView(null);
 			// enableAcelerometer(savedInstanceState);
 
+			/*
 			if (!userContext.isUsedCircleMenu()) {
 				// The Circle Context Menu (Roulette) has never been displayed,
 				// so let's
 				// give the user a hint about it
 				Toast t = Toast.makeText(this, R.string.Map_23,
+						Toast.LENGTH_LONG);
+				t.show();
+			}
+			*/
+			int hintId = 0;
+			hintId = userContext.getHintMessage();
+			if (hintId != 0) {
+				Toast t = Toast.makeText(this, hintId,
 						Toast.LENGTH_LONG);
 				t.show();
 			}
@@ -1036,7 +1045,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 
 			adapter.addItem(new BulletedText(new StringBuffer().append(
 					this.getResources().getString(R.string.Map_12)).append(
-					" - ").append(wc.getTempCelcius()).append(" ºC").append(
+					" - ").append(wc.getTempCelcius()).append(" ï¿½C").append(
 					"\n").append(wc.getCondition()).append("\n").append(
 					wc.getWindCondition()).append("\n")
 					.append(wc.getHumidity()).toString(), BulletedText
@@ -1052,8 +1061,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 					temp = l.get(i);
 					adapter.addItem(new BulletedText(new StringBuffer().append(
 							temp.getDayofWeek()).append(" - ").append(
-							temp.getTempMinCelsius()).append(" ºC").append("/")
-							.append(temp.getTempMaxCelsius()).append(" ºC")
+							temp.getTempMinCelsius()).append(" ï¿½C").append("/")
+							.append(temp.getTempMaxCelsius()).append(" ï¿½C")
 							.append("\n").append(temp.getCondition())
 							.toString(), BulletedText.getRemoteImage(new URL(
 							"http://www.google.com" + temp.getIconURL())))
@@ -2567,7 +2576,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 				this.onDestroy();
 				finish();
 				// TODO: Hacer esto bien, liberando recursos y cerrando la
-				// aplicación
+				// aplicaciï¿½n
 				android.os.Process.killProcess(android.os.Process.myPid());
 				// return false;
 			}
