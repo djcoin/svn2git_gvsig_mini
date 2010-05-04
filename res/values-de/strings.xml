@@ -94,38 +94,31 @@
     <string name="alert_dialog_text_ok">OK</string>
     <string name="minitwitter">gvSIG Mini Twitter</string>
     <string name="share">gvSIG Mini geo share</string>
-	
-
-<string name="select_web_browser">Wählen Sie Web-Browser</string>
-<string name="typeof">Geolocated mit</string>
-<string name="select_mail_client">Wählen Sie Mail-Client</string>
- <string name="download_tiles_01">Download Layers</string>
-    <string name="download_tiles_02">Ein Internet-Browser sein wird, um die Datei "gvsigminilayers.gvtiles" zu öffnen, tippen Sie auf den Link in der Browser, um neue Ebenen hinzuzufügen gvSIG Mini. Sie können auch Schichten Dateien auf Ihren SDCard und führen Sie sie mit Ihren Datei-Browser, um neue Ebenen hinzuzufügen.</string>
-    <string name="download_tiles_03">Ebenen-Datei heruntergeladen</string>
     
 
+<string name="select_web_browser">Wählen Sie den Web-Browser aus </string>
+<string name="typeof">Geolocated mit</string>
+<string name="select_mail_client">Wählen Sie den Mail-Client aus</string>
+<string name="download_tiles_01">Layers heruterladen</string>
+<string name="download_tiles_02">Ein Internet-Browser wird öffnen,um die Datei "gvsigminilayers.gvtiles" herunterladen. Tippen Sie auf den Link in dem Browser,um neue Layers in gvSIGMini hinzuzufügen. Sie können auch Layers Dateien auf Ihren SDCard hinzufügen und führen sie mit Ihrem Datei-Browser, um neue Layers hinzuzufügen.</string>
+<string name="download_tiles_03">Layers-Datei heruntergeladen</string>
 <string name="Map_Navigator">Navigator</string>
-<!-- Missing prefs -->
-<string name="Map_24">Kein Ort verfügbaren Anbieter noch</string>
-    <string name="Map_25">Warnung: Geringer Speicherbedarf</string>
-    <string name="Map_26">Deaktivieren Standort</string>
-    <string name="Map_27">Deaktivieren Standort</string>
-    <string name="Map_28">Über</string>
-    <string name="Map_29">Lizenz</string>
-    <string name="Map_30">Was ist neu</string>
-
-
-
-<!-- Missing prefs -->
- <string name="MapLocation_2">gvSIG Mini hat festgestellt, dass ein Fehler der letzten Zeit die Anwendung ausgeführt wurde aufgetreten. Wollen Sie die Log-Datei zu senden an die Entwickler?</string>
-<string name="Utils_0">Wählen Sie Mail-Client</string>
+<string name="Map_24">Kein Anbieter von Standorten verfügbar</string>
+<string name="Map_25">Warnung: Geringer Speicherbereich </string>
+<string name="Map_26">GPS aktivieren nicht </string>
+<string name="Map_27">GPS aktivieren </string>
+<string name="Map_28">Über</string>
+<string name="Map_29">Lizenz</string>
+<string name="Map_30">Was ist neu</string>
+<string name="MapLocation_2">gvSIG Mini hat festgestellt, dass ein Fehler der letzten Zeit die Anwendung ausgeführt wurde aufgetret hat. Möchten Sie den Entwicklern die Log-Datei senden ?</string>
+<string name="Utils_0">Wählen Sie den Klient von die elektronische Post aus </string>
 <string name="warning">Warnung</string>
-<!-- Missing prefs -->
-   <string name="not_ask">Nicht mehr fragen</string>
-    <string name="portrait">Portrait</string>
-    <string name="landscape">Landscape</string>
-    <string name="send_log">Senden Ausnahme log</string>
-    <string name="fatal_error">gvSIG Mini hat einen Fehler erkannt. Möchten Sie die Ausnahme log an die Entwickler senden, damit sie es beheben?</string>    
+<string name="not_ask">Nicht fragen weiter</string>
+<string name="portrait">vertical</string>
+<string name="landscape">horizontal</string>
+<string name="send_log">Fehler Datei senden </string>
+<string name="fatal_error">gvSIG Mini hat einen Fehler endeckt. Möchten Sie den Entwicklern die Fehler Datei senden, damit sie es beheben?</string>
+    
 
 
 
