@@ -1,3 +1,19 @@
+gvSIG Mini Copyright v. 0.2.1
+
+v. 0.2.1
+
+--------
+
+Bugs fixed:
+
+* Fixed german translation
+
+* Fixed UI layout in low resolution devices
+
+* Added WRITE_EXTERNAL_STORAGE permission to allow writing files on the device
+
+
+
 gvSIG Mini Copyright v. 0.2.0
 
 v. 0.2.0

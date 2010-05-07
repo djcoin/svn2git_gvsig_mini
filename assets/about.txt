@@ -1,5 +1,5 @@
-gvSIG Mini Copyright v. 0.2 
-28th-apr-2010
+gvSIG Mini Copyright v. 0.2.1
+7th-apr-2010
 
 gvSIG Mini is a free viewer of free-access maps for Java and Android cellular phones.
 

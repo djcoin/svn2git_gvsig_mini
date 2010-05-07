@@ -61,6 +61,7 @@ import net.sf.microlog.core.LoggerFactory;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -145,6 +146,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public int pixelX;
 	public int pixelY;
 	public Paint mPaint = new Paint();
+	public Paint whitePaint = new Paint();
 	public Paint normalPaint = new Paint();
 	public Paint rotatePaint = new Paint();
 	int mTouchDownX;
@@ -218,6 +220,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			acetate = new AcetateOverlay(context, this);
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
 					false);
+			whitePaint.setColor(Color.WHITE);
 			this.setFocusable(true);
 			this.setClickable(true);
 			this.setLongClickable(true);
@@ -637,9 +640,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 	@Override
 	public void onDraw(final Canvas c) {
-		boolean canDraw = false;
+		boolean canDraw = false;		
 
-		try {
+		try {			
 //			if (bufferBitmap == null) {
 //				bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(), Bitmap.Config.RGB_565);
 //				bufferCanvas.setBitmap(bufferBitmap);
@@ -653,6 +656,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 //			frontCanvas = c;
 			mapWidth = getWidth();
 			mapHeight = getHeight();
+			c.drawRect(0, 0, mapWidth, mapHeight, whitePaint);
 
 			final MapRenderer renderer = this.getMRendererInfo();
 
