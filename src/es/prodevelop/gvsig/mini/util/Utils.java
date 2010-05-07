@@ -53,19 +53,14 @@
 package es.prodevelop.gvsig.mini.util;
 
 import java.io.Closeable;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import net.sf.microlog.core.Level;
-
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -73,16 +68,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.telephony.CellLocation;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
-import es.prodevelop.gvsig.mini.map.MapLocation;
 
 /**
  * Utility mehtods

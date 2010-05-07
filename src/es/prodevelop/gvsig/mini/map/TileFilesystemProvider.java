@@ -139,7 +139,7 @@ public class TileFilesystemProvider implements GeoUtils {
 	 * @param zoomLevel The current zoom level
 	 * @throws IOException
 	 */
-	public void loadMapTileToMemCacheAsync(final String aTileURLString,
+	public synchronized void loadMapTileToMemCacheAsync(final String aTileURLString,
 			final Handler callback, final int[] tile, final String layerName,
 			final int zoomLevel) throws IOException {
 
@@ -231,7 +231,7 @@ public class TileFilesystemProvider implements GeoUtils {
 	 * @param zoomLevel The current zoom level
 	 * @throws IOException
 	 */
-	public void saveFile(final String aURLString, final byte[] someData,
+	public synchronized void saveFile(final String aURLString, final byte[] someData,
 			final int[] tile, String layerName, int zoomLevel)
 			throws IOException {
 		// final String filename = TileCache.format(aURLString);
@@ -255,22 +255,35 @@ public class TileFilesystemProvider implements GeoUtils {
 //			String path = f.getAbsolutePath();
 //			path = path.substring(0, path.lastIndexOf("/"));
 //			final File f1 = new File(path);
-			log.debug("mkdirs: " /*+ path*/);
-			f.getParentFile().mkdirs();			
-			f.createNewFile();
+			log.debug("mkdirs: " );
+			File dir = new File(f.getParent());
+			if (dir.mkdirs()) {
+				log.debug("directories created: " + aURLString);
+			} else {
+				if (f.getParent() == null) {
+					log.debug("parent = null");
+				}
+				log.debug("directories failed " + aURLString);
+			}
+			
+			if (f.getParentFile().exists() && f.createNewFile()) {
+				log.debug("new file created " + aURLString);
+			} else {
+				log.debug("new file failed " + aURLString);
+			}
 //			path = null;
-			log.debug("new file created");
+			
 		}
 		final FileOutputStream fos = new FileOutputStream(f);
 		final BufferedOutputStream bos = new BufferedOutputStream(fos,
 				Utils.IO_BUFFER_SIZE);
 
 		try {
-			log.debug("prepared to write");
+			log.debug("prepared to write " + aURLString);
 			bos.write(someData);
 			bos.flush();
 			bos.close();
-			log.debug("Tile stored");
+			log.debug("Tile stored " + aURLString);
 		} catch (Exception e) {
 			log.error("save file", e);
 		}

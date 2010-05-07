@@ -120,7 +120,7 @@ public class Downloader implements GeoUtils {
 	 * @param layerName The name of the layer
 	 * @param zoomLevel The zoomLevel of the tile
 	 */
-	public void getRemoteImageAsync(final String aURLString,
+	public synchronized void getRemoteImageAsync(final String aURLString,
 			final Handler callback, final int[] tile, final String layerName,
 			final int zoomLevel) {
 		try {
@@ -148,7 +148,7 @@ public class Downloader implements GeoUtils {
 						
 
 						if (Utils.isSDMounted()) {
-							log.debug("trying to save file to disk");
+							log.debug("trying to save file to disk " + aURLString);
 							Downloader.this.mMapTileFSProvider.saveFile(aURLString,
 									data, tile, layerName, zoomLevel);
 						}
@@ -179,7 +179,7 @@ public class Downloader implements GeoUtils {
 								MAPTILEDOWNLOADER_FAIL_ID);
 						failMessage.sendToTarget();
 						log.error("Tile Loading Error " + aURLString);
-						log.error(e);		
+						log.error(e + aURLString);		
 					} finally {
 						Utils.closeStream(in);
 						Utils.closeStream(out);						
@@ -200,7 +200,7 @@ public class Downloader implements GeoUtils {
 	 * @param layerName The name of the layer
 	 * @param zoomLevel The zoom level of the tile
 	 */
-	public void requestMapTileAsync(final String aURLString,
+	public synchronized void requestMapTileAsync(final String aURLString,
 			final Handler callback, final int[] tile, final String layerName,
 			final int zoomLevel) {
 		try {

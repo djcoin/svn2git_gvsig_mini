@@ -99,15 +99,15 @@ public class MapState {
 	/**
 	 * Persists the map state
 	 */
-	public void persist() {
+	public synchronized void persist() {
 		try {
 			if (map != null) {				
 				File f = new File(dirPath + fileName);
 				log.debug("Persist map state to: " + f.getAbsolutePath());
 				if (!f.exists()) {
 					File dirFile = new File(dirPath);
-					dirFile.mkdirs();
-					f.createNewFile();
+					if (dirFile.mkdirs())
+						f.createNewFile();	
 				}
 //				} else {
 //					f.delete();
@@ -137,7 +137,7 @@ public class MapState {
 	 * Loads the map state from the previous state
 	 * @return True if the map state is loaded correctly
 	 */
-	public boolean load() {		
+	public synchronized boolean load() {		
 		FileReader configReader = null;
 		BufferedReader reader = null;
 		try {
