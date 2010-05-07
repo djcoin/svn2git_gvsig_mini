@@ -25,3 +25,5 @@ gvSIG Mini for Android uses these icons with license restrictions or attribution
 - menu00 http://www.everaldo.com/
 
 - menu_download http://earam.deviantart.com/art/the-moonlight-31208162
+
+- PNOA ortophotos author and propietary: © Instituto Geográfico Nacional de España
