@@ -275,17 +275,17 @@ public class Utils implements GeoUtils {
 	public static void sendExceptionEmail(final Context ctx) {
 		String lastLog = Utils.exitedCorrectly();
 		if (lastLog == null) return;
-		openEmail(ctx, "", "gvSIG Mini-Exception",
+		openEmail(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
 				new String[] { "minijira@prodevelop.es" }, lastLog);		
 	}
 	
 	public static void downloadLayerFile(final Context ctx) {
-		openWeb(ctx, "", "gvSIG Mini-Exception",
+		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
 				new String[] { "minijira@prodevelop.es" });		
 	}
 	
 	public static void askLayers(final Context ctx) {
-		openWeb(ctx, "", "gvSIG Mini-Layers",
+		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Layers",
 				new String[] { "minijira@prodevelop.es" });		
 	}
 	
