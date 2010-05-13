@@ -127,7 +127,7 @@ public class SlideBar extends SeekBar {
 			super.dispatchDraw(c);
 			updateThumb();
 
-			int maxZoomLevel = tileRaster.getMRendererInfo().getZOOM_MAXLEVEL();
+			int maxZoomLevel = tileRaster.getMRendererInfo().getZOOM_MAXLEVEL() - tileRaster.getMRendererInfo().getZoomMinLevel();
 			float portion = oHeight / (float) maxZoomLevel;
 			float j = (float) ((float) thumb.getHeight() / 2.0);
 			for (int i = 0; i <= maxZoomLevel; i++) {
@@ -136,7 +136,7 @@ public class SlideBar extends SeekBar {
 			}
 
 			j = (float) thumb.getHeight() / 2.0f;
-			int currentZoom = tileRaster.getTempZoomLevel();
+			int currentZoom = tileRaster.getTempZoomLevel() - tileRaster.getMRendererInfo().getZoomMinLevel();
 			float last = j;
 			for (int i = 0; i <= currentZoom; i++) {
 				last = j;

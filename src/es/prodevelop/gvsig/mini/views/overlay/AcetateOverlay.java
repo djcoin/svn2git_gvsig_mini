@@ -47,15 +47,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PathEffect;
 import android.graphics.Rect;
 import android.graphics.Paint.Style;
 import android.view.MotionEvent;
 import es.prodevelop.gvsig.mini.context.ItemContext;
-import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
+import es.prodevelop.gvsig.mini.map.ViewPort;
 
 /**
  * A MapOverlay to draw transient geometries. For example the rectangle zoom envelope. 
@@ -166,7 +165,8 @@ public class AcetateOverlay extends MapOverlay {
 			case MotionEvent.ACTION_DOWN:
 				if (t.panMode) {
 					t.mTouchDownX = (int) event.getX();
-					t.mTouchDownY = (int) event.getY();					
+					t.mTouchDownY = (int) event.getY();
+					t.mTouchDownY = (int) event.getY();
 				} else {
 					this.mTouchDownX = (int) event.getX();
 					this.mTouchDownY = (int) event.getY();
@@ -178,6 +178,8 @@ public class AcetateOverlay extends MapOverlay {
 				if (t.panMode) {
 					t.mTouchMapOffsetX = (int) event.getX() - t.mTouchDownX;
 					t.mTouchMapOffsetY = (int) event.getY() - t.mTouchDownY;					
+					ViewPort.mTouchMapOffsetX = (int) event.getX() - t.mTouchDownX;
+					ViewPort.mTouchMapOffsetY = (int) event.getY() - t.mTouchDownY;
 				} else {
 					mTouchMapOffsetX = (int) event.getX() - mTouchDownX;
 					mTouchMapOffsetY = (int) event.getY() - mTouchDownY;
@@ -194,6 +196,8 @@ public class AcetateOverlay extends MapOverlay {
 							new int[] {viewWidth_2, viewHeight_2});
 					t.mTouchMapOffsetX = 0;
 					t.mTouchMapOffsetY = 0;
+					ViewPort.mTouchMapOffsetX = 0;
+					ViewPort.mTouchMapOffsetY = 0;
 					t.setMapCenter(center[0], center[1]);
 				} else {					
 					this.updateRectangle();

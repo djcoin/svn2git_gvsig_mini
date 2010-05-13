@@ -79,7 +79,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
-import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
@@ -90,20 +89,20 @@ import es.prodevelop.gvsig.mini.map.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
-import es.prodevelop.gvsig.mini.map.Layers;
 import es.prodevelop.gvsig.mini.map.Tile;
 import es.prodevelop.gvsig.mini.map.TileFilesystemProvider;
 import es.prodevelop.gvsig.mini.map.TileProvider;
 import es.prodevelop.gvsig.mini.map.ViewPort;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
-import es.prodevelop.gvsig.mini.map.renderer.OSMRenderer;
-import es.prodevelop.gvsig.mini.map.renderer.WMSRenderer;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.tasks.WorkQueue;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.tilecache.layers.Layers;
+import es.prodevelop.tilecache.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
+import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 
 /**
  * The main view to show tiles. This view is contained in a RelativeLayout in
@@ -115,7 +114,7 @@ import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
  * The TileProvider manages the logic of download/load from server/filesystem
  * the tiles
  * 
- * @author aromeu 
+ * @author aromeu
  * @author rblanco
  * 
  */
@@ -187,10 +186,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	//
 	// }
 	Scaler mScaler;
-//	Canvas bufferCanvas = new Canvas();
-//	Bitmap bufferBitmap;
-//	Canvas frontCanvas = new Canvas();
-//	Bitmap frontBitmap;
+
+	// Canvas bufferCanvas = new Canvas();
+	// Bitmap bufferBitmap;
+	// Canvas frontCanvas = new Canvas();
+	// Bitmap frontBitmap;
 
 	/**
 	 * The Constructor.
@@ -207,7 +207,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public TileRaster(final Context context, final MapRenderer aRendererInfo,
 			int width, int height) {
 		super(context);
-		try {			
+		try {
 			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);
 			log.setLevel(Utils.LOG_LEVEL);
 			log.setClientID(this.toString());
@@ -348,8 +348,17 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 *            The zoom level
 	 */
 	public void setZoomLevel(final int aZoomLevel) {
-		final int zoomLevel = Math.max(0, Math.min(this.mRendererInfo
-				.getZOOM_MAXLEVEL(), aZoomLevel));
+		int zoomLevel = aZoomLevel;
+		if (aZoomLevel < this.mRendererInfo
+				.getZoomMinLevel()) {
+			zoomLevel = this.mRendererInfo
+			.getZoomMinLevel();
+		} else if(aZoomLevel > this.mRendererInfo
+				.getZOOM_MAXLEVEL()) {
+			zoomLevel = this.mRendererInfo
+			.getZOOM_MAXLEVEL();
+		}
+		
 		tempZoomLevel = zoomLevel;
 		// Extent viewExtent =
 		// this.map.vp.calculateExtent(this.getMRendererInfo()
@@ -451,7 +460,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	}
 
 	void onScalingFinished() {
-//		frontCanvas.drawBitmap(bufferBitmap, 0, 0, normalPaint);
+		// frontCanvas.drawBitmap(bufferBitmap, 0, 0, normalPaint);
 		setZoomLevel(tempZoomLevel);
 	}
 
@@ -558,8 +567,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
-				TileRaster.this.getMRendererInfo().getZOOM_MAXLEVEL();
-
+				
 				this.animateTo(coords[0], coords[1]);
 				map.showContext(map.getItemContext());
 
@@ -642,35 +650,40 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public void onDraw(final Canvas c) {
 		boolean canDraw = false;		
 
-		try {			
-//			if (bufferBitmap == null) {
-//				bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(), Bitmap.Config.RGB_565);
-//				bufferCanvas.setBitmap(bufferBitmap);
-//			}
-//				
-//			if (frontBitmap == null) {
-//				frontBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(), Bitmap.Config.RGB_565);				
-//				frontCanvas.setBitmap(frontBitmap);
-//			}			
-			
-//			frontCanvas = c;
+		try {
+			// if (bufferBitmap == null) {
+			// bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
+			// Bitmap.Config.RGB_565);
+			// bufferCanvas.setBitmap(bufferBitmap);
+			// }
+			//				
+			// if (frontBitmap == null) {
+			// frontBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
+			// Bitmap.Config.RGB_565);
+			// frontCanvas.setBitmap(frontBitmap);
+			// }
+
+			// frontCanvas = c;
 			mapWidth = getWidth();
 			mapHeight = getHeight();
+			ViewPort.mapHeight = getHeight();
+			ViewPort.mapWidth = getWidth();
 			c.drawRect(0, 0, mapWidth, mapHeight, whitePaint);
 
+//			log.debug(map.vp.calculateExtent(mapWidth, mapHeight, this.getMRendererInfo().getCenter()).toString());
 			final MapRenderer renderer = this.getMRendererInfo();
 
 			if (!mScaler.isFinished()) {
 				Matrix m = c.getMatrix();
 				m.preScale(mScaler.mCurrScale, mScaler.mCurrScale,
-						c.getWidth() / 2, c.getHeight() / 2);						
-				
+						c.getWidth() / 2, c.getHeight() / 2);
+
 				c.setMatrix(m);
-//				bufferCanvas.setMatrix(m);
-//				c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
+				// bufferCanvas.setMatrix(m);
+				// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
 			}
 
-			if (map.navigation) {				
+			if (map.navigation) {
 				// TileRaster.this.rotatePaint.setAntiAlias(true);
 				normalPaint = rotatePaint;
 				int rotationToDraw = -mBearing
@@ -681,7 +694,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				} else {
 					previousRotation = rotationToDraw;
 				}
-				c.rotate(rotationToDraw, mapWidth/2, mapHeight/ 2);
+				c.rotate(rotationToDraw, mapWidth / 2, mapHeight / 2);
 				// if (map.getmMyLocationOverlay().rotationBearingFlag >
 				// (mBearing + Utils.COMPASS_ACCURACY)
 				// || map.getmMyLocationOverlay().rotationBearingFlag <
@@ -902,17 +915,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 						// temp.distanceFromCenter.getY(),
 						// this.mPaint);
 						// if (currentMapTile !=
-						// this.mTileProvider.mLoadingMapTile)		
+						// this.mTileProvider.mLoadingMapTile)
 						canDraw = true;
-						
-						
-						
-						
-							c.drawBitmap(currentMapTile, temp.distanceFromCenter
-									.getX(), temp.distanceFromCenter.getY(),
-									this.normalPaint);							
-//						c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
-						
+
+						c.drawBitmap(currentMapTile, temp.distanceFromCenter
+								.getX(), temp.distanceFromCenter.getY(),
+								this.normalPaint);
+						// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
+
 						temp.destroy();
 						temp = null;
 						// Paint paint = new Paint();
@@ -969,18 +979,19 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			//
 			// final long endMs = System.currentTimeMillis();
 			// Log.i(DEBUGTAG, "Rendering overall: " + (endMs - startMs) +
-			// "ms");	
+			// "ms");
 			computeScale();
-//			if (canDraw && mScaler.isFinished()) {
-//				c.drawBitmap(frontBitmap, 0, 0, normalPaint);
-////				bufferCanvas.drawBitmap(frontBitmap, 0, 0, normalPaint);
-//			}
-//			else
-////				c.save();
-//				c.drawBitmap(bufferBitmap, this.mTouchMapOffsetX, this.mTouchMapOffsetY, normalPaint);			
+			// if (canDraw && mScaler.isFinished()) {
+			// c.drawBitmap(frontBitmap, 0, 0, normalPaint);
+			// // bufferCanvas.drawBitmap(frontBitmap, 0, 0, normalPaint);
+			// }
+			// else
+			// // c.save();
+			// c.drawBitmap(bufferBitmap, this.mTouchMapOffsetX,
+			// this.mTouchMapOffsetY, normalPaint);
 		} catch (Exception e) {
 			log.error("onDraw", e);
-		}
+		} 
 
 	}
 
@@ -998,8 +1009,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			final int length = array2.length;
 			Tile t;
 			Tile t1;
-			final Pixel temp = new Pixel((256 / 2),
-					(256 / 2));
+			final Pixel temp = new Pixel((256 / 2), (256 / 2));
 			for (int pass = 1; pass < length; pass++) {
 				for (int element = 0; element < length - 1; element++) {
 					t = array2[element];
@@ -1014,7 +1024,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				}
 			}
 		} catch (final Exception e) {
-			log.error("sortTiles:", e); 
+			log.error("sortTiles:", e);
 		}
 	}
 
@@ -1218,15 +1228,17 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					maxXY[1]);
 			if (contains) {
 				this.setMapCenter(newCenter[0], newCenter[1]);
-				if (previous instanceof OSMRenderer
-						&& renderer instanceof OSMRenderer) {
+				if (previous instanceof OSMMercatorRenderer
+						&& renderer instanceof OSMMercatorRenderer) {
 					setZoomLevel(previous.getZoomLevel(), false);
 				} else {
 					this.zoomToExtent(currentExtent, true);
 				}
 			} else {
-				Point p = renderer.getExtent().getCenter();
-				this.setMapCenter(p.getX(), p.getY());
+				renderer.centerOnBBox();
+				this.setMapCenter(renderer.getCenter().getX(), renderer.getCenter().getY());
+//				Point p = renderer.getExtent().getCenter();
+//				this.setMapCenter(p.getX(), p.getY());
 			}
 
 			// this.setZoomLevel(previous.getZoomLevel());
@@ -1782,7 +1794,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			mFinalScale = finalScale;
 			mDeltaScale = finalScale - startScale;
 			mDurationReciprocal = 1.0f / (float) mDuration;
-//			bufferCanvas.drawBitmap(frontBitmap, TileRaster.this.mTouchMapOffsetX, TileRaster.this.mTouchMapOffsetY, rotatePaint);
+			// bufferCanvas.drawBitmap(frontBitmap,
+			// TileRaster.this.mTouchMapOffsetX,
+			// TileRaster.this.mTouchMapOffsetY, rotatePaint);
 		}
 
 		/**
@@ -1844,5 +1858,4 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		}
 	}
 
-	
 }

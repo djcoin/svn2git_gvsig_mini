@@ -141,7 +141,7 @@ public class TileFilesystemProvider implements GeoUtils {
 	 */
 	public synchronized void loadMapTileToMemCacheAsync(final String aTileURLString,
 			final Handler callback, final int[] tile, final String layerName,
-			final int zoomLevel) throws IOException {
+			final int zoomLevel, final String cacheURL) throws IOException {
 
 		if (this.mPending.contains(aTileURLString))
 			return;
@@ -171,7 +171,7 @@ public class TileFilesystemProvider implements GeoUtils {
 
 		final FileInputStream in = new FileInputStream(f);
 
-		this.mPending.add(aTileURLString);
+		this.mPending.add(cacheURL);
 
 		WorkQueue.getInstance().execute(new Runnable() {
 			@Override
@@ -194,7 +194,7 @@ public class TileFilesystemProvider implements GeoUtils {
 					final Bitmap bmp = BitmapFactory.decodeByteArray(data, 0,
 							data.length);
 
-					TileFilesystemProvider.this.mCache.putTile(aTileURLString,
+					TileFilesystemProvider.this.mCache.putTile(cacheURL,
 							bmp);
 
 					final Message successMessage = Message.obtain(callback,
@@ -217,7 +217,7 @@ public class TileFilesystemProvider implements GeoUtils {
 					Utils.closeStream(dataStream);
 					Utils.closeStream(out);
 				}
-				TileFilesystemProvider.this.mPending.remove(aTileURLString);
+				TileFilesystemProvider.this.mPending.remove(cacheURL);
 			}
 		});
 	}

@@ -86,7 +86,7 @@ public class LocationTimer extends TimerTask {
 				break;
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class LocationTimer extends TimerTask {
 			}
 			return false;
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e);
 			return false;
 		}
 	}
@@ -112,7 +112,7 @@ public class LocationTimer extends TimerTask {
 			}
 			return false;
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e);
 			return false;
 		}
 	}
@@ -130,7 +130,7 @@ public class LocationTimer extends TimerTask {
 			timer = new Timer();
 			timer.scheduleAtFixedRate(this, 0, period);
 		} catch (Exception e) {
-			logger.error("schedule: " + e.getMessage());
+			logger.error("schedule: " + e);
 		}
 	}
 
@@ -144,7 +144,7 @@ public class LocationTimer extends TimerTask {
 				return super.cancel();
 			}
 		} catch (Exception e) {
-			logger.error("cancel: " + e.getMessage());
+			logger.error("cancel: " + e);
 			return false;
 		}
 		return false;

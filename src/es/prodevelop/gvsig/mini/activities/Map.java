@@ -78,6 +78,7 @@ import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -110,6 +111,7 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
+import es.prodevelop.gvsig.mini.context.AndroidContext;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.DefaultContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
@@ -119,16 +121,14 @@ import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.location.Config;
+import es.prodevelop.gvsig.mini.location.MockLocationProvider;
 import es.prodevelop.gvsig.mini.map.Downloader;
 import es.prodevelop.gvsig.mini.map.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
-import es.prodevelop.gvsig.mini.map.Layers;
 import es.prodevelop.gvsig.mini.map.MapLocation;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
-import es.prodevelop.gvsig.mini.map.renderer.OSMMercatorRenderer;
-import es.prodevelop.gvsig.mini.map.renderer.OSMRenderer;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
@@ -145,6 +145,7 @@ import es.prodevelop.gvsig.mini.user.UserContext;
 import es.prodevelop.gvsig.mini.user.UserContextManager;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
+import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
@@ -154,8 +155,11 @@ import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import es.prodevelop.gvsig.mini.location.MockLocationProvider;
-import es.prodevelop.gvsig.mini.location.Config;
+import es.prodevelop.tilecache.layers.Layers;
+import es.prodevelop.tilecache.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.MapRendererManager;
+import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
+import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
 
 /**
  * The main activity of the application. Consists on a RelativeLayout with some
@@ -277,6 +281,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 				// log.addAppender(new ConsoleAppender());
 				// log.setLevel(Utils.LOG_LEVEL);
 				// log.error("Testing to log error message with Microlog.");
+				MapRendererManager.getInstance().registerMapRendererFactory(new WMSMapRendererFactory());
 				onNewIntent(getIntent());
 				Config.setContext(this.getApplicationContext());
 				ResourceLoader.initialize(this.getApplicationContext());
@@ -285,7 +290,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 				log.error("onCreate", e);
 				// log.error(e.getMessage());
 			} finally {
-				Layers.setContext(this.getApplicationContext());
+				Layers.setContext(new AndroidContext(this.getApplicationContext()));
+				Constants.ROOT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
 				log.setLevel(Utils.LOG_LEVEL);
 				log.setClientID(this.toString());
 			}
@@ -541,7 +547,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 							"selected").toString());
 					Named p2 = (Named) this.nameds.getPoint(pos2);
 					osmap.setMapCenterFromLonLat(p2.getX(), p2.getY());
-					if (osmap.getMRendererInfo() instanceof OSMRenderer)
+					if (osmap.getMRendererInfo() instanceof OSMMercatorRenderer)
 						osmap.setZoomLevel(p2.zoom);
 					break;
 				}
@@ -1521,7 +1527,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		try {
 			MapRenderer r = Map.this.osmap.getMRendererInfo();
 
-			if (r.getZoomLevel() > 0)
+			if (r.getZoomLevel() > r.getZoomMinLevel())
 				z.setIsZoomOutEnabled(true);
 			else
 				z.setIsZoomOutEnabled(false);
@@ -1547,7 +1553,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 			log.debug("load UI");
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-			z = new ZoomControls(this);
+			z = new ZoomControls(this);			
 
 			/* Creating the main Overlay */
 			{
@@ -1610,7 +1616,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 						boolean fromUser) {
 					int zoom = (int) Math.floor(progress
 							* (Map.this.osmap.getMRendererInfo()
-									.getZOOM_MAXLEVEL() + 1) / 100);
+									.getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
+									.getZoomMinLevel()) / 100);
 					osmap.drawZoomRectangle(zoom);
 				}
 
@@ -1623,7 +1630,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 					try {
 						int zoom = (int) Math.floor(seekBar.getProgress()
 								* (Map.this.osmap.getMRendererInfo()
-										.getZOOM_MAXLEVEL() + 1) / 100);
+										.getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
+										.getZoomMinLevel()) / 100);
 						// int zoom = ((SlideBar)seekBar).portions;
 						Map.this.updateSlider(zoom);
 						Map.this.osmap.setZoomLevel(zoom, true);
@@ -2433,7 +2441,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	public void updateSlider() {
 		try {
 			int progress = Math.round(this.osmap.getTempZoomLevel() * 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1));
+					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
+							.getZoomMinLevel()));
 			// if (progress == 0)
 			// progress = 1;
 			this.s.setProgress(progress);
@@ -2452,7 +2461,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	public void updateSlider(int zoom) {
 		try {
 			int progress = zoom * 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1);
+					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
+							.getZoomMinLevel());
 			// if (progress == 0)
 			// progress = 1;
 			this.s.setProgress(progress);

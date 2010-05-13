@@ -44,7 +44,7 @@ import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
  * Sets the end point of the route

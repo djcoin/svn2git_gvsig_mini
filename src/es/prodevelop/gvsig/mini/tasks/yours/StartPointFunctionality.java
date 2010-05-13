@@ -45,7 +45,7 @@ import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;

@@ -81,7 +81,7 @@ import es.prodevelop.gvsig.mini.map.GeoUtils;
  */
 public class Utils implements GeoUtils {
 
-	public final static String LAYERS_VERSION = "v0.2";
+	public final static String LAYERS_VERSION = "v0.2.1";
 	public final static String APP_DIR = "gvSIG";
 	public final static String MAPS_DIR = "maps";
 	public final static String CONFIG_DIR = "config";

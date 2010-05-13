@@ -122,7 +122,7 @@ public class Downloader implements GeoUtils {
 	 */
 	public synchronized void getRemoteImageAsync(final String aURLString,
 			final Handler callback, final int[] tile, final String layerName,
-			final int zoomLevel) {
+			final int zoomLevel, final String cacheURL) {
 		try {
 			WorkQueue.getInstance().execute(new Runnable() {
 				@Override
@@ -142,7 +142,7 @@ public class Downloader implements GeoUtils {
 						log.debug("downloaded data from server");
 						final Bitmap bmp = BitmapFactory.decodeByteArray(data, 0,
 								data.length);						
-						Downloader.this.mMapTileFSProvider.mCache.putTile(aURLString,
+						Downloader.this.mMapTileFSProvider.mCache.putTile(cacheURL,
 								bmp);
 						log.debug("Bitmap put into memory cache");
 						
@@ -164,7 +164,7 @@ public class Downloader implements GeoUtils {
 						successMessage.sendToTarget();
 //						log.debug("Loaded from server: ");
 //						mMapTileFSProvider.datas = null;
-						mPending.remove(aURLString);						
+						mPending.remove(cacheURL);						
 					} catch (OutOfMemoryError oe) {						
 						System.gc();
 						log.error(aURLString);
@@ -202,13 +202,13 @@ public class Downloader implements GeoUtils {
 	 */
 	public synchronized void requestMapTileAsync(final String aURLString,
 			final Handler callback, final int[] tile, final String layerName,
-			final int zoomLevel) {
+			final int zoomLevel, final String cacheURL) {
 		try {
-			if (this.mPending.contains(aURLString)) {
+			if (this.mPending.contains(cacheURL)) {
 				return;
 			}
-			this.mPending.add(aURLString);
-			getRemoteImageAsync(aURLString, callback, tile, layerName, zoomLevel);
+			this.mPending.add(cacheURL);
+			getRemoteImageAsync(aURLString, callback, tile, layerName, zoomLevel, cacheURL);
 		} catch (Exception e) {
 			log.error("requestMapTileAsync: ", e);
 		}		

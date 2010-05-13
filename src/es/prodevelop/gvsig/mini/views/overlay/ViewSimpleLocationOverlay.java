@@ -64,8 +64,8 @@ import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.GPSPoint;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
-import es.prodevelop.gvsig.mini.map.renderer.OSMRenderer;
+import es.prodevelop.tilecache.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -287,7 +287,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 					Path path = new Path();
 					if (CRSFactory.getCRS(renderer.getSRS()).getUnitsAbbrev()
 							.compareTo("m") == 0
-							|| renderer instanceof OSMRenderer) {
+							|| renderer instanceof OSMMercatorRenderer) {
 						int distancePixels = (int) (this.mLocation.acc / Tags.RESOLUTIONS[renderer
 								.getZoomLevel()]);
 

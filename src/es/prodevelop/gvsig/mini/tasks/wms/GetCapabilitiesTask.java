@@ -38,24 +38,56 @@
  *   
  */
 
-package es.prodevelop.gvsig.mini.wms;
+package es.prodevelop.gvsig.mini.tasks.wms;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
-import java.util.Hashtable;
 
-public class FMapWMSDriverFactory {
-	private static Hashtable drivers = new Hashtable();
-	private FMapWMSDriverFactory() { }
+import android.os.Handler;
+import es.prodevelop.gvsig.mini.activities.LayersActivity;
+import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
+import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
+import es.prodevelop.gvsig.mini.wms.WMSCancellable;
+
+public class GetCapabilitiesTask implements Runnable {
 	
-	static public final FMapWMSDriver getFMapDriverForURL(URL url) throws ConnectException, IOException {
-		FMapWMSDriver drv = (FMapWMSDriver) drivers.get(url);
-		if (drv == null) {
-			drv = new FMapWMSDriver(url);
-			drivers.put(url, drv);
+	private String server;
+	private Handler handler;
+	private WMSCancellable cancellable;
+	
+	public GetCapabilitiesTask(String server, Handler handler) {
+		this.server = server;
+		this.handler = handler;
+	}
+	
+	public void run() {
+		callGetCapabilities(server);
+	}
+	
+	private void callGetCapabilities(String server) {
+		try {
+			FMapWMSDriver wmsDriver = FMapWMSDriverFactory
+					.getFMapDriverForURL(new URL(server));
+
+			cancellable = new WMSCancellable();
+			wmsDriver.connect(cancellable);
+			
+			if (cancellable.isCanceled()) {
+				handler.sendEmptyMessage(LayersActivity.WMS_CANCELED);
+			} else {
+				handler.sendEmptyMessage(LayersActivity.WMS_CONNECTED);
+			}
+		} catch (ConnectException e) {
+			handler.sendEmptyMessage(LayersActivity.WMS_ERROR);
+		} catch (IOException e) {
+			handler.sendEmptyMessage(LayersActivity.WMS_ERROR);
 		}
-		return drv;
+	}
+	
+	public void cancel() {
+		if (cancellable != null)
+			cancellable.canceled = true;
 	}
 
 }

@@ -70,8 +70,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.SimpleExpandableListAdapter;
@@ -79,13 +77,13 @@ import android.widget.Toast;
 import android.widget.TwoLineListItem;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Extent;
-import es.prodevelop.gvsig.mini.map.Layers;
-import es.prodevelop.gvsig.mini.map.renderer.WMSRenderer;
 import es.prodevelop.gvsig.mini.tasks.WorkQueue;
+import es.prodevelop.gvsig.mini.tasks.wms.GetCapabilitiesTask;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
-import es.prodevelop.gvsig.mini.wms.GetCapabilitiesTask;
 import es.prodevelop.gvsig.mini.wms.WMSLayerNode;
+import es.prodevelop.tilecache.layers.Layers;
+import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 
 /**
  * An ExpandableListActivity to manage layers. The default layers file is bundled
@@ -639,8 +637,8 @@ public class LayersActivity extends ExpandableListActivity {
 					double maxY = intent.getDoubleExtra("maxY", 0);
 					String version = intent.getStringExtra("version");
 
-					WMSRenderer w = WMSRenderer.getWMSRenderer(server, name,
-							format, WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 256, layersName, new Extent(minX, minY,
+					WMSRenderer w = WMSRenderer.getWMSRenderer(new String[]{server}, name,
+							format, WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 0, 256, layersName, new Extent(minX, minY,
 									maxX, maxY), srs, version);
 					Layers.getInstance().addLayer(w.toString());
 					Layers.getInstance().persist();

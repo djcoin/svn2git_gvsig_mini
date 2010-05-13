@@ -148,9 +148,10 @@ public class TileProvider implements GeoUtils {
 	 * @return A Bitmap representing the tile
 	 */
 	public Bitmap getMapTile(final String aTileURLString, int[] tile,
-			String layerName, int zoomLevel) {
+			String layerName, int zoomLevel) {		
 		try {
-			Bitmap ret = this.mTileCache.getMapTile(aTileURLString);
+			String cacheURL = new StringBuffer().append(tile[0]).append("_").append(tile[1]).append("_").append(zoomLevel).toString();
+			Bitmap ret = this.mTileCache.getMapTile(cacheURL);
 			if (ret != null) {				
 //					log.debug("MapTileCache succeded for: " + aTileURLString);
 			} else {				
@@ -158,11 +159,11 @@ public class TileProvider implements GeoUtils {
 				try {					
 
 					if (Utils.isSDMounted()) {
-						if (!this.mTileDownloader.mPending.contains(aTileURLString)) {
+						if (!this.mTileDownloader.mPending.contains(cacheURL)) {
 							log.debug("load from disk");
 							this.mFSTileProvider.loadMapTileToMemCacheAsync(
 									aTileURLString, this.mLoadCallbackHandler,
-									tile, layerName, zoomLevel);							
+									tile, layerName, zoomLevel, cacheURL);							
 						}										
 						ret = this.mLoadingMapTile;
 					} else {
@@ -170,7 +171,7 @@ public class TileProvider implements GeoUtils {
 						log.debug("load from server");
 						this.mTileDownloader.requestMapTileAsync(aTileURLString,
 								this.mLoadCallbackHandler, tile, layerName,
-								zoomLevel);	
+								zoomLevel, cacheURL);	
 					}
 
 				} catch (Exception e) {
@@ -178,7 +179,7 @@ public class TileProvider implements GeoUtils {
 					log.debug("load from server");
 					this.mTileDownloader.requestMapTileAsync(aTileURLString,
 							this.mLoadCallbackHandler, tile, layerName,
-							zoomLevel);	
+							zoomLevel, cacheURL);	
 //					log.error(e);
 				}
 //				if (ret == null) {

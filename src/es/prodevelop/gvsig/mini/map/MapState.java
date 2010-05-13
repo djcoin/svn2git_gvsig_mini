@@ -52,6 +52,7 @@ import net.sf.microlog.core.LoggerFactory;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.util.Utils;
+import es.prodevelop.tilecache.layers.Layers;
 
 /**
  * Class to persist phisically the map state between sesions. The state

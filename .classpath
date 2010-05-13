@@ -3,10 +3,12 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="/gvSig mini compat/lib/kxml2-min-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/microlog-logger-android-2.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/microlog-logger-core-2.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/es.prodevelop.gvsig.mini.compat-0.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/es.prodevelop.gvsig.mini.remoteservices-0.2.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.gvsig.mini.remoteservices"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.gvsig.mini.compat"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache.wms"/>
+	<classpathentry kind="lib" path="lib/kxml2-min-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

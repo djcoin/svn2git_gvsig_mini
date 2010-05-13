@@ -61,7 +61,7 @@ import es.prodevelop.gvsig.mini.geom.MultiLineString;
 import es.prodevelop.gvsig.mini.geom.MultiPoint;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.phonecache.CRSFactory;
 import es.prodevelop.gvsig.mini.phonecache.ConversionCoords;
