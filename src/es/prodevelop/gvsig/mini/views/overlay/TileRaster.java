@@ -79,19 +79,20 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
+import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.android.AndroidContext;
+import es.prodevelop.gvsig.mini.common.android.HandlerAndroid;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.Downloader;
 import es.prodevelop.gvsig.mini.map.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
-import es.prodevelop.gvsig.mini.map.Tile;
-import es.prodevelop.gvsig.mini.map.TileFilesystemProvider;
-import es.prodevelop.gvsig.mini.map.TileProvider;
+import es.prodevelop.gvsig.mini.map.LoadCallbackHandler;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.tasks.WorkQueue;
@@ -100,6 +101,10 @@ import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
+import es.prodevelop.tilecache.provider.Downloader;
+import es.prodevelop.tilecache.provider.Tile;
+import es.prodevelop.tilecache.provider.TileFilesystemProvider;
+import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
@@ -164,6 +169,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public static int mapHeight = 0;
 	public static boolean CLEAR_ROUTE = false;
 	private Feature selectedFeature = null;
+	private IContext androidContext;
 
 	// ZoomRefreshTask zoomTask = new ZoomRefreshTask();
 	// Timer t;
@@ -204,16 +210,18 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 * @param height
 	 *            The height of the view in pixels
 	 */
-	public TileRaster(final Context context, final MapRenderer aRendererInfo,
+	public TileRaster(final Context context, final IContext androidContext, final MapRenderer aRendererInfo,
 			int width, int height) {
 		super(context);
 		try {
+			this.androidContext = androidContext;
 			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);
 			log.setLevel(Utils.LOG_LEVEL);
 			log.setClientID(this.toString());
 			this.mScaler = new Scaler(context, new LinearInterpolator());
-			this.mTileProvider = new TileProvider(context,
-					new SimpleInvalidationHandler(), width, height, 256);
+			Handler h = new SimpleInvalidationHandler();
+			this.mTileProvider = new TileProvider(androidContext,
+					new HandlerAndroid(h), new HandlerAndroid(new LoadCallbackHandler(h)), width, height, 256, R.drawable.maptile_loading);
 			this.map = (Map) context;
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
@@ -904,10 +912,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			for (int j = 0; j < length; j++) {
 				temp = tiles[j];
 				if (temp != null) {
-					final Bitmap currentMapTile = this.mTileProvider
+					final Bitmap currentMapTile = (Bitmap)this.mTileProvider
 							.getMapTile(temp.mURL, temp.tile,
 									this.mRendererInfo.getNAME(), this
-											.getZoomLevel());
+											.getZoomLevel()).getBitmap();
 					if (currentMapTile != null) {
 						// bufferCanvas
 						// .drawBitmap(currentMapTile,
@@ -1188,8 +1196,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			mTileProvider.destroy();
 
 			Utils.BUFFER_SIZE = 2;
-			mTileProvider = new TileProvider(map,
-					new SimpleInvalidationHandler(), mapWidth, mapHeight, 256);
+			Handler h = new SimpleInvalidationHandler();
+			Handler lh = new LoadCallbackHandler(h);
+			mTileProvider = new TileProvider(this.androidContext,
+					new HandlerAndroid(h), new HandlerAndroid(lh), mapWidth, mapHeight, 256, R.drawable.maptile_loading);
 			Extent previousExtent = map.vp.calculateExtent(mapWidth, mapHeight,
 					previous.getCenter());
 			if (renderer != null)

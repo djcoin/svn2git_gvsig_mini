@@ -111,7 +111,8 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
-import es.prodevelop.gvsig.mini.context.AndroidContext;
+import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.DefaultContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
@@ -123,7 +124,6 @@ import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.MockLocationProvider;
-import es.prodevelop.gvsig.mini.map.Downloader;
 import es.prodevelop.gvsig.mini.map.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapLocation;
@@ -189,7 +189,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	String datalog = null;
 	public float datatransfer2 = 0;
 	public RelativeLayout rl;
-	public Downloader down;
+	
 	ImageView ivSwitch;
 	ImageView ivCompassY;
 	ImageView ivCompass;
@@ -258,6 +258,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
 	private UserContext userContext;
+	private IContext aContext;
 
 	/**
 	 * Called when the activity is first created.
@@ -290,7 +291,8 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 				log.error("onCreate", e);
 				// log.error(e.getMessage());
 			} finally {
-				Layers.setContext(new AndroidContext(this.getApplicationContext()));
+				aContext = new AndroidContext(this.getApplicationContext());
+				Layers.setContext(aContext);
 				Constants.ROOT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
 				log.setLevel(Utils.LOG_LEVEL);
 				log.setClientID(this.toString());
@@ -1430,7 +1432,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		} catch (Exception e) {
 			log.error("loadMap: ", e);
 			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
-			this.osmap = new TileRaster(this, t, metrics.widthPixels,
+			this.osmap = new TileRaster(this, aContext, t, metrics.widthPixels,
 					metrics.heightPixels);
 
 		} finally {

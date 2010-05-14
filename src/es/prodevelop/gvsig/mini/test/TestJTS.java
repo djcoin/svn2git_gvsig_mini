@@ -38,40 +38,28 @@
  *   
  */
 
-package es.prodevelop.gvsig.mini.map;
+package es.prodevelop.gvsig.mini.test;
 
-import es.prodevelop.gvsig.mini.geom.Pixel;
+import junit.framework.TestCase;
 
-/**
- * Container class of a single Tile instance. 
- * @author aromeu 
- * @author rblanco
- *
- */
-public class Tile {
-	
-	public String mURL;
-	public int[] tile;
-	public Pixel distanceFromCenter;
-	
-	/**
-	 * The constructor
-	 * @param url The url of the tile
-	 * @param tile The tile x-y
-	 * @param distanceFromCenter Distance from the center of the screen in pixels
-	 */
-	public Tile(String url, int[] tile, Pixel distanceFromCenter) {
-		this.mURL = url;
-		this.tile = tile;
-		this.distanceFromCenter = distanceFromCenter;
+public class TestJTS extends TestCase {
+
+	byte[] data;
+
+	public void setUp() {
+		
 	}
-	
-	/**
-	 * Frees memory
-	 */
-	public void destroy() {
-		this.mURL = null;
-		tile = null;
-		distanceFromCenter = null;
+
+	public void testIntersectsJTS() {
+//		Coordinate[] coords = new Coordinate[5];
+//		coords[0] = new Coordinate(super.getMinX(), super.getMinY());
+//		coords[1] = new Coordinate(super.getMinX(), super.getMinY()+super.getHeight());
+//		coords[2] = new Coordinate(super.getMinX()+super.getWidth(), super.getMinY()+super.getHeight());
+//		coords[3] = new Coordinate(super.getMinX()+super.getWidth(), super.getMinY());
+//		coords[4] = new Coordinate(super.getMinX(), super.getMinY());
+//		GeometryFactory factory = new GeometryFactory();
+//		LinearRing shell = factory.createLinearRing(coords);
+//		LinearRing[] holes = new LinearRing[0];
+//		Geometry bbox = factory.createPolygon(shell, holes);
 	}
 }
