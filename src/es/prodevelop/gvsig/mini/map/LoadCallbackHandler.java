@@ -1,7 +1,7 @@
 package es.prodevelop.gvsig.mini.map;
 
 import es.prodevelop.tilecache.provider.Downloader;
-import es.prodevelop.tilecache.provider.TileFilesystemProvider;
+import es.prodevelop.tilecache.provider.filesystem.TileFilesystemProvider;
 import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
 import android.os.Handler;
