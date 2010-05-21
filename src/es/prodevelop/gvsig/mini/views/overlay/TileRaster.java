@@ -88,7 +88,7 @@ import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.GPSPoint;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
@@ -1605,7 +1605,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					.getMinX(), currentExtent.getMaxY());
 			int[] rightTop = map.vp.fromMapPoint(maxXY,
 					currentExtent.getMinX(), currentExtent.getMaxY());
-			Rect r = new Rect();
+			Rect r = new Rect();			
 			r.set(leftBottom[0], rightTop[1], rightTop[0], leftBottom[1]);
 			if (leftBottom[0] <= 0 || leftBottom[1] >= mapHeight
 					|| rightTop[1] <= 0 || rightTop[0] >= mapWidth)

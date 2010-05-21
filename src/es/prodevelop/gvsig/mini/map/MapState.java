@@ -51,6 +51,7 @@ import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.tilecache.layers.Layers;
 

@@ -50,7 +50,7 @@
  * 
  */
 
-package es.prodevelop.gvsig.mini.map;
+package es.prodevelop.gvsig.mini.activities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -83,9 +83,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.LocationHandler;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
+import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 /**

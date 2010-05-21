@@ -55,7 +55,7 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.map.GPSPoint;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.phonecache.Grid;
 import es.prodevelop.gvsig.mini.phonecache.OSMHandler;

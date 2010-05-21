@@ -54,41 +54,30 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.os.Bundle;
+import android.os.Message;
+import android.view.MotionEvent;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
-
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
-import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
-import es.prodevelop.gvsig.mini.map.GPSPoint;
-import es.prodevelop.tilecache.renderer.MapRenderer;
-import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
-import es.prodevelop.gvsig.mini.namefinder.Named;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.RectF;
-import android.graphics.Path.Direction;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
-import android.view.MotionEvent;
+import es.prodevelop.tilecache.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 
 /**
  * A MapOverlay to draw the GPS location

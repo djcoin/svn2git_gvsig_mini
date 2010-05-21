@@ -111,6 +111,7 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.context.ItemContext;
@@ -124,9 +125,8 @@ import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.MockLocationProvider;
-import es.prodevelop.gvsig.mini.map.GPSPoint;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
-import es.prodevelop.gvsig.mini.map.MapLocation;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
@@ -286,13 +286,16 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 				onNewIntent(getIntent());
 				Config.setContext(this.getApplicationContext());
 				ResourceLoader.initialize(this.getApplicationContext());
+				
+				aContext = new AndroidContext(this.getApplicationContext());
+				CompatManager.getInstance().registerContext(aContext);				
+				Layers.getInstance().initialize(true);
+				
 
 			} catch (Exception e) {
 				log.error("onCreate", e);
 				// log.error(e.getMessage());
-			} finally {
-				aContext = new AndroidContext(this.getApplicationContext());
-				Layers.setContext(aContext);
+			} finally {				
 				Constants.ROOT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
 				log.setLevel(Utils.LOG_LEVEL);
 				log.setClientID(this.toString());

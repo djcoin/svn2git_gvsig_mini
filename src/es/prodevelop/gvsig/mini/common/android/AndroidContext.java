@@ -1,5 +1,6 @@
 package es.prodevelop.gvsig.mini.common.android;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -11,12 +12,14 @@ import android.os.Message;
 import es.prodevelop.gvsig.mini.common.IBitmap;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.IHandler;
+import es.prodevelop.gvsig.mini.common.IRect;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 public class AndroidContext implements IContext {
 
 	Context context;
+	private String externalStoragePath;
 
 	public AndroidContext(Context context) {
 		this.context = context;
@@ -40,7 +43,9 @@ public class AndroidContext implements IContext {
 
 	@Override
 	public String getExternalStorageDirectoryPath() {
-		return Environment.getExternalStorageDirectory().getPath();
+		if (externalStoragePath == null)
+			this.externalStoragePath = Environment.getExternalStorageDirectory().getPath();
+		return this.externalStoragePath;
 	}
 
 	@Override
@@ -59,4 +64,26 @@ public class AndroidContext implements IContext {
 		((Handler) handler.getHandler()).sendEmptyMessage(ID);
 	}
 
+	@Override
+	public String getBaseLayerFilePath() {
+		String SDDIR = Environment.getExternalStorageDirectory().getPath();
+		return new StringBuffer(SDDIR).append(File.separator).append(
+				Utils.APP_DIR).append(File.separator).append(Utils.LAYERS_DIR)
+				.append(File.separator).toString();
+	}
+
+	@Override
+	public String getBaseLayerPersistFilePath() {
+		return this.getBaseLayerFilePath();
+	}
+
+	@Override
+	public IRect getRectangle() {
+		return new RectangleAndroid();
+	}
+
+	@Override
+	public void setExternalStorageDirectoryPath(String path) {
+		this.externalStoragePath = path;
+	}
 }
