@@ -74,12 +74,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Extent;
-import es.prodevelop.gvsig.mini.phonecache.CRSFactory;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
 import es.prodevelop.gvsig.mini.wms.WMSCancellable;
 import es.prodevelop.gvsig.mini.wms.WMSException;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 /**
  * A ListActivity which shows the results of a GetCapabilities. Contains a plain

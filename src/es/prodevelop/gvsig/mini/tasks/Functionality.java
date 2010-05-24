@@ -43,6 +43,7 @@ package es.prodevelop.gvsig.mini.tasks;
 import net.sf.microlog.core.Logger;
 import net.sf.microlog.core.LoggerFactory;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
 /**
  * A Background task executable on a WorkQueue and represented on screen 

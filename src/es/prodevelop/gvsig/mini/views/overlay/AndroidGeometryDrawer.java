@@ -52,6 +52,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.GPSPoint;
@@ -63,9 +64,8 @@ import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
-import es.prodevelop.gvsig.mini.phonecache.CRSFactory;
-import es.prodevelop.gvsig.mini.phonecache.ConversionCoords;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 /**
  * Utility class to draw geometries in Android. @see es.prodevelop.gvsig.mini.geom package

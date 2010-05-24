@@ -132,10 +132,8 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
-import es.prodevelop.gvsig.mini.phonecache.DownloadWaiter;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
-import es.prodevelop.gvsig.mini.tasks.WorkQueue;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 import es.prodevelop.gvsig.mini.tasks.twitter.TweetMyLocationFunc;
@@ -147,6 +145,7 @@ import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
+import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
@@ -155,6 +154,7 @@ import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.tilecache.DownloadWaiter;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.MapRendererManager;
@@ -2192,45 +2192,7 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		} catch (Exception e) {
 			log.error("onStop: ", e);
 		}
-	}
-
-	@Override
-	public void downloadCanceled() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void finishDownload() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void incrementProgressBar(int progress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void numTilesRetrieved(int totalNumTiles) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void startDownload() {
-		cacheCounter = 0;
-
-	}
-
-	@Override
-	public void tileDownloaded(String URL) {
-		cacheCounter++;
-		log.debug("tileDownloaded: " + URL);
-		// this.reportView.setText("Tiles downloaded: " + cacheCounter);
-
-	}
+	}	
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -2760,5 +2722,40 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		} catch (Exception e) {
 			log.error(e);
 		}
+	}
+
+	@Override
+	public void onDownloadCanceled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFinishDownload() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStartDownload() {
+		cacheCounter = 0;
+	}
+
+	@Override
+	public void onTileDownloaded(String URL) {
+		cacheCounter++;
+		log.debug("tileDownloaded: " + URL);
+	}
+
+	@Override
+	public void onTotalNumTilesRetrieved(int totalNumTiles) {
+		// TODO Auto-generated method stub
+		
+	}	
+
+	@Override
+	public Object getHandler() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

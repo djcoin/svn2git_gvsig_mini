@@ -42,6 +42,8 @@ package es.prodevelop.gvsig.mini.tasks;
 
 import java.util.Vector;
 
+import es.prodevelop.gvsig.mini.utiles.WorkQueue;
+
 import net.sf.microlog.core.LoggerFactory;
 
 import android.content.DialogInterface;
