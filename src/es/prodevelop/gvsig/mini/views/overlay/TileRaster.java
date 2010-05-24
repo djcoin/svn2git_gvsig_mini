@@ -82,7 +82,6 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.IContext;
-import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.common.android.HandlerAndroid;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
@@ -105,6 +104,7 @@ import es.prodevelop.tilecache.provider.Downloader;
 import es.prodevelop.tilecache.provider.Tile;
 import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.TileFilesystemProvider;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
@@ -222,7 +222,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.mTileProvider = new TileProvider(androidContext,
 					new HandlerAndroid(new LoadCallbackHandler(
 							new SimpleInvalidationHandler())), width, height,
-					256, R.drawable.maptile_loading, false);
+					256, R.drawable.maptile_loading, false,
+					new QuadKeyFileSystemStrategy());
 			this.map = (Map) context;
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
@@ -1198,7 +1199,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					new SimpleInvalidationHandler());
 			mTileProvider = new TileProvider(this.androidContext,
 					new HandlerAndroid(lh), mapWidth, mapHeight, 256,
-					R.drawable.maptile_loading, false);
+					R.drawable.maptile_loading, false,
+					new QuadKeyFileSystemStrategy());
 			Extent previousExtent = map.vp.calculateExtent(mapWidth, mapHeight,
 					previous.getCenter());
 			if (renderer != null)
