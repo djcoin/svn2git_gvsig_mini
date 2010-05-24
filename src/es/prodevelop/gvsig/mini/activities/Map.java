@@ -154,7 +154,6 @@ import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import es.prodevelop.tilecache.DownloadWaiter;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.MapRendererManager;
@@ -175,7 +174,7 @@ import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
+public class Map extends MapLocation implements GeoUtils {
 	SlideBar s;
 
 	public static String twituser = null;
@@ -2722,40 +2721,5 @@ public class Map extends MapLocation implements GeoUtils, DownloadWaiter {
 		} catch (Exception e) {
 			log.error(e);
 		}
-	}
-
-	@Override
-	public void onDownloadCanceled() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onFinishDownload() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onStartDownload() {
-		cacheCounter = 0;
-	}
-
-	@Override
-	public void onTileDownloaded(String URL) {
-		cacheCounter++;
-		log.debug("tileDownloaded: " + URL);
-	}
-
-	@Override
-	public void onTotalNumTilesRetrieved(int totalNumTiles) {
-		// TODO Auto-generated method stub
-		
 	}	
-
-	@Override
-	public Object getHandler() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
