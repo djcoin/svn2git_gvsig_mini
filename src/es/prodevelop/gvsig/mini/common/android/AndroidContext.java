@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
@@ -31,9 +32,11 @@ public class AndroidContext implements IContext {
 	}
 
 	@Override
-	public IBitmap decodeByteArray(byte[] data, int offset, int length) {
-		return new BitmapAndroid(BitmapFactory.decodeByteArray(data, offset,
-				length));
+	public IBitmap decodeByteArray(byte[] data, int offset, int length) throws IOException {
+		Bitmap b = BitmapFactory.decodeByteArray(data, offset,
+				length);
+		if (b == null) throw new IOException("BitmapFactory failed");
+		return new BitmapAndroid(b);
 	}
 
 	@Override

@@ -210,8 +210,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 * @param height
 	 *            The height of the view in pixels
 	 */
-	public TileRaster(final Context context, final IContext androidContext, final MapRenderer aRendererInfo,
-			int width, int height) {
+	public TileRaster(final Context context, final IContext androidContext,
+			final MapRenderer aRendererInfo, int width, int height) {
 		super(context);
 		try {
 			this.androidContext = androidContext;
@@ -219,9 +219,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			log.setLevel(Utils.LOG_LEVEL);
 			log.setClientID(this.toString());
 			this.mScaler = new Scaler(context, new LinearInterpolator());
-			Handler h = new SimpleInvalidationHandler();
 			this.mTileProvider = new TileProvider(androidContext,
-					new HandlerAndroid(h), new HandlerAndroid(new LoadCallbackHandler(h)), width, height, 256, R.drawable.maptile_loading);
+					new HandlerAndroid(new LoadCallbackHandler(
+							new SimpleInvalidationHandler())), width, height,
+					256, R.drawable.maptile_loading, false);
 			this.map = (Map) context;
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
@@ -357,16 +358,12 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 */
 	public void setZoomLevel(final int aZoomLevel) {
 		int zoomLevel = aZoomLevel;
-		if (aZoomLevel < this.mRendererInfo
-				.getZoomMinLevel()) {
-			zoomLevel = this.mRendererInfo
-			.getZoomMinLevel();
-		} else if(aZoomLevel > this.mRendererInfo
-				.getZOOM_MAXLEVEL()) {
-			zoomLevel = this.mRendererInfo
-			.getZOOM_MAXLEVEL();
+		if (aZoomLevel < this.mRendererInfo.getZoomMinLevel()) {
+			zoomLevel = this.mRendererInfo.getZoomMinLevel();
+		} else if (aZoomLevel > this.mRendererInfo.getZOOM_MAXLEVEL()) {
+			zoomLevel = this.mRendererInfo.getZOOM_MAXLEVEL();
 		}
-		
+
 		tempZoomLevel = zoomLevel;
 		// Extent viewExtent =
 		// this.map.vp.calculateExtent(this.getMRendererInfo()
@@ -575,7 +572,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
-				
+
 				this.animateTo(coords[0], coords[1]);
 				map.showContext(map.getItemContext());
 
@@ -656,7 +653,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 	@Override
 	public void onDraw(final Canvas c) {
-		boolean canDraw = false;		
+		boolean canDraw = false;
 
 		try {
 			// if (bufferBitmap == null) {
@@ -678,7 +675,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			ViewPort.mapWidth = getWidth();
 			c.drawRect(0, 0, mapWidth, mapHeight, whitePaint);
 
-//			log.debug(map.vp.calculateExtent(mapWidth, mapHeight, this.getMRendererInfo().getCenter()).toString());
+			// log.debug(map.vp.calculateExtent(mapWidth, mapHeight,
+			// this.getMRendererInfo().getCenter()).toString());
 			final MapRenderer renderer = this.getMRendererInfo();
 
 			if (!mScaler.isFinished()) {
@@ -912,10 +910,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			for (int j = 0; j < length; j++) {
 				temp = tiles[j];
 				if (temp != null) {
-					final Bitmap currentMapTile = (Bitmap)this.mTileProvider
+					final Bitmap currentMapTile = (Bitmap) this.mTileProvider
 							.getMapTile(temp.mURL, temp.tile,
-									this.mRendererInfo.getNAME(), this
-											.getZoomLevel()).getBitmap();
+									this.mRendererInfo.getNAME(),
+									this.getZoomLevel()).getBitmap();
 					if (currentMapTile != null) {
 						// bufferCanvas
 						// .drawBitmap(currentMapTile,
@@ -999,7 +997,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// this.mTouchMapOffsetY, normalPaint);
 		} catch (Exception e) {
 			log.error("onDraw", e);
-		} 
+		}
 
 	}
 
@@ -1196,10 +1194,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			mTileProvider.destroy();
 
 			Utils.BUFFER_SIZE = 2;
-			Handler h = new SimpleInvalidationHandler();
-			Handler lh = new LoadCallbackHandler(h);
+			Handler lh = new LoadCallbackHandler(
+					new SimpleInvalidationHandler());
 			mTileProvider = new TileProvider(this.androidContext,
-					new HandlerAndroid(h), new HandlerAndroid(lh), mapWidth, mapHeight, 256, R.drawable.maptile_loading);
+					new HandlerAndroid(lh), mapWidth, mapHeight, 256,
+					R.drawable.maptile_loading, false);
 			Extent previousExtent = map.vp.calculateExtent(mapWidth, mapHeight,
 					previous.getCenter());
 			if (renderer != null)
@@ -1246,9 +1245,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				}
 			} else {
 				renderer.centerOnBBox();
-				this.setMapCenter(renderer.getCenter().getX(), renderer.getCenter().getY());
-//				Point p = renderer.getExtent().getCenter();
-//				this.setMapCenter(p.getX(), p.getY());
+				this.setMapCenter(renderer.getCenter().getX(), renderer
+						.getCenter().getY());
+				// Point p = renderer.getExtent().getCenter();
+				// this.setMapCenter(p.getX(), p.getY());
 			}
 
 			// this.setZoomLevel(previous.getZoomLevel());
@@ -1605,7 +1605,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					.getMinX(), currentExtent.getMaxY());
 			int[] rightTop = map.vp.fromMapPoint(maxXY,
 					currentExtent.getMinX(), currentExtent.getMaxY());
-			Rect r = new Rect();			
+			Rect r = new Rect();
 			r.set(leftBottom[0], rightTop[1], rightTop[0], leftBottom[1]);
 			if (leftBottom[0] <= 0 || leftBottom[1] >= mapHeight
 					|| rightTop[1] <= 0 || rightTop[0] >= mapWidth)
