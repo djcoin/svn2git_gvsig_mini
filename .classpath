@@ -5,10 +5,12 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="lib/microlog-logger-android-2.2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/microlog-logger-core-2.1.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.gvsig.mini.remoteservices"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.gvsig.mini.compat"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache.wms"/>
 	<classpathentry kind="lib" path="lib/kxml2-min-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/es.prodevelop.gvsig.mini.compat-0.3.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/es.prodevelop.gvsig.mini.remoteservices-0.2.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/es.prodevelop.tilerastercache.wms-0.3.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.0-alpha5.jar"/>
+	<classpathentry kind="lib" path="lib/es.prodevelop.tilerastercache-0.3.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
