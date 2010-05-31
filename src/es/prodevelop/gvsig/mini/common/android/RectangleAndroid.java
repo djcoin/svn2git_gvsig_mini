@@ -21,4 +21,8 @@ public class RectangleAndroid implements IRect {
 		instance.set(left, top, right, bottom);
 	}
 
+	@Override
+	public int getArea() {
+		return (instance.bottom - instance.top) * (instance.right - instance.left); 
+	}
 }

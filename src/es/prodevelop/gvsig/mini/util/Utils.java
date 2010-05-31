@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -80,7 +80,7 @@ import es.prodevelop.gvsig.mini.map.GeoUtils;
  *
  */
 public class Utils implements GeoUtils {
-
+	
 	public final static String LAYERS_VERSION = "v0.2.1";
 	public final static String APP_DIR = "gvSIG";
 	public final static String MAPS_DIR = "maps";

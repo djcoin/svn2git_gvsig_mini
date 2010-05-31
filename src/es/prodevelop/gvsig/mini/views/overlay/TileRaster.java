@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -103,8 +103,8 @@ import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.Downloader;
 import es.prodevelop.tilecache.provider.Tile;
 import es.prodevelop.tilecache.provider.TileProvider;
-import es.prodevelop.tilecache.provider.filesystem.TileFilesystemProvider;
-import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
+import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
@@ -219,11 +219,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			log.setLevel(Utils.LOG_LEVEL);
 			log.setClientID(this.toString());
 			this.mScaler = new Scaler(context, new LinearInterpolator());
-			this.mTileProvider = new TileProvider(androidContext,
-					new HandlerAndroid(new LoadCallbackHandler(
-							new SimpleInvalidationHandler())), width, height,
-					256, R.drawable.maptile_loading, false,
-					new QuadKeyFileSystemStrategy());
+			this.instantiateTileProvider();
 			this.map = (Map) context;
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
@@ -1174,6 +1170,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		return true;
 	}
 
+	private void instantiateTileProvider() {
+		Handler lh = new LoadCallbackHandler(new SimpleInvalidationHandler());
+		this.mTileProvider = new TileProvider(this.androidContext,
+				new HandlerAndroid(lh), mapWidth, mapHeight, 256,
+				R.drawable.maptile_loading, TileProvider.MODE_ONLINE,
+				new FlatXFileSystemStrategy(".tile.gvSIG"));
+	}
+
 	@Override
 	public void onLayerChanged(String layerName) {
 		try {
@@ -1195,12 +1199,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			mTileProvider.destroy();
 
 			Utils.BUFFER_SIZE = 2;
-			Handler lh = new LoadCallbackHandler(
-					new SimpleInvalidationHandler());
-			mTileProvider = new TileProvider(this.androidContext,
-					new HandlerAndroid(lh), mapWidth, mapHeight, 256,
-					R.drawable.maptile_loading, false,
-					new QuadKeyFileSystemStrategy());
+			instantiateTileProvider();
 			Extent previousExtent = map.vp.calculateExtent(mapWidth, mapHeight,
 					previous.getCenter());
 			if (renderer != null)

@@ -32,7 +32,7 @@ public class AndroidContext implements IContext {
 	}
 
 	@Override
-	public IBitmap decodeByteArray(byte[] data, int offset, int length) throws IOException {
+	public IBitmap decodeByteArray(byte[] data, int offset, int length) throws IOException {		
 		Bitmap b = BitmapFactory.decodeByteArray(data, offset,
 				length);
 		if (b == null) throw new IOException("BitmapFactory failed");
@@ -88,5 +88,19 @@ public class AndroidContext implements IContext {
 	@Override
 	public void setExternalStorageDirectoryPath(String path) {
 		this.externalStoragePath = path;
+	}
+
+	@Override
+	public IBitmap decodeByteArray(InputStream in) throws IOException {
+		Bitmap b = BitmapFactory.decodeStream(in);
+		if (b == null) throw new IOException("BitmapFactory failed");
+		return new BitmapAndroid(b);
+	}
+
+	@Override
+	public IBitmap decodeByteArray(String filePath) throws IOException {
+		Bitmap b = BitmapFactory.decodeFile(filePath);
+		if (b == null) throw new IOException("BitmapFactory failed");
+		return new BitmapAndroid(b);
 	}
 }
