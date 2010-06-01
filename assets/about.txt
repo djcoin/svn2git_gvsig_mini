@@ -14,6 +14,12 @@ e-mail: prode@prodevelop.es
 
 gvSIG Mini has been funded by Prodevelop, S.L., IMPIVA Institute of Regional Government of Valencia and European Union FEDER funds.
 
+gvSIG Mini displays maps with the following license restrictions or attributions:
+
+- PNOA & Cartociudad images. Author and owner: © Instituto Geográfico Nacional de España-Institut Cartogràfic de Catalunya.
+
+- Ordnance Survey (UK). Contains Ordnance Survey data © Crown copyright and database right 2010
+
 gvSIG Mini for Android uses these icons with license restrictions or attributions:
 
 - menu03.png http://www.kde-look.org/content/show.php?content=39988 GNU/GPL
@@ -24,6 +30,4 @@ gvSIG Mini for Android uses these icons with license restrictions or attribution
 
 - menu00 http://www.everaldo.com/
 
-- menu_download http://earam.deviantart.com/art/the-moonlight-31208162
-
-- PNOA & Cartociudad images. Author and owner: © Instituto Geográfico Nacional de España-Institut Cartogràfic de Catalunya.
+- menu_download http://earam.deviantart.com/art/the-moonlight-31208162 
