@@ -124,4 +124,15 @@
     <string name="download_tiles_01">Download Layers</string>
     <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIG Mini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
     <string name="download_tiles_03">Layers File Downloaded</string>
+    <string name="download_tiles_04">Select zoom levels to download</string>
+    <string name="download_tiles_05">Min/max zoom levels: </string>
+    <string name="download_tiles_06">Total tiles to download: </string>
+    <string name="download_tiles_07">Total MB to download: </string>
+    <string name="download_tiles_08">Overwrite previous cache?</string>
+    <string name="download_tiles_09">Total downloaded MB: </string>
+    <string name="download_tiles_10">Time elapsed: </string>
+    <string name="download_tiles_11">Estimated time left: </string>
+    <string name="download_tiles_12">Tile downloader cancelled</string>
+    <string name="download_tiles_13">Press the cancel button to cancel the process</string>
+    <string name="download_tiles_14">Download tiles</string>
 </resources>

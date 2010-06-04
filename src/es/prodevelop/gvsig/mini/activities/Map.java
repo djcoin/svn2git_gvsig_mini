@@ -70,6 +70,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -92,9 +93,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -119,13 +124,14 @@ import es.prodevelop.gvsig.mini.context.map.DefaultContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
 import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.context.map.RoutePOIContext;
+import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.MockLocationProvider;
-import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
@@ -136,6 +142,8 @@ import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
+import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadCallbackHandler;
+import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadWaiter;
 import es.prodevelop.gvsig.mini.tasks.twitter.TweetMyLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
 import es.prodevelop.gvsig.mini.tasks.yours.YOURSFunctionality;
@@ -154,11 +162,19 @@ import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.tilecache.IDownloadWaiter;
+import es.prodevelop.tilecache.TileDownloaderTask;
+import es.prodevelop.tilecache.generator.impl.FitScreenBufferStrategy;
 import es.prodevelop.tilecache.layers.Layers;
+import es.prodevelop.tilecache.provider.TileProvider;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.MapRendererManager;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
+import es.prodevelop.tilecache.util.Cancellable;
+import es.prodevelop.tilecache.util.ConstantsTileCache;
+import es.prodevelop.tilecache.util.Utilities;
 
 /**
  * The main activity of the application. Consists on a RelativeLayout with some
@@ -174,9 +190,20 @@ import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils {
+public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	SlideBar s;
 
+	AlertDialog downloadTileAlert;
+	Cancellable downloadCancellable;
+	Button downloadTilesButton;
+	private TileDownloaderTask t;
+	private SeekBar downTilesSeekBar;
+	private TextView totalTiles;
+	private TextView totalMB;
+	private TextView totalZoom;
+
+	private TileDownloadWaiterDelegate tileWaiter = new TileDownloadWaiterDelegate(
+			this);
 	public static String twituser = null;
 	public static String twitpass = null;
 	private ViewSimpleLocationOverlay mMyLocationOverlay;
@@ -188,7 +215,7 @@ public class Map extends MapLocation implements GeoUtils {
 	String datalog = null;
 	public float datatransfer2 = 0;
 	public RelativeLayout rl;
-	
+
 	ImageView ivSwitch;
 	ImageView ivCompassY;
 	ImageView ivCompass;
@@ -203,6 +230,7 @@ public class Map extends MapLocation implements GeoUtils {
 	private MenuItem myZoomRectangle;
 	private MenuItem mySearchDirection;
 	private MenuItem myDownloadLayers;
+	private MenuItem myDownloadTiles;
 	private MenuItem myGPSButton;
 	private MenuItem myAbout;
 	private MenuItem myWhats;
@@ -258,6 +286,8 @@ public class Map extends MapLocation implements GeoUtils {
 	// list
 	private UserContext userContext;
 	private IContext aContext;
+	LinearLayout downloadTilesLayout;
+	ProgressBar downloadTilesPB;
 
 	/**
 	 * Called when the activity is first created.
@@ -281,21 +311,22 @@ public class Map extends MapLocation implements GeoUtils {
 				// log.addAppender(new ConsoleAppender());
 				// log.setLevel(Utils.LOG_LEVEL);
 				// log.error("Testing to log error message with Microlog.");
-				MapRendererManager.getInstance().registerMapRendererFactory(new WMSMapRendererFactory());
+				MapRendererManager.getInstance().registerMapRendererFactory(
+						new WMSMapRendererFactory());
 				onNewIntent(getIntent());
 				Config.setContext(this.getApplicationContext());
 				ResourceLoader.initialize(this.getApplicationContext());
-				
+
 				aContext = new AndroidContext(this.getApplicationContext());
-				CompatManager.getInstance().registerContext(aContext);				
+				CompatManager.getInstance().registerContext(aContext);
 				Layers.getInstance().initialize(true);
-				
 
 			} catch (Exception e) {
 				log.error("onCreate", e);
 				// log.error(e.getMessage());
-			} finally {				
-				Constants.ROOT_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
+			} finally {
+				Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
+						.getAbsolutePath();
 				log.setLevel(Utils.LOG_LEVEL);
 				log.setClientID(this.toString());
 			}
@@ -353,20 +384,15 @@ public class Map extends MapLocation implements GeoUtils {
 			// enableAcelerometer(savedInstanceState);
 
 			/*
-			if (!userContext.isUsedCircleMenu()) {
-				// The Circle Context Menu (Roulette) has never been displayed,
-				// so let's
-				// give the user a hint about it
-				Toast t = Toast.makeText(this, R.string.Map_23,
-						Toast.LENGTH_LONG);
-				t.show();
-			}
-			*/
+			 * if (!userContext.isUsedCircleMenu()) { // The Circle Context Menu
+			 * (Roulette) has never been displayed, // so let's // give the user
+			 * a hint about it Toast t = Toast.makeText(this, R.string.Map_23,
+			 * Toast.LENGTH_LONG); t.show(); }
+			 */
 			int hintId = 0;
 			hintId = userContext.getHintMessage();
 			if (hintId != 0) {
-				Toast t = Toast.makeText(this, hintId,
-						Toast.LENGTH_LONG);
+				Toast t = Toast.makeText(this, hintId, Toast.LENGTH_LONG);
 				t.show();
 			}
 
@@ -617,6 +643,8 @@ public class Map extends MapLocation implements GeoUtils {
 			myLocationButton = pMenu.add(0, 2, 2, R.string.Map_4).setIcon(
 					R.drawable.menu_location);
 			pMenu.add(0, 3, 3, R.string.Map_5).setIcon(R.drawable.menu02);
+			myDownloadTiles = pMenu.add(0, 4, 4, R.string.download_tiles_14).setIcon(
+					R.drawable.layerdonwload);
 			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
 			// R.drawable.mv_rectangle);
 			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
@@ -737,12 +765,12 @@ public class Map extends MapLocation implements GeoUtils {
 					// // osmap.switchPanMode();
 					//
 					// if (recenterOnGPS) {
-					// log.debug("recentering on GPS after check MyLocation on");
+					//log.debug("recentering on GPS after check MyLocation on");
 					// myLocation.setIcon(R.drawable.menu01);
 					//
 					// } else {
 					// log
-					// .debug("stop recentering on GPS after check MyLocation off"
+					//.debug("stop recentering on GPS after check MyLocation off"
 					// );
 					// myLocation.setIcon(R.drawable.menu01_2);
 					// }
@@ -775,19 +803,20 @@ public class Map extends MapLocation implements GeoUtils {
 				viewLayers();
 				break;
 			case 4:
-				try {
-					log.debug("switch pan mode");
-					osmap.switchPanMode();
-					if (osmap.isPanMode()) {
-						item.setIcon(R.drawable.mv_rectangle).setTitle(
-								R.string.Map_6);
-					} else {
-						item.setIcon(R.drawable.mv_pan)
-								.setTitle(R.string.Map_7);
-					}
-				} catch (Exception e) {
-					log.error("switchPanMode: ", e);
-				}
+				Map.this.showDownloadTilesDialog();
+				// try {
+				// log.debug("switch pan mode");
+				// osmap.switchPanMode();
+				// if (osmap.isPanMode()) {
+				// item.setIcon(R.drawable.mv_rectangle).setTitle(
+				// R.string.Map_6);
+				// } else {
+				// item.setIcon(R.drawable.mv_pan)
+				// .setTitle(R.string.Map_7);
+				// }
+				// } catch (Exception e) {
+				// log.error("switchPanMode: ", e);
+				// }
 				break;
 			case 5:
 				try {
@@ -821,12 +850,12 @@ public class Map extends MapLocation implements GeoUtils {
 					}
 					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
 					// ) {
-					// log.debug("recentering on GPS after check MyLocation on");
+					//log.debug("recentering on GPS after check MyLocation on");
 					// myNavigator.setIcon(R.drawable.menu_navigation_off);
 					//
 					// } else {
 					// log
-					// .debug("stop recentering on GPS after check MyLocation off"
+					//.debug("stop recentering on GPS after check MyLocation off"
 					// );
 					// myNavigator.setIcon(R.drawable.menu_navigation);
 					// }
@@ -1557,7 +1586,7 @@ public class Map extends MapLocation implements GeoUtils {
 			log.debug("load UI");
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-			z = new ZoomControls(this);			
+			z = new ZoomControls(this);
 
 			/* Creating the main Overlay */
 			{
@@ -1620,8 +1649,9 @@ public class Map extends MapLocation implements GeoUtils {
 						boolean fromUser) {
 					int zoom = (int) Math.floor(progress
 							* (Map.this.osmap.getMRendererInfo()
-									.getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
-									.getZoomMinLevel()) / 100);
+									.getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+									.getMRendererInfo().getZoomMinLevel())
+							/ 100);
 					osmap.drawZoomRectangle(zoom);
 				}
 
@@ -1632,10 +1662,12 @@ public class Map extends MapLocation implements GeoUtils {
 				@Override
 				public void onStopTrackingTouch(SeekBar seekBar) {
 					try {
-						int zoom = (int) Math.floor(seekBar.getProgress()
-								* (Map.this.osmap.getMRendererInfo()
-										.getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
-										.getZoomMinLevel()) / 100);
+						int zoom = (int) Math
+								.floor(seekBar.getProgress()
+										* (Map.this.osmap.getMRendererInfo()
+												.getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+												.getMRendererInfo()
+												.getZoomMinLevel()) / 100);
 						// int zoom = ((SlideBar)seekBar).portions;
 						Map.this.updateSlider(zoom);
 						Map.this.osmap.setZoomLevel(zoom, true);
@@ -2117,6 +2149,221 @@ public class Map extends MapLocation implements GeoUtils {
 		}
 	}
 
+	private void instantiateTileDownloaderTask(LinearLayout l, int progress) {
+		try {
+			final boolean updateTiles = ((CheckBox) l
+					.findViewById(R.id.download_tiles_overwrite_check))
+					.isChecked();
+
+			MapRenderer currentRenderer = Map.this.osmap.getMRendererInfo();
+			MapRenderer renderer = Layers.getInstance().getRenderer(
+					currentRenderer.getNAME());
+
+			int fromZoomLevel = currentRenderer.getZoomLevel();
+
+			int totalZoomLevels = currentRenderer.getZOOM_MAXLEVEL()
+					- fromZoomLevel;
+
+			int z = currentRenderer.getZOOM_MAXLEVEL()
+					- currentRenderer.getZoomMinLevel();
+
+			int toZoomLevel = (totalZoomLevels * progress / 100)
+					+ fromZoomLevel;
+
+			Map.this.totalZoom.setText(Map.this
+					.getText(R.string.download_tiles_05)
+					+ " " + fromZoomLevel + "/" + toZoomLevel);
+
+			Extent extent = ViewPort
+					.calculateExtent(currentRenderer.getCenter(),
+							currentRenderer.resolutions[currentRenderer
+									.getZoomLevel()], TileRaster.mapWidth,
+							TileRaster.mapHeight);
+
+			if (extent.area() < currentRenderer.getExtent().area())
+				renderer.setExtent(extent);
+
+			/*
+			 * Once we set the extent, we have to update the center of the
+			 * MapRenderer
+			 */
+			renderer.setCenter(renderer.getExtent().getCenter().getX(),
+					renderer.getExtent().getCenter().getY());
+
+			/*
+			 * Get a new Cancellable instance (one different each time the task
+			 * is executed)
+			 */
+			downloadCancellable = Utilities.getNewCancellable();
+
+			/*
+			 * Instantiate the download waiter. The implementation should
+			 * properly update the UI as the task is processing tiles
+			 */
+
+			TileDownloadCallbackHandler callBackHandler = new TileDownloadCallbackHandler(
+					Map.this);
+			ConstantsTileCache.DEFAULT_NUM_THREADS = 4;
+
+			/*
+			 * Finally instantiate the TileDownloaderTask. Automatically
+			 * launches to the IDownloadWaiter implementation the
+			 * onTotalNumTilesRetrieved event (prior to execute the task)
+			 * 
+			 * This instance will donwload from 0 to 3 zoom level of the whole
+			 * world extent of OSM (Mapnik) server. Not apply any ITileSorter
+			 * nor ITileBufferIntersector and applies the FlatX file system
+			 * strategy with a minimum buffer to fit the map size.
+			 */
+			int mode = TileProvider.MODE_ONLINE;
+			if (updateTiles) {
+				mode = TileProvider.MODE_UPDATE;
+			}
+			t = new TileDownloaderTask(CompatManager.getInstance()
+					.getRegisteredContext(), renderer, fromZoomLevel,
+					toZoomLevel, downloadCancellable, renderer.getExtent(),
+					null, callBackHandler, null, mode,
+					new FlatXFileSystemStrategy(),
+					new FitScreenBufferStrategy());
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+
+	/**
+	 * Show an AlertDialog to the user to input the query string for NameFinder
+	 * addresses
+	 */
+	public void showDownloadTilesDialog() {
+		try {
+			log.debug("show address dialog");
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			final LinearLayout l = (LinearLayout) this.getLayoutInflater()
+					.inflate(R.layout.download_tiles, null);
+			this.totalMB = (TextView) l
+					.findViewById(R.id.download_total_transfer_text);
+			this.totalTiles = (TextView) l
+					.findViewById(R.id.download_total_tiles_text);
+			this.totalZoom = (TextView) l
+					.findViewById(R.id.download_zoom_level_text);
+			this.downTilesSeekBar = (SeekBar) l
+					.findViewById(R.id.download_zoom_level_seekbar);
+			this.downTilesSeekBar
+					.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+						@Override
+						public void onProgressChanged(SeekBar arg0,
+								int progress, boolean arg2) {
+							try {
+								Map.this.instantiateTileDownloaderTask(l,
+										progress);
+
+							} catch (Exception e) {
+								log.error(e.getMessage());
+							}
+						}
+
+						@Override
+						public void onStartTrackingTouch(SeekBar seekBar) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onStopTrackingTouch(SeekBar seekBar) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+			alert.setIcon(R.drawable.layerdonwload);
+			alert.setTitle(R.string.download_tiles_14);
+			this.downTilesSeekBar.setProgress(50);
+			((CheckBox) l.findViewById(R.id.download_tiles_overwrite_check))
+					.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View arg0) {
+							Map.this.instantiateTileDownloaderTask(l,
+									Map.this.downTilesSeekBar.getProgress());
+						}
+					});
+
+			alert.setView(l);
+
+			alert.setPositiveButton(R.string.download_tiles_14,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								Map.this.resetCounter();
+								Map.this.downloadTileAlert = Map.this
+										.getDownloadTilesDialog();
+								Map.this.downloadTileAlert.show();
+								WorkQueue.getExclusiveInstance().execute(t);
+							} catch (Exception e) {
+								log.error("clickNameFinderAddress: ", e);
+							}
+							return;
+						}
+					});
+
+			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.error("", e);
+		}
+	}
+
+	private AlertDialog getDownloadTilesDialog() {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setOnKeyListener(new OnKeyListener() {
+
+			@Override
+			public boolean onKey(DialogInterface arg0, int arg1, KeyEvent arg2) {
+				if (arg2.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+					Toast.makeText(Map.this, R.string.download_tiles_13,
+							Toast.LENGTH_LONG).show();
+				}
+				return true;
+			}
+
+		});
+
+		builder.setIcon(R.drawable.layerdonwload);
+		builder.setTitle(R.string.download_tiles_14);
+
+		this.downloadTilesLayout = (LinearLayout) this.getLayoutInflater()
+				.inflate(R.layout.download_tiles_pd, null);
+
+		downloadTilesPB = (ProgressBar) this.downloadTilesLayout
+				.findViewById(R.id.ProgressBar01);
+
+		downloadTilesButton = (Button) this.downloadTilesLayout
+				.findViewById(R.id.download_tiles_button);
+
+		downloadTilesButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Map.this.downloadCancellable.setCanceled(true);
+				Map.this.downloadTileAlert.dismiss();
+			}
+		});
+
+		builder.setView(this.downloadTilesLayout);
+
+		return builder.create();
+	}
+
 	// public void enableAcelerometer(Bundle savedInstanceState) {
 	// try {
 	// log.debug("enable accelerometer");
@@ -2191,7 +2438,7 @@ public class Map extends MapLocation implements GeoUtils {
 		} catch (Exception e) {
 			log.error("onStop: ", e);
 		}
-	}	
+	}
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -2406,9 +2653,11 @@ public class Map extends MapLocation implements GeoUtils {
 	 */
 	public void updateSlider() {
 		try {
-			int progress = Math.round(this.osmap.getTempZoomLevel() * 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
-							.getZoomMinLevel()));
+			int progress = Math
+					.round(this.osmap.getTempZoomLevel()
+							* 100
+							/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+									.getMRendererInfo().getZoomMinLevel()));
 			// if (progress == 0)
 			// progress = 1;
 			this.s.setProgress(progress);
@@ -2426,9 +2675,10 @@ public class Map extends MapLocation implements GeoUtils {
 	 */
 	public void updateSlider(int zoom) {
 		try {
-			int progress = zoom * 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap.getMRendererInfo()
-							.getZoomMinLevel());
+			int progress = zoom
+					* 100
+					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+							.getMRendererInfo().getZoomMinLevel());
 			// if (progress == 0)
 			// progress = 1;
 			this.s.setProgress(progress);
@@ -2721,5 +2971,269 @@ public class Map extends MapLocation implements GeoUtils {
 		} catch (Exception e) {
 			log.error(e);
 		}
-	}	
+	}
+	
+	private int previousTime = 0;
+
+	private synchronized void updateDownloadTilesDialog() {
+		try {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					int time = (int) ((System.currentTimeMillis() - tileWaiter
+							.getInitDownloadTime()) / 1000);
+					
+					if (time - previousTime < 1 ) {						
+						return;
+					}
+					
+					if (tileWaiter.getInitDownloadTime() > 0)
+						previousTime = time;
+					
+					Map.this.downloadTilesPB.setMax((int) tileWaiter
+							.getTotalTilesToProcess());
+					Map.this.downloadTilesPB.setProgress((int) tileWaiter
+							.getDownloadedNow());
+					long totalDownloaded = Map.this.tileWaiter
+							.getDownloadedNow();
+					long total = Map.this.tileWaiter.getTotalTilesToProcess();
+					int perc = (int) ((double) totalDownloaded / (double) total * 100.0);
+					((TextView) Map.this.downloadTilesLayout
+							.findViewById(R.id.download_perc_text))
+							.setText(perc + "%" + " - " + totalDownloaded + "/"
+									+ total);
+
+					String downloadedMB = String.valueOf(Map.this.tileWaiter
+							.getBytesDownloaded() / 1024 / 1024);
+
+					if (downloadedMB.length() > 4) {
+						downloadedMB = downloadedMB.substring(0, 4);
+					}
+
+					((TextView) Map.this.downloadTilesLayout
+							.findViewById(R.id.downloaded_mb_text))
+							.setText(Map.this
+									.getText(R.string.download_tiles_09)
+									+ " " + downloadedMB + " MB");
+					
+					((TextView) Map.this.downloadTilesLayout
+							.findViewById(R.id.download_time_text))
+							.setText(Map.this
+									.getText(R.string.download_tiles_10)
+									+ " " + time + " s");
+
+					int estimated = (int) (total * time / totalDownloaded)
+							- time;
+					((TextView) Map.this.downloadTilesLayout
+							.findViewById(R.id.download_time_estimated_text))
+							.setText(Map.this
+									.getText(R.string.download_tiles_11)
+									+ " " + estimated + " s");
+				}
+			});
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+
+	public double getBytesDownloaded() {
+		return tileWaiter.getBytesDownloaded();
+	}
+
+	public IDownloadWaiter getDownloadWaiter() {
+		return tileWaiter.getDownloadWaiter();
+	}
+
+	public long getDownloadedNow() {
+		return tileWaiter.getDownloadedNow();
+	}
+
+	public long getEndDownloadTime() {
+		return tileWaiter.getEndDownloadTime();
+	}
+
+	public Object getHandler() {
+		return tileWaiter.getHandler();
+	}
+
+	public long getInitDownloadTime() {
+		return tileWaiter.getInitDownloadTime();
+	}
+
+	public int getTilesDeleted() {
+		return tileWaiter.getTilesDeleted();
+	}
+
+	public int getTilesDownloaded() {
+		return tileWaiter.getTilesDownloaded();
+	}
+
+	public int getTilesFailed() {
+		return tileWaiter.getTilesFailed();
+	}
+
+	public int getTilesFromFS() {
+		return tileWaiter.getTilesFromFS();
+	}
+
+	public int getTilesNotFound() {
+		return tileWaiter.getTilesNotFound();
+	}
+
+	public int getTilesSkipped() {
+		return tileWaiter.getTilesSkipped();
+	}
+
+	public long getTotalTilesToProcess() {
+		return tileWaiter.getTotalTilesToProcess();
+	}
+
+	public long getTotalTime() {
+		return tileWaiter.getTotalTime();
+	}
+
+	public void onDownloadCanceled() {
+		tileWaiter.onDownloadCanceled();
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Toast.makeText(Map.this, R.string.download_tiles_12,
+						Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	public void onFailDownload(String URL) {
+		tileWaiter.onFailDownload(URL);
+		this.updateDownloadTilesDialog();
+	}
+
+	public void onFatalError(String URL) {
+		tileWaiter.onFatalError(URL);
+	}
+
+	public void onFinishDownload() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Map.this.downloadTilesButton
+						.setText(R.string.alert_dialog_text_ok);
+			}
+		});
+	}
+
+	public void onNewMessage(int ID, String message) {
+		switch (ID) {
+		case IContext.DOWNLOAD_CANCELED:
+			this.onDownloadCanceled();
+			break;
+		case IContext.FINISH_DOWNLOAD:
+			this.onFinishDownload();
+			break;
+		case IContext.START_DOWNLOAD:
+			this.onStartDownload();
+			break;
+		case IContext.TILE_DOWNLOADED:
+			this.onTileDownloaded(message);
+			break;
+		case IContext.TOTAL_TILES_COUNT:
+			this.onTotalNumTilesRetrieved(Integer.valueOf(message));
+			break;
+		}
+	}
+
+	public void onStartDownload() {
+		tileWaiter.onStartDownload();
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Map.this.downloadTilesButton
+						.setText(R.string.alert_dialog_cancel);
+			}
+		});
+	}
+
+	public void onTileDeleted(String URL) {
+		tileWaiter.onTileDeleted(URL);
+	}
+
+	public void onTileDownloaded(String URL) {
+		tileWaiter.onTileDownloaded(URL);
+		this.updateDownloadTilesDialog();
+	}
+
+	public void onTileLoadedFromFileSystem(String URL) {
+		tileWaiter.onTileLoadedFromFileSystem(URL);
+		this.updateDownloadTilesDialog();
+	}
+
+	public void onTileNotFound(String URL) {
+		tileWaiter.onTileNotFound(URL);
+		this.updateDownloadTilesDialog();
+	}
+
+	public void onTileSkipped(String URL) {
+		tileWaiter.onTileSkipped(URL);
+		this.updateDownloadTilesDialog();
+	}
+
+	public void onTotalNumTilesRetrieved(final long totalNumTiles) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Map.this.tileWaiter.onTotalNumTilesRetrieved(totalNumTiles);
+				Map.this.totalTiles.setText(Map.this
+						.getText(R.string.download_tiles_06)
+						+ " " + totalNumTiles);
+				double totalMB = totalNumTiles * 10 / 1024;
+				Map.this.totalMB.setText(Map.this
+						.getText(R.string.download_tiles_07)
+						+ " " + totalMB);
+			}
+		});
+	}
+
+	public void resetCounter() {
+		tileWaiter.resetCounter();
+		this.updateDownloadTilesDialog();
+	}
+
+	public void updateDataTransfer(int size) {
+		tileWaiter.updateDataTransfer(size);
+	}
+
+	private class TileDownloadWaiterDelegate extends TileDownloadWaiter {
+
+		public TileDownloadWaiterDelegate(IDownloadWaiter w) {
+			super(w);
+			// TODO Auto-generated constructor stub
+		}
+
+	}
+
+	public boolean isRendererAllowedToDownloadTiles(MapRenderer renderer) {
+		try {
+			String name = renderer.getNAME();
+			if (name.contains("OPEN STREET MAP") || name.contains("OSMARENDER") /*
+																				 * ||
+																				 * name
+																				 * .
+																				 * contains
+																				 * (
+																				 * "Cloudmade"
+																				 * )
+																				 * ||
+																				 * name
+																				 * .
+																				 * contains
+																				 * (
+																				 * "Cloudmade Fresh"
+																				 * )
+																				 */
+					|| name.contains("CYCLE MAP")) {
+				myDownloadTiles.setEnabled(true);
+				return true;
+			}
+			myDownloadTiles.setEnabled(false);
+			return false;
+		} catch (Exception e) {
+			log.error(e);
+			return false;
+		}
+	}
 }

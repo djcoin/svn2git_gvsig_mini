@@ -94,6 +94,7 @@ import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.LoadCallbackHandler;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
+import es.prodevelop.gvsig.mini.projection.TileConversor;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
@@ -108,6 +109,9 @@ import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystem
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
+import es.prodevelop.tilecache.util.Cancellable;
+import es.prodevelop.tilecache.util.Tags;
+import es.prodevelop.tilecache.util.Utilities;
 
 /**
  * The main view to show tiles. This view is contained in a RelativeLayout in
@@ -126,6 +130,7 @@ import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 public class TileRaster extends View implements GeoUtils, OnClickListener,
 		OnLongClickListener, LayerChangedListener {
 
+	Cancellable cancellable = Utilities.getNewCancellable();
 	AcetateOverlay acetate;
 	boolean panMode = true;
 
@@ -910,7 +915,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					final Bitmap currentMapTile = (Bitmap) this.mTileProvider
 							.getMapTile(temp.mURL, temp.tile,
 									this.mRendererInfo.getNAME(),
-									this.getZoomLevel()).getBitmap();
+									this.getZoomLevel(), cancellable).getBitmap();
 					if (currentMapTile != null) {
 						// bufferCanvas
 						// .drawBitmap(currentMapTile,
@@ -1012,7 +1017,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			final int length = array2.length;
 			Tile t;
 			Tile t1;
-			final Pixel temp = new Pixel((256 / 2), (256 / 2));
+			final Pixel temp = new Pixel((this.getMRendererInfo().getMAPTILE_SIZEPX() / 2), (this.getMRendererInfo().getMAPTILE_SIZEPX()/ 2));
 			for (int pass = 1; pass < length; pass++) {
 				for (int element = 0; element < length - 1; element++) {
 					t = array2[element];
@@ -1183,8 +1188,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		try {
 			log.debug("on layer changed");
 			this.clearCache();
+			
 			MapRenderer previous = this.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(layerName);
+			
+			map.isRendererAllowedToDownloadTiles(renderer);
+			Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
+			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
+			TileConversor.pixelsPerTile = renderer.getMAPTILE_SIZEPX();
 
 			log.debug("from: " + previous.toString());
 			log.debug("to: " + renderer.toString());

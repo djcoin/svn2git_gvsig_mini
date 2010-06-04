@@ -57,13 +57,13 @@ public class AndroidContext implements IContext {
 	}
 
 	@Override
-	public void sendMessage(IHandler handler, String message, int ID) {
+	public synchronized void sendMessage(IHandler handler, String message, int ID) {
 		Handler h = (Handler) handler.getHandler();
 		Message.obtain(h, ID, message).sendToTarget();
 	}
 
 	@Override
-	public void sendMessage(IHandler handler, int ID) {
+	public synchronized void sendMessage(IHandler handler, int ID) {
 		((Handler) handler.getHandler()).sendEmptyMessage(ID);
 	}
 

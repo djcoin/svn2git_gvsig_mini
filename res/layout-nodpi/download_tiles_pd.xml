@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<ProgressBar android:id="@+id/ProgressBar01"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:indeterminateOnly="false"></ProgressBar>
+	<TextView android:text="" android:id="@+id/download_perc_text"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+	<TextView android:text="@string/download_tiles_09" android:id="@+id/downloaded_mb_text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+		android:gravity="left">
+	</TextView>
+	<TextView android:text="@string/download_tiles_10" android:id="@+id/download_time_text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+		android:gravity="left">
+	</TextView>
+	<TextView android:text="@string/download_tiles_11" android:id="@+id/download_time_estimated_text"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+		android:gravity="left">
+	</TextView>
+	<Button android:text="@string/alert_dialog_text_cancel" android:id="@+id/download_tiles_button"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginLeft="20dip" android:layout_marginRight="20dip"
+		android:gravity="center">
+	</Button>
+
+
+</LinearLayout>
