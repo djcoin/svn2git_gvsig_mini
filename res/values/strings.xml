@@ -26,7 +26,9 @@
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="send_log">Send exception log</string>
-    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
+    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>
+    <string name="search_hint">Search places and addresses</string>
+        
     
     <string name="LayersActivity_0">Layers</string>
     <string name="LayersActivity_1">No SD card mounted</string>
@@ -75,7 +77,10 @@
     <string name="Map_28">About</string>
     <string name="Map_29">License</string>
     <string name="Map_30">What is New</string>
-    <string name="Map_31">Touch once to see/hide a zoom scale bar.</string>
+    <string name="Map_31">Settings</string>
+    <string name="Map_32">Keep Screen On</string>
+    <string name="Map_33">Force the screen to be switched on</string>
+    <string name="Map_34">Touch once to see/hide a zoom scale bar.</string>
     <string name="Map_Navigator">Navigator</string>
     
     

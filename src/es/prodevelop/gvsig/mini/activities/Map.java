@@ -66,6 +66,7 @@ import org.anddev.android.weatherforecast.weather.WeatherSet;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -389,6 +390,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			 * a hint about it Toast t = Toast.makeText(this, R.string.Map_23,
 			 * Toast.LENGTH_LONG); t.show(); }
 			 */
+			
+			
+			//Intercept a possible intent with a search executed from the search
+			//dialog, towards the application
+			Intent i = getIntent();
+
+			if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+			      String query = i.getStringExtra(SearchManager.QUERY);
+			      searchInNameFinder(query);			      
+			}
+
 			int hintId = 0;
 			hintId = userContext.getHintMessage();
 			if (hintId != 0) {
@@ -2063,18 +2075,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								int whichButton) {
 							try {
 								Editable value = inputPOI.getText();
-								if (nearopt != 0) {
-									NameFinder.parms = value.toString();
-								} else {
-									double[] center = osmap.getCenterLonLat();
-									NameFinder.parms = value.toString()
-											+ " near "
-
-											+ center[1] + "," + center[0];
-								}
-								NameFinderFunc func = new NameFinderFunc(
-										Map.this, 0);
-								func.onClick(null);
+								//Call to NameFinder with the text
+								searchInNameFinder(value.toString());
 
 							} catch (Exception e) {
 								log.error("clickNameFinder: ", e);
@@ -2116,19 +2118,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								int whichButton) {
 							try {
 								Editable value = input.getText();
-
-								if (nearopt != 0) {
-									NameFinder.parms = value.toString();
-								} else {
-									double[] center = osmap.getCenterLonLat();
-									NameFinder.parms = value.toString()
-											+ " near "
-
-											+ center[1] + "," + center[0];
-								}
-								NameFinderFunc func = new NameFinderFunc(
-										Map.this, 0);
-								func.onClick(null);
+								//Call to NameFinder with the text
+								searchInNameFinder(value.toString());
+								
 							} catch (Exception e) {
 								log.error("clickNameFinderAddress: ", e);
 							}
@@ -2147,6 +2139,34 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		} catch (Exception e) {
 			log.error("", e);
 		}
+	}
+	
+	/* Perform a search for all types of different searches (POI, address, search manager,...)
+	 * using the NameFinder consumer
+	 * It acts as a façade for all searches launched from Map activity to be resolved
+	 * by the NameFinder
+	 * query: text to be sought
+	 */
+	private void searchInNameFinder (String query){
+		try {
+			if (!query.trim().equals("")){
+			
+				if (nearopt != 0) {
+					NameFinder.parms = query;
+				} else {
+					double[] center = osmap.getCenterLonLat();
+					NameFinder.parms = query
+						+ " near "	+ center[1] + "," + center[0];
+				}
+				NameFinderFunc func = new NameFinderFunc(
+						Map.this, 0);
+				func.onClick(null);
+			}
+		} catch (Exception e) {
+			log.error("searchWithNameFinder: ", e);
+		}
+		return;
+		
 	}
 
 	private void instantiateTileDownloaderTask(LinearLayout l, int progress) {
@@ -2770,6 +2790,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 
 			clearContext();
+			//Update context for the Scale bar has been displayed
+			userContext.setLastExecScaleBar();
 
 		} catch (Exception e) {
 			log.error("switchSlideBar: ", e);
@@ -2883,11 +2905,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 
 			try {
-				String mapLayer = i.getStringExtra("layer");
-				log.debug("previous layer: " + mapLayer);
-				if (mapLayer != null) {
-					osmap.onLayerChanged(mapLayer);
-					log.debug("map loaded");
+				setIntent(i);
+				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+				      String query = i.getStringExtra(SearchManager.QUERY);
+				      //Execute the search (common with POI and address as of 0.3.0 version)
+				      searchInNameFinder(query);
+				} else {
+					String mapLayer = i.getStringExtra("layer");
+					log.debug("previous layer: " + mapLayer);
+					if (mapLayer != null) {
+						osmap.onLayerChanged(mapLayer);
+						log.debug("map loaded");
+					}
 				}
 			} catch (Exception e) {
 				log.error("onNewIntent", e);

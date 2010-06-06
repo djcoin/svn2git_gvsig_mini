@@ -14,6 +14,10 @@ e-mail: prode@prodevelop.es
 
 gvSIG Mini has been funded by Prodevelop, S.L., IMPIVA Institute of Regional Government of Valencia and European Union FEDER funds.
 
+-------------------------------------------------------------------------------
+
+Cartography license & attributions
+
 gvSIG Mini displays maps with the following license restrictions or attributions:
 
 - PNOA & Cartociudad images. Author and owner: © Instituto Geográfico Nacional de España-Institut Cartogràfic de Catalunya.
