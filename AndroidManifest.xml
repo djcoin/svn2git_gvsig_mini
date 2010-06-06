@@ -58,6 +58,10 @@
 		</uses-library>
 
 		<activity android:name=".activities.WMSLayersActivity"></activity>
+		<!-- this one declares the searchable Activity for the whole app -->
+    	<meta-data android:name="android.app.default_searchable"
+               android:value=".activities.Map" />
+		
 	</application>
 
 	<instrumentation android:targetPackage="test.mini"
