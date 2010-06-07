@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">gvSIG Mini Maps</string>
-    <string name="app_name_itemizedoverlay">gvSIG Mini 0.2.2</string>
+    <string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0</string>
     
     <string name="warning">Warning</string>
     <string name="error">Error</string>
@@ -26,9 +26,9 @@
     <string name="portrait">Portrait</string>
     <string name="landscape">Landscape</string>
     <string name="send_log">Send exception log</string>
-    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>
+    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
     <string name="search_hint">Search places and addresses</string>
-        
+    <string name="getFeatureInfo">GetFeatureInfo</string>    
     
     <string name="LayersActivity_0">Layers</string>
     <string name="LayersActivity_1">No SD card mounted</string>
@@ -72,8 +72,8 @@
     <string name="Map_23">Touch and hold on the screen to see more actions on a certain location</string>
     <string name="Map_24">No location provider available yet</string>
     <string name="Map_25">Warning: Low memory</string>
-    <string name="Map_26">Disable Location</string>
-    <string name="Map_27">Enable Location</string>
+    <string name="Map_26">GPS location disabled</string>
+    <string name="Map_27">GPS location enabled</string>
     <string name="Map_28">About</string>
     <string name="Map_29">License</string>
     <string name="Map_30">What is New</string>
@@ -97,6 +97,7 @@
     <string name="MapLocation_0">GPS not enabled</string>
     <string name="MapLocation_1">GPS is not enabled. gvSIG Mini needs to receive data from GPS device to properly show your location on the map. Would you like to enable GPS device now?</string>
     <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
+    <string name="MapLocation_3">The data is too large to be displayed</string>
     
     <string name="TweetMyLocationFunc_0">My location</string>
     
@@ -140,4 +141,6 @@
     <string name="download_tiles_12">Tile downloader cancelled</string>
     <string name="download_tiles_13">Press the cancel button to cancel the process</string>
     <string name="download_tiles_14">Download tiles</string>
+    
+        <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
 </resources>

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -68,7 +68,7 @@ import es.prodevelop.gvsig.mini.util.Utils;
 public class DefaultContext implements ItemContext {
 
 	private final static Logger log = LoggerFactory.getLogger(DefaultContext.class);
-	Map map;
+	protected Map map;
 	WeatherFunctionality weatherFunc;
 	HashMap h;
 	Functionality executing;

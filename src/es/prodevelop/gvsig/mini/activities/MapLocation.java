@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -79,7 +79,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
@@ -140,12 +142,12 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			locationHandler = new LocationHandler(
 					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 					this, this);
+			initLocation();
 			locationHandler
 					.setLocationTimer(new LocationTimer(locationHandler));
 			// manager = new GPSManager(getLocationManager(), this, this/*,
 			// true*/);
 			// manager.setGPSTask(new LocationTimer(manager));
-			initLocation();
 			this.initializeSensor(this);
 		} catch (Exception e) {
 			log.error(e);
@@ -158,6 +160,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			log.debug("onPause MapLocation");
 			super.onPause();
 			this.stopSensor(this);
+			disableGPS();
 			// manager.stopLocationProviders();
 		} catch (Exception e) {
 			log.error(e);
@@ -170,6 +173,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			log.debug("on resume MapLocation");
 			super.onResume();
 			this.initializeSensor(this);
+			enableGPS();
 			// manager.startLocationProviders();
 		} catch (Exception e) {
 			log.error(e);
@@ -337,7 +341,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle(id);
 			ListView l = new ListView(this);
-			l.setAdapter(new LongTextAdapter(license));
+			l.setAdapter(new LongTextAdapter(license, false));
 			l.setClickable(false);
 			l.setLongClickable(false);
 			l.setFocusable(false);
@@ -416,6 +420,8 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			log.error(e);
 		}
 	}
+	
+	
 
 	public GPSPoint getLastLocation() {
 		try {
@@ -481,12 +487,14 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		return isLocationHandlerEnabled;
 	}
 
-	private class LongTextAdapter extends BaseAdapter {
+	protected class LongTextAdapter extends BaseAdapter {
 
 		String text = "hola";
+		private boolean editText = false;
 
-		public LongTextAdapter(String longText) {
+		public LongTextAdapter(String longText, boolean editText) {
 			this.text = longText;
+			this.editText = editText;
 		}
 
 		@Override
@@ -509,7 +517,13 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 		@Override
 		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			TextView t = new TextView(MapLocation.this);
+			TextView t;
+			if (editText) {
+				t = new EditText(MapLocation.this);
+			} else {
+				t = new TextView(MapLocation.this);
+			}
+			
 			t.setText(text);
 			return t;
 		}

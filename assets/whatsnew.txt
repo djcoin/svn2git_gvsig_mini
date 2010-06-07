@@ -1,4 +1,34 @@
-gvSIG Mini Copyright v. 0.2.1
+gvSIG Mini Copyright v. 0.2.2
+
+v. 0.2.2
+
+New Features:
+
+* Added WMS contexts with GetFeatureInfo functionality
+
+* Added GetFeatureInfo request for queryable WMS layers 
+
+* Added Polish translation by Grzegorz Myrda
+
+* Updated layers.txt to v0.2.1
+
+--------
+
+Bugs fixed:
+
+* Fixed a bug when switching between item contexts
+	
+* Fixed a bug on WMS layers whose name contains ':'
+	
+* Fixed a bug on WMS requests when symbol '?' is not at last position
+
+* Fixed log level on YOURSFunctionality
+
+* Fixed a bug when instantiating LocationTimer	
+	
+* Fixed resolutions for zoom levels higher than 19
+
+* Fixed cache size when no optimal size can be calculated
 
 v. 0.2.1
 

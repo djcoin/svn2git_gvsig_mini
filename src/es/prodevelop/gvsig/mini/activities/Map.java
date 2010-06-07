@@ -93,6 +93,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -122,9 +123,14 @@ import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.DefaultContext;
+import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
 import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.context.map.RoutePOIContext;
+import es.prodevelop.gvsig.mini.context.map.wms.WMSGPSItemContext;
+import es.prodevelop.gvsig.mini.context.map.wms.WMSPOIContext;
+import es.prodevelop.gvsig.mini.context.map.wms.WMSRouteContext;
+import es.prodevelop.gvsig.mini.context.map.wms.WMSRoutePOIContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.FeatureCollection;
@@ -136,7 +142,6 @@ import es.prodevelop.gvsig.mini.location.MockLocationProvider;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
-import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
@@ -224,6 +229,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public ProgressDialog dialog2 = null;
 	private boolean recenterOnGPS = false;
 	private boolean backpressed = false;
+	public boolean backpressedroulette = false;
 	private AlertDialog alertP;
 	SensorEventListener mTop = null;
 	// private SensorManager mSensorManager;
@@ -254,6 +260,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public static final int POI_CLEARED = 111;
 	public static final int TWEET_ERROR = 112;
 	public static final int SHOW_TOAST = 113;
+	public static final int SHOW_OK_DIALOG = 114;
+	public static final int GETFEATURE_INITED = 115;
 	public static final int POI_CANCELED = 1;
 	public static final int POI_SUCCEEDED = 2;
 	public static final int ROUTE_SUCCEEDED = 3;
@@ -298,7 +306,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void onCreate(Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-			try {
+			try {				
 				log.debug("on create");
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 				wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
@@ -356,7 +364,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			boolean isSaved = false;
 			try {
-				isSaved = savedInstanceState.getBoolean("isSaved", false);
+				if (savedInstanceState != null)
+					isSaved = savedInstanceState.getBoolean("isSaved", false);
 			} catch (Exception e) {
 				log.error("isSaved: ", e);
 			}
@@ -618,6 +627,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	@Override
 	public void onLocationChanged(final Location pLoc) {
 		try {
+			if (pLoc == null) return;
 			log.debug("onLocationChanged (lon, lat): " + pLoc.getLongitude()
 					+ ", " + pLoc.getLatitude());
 			this.mMyLocationOverlay.setLocation(MapLocation
@@ -636,14 +646,25 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			// .getLatitude());
 			if (mMyLocationOverlay.mLocation != null) {
 				connection = true;
-				myNavigator.setEnabled(connection);
+				if (myNavigator != null)
+					myNavigator.setEnabled(connection);
 			}
 
 		} catch (Exception e) {
 			log.error("onLocationChanged: ", e);
 		} finally {
-			if (osmap != null)
-				osmap.postInvalidate();
+			
+		}
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu (final Menu menu) {
+		try {
+			this.isRendererAllowedToDownloadTiles(osmap.getMRendererInfo()); 
+			return super.onPrepareOptionsMenu(menu);
+		} catch (Exception e) {
+			log.error(e);
+			return false;
 		}
 	}
 
@@ -656,8 +677,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			myLocationButton = pMenu.add(0, 2, 2, R.string.Map_4).setIcon(
 					R.drawable.menu_location);
 			pMenu.add(0, 3, 3, R.string.Map_5).setIcon(R.drawable.menu02);
-			myDownloadTiles = pMenu.add(0, 4, 4, R.string.download_tiles_14).setIcon(
-					R.drawable.layerdonwload);
+			myDownloadTiles = pMenu.add(0, 4, 4, R.string.download_tiles_14)
+					.setIcon(R.drawable.layerdonwload);
 			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
 			// R.drawable.mv_rectangle);
 			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
@@ -666,7 +687,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					.setIcon(R.drawable.menu_download);
 			myNavigator = pMenu.add(0, 6, 6, R.string.Map_Navigator).setIcon(
 					R.drawable.menu_navigation).setEnabled(connection);
-			myGPSButton = pMenu.add(0, 7, 7, R.string.Map_26).setIcon(
+			myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
 					R.drawable.menu_location).setCheckable(true).setChecked(
 					true);
 			myWhats = pMenu.add(0, 8, 8, R.string.Map_30).setIcon(
@@ -689,7 +710,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			switch (item.getItemId()) {
 			case 0:
 				try {
-					Map.this.showAddressDialog();
+					Map.this.showSearchDialog();
 				} catch (Exception e) {
 					log.error("showAddressDialog: ", e);
 				}
@@ -816,7 +837,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				viewLayers();
 				break;
 			case 4:
-				Map.this.showDownloadTilesDialog();
+				if (Utils.isSDMounted())
+					Map.this.showDownloadTilesDialog();
+				else
+					Toast.makeText(this, R.string.LayersActivity_1, Toast.LENGTH_LONG).show();
 				// try {
 				// log.debug("switch pan mode");
 				// osmap.switchPanMode();
@@ -1113,8 +1137,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					temp = l.get(i);
 					adapter.addItem(new BulletedText(new StringBuffer().append(
 							temp.getDayofWeek()).append(" - ").append(
-							temp.getTempMinCelsius()).append(" ï¿½C").append("/")
-							.append(temp.getTempMaxCelsius()).append(" ï¿½C")
+							temp.getTempMinCelsius()).append(" C").append("/")
+							.append(temp.getTempMaxCelsius()).append(" C")
 							.append("\n").append(temp.getCondition())
 							.toString(), BulletedText.getRemoteImage(new URL(
 							"http://www.google.com" + temp.getIconURL())))
@@ -1835,6 +1859,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					Toast t = Toast.makeText(Map.this, msg.obj.toString(),
 							Toast.LENGTH_LONG);
 					t.show();
+					if (dialog2 != null)
+						dialog2.dismiss();
+					break;
+				case Map.SHOW_OK_DIALOG:
+					log.debug("SHOW_OK_DIALOG");
+					if (dialog2 != null)
+						dialog2.dismiss();
+					Map.this.showOKDialog(msg.obj.toString(),
+							R.string.getFeatureInfo);
 					break;
 				case Map.POI_LIST:
 					log.debug("POI_LIST");
@@ -1870,6 +1903,28 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						}
 					});
 					break;
+				case Map.GETFEATURE_INITED:
+					log.debug("GETFEATURE_INITED");
+					dialog2 = ProgressDialog.show(Map.this, Map.this
+							.getResources().getString(R.string.please_wait),
+							"GetFeatureInfo...", true);
+					dialog2.setCancelable(true);
+					dialog2.setCanceledOnTouchOutside(true);
+					dialog2.setIcon(R.drawable.infobutton);
+					dialog2.setOnCancelListener(new OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog2) {
+							try {
+								log.debug("getFeature canceled");
+								Map.this.getItemContext().cancelCurrentTask();
+								dialog2.dismiss();
+							} catch (Exception e) {
+								log.error("onCancelDialog: ", e);
+							}
+						}
+					});
+					break;
+
 				case Map.WEATHER_CANCELED:
 					log.debug("WEATHER_CANCELED");
 					Toast
@@ -2030,11 +2085,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					break;
 				case Map.SHOW_POI_DIALOG:
 					log.debug("SHOW_POI_DIALOG");
-					Map.this.showPOIDialog();
+					Map.this.showSearchDialog();
 					break;
 				case Map.SHOW_ADDRESS_DIALOG:
 					log.debug("SHOW_ADDRESS_DIALOG");
-					Map.this.showAddressDialog();
+					Map.this.showSearchDialog();
 					break;
 				}
 			} catch (Exception e) {
@@ -2057,6 +2112,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 	/**
 	 * Shows an AlertDialog to the user to input the query string for NameFinder
+	 * @deprecated
 	 */
 	public void showPOIDialog() {
 		try {
@@ -2103,40 +2159,42 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 * Show an AlertDialog to the user to input the query string for NameFinder
 	 * addresses
 	 */
-	public void showAddressDialog() {
+	public void showSearchDialog() {
 		try {
-			log.debug("show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_3);
-			final EditText input = new EditText(this);
-			alert.setView(input);
-
-			alert.setPositiveButton(R.string.alert_dialog_text_search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = input.getText();
-								//Call to NameFinder with the text
-								searchInNameFinder(value.toString());
-								
-							} catch (Exception e) {
-								log.error("clickNameFinderAddress: ", e);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
+			this.onSearchRequested();
+//			log.debug("show address dialog");
+//			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//
+//			alert.setIcon(R.drawable.menu00);
+//			alert.setTitle(R.string.Map_3);
+//			final EditText input = new EditText(this);
+//			alert.setView(input);
+//
+//			alert.setPositiveButton(R.string.alert_dialog_text_search,
+//					new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog,
+//								int whichButton) {
+//							try {
+//								Editable value = input.getText();
+//								//Call to NameFinder with the text
+//								searchInNameFinder(value.toString());
+//								
+//							} catch (Exception e) {
+//								log.error("clickNameFinderAddress: ", e);
+//							}
+//							return;
+//						}
+//					});
+//
+//			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
+//					new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog,
+//								int whichButton) {
+//						}
+//					});
+//
+//			alert.show();			
+			
 		} catch (Exception e) {
 			log.error("", e);
 		}
@@ -2144,7 +2202,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	
 	/* Perform a search for all types of different searches (POI, address, search manager,...)
 	 * using the NameFinder consumer
-	 * It acts as a façade for all searches launched from Map activity to be resolved
+	 * It acts as a faï¿½ade for all searches launched from Map activity to be resolved
 	 * by the NameFinder
 	 * query: text to be sought
 	 */
@@ -2495,6 +2553,67 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
+	private ItemContext updateContextWMS(ItemContext context) {
+		try {
+			if (this.osmap.getMRendererInfo().getType() != MapRenderer.WMS_RENDERER) {
+				if (context instanceof WMSRoutePOIContext)
+					context = new RoutePOIContext(this);
+				else if (context instanceof WMSRouteContext)
+					context = new RouteContext(this);
+				else if (context instanceof WMSPOIContext) {
+					if (route != null
+							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+						context = new RoutePOIContext(this);
+					} else {
+						context = new POIContext(this);
+					}
+				}
+
+				else if (context instanceof WMSGPSItemContext)
+					if (route != null
+							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+						context = new RouteContext(this);
+					} else {
+						context = new DefaultContext(this);
+					}
+				else if (context instanceof POIContext)
+					if (route != null
+							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+						context = new RoutePOIContext(this);
+					}
+
+				this.setContext(context);
+				return context;
+			}
+
+			if (context instanceof RoutePOIContext)
+				context = new WMSRoutePOIContext(this);
+			else if (context instanceof RouteContext)
+				context = new WMSRouteContext(this);
+			else if (context instanceof POIContext)
+				if (route != null
+						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+					context = new WMSRoutePOIContext(this);
+				} else {
+					context = new WMSPOIContext(this);
+				}
+			else if (context instanceof DefaultContext
+					|| context instanceof GPSItemContext)
+				if (route != null
+						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+					context = new WMSRouteContext(this);
+				} else {
+					context = new WMSGPSItemContext(this);
+				}
+
+			this.setContext(context);
+			return context;
+		} catch (Exception e) {
+			log.error(e);
+			return null;
+		}
+	}
+
 	/**
 	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
 	 * 
@@ -2505,6 +2624,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void showContext(ItemContext context) {
 		try {
 			log.debug("show context");
+
+			context = updateContextWMS(context);
+			if (context == null)
+				return;
+
 			LayoutInflater factory = LayoutInflater.from(this);
 			final int[] viewsID = context.getViewsId();
 			final int size = viewsID.length;
@@ -2546,7 +2670,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			// shown once at least
 			userContext.setUsedCircleMenu(true);
 			userContext.setLastExecCircle();
-
+			backpressedroulette = true;
 		} catch (Exception e) {
 			log.error("showContext: ", e);
 		}
@@ -2769,6 +2893,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				}
 				break;
 			}
+			updateContextWMS(this.context);
 		} catch (Exception e) {
 			log.error("updateContext: ", e);
 		}
@@ -2829,15 +2954,22 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
 				log.debug("KEY BACK pressed");
-				backpressed = true;
-				this.onDestroy();
-				finish();
-				// TODO: Hacer esto bien, liberando recursos y cerrando la
-				// aplicaciï¿½n
-				android.os.Process.killProcess(android.os.Process.myPid());
-				// return false;
-			}
-			return super.onKeyDown(keyCode, event);
+				if (!backpressedroulette) {
+					backpressed = true;
+					this.onDestroy();
+					finish();
+					// TODO: Hacer esto bien, liberando recursos y cerrando la
+					// aplicaciï¿½n
+					android.os.Process.killProcess(android.os.Process.myPid());
+					// return false;
+					super.onKeyDown(keyCode, event);
+				} else {
+					clearContext();
+					backpressedroulette = false;
+					return true;
+				}
+			} 
+			return super.onKeyDown(keyCode, event);			
 		} catch (Exception e) {
 			log.error("onKeyDown: ", e);
 			return false;
@@ -2896,7 +3028,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			log.debug("onPause");
 			super.onPause();
-			if (wl != null)
+			if (wl != null && wl.isHeld())
 				wl.release();
 
 		} catch (Exception e)
@@ -2989,7 +3121,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			this.myLocationButton.setEnabled(enabled);
 			this.myNavigator.setEnabled(enabled);
-			this.myGPSButton.setTitle(R.string.Map_26);
+			this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.error(e);
 		}
@@ -3005,12 +3137,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			this.myLocationButton.setEnabled(enabled);
 			this.myNavigator.setEnabled(enabled);
-			this.myGPSButton.setTitle(R.string.Map_27);
+			this.myGPSButton.setTitle(R.string.Map_26);
 		} catch (Exception e) {
 			log.error(e);
 		}
 	}
-	
+
 	private int previousTime = 0;
 
 	private synchronized void updateDownloadTilesDialog() {
@@ -3019,14 +3151,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				public void run() {
 					int time = (int) ((System.currentTimeMillis() - tileWaiter
 							.getInitDownloadTime()) / 1000);
-					
-					if (time - previousTime < 1 ) {						
+
+					if (time - previousTime < 1 && !isDownloadTilesFinished) {
 						return;
 					}
-					
+
 					if (tileWaiter.getInitDownloadTime() > 0)
 						previousTime = time;
-					
+
 					Map.this.downloadTilesPB.setMax((int) tileWaiter
 							.getTotalTilesToProcess());
 					Map.this.downloadTilesPB.setProgress((int) tileWaiter
@@ -3052,7 +3184,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							.setText(Map.this
 									.getText(R.string.download_tiles_09)
 									+ " " + downloadedMB + " MB");
-					
+
 					((TextView) Map.this.downloadTilesLayout
 							.findViewById(R.id.download_time_text))
 							.setText(Map.this
@@ -3146,11 +3278,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 	public void onFatalError(String URL) {
 		tileWaiter.onFatalError(URL);
+		this.updateDownloadTilesDialog();
 	}
 
 	public void onFinishDownload() {
 		runOnUiThread(new Runnable() {
 			public void run() {
+				isDownloadTilesFinished = true;
 				Map.this.downloadTilesButton
 						.setText(R.string.alert_dialog_text_ok);
 			}
@@ -3176,8 +3310,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			break;
 		}
 	}
+	
+	private boolean isDownloadTilesFinished = false;
 
 	public void onStartDownload() {
+		isDownloadTilesFinished = false;
+		this.previousTime = 0;
 		tileWaiter.onStartDownload();
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -3272,6 +3410,76 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		} catch (Exception e) {
 			log.error(e);
 			return false;
+		}
+	}
+	
+	public void showToast(int resId) {
+		try {
+			Message m = new Message();
+			m.what = Map.SHOW_TOAST;
+			m.obj = this.getText(resId);
+			this.getMapHandler().sendMessage(m);
+		} catch (Exception e) {
+			log.error(e);
+		}
+	}
+	
+	public void showOKDialog(String textBody, int title) {
+		try {
+			log.debug("show ok dialog");
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			
+			if (textBody.contains("<html")) {
+				try {
+					WebView wv = new WebView(this); 
+					String html = textBody.substring(textBody.indexOf("<html"), textBody.indexOf("html>") + 5 ); 
+
+					wv.loadData(html, "text/html", "UTF-8");
+					alert.setView(wv);
+				} catch (Exception e) {
+					log.error(e);
+					ListView l = new ListView(this);
+					l.setAdapter(new LongTextAdapter(textBody, true));
+					l.setClickable(false);
+					l.setLongClickable(false);
+					l.setFocusable(false);
+					alert.setView(l);
+				} catch (OutOfMemoryError oe) {
+					onLowMemory();
+					log.error(oe);		
+					showToast(R.string.MapLocation_3);
+				}
+				
+			} else {
+				ListView l = new ListView(this);
+				l.setAdapter(new LongTextAdapter(textBody, true));
+				l.setClickable(false);
+				l.setLongClickable(false);
+				l.setFocusable(false);
+				alert.setView(l);
+			}
+
+			alert.setTitle(title);			
+
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								
+							} catch (Exception e) {
+								log.error(e);
+							}
+						}
+					});			
+
+			alert.show();
+		} catch (Exception e) {
+			log.error(e);
+		} catch (OutOfMemoryError oe) {
+			onLowMemory();
+			log.error(oe);
+			showToast(R.string.MapLocation_3);
 		}
 	}
 }

@@ -104,8 +104,8 @@
 <!-- Missing prefs -->
 <string name="Map_24">Nessun location provider disponibile</string>
 <string name="Map_25">Attenzione: Memoria disponibile scarsa</string>
-<string name="Map_26">Disattivare Posizione</string>
-<string name="Map_27">Attivare Posizione</string>
+<string name="Map_26">GPS scollegato</string>
+<string name="Map_27">GPS attivato</string>
 <string name="fatal_error">Si è verificato un errore. Vuoi inviare il file di log agli sviluppatori per soluzionare il problema?</string>
 <string name="not_ask">Non chiedere di nuovo</string>
 <string name="portrait">Portrait</string>

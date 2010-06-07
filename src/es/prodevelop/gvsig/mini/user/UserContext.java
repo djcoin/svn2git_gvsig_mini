@@ -160,7 +160,7 @@ public class UserContext implements UserContextable{
 		} else if (!this.usedScaleBar) {
 			// The Zoom Scale Bar has never been displayed,
 			// so let's give the user a hint about it
-			return R.string.Map_31;
+			return R.string.Map_34;
 		} else {
 			return 0;
 		}

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -81,25 +81,34 @@ public class LocationHandler {
 
 	public synchronized void start() {
 		// initialize state of location providers and launch location listeners
-		if (!networkLocationActivated
-				&& mLocationManager
-						.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-			log.debug("Request updates for network provider");
-			networkLocationActivated = true;
-			mNetworkLocationListener = new LocationListenerAdaptor();
-			mLocationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, 0, 0,
-					this.mNetworkLocationListener);
+		try {
+			if (!networkLocationActivated
+					&& mLocationManager
+							.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				log.debug("Request updates for network provider");
+				networkLocationActivated = true;
+				mNetworkLocationListener = new LocationListenerAdaptor();
+				mLocationManager.requestLocationUpdates(
+						LocationManager.NETWORK_PROVIDER, 0, 0,
+						this.mNetworkLocationListener);
+			}
+		} catch (Exception e) {
+			log.error(e);
 		}
-		if (!gpsLocationActivated
-				&& mLocationManager
-						.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			log.debug("Request updates for gps provider");
-			gpsLocationActivated = true;
-			mGpsLocationListener = new LocationListenerAdaptor();
-			mLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, 0, 0,
-					this.mGpsLocationListener);
+		
+		try {
+			if (!gpsLocationActivated
+					&& mLocationManager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				log.debug("Request updates for gps provider");
+				gpsLocationActivated = true;
+				mGpsLocationListener = new LocationListenerAdaptor();
+				mLocationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, 0, 0,
+						this.mGpsLocationListener);
+			}
+		} catch (Exception e) {
+			log.error(e);
 		}
 		// get the best location using bestProvider()
 		try {
@@ -253,19 +262,29 @@ public class LocationHandler {
 
 	private class LocationListenerAdaptor implements LocationListener {
 		public void onLocationChanged(final Location loc) {
-			if (isBestProvider(loc)) {
-				log.debug("location changed");
-				mLocationReceiver.onLocationChanged(loc);
-				lastLocation = loc.getProvider();
-			}
+			try {
+				if (isBestProvider(loc)) {
+					log.debug("location changed");
+					if (mLocationReceiver != null) {
+						mLocationReceiver.onLocationChanged(loc);
+					}	
+					lastLocation = loc.getProvider();
+				}
+			} catch (Exception e) {
+				log.error(e);
+			}			
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// LocationHandler.this.mNumSatellites = extras.getInt(
 			// "satellites", NOT_SET); // TODO Check on an actual device
-			if (provider.equals(bestProvider())) {
-				mLocationReceiver.onStatusChanged(provider, status, extras);
-			}
+			try {
+				if (provider.equals(bestProvider())) {
+					mLocationReceiver.onStatusChanged(provider, status, extras);
+				}
+			} catch (Exception e) {
+				log.error(e);
+			}	
 		}
 
 		public void onProviderEnabled(String a) { /* ignore */

@@ -1190,9 +1190,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.clearCache();
 			
 			MapRenderer previous = this.getMRendererInfo();
-			MapRenderer renderer = Layers.getInstance().getRenderer(layerName);
+			MapRenderer renderer = Layers.getInstance().getRenderer(layerName);			
 			
-			map.isRendererAllowedToDownloadTiles(renderer);
 			Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			TileConversor.pixelsPerTile = renderer.getMAPTILE_SIZEPX();

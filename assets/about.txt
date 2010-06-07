@@ -1,4 +1,4 @@
-gvSIG Mini Copyright v. 0.2.1
+gvSIG Mini Copyright v. 0.2.2
 7th-apr-2010
 
 gvSIG Mini is a free viewer of free-access maps for Java and Android cellular phones.
@@ -20,9 +20,9 @@ Cartography license & attributions
 
 gvSIG Mini displays maps with the following license restrictions or attributions:
 
-- PNOA & Cartociudad images. Author and owner: © Instituto Geográfico Nacional de España-Institut Cartogràfic de Catalunya.
+- PNOA & Cartociudad images. Author and owner: ï¿½ Instituto Geogrï¿½fico Nacional de Espaï¿½a-Institut Cartogrï¿½fic de Catalunya.
 
-- Ordnance Survey (UK). Contains Ordnance Survey data © Crown copyright and database right 2010
+- Ordnance Survey (UK). Contains Ordnance Survey data ï¿½ Crown copyright and database right 2010
 
 gvSIG Mini for Android uses these icons with license restrictions or attributions:
 

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -165,7 +165,6 @@ public class AcetateOverlay extends MapOverlay {
 			case MotionEvent.ACTION_DOWN:
 				if (t.panMode) {
 					t.mTouchDownX = (int) event.getX();
-					t.mTouchDownY = (int) event.getY();
 					t.mTouchDownY = (int) event.getY();
 				} else {
 					this.mTouchDownX = (int) event.getX();

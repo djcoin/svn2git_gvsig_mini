@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -61,9 +61,13 @@ public class LocationTimer extends TimerTask {
 	Timer timer;
 
 	public LocationTimer(LocationHandler locationHandler) {
-		logger.setLevel(Utils.LOG_LEVEL);
-		logger.setClientID(this.toString());
-		map = (Map) locationHandler.mContext;
+		try {
+			logger.setLevel(Utils.LOG_LEVEL);
+			logger.setClientID(this.toString());
+			map = (Map) locationHandler.mContext;
+		} catch (Exception e) {
+			logger.error(e);
+		}
 	}
 
 	@Override
