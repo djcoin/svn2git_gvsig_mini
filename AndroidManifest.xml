@@ -58,6 +58,11 @@
 		</uses-library>
 
 		<activity android:name=".activities.WMSLayersActivity"></activity>
+
+        <!-- Provides search suggestions for previous queries -->
+        <provider android:name=".search.SearchSuggestionsMiniProvider"
+                  android:authorities=".search.SearchSuggestionsMiniProvider" />		
+		
 		<!-- this one declares the searchable Activity for the whole app -->
     	<meta-data android:name="android.app.default_searchable"
                android:value=".activities.Map" />

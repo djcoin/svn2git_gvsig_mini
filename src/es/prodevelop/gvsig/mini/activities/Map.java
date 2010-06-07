@@ -139,6 +139,7 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
+import es.prodevelop.gvsig.mini.search.PlaceSearcher;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
@@ -2150,8 +2151,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	private void searchInNameFinder (String query){
 		try {
 			if (!query.trim().equals("")){
-			
+				PlaceSearcher search;
+
 				if (nearopt != 0) {
+					search = new PlaceSearcher(this, query);
+				} else {
+					double[] center = osmap.getCenterLonLat();
+					search = new PlaceSearcher(this, query, center[0], center[1]);
+				}
+/*				if (nearopt != 0) {
 					NameFinder.parms = query;
 				} else {
 					double[] center = osmap.getCenterLonLat();
@@ -2161,6 +2169,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				NameFinderFunc func = new NameFinderFunc(
 						Map.this, 0);
 				func.onClick(null);
+*/
 			}
 		} catch (Exception e) {
 			log.error("searchWithNameFinder: ", e);
