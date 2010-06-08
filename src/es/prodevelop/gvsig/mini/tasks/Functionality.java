@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,8 +40,11 @@
 
 package es.prodevelop.gvsig.mini.tasks;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
@@ -54,7 +57,7 @@ import es.prodevelop.gvsig.mini.utiles.WorkQueue;
  */
 public abstract class Functionality extends Task {
 	
-	private final static Logger log = LoggerFactory.getLogger(Functionality.class);
+	private final static Logger log = Logger.getLogger(Functionality.class.getName());
 	private Map map;
 	private int id;
 	
@@ -76,7 +79,7 @@ public abstract class Functionality extends Task {
 			execute();
 			super.stop();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			
 		}

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -46,9 +46,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
@@ -78,7 +78,7 @@ public class MapState {
 	private static final String X = "x";
 	private static final String Y = "y";
 	private static final String GVTILES = "gvtiles";	
-	private final static Logger log = LoggerFactory.getLogger(MapState.class);
+	private final static Logger log = Logger.getLogger(MapState.class.getName());
 	
 	/**
 	 * The constructor
@@ -86,15 +86,15 @@ public class MapState {
 	 */
 	public MapState(Map map) {	
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 			this.map = map;
 			String SDDIR = Environment.getExternalStorageDirectory().getPath();
 			String appDir = Utils.APP_DIR;
 			String configDir = Utils.CONFIG_DIR;
 			dirPath = SDDIR + File.separator + appDir + File.separator + configDir + File.separator;			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 	}
 	
@@ -105,7 +105,7 @@ public class MapState {
 		try {
 			if (map != null) {				
 				File f = new File(dirPath + fileName);
-				log.debug("Persist map state to: " + f.getAbsolutePath());
+				log.log(Level.FINE, "Persist map state to: " + f.getAbsolutePath());
 				if (!f.exists()) {
 					File dirFile = new File(dirPath);
 					if (dirFile.mkdirs())
@@ -128,10 +128,10 @@ public class MapState {
 				out.write(GVTILES +"=" +gvTilesPath);
 				
 				out.close();	
-				log.debug("Map state sucessfully persisted");
+				log.log(Level.FINE, "Map state sucessfully persisted");
 			}			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
@@ -145,12 +145,12 @@ public class MapState {
 		try {
 			File f = new File(dirPath + fileName);
 			if (f != null && f.exists()) {
-				log.debug("load map state: " + f.getAbsolutePath());
+				log.log(Level.FINE, "load map state: " + f.getAbsolutePath());
 				configReader = new FileReader(f);
 				reader = new BufferedReader(configReader);	
 				
 			} else {
-				log.debug("Map state not exists in disk");
+				log.log(Level.FINE, "Map state not exists in disk");
 				return false;				
 			}
 			
@@ -160,7 +160,7 @@ public class MapState {
 			while ((line = reader.readLine()) != null) {
 				part = line.split("=");
 				properties.put(part[0], part[1]);
-				log.debug(part[1]);
+				log.log(Level.FINE, part[1]);
 			}
 			
 			double x = 0.0;
@@ -178,7 +178,7 @@ public class MapState {
 			String gvTilesPath = properties.get(GVTILES).toString();			
 				
 			if (gvTilesPath.compareTo("") != 0 && gvTilesPath.compareToIgnoreCase("null") != 0) {
-				log.debug("gvtilesPath: " + gvTilesPath);
+				log.log(Level.FINE, "gvtilesPath: " + gvTilesPath);
 				this.gvTilesPath = (gvTilesPath);
 				Layers.getInstance().loadProperties(this.gvTilesPath);
 			}
@@ -188,7 +188,7 @@ public class MapState {
 			
 			return true;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return false;
 		}
 	}

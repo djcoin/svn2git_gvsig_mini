@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -41,14 +41,12 @@
 package es.prodevelop.gvsig.mini.context.map;
 
 import java.util.HashMap;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.yours.DeleteRouteFunctionality;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * ItemContext when RouteOverlay is visible, that means a route has been calculated.
@@ -59,25 +57,25 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class RouteContext extends DefaultContext {
 	
-	private final static Logger log = LoggerFactory.getLogger(RouteContext.class);
+	private final static Logger log = Logger.getLogger(RouteContext.class.getName());
 
 	public RouteContext() {
 		super();
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.log(Level.SEVERE,e.getMessage());
 		}
 	}
 
 	public RouteContext(Map map) {
 		super(map);
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -89,7 +87,7 @@ public class RouteContext extends DefaultContext {
 					R.layout.route_clean_image_button);
 			h.put(dr.getID(), dr);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return h;
 	}
@@ -102,7 +100,7 @@ public class RouteContext extends DefaultContext {
 					R.layout.route_start_image_button,
 					R.layout.route_clean_image_button, R.layout.poi_image_button,R.layout.streetview_image_button };
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}		
 	}

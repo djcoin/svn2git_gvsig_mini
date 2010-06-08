@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -50,52 +50,59 @@
 
 package es.prodevelop.gvsig.mini.app;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
-
-import net.sf.microlog.android.appender.SDCardAppender;
-import net.sf.microlog.core.Level;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import net.sf.microlog.core.appender.ConsoleAppender;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.settings.LogHandler;
 import es.prodevelop.gvsig.mini.util.Utils;
-import android.app.Activity;
-import android.os.Handler;
 
 /**
  * gvSIG Mini splash. Waits SPLASH_DISPLAY_LENGHT to start the Map Activity
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class SplashActivity extends Activity {
 
 	private final int SPLASH_DISPLAY_LENGHT = 500;
-	private final static Logger log = LoggerFactory.getLogger(SplashActivity.class);
+	private final static Logger logger = Logger.getLogger(SplashActivity.class
+			.getName());
+	
 
 	/** Splash Screen gvSIG. */
 	@Override
 	public void onCreate(Bundle icicle) {
-		try {			
+		try {
 			super.onCreate(icicle);
 			setContentView(R.layout.main);
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						Intent mainIntent = new Intent(SplashActivity.this, Map.class);
+						LogHandler.getInstance().configureLog();
+						Intent mainIntent = new Intent(SplashActivity.this,
+								Map.class);
 						SplashActivity.this.startActivity(mainIntent);
 						SplashActivity.this.finish();
 					} catch (Exception e) {
-						log.error(e);
-					}					
+						logger.log(Level.SEVERE, "", e);
+					}
 				}
 			}, SPLASH_DISPLAY_LENGHT);
 		} catch (Exception e) {
-			log.error(e);
+			logger.log(Level.SEVERE, "", e);
 		}
 	}
 

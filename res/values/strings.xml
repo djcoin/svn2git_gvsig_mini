@@ -28,7 +28,8 @@
     <string name="send_log">Send exception log</string>
     <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
     <string name="search_hint">Search places and addresses</string>
-    <string name="getFeatureInfo">GetFeatureInfo</string>    
+    <string name="getFeatureInfo">GetFeatureInfo</string>   
+    <string name="stop">stop</string> 
     
     <string name="LayersActivity_0">Layers</string>
     <string name="LayersActivity_1">No SD card mounted</string>
@@ -141,6 +142,7 @@
     <string name="download_tiles_12">Tile downloader cancelled</string>
     <string name="download_tiles_13">Press the cancel button to cancel the process</string>
     <string name="download_tiles_14">Download tiles</string>
+    <string name="download_tiles_15">Move the slide bar to select the max zoom level to download tiles. The process will download the tiles that fill the screen from the current zoom level of the view to the zoom level selected with the slide bar.</string>
     
         <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
 </resources>

@@ -40,8 +40,11 @@
 
 package es.prodevelop.gvsig.mini.location;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -50,7 +53,7 @@ import android.os.Bundle;
 
 public class LocationHandler {
 
-	private Logger log = LoggerFactory.getLogger(LocationHandler.class);
+	private Logger log = Logger.getLogger(LocationHandler.class.getName());
 	protected LocationListenerAdaptor mGpsLocationListener;
 	protected LocationListenerAdaptor mNetworkLocationListener;
 
@@ -85,7 +88,7 @@ public class LocationHandler {
 			if (!networkLocationActivated
 					&& mLocationManager
 							.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-				log.debug("Request updates for network provider");
+				log.log(Level.FINE, "Request updates for network provider");
 				networkLocationActivated = true;
 				mNetworkLocationListener = new LocationListenerAdaptor();
 				mLocationManager.requestLocationUpdates(
@@ -93,14 +96,14 @@ public class LocationHandler {
 						this.mNetworkLocationListener);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		
 		try {
 			if (!gpsLocationActivated
 					&& mLocationManager
 							.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-				log.debug("Request updates for gps provider");
+				log.log(Level.FINE, "Request updates for gps provider");
 				gpsLocationActivated = true;
 				mGpsLocationListener = new LocationListenerAdaptor();
 				mLocationManager.requestLocationUpdates(
@@ -108,7 +111,7 @@ public class LocationHandler {
 						this.mGpsLocationListener);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		// get the best location using bestProvider()
 		try {
@@ -164,7 +167,7 @@ public class LocationHandler {
 
 	public synchronized void stop() {
 		// Log.v(OpenSatNavConstants.LOG_TAG, "LocationHandler Stop");
-		log.debug("LocationHandler stop");
+		log.log(Level.FINE, "LocationHandler stop");
 		try {
 			mLocationManager.removeUpdates(mGpsLocationListener);
 			gpsLocationActivated = false;
@@ -264,14 +267,14 @@ public class LocationHandler {
 		public void onLocationChanged(final Location loc) {
 			try {
 				if (isBestProvider(loc)) {
-					log.debug("location changed");
+					log.log(Level.FINE, "location changed");
 					if (mLocationReceiver != null) {
 						mLocationReceiver.onLocationChanged(loc);
 					}	
 					lastLocation = loc.getProvider();
 				}
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}			
 		}
 
@@ -283,7 +286,7 @@ public class LocationHandler {
 					mLocationReceiver.onStatusChanged(provider, status, extras);
 				}
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}	
 		}
 

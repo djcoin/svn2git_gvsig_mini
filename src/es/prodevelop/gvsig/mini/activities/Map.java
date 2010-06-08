@@ -56,9 +56,8 @@ package es.prodevelop.gvsig.mini.activities;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
@@ -291,7 +290,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	boolean mUpdatingAnimation;
 	PowerManager.WakeLock wl;
 	private MapHandler handler = new MapHandler();
-	private final static Logger log = LoggerFactory.getLogger(Map.class);
+	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
 	private UserContext userContext;
@@ -307,7 +306,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			super.onCreate(savedInstanceState);
 			try {				
-				log.debug("on create");
+				log.log(Level.FINE, "on create");
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 				wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 						"Prueba de ScreenPower");
@@ -320,7 +319,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				// log.addAppender(appender);
 				// log.addAppender(new ConsoleAppender());
 				// log.setLevel(Utils.LOG_LEVEL);
-				// log.error("Testing to log error message with Microlog.");
+				// log.log(Level.SEVERE,"Testing to log error message with Microlog.");
 				MapRendererManager.getInstance().registerMapRendererFactory(
 						new WMSMapRendererFactory());
 				onNewIntent(getIntent());
@@ -332,13 +331,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				Layers.getInstance().initialize(true);
 
 			} catch (Exception e) {
-				log.error("onCreate", e);
-				// log.error(e.getMessage());
+				log.log(Level.SEVERE,"onCreate", e);
+				// log.log(Level.SEVERE,e.getMessage());
 			} finally {
 				Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
-						.getAbsolutePath();
-				log.setLevel(Utils.LOG_LEVEL);
-				log.setClientID(this.toString());
+						.getAbsolutePath();				
 			}
 
 			mapState = new MapState(this);
@@ -367,22 +364,22 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				if (savedInstanceState != null)
 					isSaved = savedInstanceState.getBoolean("isSaved", false);
 			} catch (Exception e) {
-				log.error("isSaved: ", e);
+				log.log(Level.SEVERE,"isSaved: ", e);
 			}
 
 			if (isSaved) {
-				log.debug("Restoring from previous state");
+				log.log(Level.FINE, "Restoring from previous state");
 				loadRoute(savedInstanceState);
 				loadPois(savedInstanceState);
 				loadUI(savedInstanceState);
 				loadMap(savedInstanceState);
 				loadCenter(savedInstanceState);
 			} else {
-				log.debug("Not restoring from previous state");
+				log.log(Level.FINE, "Not restoring from previous state");
 				loadUI(savedInstanceState);
 				boolean succeed = mapState.load();
 				if (!succeed) {
-					log.debug("map state was not persisted. Loading Mapnik");
+					log.log(Level.FINE, "map state was not persisted. Loading Mapnik");
 					this.osmap.setZoomLevel(3);
 					this.osmap.setMapCenter(0, 0);
 					this.osmap.setRenderer(OSMMercatorRenderer
@@ -419,7 +416,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 			Utils.showSendLogDialog(this, R.string.fatal_error);
 		} finally {
 			// this.obtainCellLocation();
@@ -440,12 +437,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public boolean showPOIs(String[] descr, NamedMultiPoint nm) {
 		try {
 			if (descr == null) {
-				log.debug("show pois with descr null, returning...");
+				log.log(Level.FINE, "show pois with descr null, returning...");
 				return false;
 			}
 
 			if (nm == null || nm.getNumPoints() <= 0) {
-				log.debug("show pois with nm null, returning...");
+				log.log(Level.FINE, "show pois with nm null, returning...");
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 				dialog2.dismiss();
@@ -480,7 +477,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			return true;
 
 		} catch (Exception e) {
-			log.error("showPOIS: ", e);
+			log.log(Level.SEVERE,"showPOIS: ", e);
 			return false;
 		} finally {
 			if (dialog2 != null)
@@ -493,7 +490,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void viewLastPOIs() {
 		try {
-			log.debug("view last pois");
+			log.log(Level.FINE, "view last pois");
 			String[] desc = new String[nameds.getNumPoints()];
 
 			for (int i = 0; i < nameds.getNumPoints(); i++) {
@@ -501,7 +498,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 			showPOIs(desc, nameds);
 		} catch (Exception e) {
-			log.error("viewLastPOIS: ", e);
+			log.log(Level.SEVERE,"viewLastPOIS: ", e);
 		}
 	}
 
@@ -510,7 +507,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void viewLayers() {
 		try {
-			log.debug("Launching load layers activity");
+			log.log(Level.FINE, "Launching load layers activity");
 			Intent intent = new Intent(this, LayersActivity.class);
 
 			intent.putExtra("loadLayers", true);
@@ -518,7 +515,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			startActivityForResult(intent, 1);
 		} catch (Exception e) {
-			log.error("viewLayers: ", e);
+			log.log(Level.SEVERE,"viewLayers: ", e);
 		}
 	}
 
@@ -527,7 +524,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void calculateRoute() {
 		try {
-			log.debug("calculate route");
+			log.log(Level.FINE, "calculate route");
 			if (route.canCalculate()) {
 				this.launchRouteCalculation();
 				// User context update
@@ -535,7 +532,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				this.userContext.setLastExecRoutes();
 			}
 		} catch (Exception e) {
-			log.error("calculateRoute: ", e);
+			log.log(Level.SEVERE,"calculateRoute: ", e);
 			Toast t = Toast.makeText(this, R.string.Map_2, Toast.LENGTH_LONG);
 			t.show();
 		} finally {
@@ -547,13 +544,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void launchRouteCalculation() {
 		try {
-			log.debug("launching route calculation");
+			log.log(Level.FINE, "launching route calculation");
 			route.iscancelled = false;
 			YOURSFunctionality yoursFunc = new YOURSFunctionality(this, 0);
 			yoursFunc.onClick(null);
 			userContext.setUsedRoutes(true);
 		} catch (Exception e) {
-			log.error("launchRouteCalculation: ", e);
+			log.log(Level.SEVERE,"launchRouteCalculation: ", e);
 		}
 	}
 
@@ -563,10 +560,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		try {
 			super.onActivityResult(requestCode, resultCode, intent);
-			log.debug("onActivityResult (code, resultCode): " + requestCode
+			log.log(Level.FINE, "onActivityResult (code, resultCode): " + requestCode
 					+ ", " + resultCode);
 			if (intent == null) {
-				log.debug("intent was null, returning from onActivityResult");
+				log.log(Level.FINE, "intent was null, returning from onActivityResult");
 				return;
 			}
 
@@ -574,7 +571,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			case 0:
 				switch (resultCode) {
 				case 0:
-					log.debug("from NameFinderActivity: route from here");
+					log.log(Level.FINE, "from NameFinderActivity: route from here");
 					int pos = Integer.parseInt(intent.getExtras().get(
 							"selected").toString());
 					Named p = (Named) nameds.getPoint(pos);
@@ -584,7 +581,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							p.projectedCoordinates.getY());
 					break;
 				case 1:
-					log.debug("from NameFinderActivity: route to here");
+					log.log(Level.FINE, "from NameFinderActivity: route to here");
 					int pos1 = Integer.parseInt(intent.getExtras().get(
 							"selected").toString());
 					Named p1 = (Named) nameds.getPoint(pos1);
@@ -594,7 +591,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							p1.projectedCoordinates.getY());
 					break;
 				case 2:
-					log.debug("from NameFinderActivity: set map center");
+					log.log(Level.FINE, "from NameFinderActivity: set map center");
 					int pos2 = Integer.parseInt(intent.getExtras().get(
 							"selected").toString());
 					Named p2 = (Named) this.nameds.getPoint(pos2);
@@ -608,18 +605,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			case 1:
 				switch (resultCode) {
 				case RESULT_OK:
-					log.debug("from LayersActivity");
+					log.log(Level.FINE, "from LayersActivity");
 					String layerName = intent.getStringExtra("layer");
 					mapState.gvTilesPath = intent.getStringExtra("gvtiles");
 					if (layerName != null) {
-						log.debug("load layer: " + layerName);
+						log.log(Level.FINE, "load layer: " + layerName);
 						this.osmap.onLayerChanged(layerName);
 					}
 					break;
 				}
 			}
 		} catch (Exception e) {
-			log.error("Map onActivityResult: ", e);
+			log.log(Level.SEVERE,"Map onActivityResult: ", e);
 		}
 
 	}
@@ -628,7 +625,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void onLocationChanged(final Location pLoc) {
 		try {
 			if (pLoc == null) return;
-			log.debug("onLocationChanged (lon, lat): " + pLoc.getLongitude()
+			log.log(Level.FINE, "onLocationChanged (lon, lat): " + pLoc.getLongitude()
 					+ ", " + pLoc.getLatitude());
 			this.mMyLocationOverlay.setLocation(MapLocation
 					.locationToGeoPoint(pLoc), pLoc.getAccuracy(), pLoc
@@ -651,7 +648,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 
 		} catch (Exception e) {
-			log.error("onLocationChanged: ", e);
+			log.log(Level.SEVERE,"onLocationChanged: ", e);
 		} finally {
 			
 		}
@@ -663,7 +660,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.isRendererAllowedToDownloadTiles(osmap.getMRendererInfo()); 
 			return super.onPrepareOptionsMenu(menu);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return false;
 		}
 	}
@@ -697,7 +694,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
 					R.drawable.menu_location);
 		} catch (Exception e) {
-			log.error("onCreateOptionsMenu: ", e);
+			log.log(Level.SEVERE,"onCreateOptionsMenu: ", e);
 		}
 		return true;
 	}
@@ -712,7 +709,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				try {
 					Map.this.showSearchDialog();
 				} catch (Exception e) {
-					log.error("showAddressDialog: ", e);
+					log.log(Level.SEVERE,"showAddressDialog: ", e);
 				}
 				break;
 			case 1:
@@ -789,7 +786,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					alertCache.show();
 
 				} catch (Exception e) {
-					log.error("", e);
+					log.log(Level.SEVERE,"", e);
 				}
 				break;
 			case 2:
@@ -799,19 +796,19 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					// // osmap.switchPanMode();
 					//
 					// if (recenterOnGPS) {
-					//log.debug("recentering on GPS after check MyLocation on");
+					//log.log(Level.FINE, "recentering on GPS after check MyLocation on");
 					// myLocation.setIcon(R.drawable.menu01);
 					//
 					// } else {
 					// log
-					//.debug("stop recentering on GPS after check MyLocation off"
+					//.log(Level.FINE, "stop recentering on GPS after check MyLocation off"
 					// );
 					// myLocation.setIcon(R.drawable.menu01_2);
 					// }
 					//
 					// if (this.mMyLocationOverlay.mLocation != null &&
 					// recenterOnGPS) {
-					log.debug("click on my location menu item");
+					log.log(Level.FINE, "click on my location menu item");
 					if (this.mMyLocationOverlay.mLocation == null
 							|| (this.mMyLocationOverlay.mLocation
 									.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
@@ -830,7 +827,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 											.getLatitudeE6() / 1E6);
 					// }
 				} catch (Exception e) {
-					log.error("My location: ", e);
+					log.log(Level.SEVERE,"My location: ", e);
 				}
 				break;
 			case 3:
@@ -842,7 +839,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				else
 					Toast.makeText(this, R.string.LayersActivity_1, Toast.LENGTH_LONG).show();
 				// try {
-				// log.debug("switch pan mode");
+				// log.log(Level.FINE, "switch pan mode");
 				// osmap.switchPanMode();
 				// if (osmap.isPanMode()) {
 				// item.setIcon(R.drawable.mv_rectangle).setTitle(
@@ -852,14 +849,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				// .setTitle(R.string.Map_7);
 				// }
 				// } catch (Exception e) {
-				// log.error("switchPanMode: ", e);
+				// log.log(Level.SEVERE,"switchPanMode: ", e);
 				// }
 				break;
 			case 5:
 				try {
 					showDownloadDialog();
 				} catch (Exception e) {
-					log.error("OpenWebsite: ", e);
+					log.log(Level.SEVERE,"OpenWebsite: ", e);
 				}
 				break;
 			case 6:
@@ -875,24 +872,24 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 					if (!recenterOnGPS) {
 						log
-								.debug("recentering on GPS after check MyLocation on");
+								.log(Level.FINE, "recentering on GPS after check MyLocation on");
 						z.setVisibility(View.VISIBLE);
 						myNavigator.setIcon(R.drawable.menu_navigation);
 
 					} else {
 						log
-								.debug("stop recentering on GPS after check MyLocation off");//						
+								.log(Level.FINE, "stop recentering on GPS after check MyLocation off");//						
 						z.setVisibility(View.INVISIBLE);
 						myNavigator.setIcon(R.drawable.menu_navigation_off);
 					}
 					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
 					// ) {
-					//log.debug("recentering on GPS after check MyLocation on");
+					//log.log(Level.FINE, "recentering on GPS after check MyLocation on");
 					// myNavigator.setIcon(R.drawable.menu_navigation_off);
 					//
 					// } else {
 					// log
-					//.debug("stop recentering on GPS after check MyLocation off"
+					//.log(Level.FINE, "stop recentering on GPS after check MyLocation off"
 					// );
 					// myNavigator.setIcon(R.drawable.menu_navigation);
 					// }
@@ -904,7 +901,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						// navigation = true;
 						this.showNavigationModeAlert();
 					} else {
-						log.debug("navigation mode off");
+						log.log(Level.FINE, "navigation mode off");
 						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						navigation = false;
 						wl.release();
@@ -919,7 +916,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					// item.setIcon(R.drawable.mv_pan).setTitle(R.string.Map_7);
 					// }
 				} catch (Exception e) {
-					log.error("switchPanMode: ", e);
+					log.log(Level.SEVERE,"switchPanMode: ", e);
 				}
 				break;
 			case 7:
@@ -936,28 +933,28 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				try {
 					showWhatsNew();
 				} catch (Exception e) {
-					log.error("OpenWebsite: ", e);
+					log.log(Level.SEVERE,"OpenWebsite: ", e);
 				}
 				break;
 			case 9:
 				try {
 					showLicense();
 				} catch (Exception e) {
-					log.error("OpenWebsite: ", e);
+					log.log(Level.SEVERE,"OpenWebsite: ", e);
 				}
 				break;
 			case 10:
 				try {
 					showAboutDialog();
 				} catch (Exception e) {
-					log.error("OpenWebsite: ", e);
+					log.log(Level.SEVERE,"OpenWebsite: ", e);
 				}
 				break;
 			default:
 				break;
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return result;
 	}
@@ -989,18 +986,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						Map.this.osmap.setZoomLevel(17, true);
 						switch (arg1) {
 						case 0:
-							log.debug("navifation mode vertical on");
+							log.log(Level.FINE, "navifation mode vertical on");
 							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 							break;
 						case 1:
-							log.debug("navifation mode horizontal on");
+							log.log(Level.FINE, "navifation mode horizontal on");
 							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 							break;
 						default:
 							break;
 						}
 					} catch (Exception e) {
-						log.error("onCheckedChanged", e);
+						log.log(Level.SEVERE,"onCheckedChanged", e);
 					}
 				}
 
@@ -1020,7 +1017,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			alertCache.show();
 			r1.setChecked(true);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -1075,10 +1072,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showWeather(WeatherSet ws) {
 		try {
-			log.debug("showWeather");
+			log.log(Level.FINE, "showWeather");
 			if (ws == null) {
 				log
-						.debug("ws == null: Can't get weather. Check another location");
+						.log(Level.FINE, "ws == null: Can't get weather. Check another location");
 				Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
 						.show();
 				return;
@@ -1093,7 +1090,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					ws.place = this.getResources().getString(R.string.Map_9);
 				}
 
-				log.debug("The weather in " + ws.place + " is not available");
+				log.log(Level.FINE, "The weather in " + ws.place + " is not available");
 				alertW.setMessage(String.format(this.getResources().getString(
 						R.string.Map_10), ws.place));
 
@@ -1144,7 +1141,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							"http://www.google.com" + temp.getIconURL())))
 							.setSelectable(false));
 				} catch (Exception e) {
-					log.error("showWeather: ", e);
+					log.log(Level.SEVERE,"showWeather: ", e);
 				}
 			}
 
@@ -1162,7 +1159,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			alertW.show();
 			dialog2.dismiss();
 		} catch (Exception e) {
-			log.error("showWeather: ", e);
+			log.log(Level.SEVERE,"showWeather: ", e);
 		} finally {
 		}
 	}
@@ -1179,7 +1176,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void getWeather(double x, double y, String SRS) {
 		try {
-			log.debug("Launching weather functionality");
+			log.log(Level.FINE, "Launching weather functionality");
 			double[] coords = ConversionCoords.reproject(x, y, CRSFactory
 					.getCRS(SRS), CRSFactory.getCRS("EPSG:4326"));
 
@@ -1189,7 +1186,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			userContext.setUsedWeather(true);
 			userContext.setLastExecWeather();
 		} catch (Exception e) {
-			log.error("getWeather: ", e);
+			log.log(Level.SEVERE,"getWeather: ", e);
 		}
 	}
 
@@ -1198,7 +1195,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showRouteError() {
 		try {
-			log.debug("Show route error");
+			log.log(Level.FINE, "Show route error");
 			dialog2.dismiss();
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setIcon(R.drawable.routes);
@@ -1214,28 +1211,28 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			alert.show();
 		} catch (Exception e) {
-			log.error("showRouteError: ", e);
+			log.log(Level.SEVERE,"showRouteError: ", e);
 		}
 	}
 
 	@Override
 	public void onDestroy() {
 		try {
-			log.debug("onDestroy map activity");
+			log.log(Level.FINE, "onDestroy map activity");
 
 			try {
-				log.debug("release wake lock");
+				log.log(Level.FINE, "release wake lock");
 				wl.release();
 			} catch (Exception e) {
-				log.error("release wake lock", e);
+				log.log(Level.SEVERE,"release wake lock", e);
 
 			}
 
 			try {
-				log.debug("persist map");
+				log.log(Level.FINE, "persist map");
 				mapState.persist();
 			} catch (Exception e) {
-				log.error("Persist mapstate: ", e);
+				log.log(Level.SEVERE,"Persist mapstate: ", e);
 			}
 
 			if (dialog2 != null)
@@ -1245,7 +1242,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			osmap.clearCache();
 			this.stopSensor(this);
 			if (backpressed) {
-				log.debug("back key pressed");
+				log.log(Level.FINE, "back key pressed");
 				// cosas a hacer para la limpieza
 
 				// this.getGPSManager().stopLocationProviders();
@@ -1258,14 +1255,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			try {
 				contextManager.saveContexts();
 			} catch (Exception e) {
-				log.error("onDestroy. contextManager.saveContexts(): ", e);
+				log.log(Level.SEVERE,"onDestroy. contextManager.saveContexts(): ", e);
 			}
 
 			this.destroy();
 
 			super.onDestroy();
 		} catch (Exception e) {
-			log.error("onDestroy: ", e);
+			log.log(Level.SEVERE,"onDestroy: ", e);
 		}
 	}
 
@@ -1274,14 +1271,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void destroy() {
 		try {
-			log.debug("destroy");
+			log.log(Level.FINE, "destroy");
 			osmap.destroy();
 			// route.destroy();
 			// nameds.destroy();
 			// osmap = null;
 			// nameds = null;
 		} catch (Exception e) {
-			log.error("destroy", e);
+			log.log(Level.SEVERE,"destroy", e);
 		}
 	}
 
@@ -1294,7 +1291,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void loadPois(Bundle outState) {
 		try {
-			log.debug("loadPOIS from saved instance");
+			log.log(Level.FINE, "loadPOIS from saved instance");
 			int poisSize = outState.getInt("PoisSize");
 			Named[] points = new Named[poisSize];
 			Named n;
@@ -1315,7 +1312,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							+ i), outState.getDouble("PY" + i));
 					points[i] = n;
 				} catch (Exception e) {
-					log.error("loadPois: ", e);
+					log.log(Level.SEVERE,"loadPois: ", e);
 				}
 			}
 
@@ -1327,9 +1324,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			cleanVisible = outState.getBoolean("cleanPoisVisible", false);
 			listVisible = outState.getBoolean("listPoisVisible", false);
-			log.debug("POIS loaded");
+			log.log(Level.FINE, "POIS loaded");
 		} catch (Exception e) {
-			log.error("loadPOIS: ", e);
+			log.log(Level.SEVERE,"loadPOIS: ", e);
 		}
 	}
 
@@ -1342,7 +1339,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void savePois(Bundle outState) {
 		try {
-			log.debug("Save POIS to bundle");
+			log.log(Level.FINE, "Save POIS to bundle");
 			int pointNumber = this.nameds.getNumPoints();
 			outState.putInt("PoisSize", pointNumber);
 			Named n;
@@ -1363,7 +1360,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					outState.putDouble("PX" + i, n.projectedCoordinates.getX());
 					outState.putDouble("PY" + i, n.projectedCoordinates.getY());
 				} catch (Exception e) {
-					log.error("savePOIS: ", e);
+					log.log(Level.SEVERE,"savePOIS: ", e);
 				}
 			}
 
@@ -1371,9 +1368,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				outState.putBoolean("cleanPoisVisible", true);
 				outState.putBoolean("listPoisVisible", true);
 			}
-			log.debug("POIS saved");
+			log.log(Level.FINE, "POIS saved");
 		} catch (Exception e) {
-			log.error("savePOIS: ", e);
+			log.log(Level.SEVERE,"savePOIS: ", e);
 		}
 	}
 
@@ -1386,7 +1383,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void loadRoute(Bundle outState) {
 		try {
-			log.debug("load route from saved instance");
+			log.log(Level.FINE, "load route from saved instance");
 			boolean isDone = outState.getBoolean("isDone", true);
 
 			double startPointX = outState.getDouble("StartPointX");
@@ -1398,7 +1395,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			if (starPoint.equals(endPoint)) {
 				log
-						.debug("start and end point equals. The route will not be loaded"
+						.log(Level.FINE, "start and end point equals. The route will not be loaded"
 								+ "return");
 			}
 
@@ -1406,11 +1403,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			route.setEndPoint(endPoint);
 			if (!isDone) {
 				log
-						.debug("Route was calculating before saving instance: Relaunch it");
+						.log(Level.FINE, "Route was calculating before saving instance: Relaunch it");
 				this.launchRouteCalculation();
 				// return;
 			}
-			log.debug("Loading route points");
+			log.log(Level.FINE, "Loading route points");
 			int routeSize = outState.getInt("RouteSize");
 			double[] xCoords = new double[routeSize];
 			double[] yCoords = new double[routeSize];
@@ -1424,9 +1421,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			route.setRoute(f);
 
 			cleanRoute = outState.getBoolean("cleanRouteVisible", false);
-			log.debug("route loaded");
+			log.log(Level.FINE, "route loaded");
 		} catch (Exception e) {
-			log.error("loadRoute: ", e);
+			log.log(Level.SEVERE,"loadRoute: ", e);
 		}
 	}
 
@@ -1474,9 +1471,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			if (save)
 				outState.putBoolean("cleanRouteVisible", true);
 
-			log.debug("route saved");
+			log.log(Level.FINE, "route saved");
 		} catch (Exception e) {
-			log.error("savRoute: ", e);
+			log.log(Level.SEVERE,"savRoute: ", e);
 		}
 	}
 
@@ -1491,14 +1488,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		try {
-			log.debug("load map from saved instance");
+			log.log(Level.FINE, "load map from saved instance");
 			String mapLayer = outState.getString("maplayer");
-			log.debug("previous layer: " + mapLayer);
+			log.log(Level.FINE, "previous layer: " + mapLayer);
 			osmap.onLayerChanged(mapLayer);
 			this.mMyLocationOverlay.loadState(outState);
-			log.debug("map loaded");
+			log.log(Level.FINE, "map loaded");
 		} catch (Exception e) {
-			log.error("loadMap: ", e);
+			log.log(Level.SEVERE,"loadMap: ", e);
 			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
 			this.osmap = new TileRaster(this, aContext, t, metrics.widthPixels,
 					metrics.heightPixels);
@@ -1508,7 +1505,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				if (outState == null)
 					return;
 				String contextName = outState.getString("contextClassName");
-				log.debug("loading previous context: " + contextName);
+				log.log(Level.FINE, "loading previous context: " + contextName);
 				ItemContext context = (ItemContext) Class.forName(contextName)
 						.newInstance();
 				if (context != null) {
@@ -1516,13 +1513,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					this.setContext(context);
 				}
 			} catch (IllegalAccessException e) {
-				log.error("", e);
+				log.log(Level.SEVERE,"", e);
 			} catch (InstantiationException e) {
-				log.error("", e);
+				log.log(Level.SEVERE,"", e);
 			} catch (ClassNotFoundException e) {
-				log.error("", e);
+				log.log(Level.SEVERE,"", e);
 			} catch (Exception e) {
-				log.error("", e);
+				log.log(Level.SEVERE,"", e);
 			}
 		}
 	}
@@ -1540,7 +1537,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			outState.putBoolean("dataNavigation", this.navigation);
 			outState.putBoolean("dataRecent", this.recenterOnGPS);
 		} catch (Exception e) {
-			log.error("saveSettings: ", e);
+			log.log(Level.SEVERE,"saveSettings: ", e);
 		}
 	}
 
@@ -1561,7 +1558,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			if (navigation && recenterOnGPS)
 				wl.acquire();
 		} catch (Exception e) {
-			log.error("loadSettings: ", e);
+			log.log(Level.SEVERE,"loadSettings: ", e);
 		}
 	}
 
@@ -1574,7 +1571,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void saveMap(Bundle outState) {
 		try {
-			log.debug("save map to bundle");
+			log.log(Level.FINE, "save map to bundle");
 			outState.putString("maplayer", osmap.getMRendererInfo().getNAME());
 			this.mMyLocationOverlay.saveState(outState);
 			ItemContext context = this.getItemContext();
@@ -1584,9 +1581,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			else
 				outState.putString("contextClassName", DefaultContext.class
 						.getName());
-			log.debug("map saved");
+			log.log(Level.FINE, "map saved");
 		} catch (Exception e) {
-			log.error("saveMap: ", e);
+			log.log(Level.SEVERE,"saveMap: ", e);
 		}
 	}
 
@@ -1608,7 +1605,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				z.setIsZoomInEnabled(false);
 			}
 		} catch (Exception e) {
-			log.error("updateZoomControl: ", e);
+			log.log(Level.SEVERE,"updateZoomControl: ", e);
 		}
 	}
 
@@ -1620,7 +1617,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void loadUI(Bundle savedInstanceState) {
 		try {
-			log.debug("load UI");
+			log.log(Level.FINE, "load UI");
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 			z = new ZoomControls(this);
@@ -1651,7 +1648,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						Map.this.osmap.zoomIn();
 
 					} catch (Exception e) {
-						log.error("onZoomInClick: ", e);
+						log.log(Level.SEVERE,"onZoomInClick: ", e);
 					}
 				}
 			});
@@ -1662,7 +1659,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						Map.this.osmap.zoomOut();
 						// Map.this.osmap.switchPanMode();
 					} catch (Exception e) {
-						log.error("onZoomOutClick: ", e);
+						log.log(Level.SEVERE,"onZoomOutClick: ", e);
 					}
 				}
 			});
@@ -1710,7 +1707,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						Map.this.osmap.setZoomLevel(zoom, true);
 						Map.this.osmap.cleanZoomRectangle();
 					} catch (Exception e) {
-						log.error("onStopTrackingTouch: ", e);
+						log.log(Level.SEVERE,"onStopTrackingTouch: ", e);
 					}
 				}
 			});
@@ -1738,19 +1735,19 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						try {
 							viewLayers();
 						} catch (Exception e) {
-							log.error("onLayersClick: ", e);
+							log.log(Level.SEVERE,"onLayersClick: ", e);
 							osmap.postInvalidate();
 						}
 					}
 				});
 				this.updateSlider();
 			}
-			log.debug("ui loaded");
+			log.log(Level.FINE, "ui loaded");
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		} catch (OutOfMemoryError ou) {
 			System.gc();
-			log.error("", ou);
+			log.log(Level.SEVERE,"", ou);
 		}
 	}
 
@@ -1763,21 +1760,21 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void loadCenter(Bundle savedInstanceState) {
 		try {
-			log.debug("load center from saved instance");
+			log.log(Level.FINE, "load center from saved instance");
 			double lat = savedInstanceState.getDouble("lat");
 			double longit = savedInstanceState.getDouble("longit");
 			int zoomlvl = savedInstanceState.getInt("zoomlvl");
 			log
-					.debug("lat, lon, zoom: " + lat + ", " + longit + ", "
+					.log(Level.FINE, "lat, lon, zoom: " + lat + ", " + longit + ", "
 							+ zoomlvl);
 
 			this.osmap.setMapCenter(longit, lat);
 			this.osmap.setZoomLevel(zoomlvl);
 			log
-					.debug("lat, lon, zoom: " + longit + ", " + lat + ", "
+					.log(Level.FINE, "lat, lon, zoom: " + longit + ", " + lat + ", "
 							+ zoomlvl);
 		} catch (Exception e) {
-			log.error("loadCenter: ", e);
+			log.log(Level.SEVERE,"loadCenter: ", e);
 			osmap.getMRendererInfo().centerOnBBox();
 		}
 	}
@@ -1791,44 +1788,44 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void saveCenter(Bundle outState) {
 		try {
-			log.debug("save center to bundle");
+			log.log(Level.FINE, "save center to bundle");
 			final Point center = this.osmap.getMRendererInfo().getCenter();
 			final int zoomLevel = this.osmap.getMRendererInfo().getZoomLevel();
 			outState.putDouble("lat", center.getY());
 			outState.putDouble("longit", center.getX());
 			outState.putInt("zoomlvl", zoomLevel);
-			log.debug("lat, lon, zoom: " + center.getY() + ", " + center.getX()
+			log.log(Level.FINE, "lat, lon, zoom: " + center.getY() + ", " + center.getX()
 					+ ", " + zoomLevel);
 		} catch (Exception e) {
-			log.error("saveCenter: ", e);
+			log.log(Level.SEVERE,"saveCenter: ", e);
 		}
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		try {
-			log.debug("onSaveInstanceState");
+			log.log(Level.FINE, "onSaveInstanceState");
 			outState.putBoolean("isSaved", true);
 			super.onSaveInstanceState(outState);
 			saveSettings(outState);
 			saveMap(outState);
 		} catch (Exception e) {
-			log.error("onSaveInstanceState: ", e);
+			log.log(Level.SEVERE,"onSaveInstanceState: ", e);
 		}
 		try {
 			saveCenter(outState);
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 		try {
 			saveRoute(outState);
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 		try {
 			savePois(outState);
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 	}
 
@@ -1843,11 +1840,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		@Override
 		public void handleMessage(final Message msg) {
 			try {
-				log.debug("MapHandler -> handleMessage");
+				log.log(Level.FINE, "MapHandler -> handleMessage");
 				final int what = msg.what;
 				switch (what) {
 				case TaskHandler.NO_RESPONSE:
-					log.debug("task handler NO_RESPONSE");
+					log.log(Level.FINE, "task handler NO_RESPONSE");
 					if (dialog2 != null)
 						dialog2.dismiss();
 					Toast
@@ -1855,7 +1852,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 									Toast.LENGTH_LONG).show();
 					break;
 				case Map.SHOW_TOAST:
-					log.debug("SHOW_TOAST");
+					log.log(Level.FINE, "SHOW_TOAST");
 					Toast t = Toast.makeText(Map.this, msg.obj.toString(),
 							Toast.LENGTH_LONG);
 					t.show();
@@ -1863,26 +1860,26 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						dialog2.dismiss();
 					break;
 				case Map.SHOW_OK_DIALOG:
-					log.debug("SHOW_OK_DIALOG");
+					log.log(Level.FINE, "SHOW_OK_DIALOG");
 					if (dialog2 != null)
 						dialog2.dismiss();
 					Map.this.showOKDialog(msg.obj.toString(),
 							R.string.getFeatureInfo);
 					break;
 				case Map.POI_LIST:
-					log.debug("POI_LIST");
+					log.log(Level.FINE, "POI_LIST");
 					Map.this.viewLastPOIs();
 					break;
 				case Map.POI_CLEARED:
-					log.debug("POI_CLEARED");
+					log.log(Level.FINE, "POI_CLEARED");
 					Map.this.updateContext(Map.POI_CLEARED);
 					break;
 				case Map.ROUTE_CLEARED:
-					log.debug("ROUTE_CLEARED");
+					log.log(Level.FINE, "ROUTE_CLEARED");
 					Map.this.updateContext(Map.ROUTE_CLEARED);
 					break;
 				case Map.WEATHER_INITED:
-					log.debug("WEATHER_INITED");
+					log.log(Level.FINE, "WEATHER_INITED");
 					dialog2 = ProgressDialog.show(Map.this, Map.this
 							.getResources().getString(R.string.please_wait),
 							Map.this.getResources().getString(R.string.Map_14),
@@ -1894,17 +1891,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						@Override
 						public void onCancel(DialogInterface dialog2) {
 							try {
-								log.debug("weather canceled");
+								log.log(Level.FINE, "weather canceled");
 								Map.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
-								log.error("onCancelDialog: ", e);
+								log.log(Level.SEVERE,"onCancelDialog: ", e);
 							}
 						}
 					});
 					break;
 				case Map.GETFEATURE_INITED:
-					log.debug("GETFEATURE_INITED");
+					log.log(Level.FINE, "GETFEATURE_INITED");
 					dialog2 = ProgressDialog.show(Map.this, Map.this
 							.getResources().getString(R.string.please_wait),
 							"GetFeatureInfo...", true);
@@ -1915,41 +1912,41 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						@Override
 						public void onCancel(DialogInterface dialog2) {
 							try {
-								log.debug("getFeature canceled");
+								log.log(Level.FINE, "getFeature canceled");
 								Map.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
-								log.error("onCancelDialog: ", e);
+								log.log(Level.SEVERE,"onCancelDialog: ", e);
 							}
 						}
 					});
 					break;
 
 				case Map.WEATHER_CANCELED:
-					log.debug("WEATHER_CANCELED");
+					log.log(Level.FINE, "WEATHER_CANCELED");
 					Toast
 							.makeText(Map.this, R.string.Map_15,
 									Toast.LENGTH_LONG).show();
 					break;
 				case Map.WEATHER_ERROR:
-					log.debug("WEATHER_ERROR");
+					log.log(Level.FINE, "WEATHER_ERROR");
 					Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
 							.show();
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
 				case Map.WEATHER_SHOW:
-					log.debug("WEATHER_SHOW");
+					log.log(Level.FINE, "WEATHER_SHOW");
 					Functionality f = Map.this.getItemContext()
 							.getExecutingFunctionality();
 					if (f instanceof WeatherFunctionality)
 						Map.this.showWeather(((WeatherFunctionality) f).ws);
 					else {
-						log.debug("Nof found Weather functionality");
+						log.log(Level.FINE, "Nof found Weather functionality");
 					}
 					break;
 				case Map.ROUTE_NO_RESPONSE:
-					log.debug("ROUTE_NO_RESPONSE");
+					log.log(Level.FINE, "ROUTE_NO_RESPONSE");
 					Toast.makeText(Map.this, R.string.server_busy,
 							Toast.LENGTH_LONG).show();
 					// ivCleanRoute.setVisibility(View.INVISIBLE);
@@ -1957,7 +1954,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						dialog2.dismiss();
 					break;
 				case Map.ROUTE_SUCCEEDED:
-					log.debug("ROUTE_SUCCEEDED");
+					log.log(Level.FINE, "ROUTE_SUCCEEDED");
 					// ivCleanRoute.setVisibility(View.VISIBLE);
 					osmap.CLEAR_ROUTE = true;
 					if (dialog2 != null)
@@ -1969,7 +1966,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					osmap.postInvalidate();
 					break;
 				case Map.ROUTE_NO_CALCULATED:
-					log.debug("ROUTE_NO_CALCULATED");
+					log.log(Level.FINE, "ROUTE_NO_CALCULATED");
 					Toast
 							.makeText(Map.this, R.string.Map_16,
 									Toast.LENGTH_LONG).show();
@@ -1978,7 +1975,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						dialog2.dismiss();
 					break;
 				case Map.POI_SHOW:
-					log.debug("POI_SHOW");
+					log.log(Level.FINE, "POI_SHOW");
 					Functionality nf = getItemContext()
 							.getExecutingFunctionality();
 					if (nf instanceof NameFinderFunc) {
@@ -1989,11 +1986,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						if (update)
 							Map.this.updateContext(Map.POI_SUCCEEDED);
 					} else {
-						log.debug("Nof found NameFinder functionality");
+						log.log(Level.FINE, "Nof found NameFinder functionality");
 					}
 					break;
 				case Map.POI_INITED:
-					log.debug("POI_INITED");
+					log.log(Level.FINE, "POI_INITED");
 					dialog2 = ProgressDialog.show(Map.this, Map.this
 							.getResources().getString(R.string.please_wait),
 							Map.this.getResources().getString(R.string.Map_17),
@@ -2008,13 +2005,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								Map.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
-								log.error("onCancelDialog: ", e);
+								log.log(Level.SEVERE,"onCancelDialog: ", e);
 							}
 						}
 					});
 					break;
 				case Map.ROUTE_CANCELED:
-					log.debug("ROUTE_CANCELED");
+					log.log(Level.FINE, "ROUTE_CANCELED");
 					route.deleteRoute(false);
 					// route.deleteEndPoint();
 					// route.deleteStartPoint();
@@ -2028,7 +2025,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					osmap.postInvalidate();
 					break;
 				case Map.POI_CANCELED:
-					log.debug("POI_CANCELED");
+					log.log(Level.FINE, "POI_CANCELED");
 					// ivCleanPois.setVisibility(View.INVISIBLE);
 					// ivShowList.setVisibility(View.INVISIBLE);
 					if (dialog2 != null)
@@ -2039,11 +2036,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					osmap.postInvalidate();
 					break;
 				case Map.CALCULATE_ROUTE:
-					log.debug("CALCULATE_ROUTE");
+					log.log(Level.FINE, "CALCULATE_ROUTE");
 					Map.this.calculateRoute();
 					break;
 				case Map.ROUTE_INITED:
-					log.debug("ROUTE_INITED");
+					log.log(Level.FINE, "ROUTE_INITED");
 					route.deleteRoute(false);
 					dialog2 = ProgressDialog.show(Map.this, Map.this
 							.getResources().getString(R.string.please_wait),
@@ -2062,38 +2059,38 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								osmap.postInvalidate();
 								Map.this.getItemContext().cancelCurrentTask();
 							} catch (Exception e) {
-								log.error("onCancelDialog: ", e);
+								log.log(Level.SEVERE,"onCancelDialog: ", e);
 							}
 						}
 					});
 					break;
 				case Map.TWEET_SENT:
-					log.debug("TWEET_SENT");
+					log.log(Level.FINE, "TWEET_SENT");
 					Toast
 							.makeText(Map.this, R.string.Map_20,
 									Toast.LENGTH_LONG).show();
 					break;
 				case Map.TWEET_ERROR:
-					log.debug("TWEET_ERROR");
+					log.log(Level.FINE, "TWEET_ERROR");
 					Toast t1 = Toast.makeText(Map.this, msg.obj.toString(),
 							Toast.LENGTH_LONG);
 					t1.show();
 					break;
 				case Map.SHOW_TWEET_DIALOG:
-					log.debug("SHOW_TWEET_DIALOG");
+					log.log(Level.FINE, "SHOW_TWEET_DIALOG");
 					Map.this.showTweetDialog();
 					break;
 				case Map.SHOW_POI_DIALOG:
-					log.debug("SHOW_POI_DIALOG");
+					log.log(Level.FINE, "SHOW_POI_DIALOG");
 					Map.this.showSearchDialog();
 					break;
 				case Map.SHOW_ADDRESS_DIALOG:
-					log.debug("SHOW_ADDRESS_DIALOG");
+					log.log(Level.FINE, "SHOW_ADDRESS_DIALOG");
 					Map.this.showSearchDialog();
 					break;
 				}
 			} catch (Exception e) {
-				log.error("handleMessage: ", e);
+				log.log(Level.SEVERE,"handleMessage: ", e);
 				if (dialog2 != null)
 					dialog2.dismiss();
 				// Toast.makeText(Map.this,
@@ -2104,7 +2101,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					Map.this.clearContext();
 					osmap.invalidate();
 				} catch (Exception e) {
-					log.error(e);
+					log.log(Level.SEVERE,"",e);
 				}
 			}
 		}
@@ -2116,7 +2113,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showPOIDialog() {
 		try {
-			log.debug("showPOIDialog");
+			log.log(Level.FINE, "showPOIDialog");
 			AlertDialog.Builder alertPOI = new AlertDialog.Builder(this);
 
 			alertPOI.setIcon(R.drawable.poismenu);
@@ -2136,7 +2133,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								searchInNameFinder(value.toString());
 
 							} catch (Exception e) {
-								log.error("clickNameFinder: ", e);
+								log.log(Level.SEVERE,"clickNameFinder: ", e);
 							}
 							return;
 						}
@@ -2151,7 +2148,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			alertPOI.show();
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 	}
 
@@ -2162,7 +2159,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void showSearchDialog() {
 		try {
 			this.onSearchRequested();
-//			log.debug("show address dialog");
+//			log.log(Level.FINE, "show address dialog");
 //			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 //
 //			alert.setIcon(R.drawable.menu00);
@@ -2180,7 +2177,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 //								searchInNameFinder(value.toString());
 //								
 //							} catch (Exception e) {
-//								log.error("clickNameFinderAddress: ", e);
+//								log.log(Level.SEVERE,"clickNameFinderAddress: ", e);
 //							}
 //							return;
 //						}
@@ -2196,7 +2193,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 //			alert.show();			
 			
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 	}
 	
@@ -2230,7 +2227,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 */
 			}
 		} catch (Exception e) {
-			log.error("searchWithNameFinder: ", e);
+			log.log(Level.SEVERE,"searchWithNameFinder: ", e);
 		}
 		return;
 		
@@ -2313,7 +2310,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					new FlatXFileSystemStrategy(),
 					new FitScreenBufferStrategy());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -2323,7 +2320,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showDownloadTilesDialog() {
 		try {
-			log.debug("show address dialog");
+			log.log(Level.FINE, "show address dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 			final LinearLayout l = (LinearLayout) this.getLayoutInflater()
@@ -2347,7 +2344,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 										progress);
 
 							} catch (Exception e) {
-								log.error(e.getMessage());
+								log.log(Level.SEVERE,e.getMessage());
 							}
 						}
 
@@ -2389,7 +2386,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 								Map.this.downloadTileAlert.show();
 								WorkQueue.getExclusiveInstance().execute(t);
 							} catch (Exception e) {
-								log.error("clickNameFinderAddress: ", e);
+								log.log(Level.SEVERE,"clickNameFinderAddress: ", e);
 							}
 							return;
 						}
@@ -2405,7 +2402,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 			alert.show();
 		} catch (Exception e) {
-			log.error("", e);
+			log.log(Level.SEVERE,"", e);
 		}
 	}
 
@@ -2453,14 +2450,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 
 	// public void enableAcelerometer(Bundle savedInstanceState) {
 	// try {
-	// log.debug("enable accelerometer");
+	// log.log(Level.FINE, "enable accelerometer");
 	// // mSensorManager = (SensorManager)
 	// // getSystemService(Context.SENSOR_SERVICE);
 	// // mSensorManager.registerListener(mSensorListener, mSensorManager
 	// // .getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 	// // SensorManager.SENSOR_DELAY_UI);
 	// } catch (Exception e) {
-	// log.error("", e);
+	// log.log(Level.SEVERE,"", e);
 	// }
 	// }
 
@@ -2495,7 +2492,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	@Override
 	protected void onResume() {
 		try {
-			log.debug("onResume");
+			log.log(Level.FINE, "onResume");
 			super.onResume();
 			if (navigation && recenterOnGPS)
 				wl.acquire();
@@ -2503,7 +2500,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			// .getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 			// SensorManager.SENSOR_DELAY_FASTEST);
 		} catch (Exception e) {
-			log.error("onResume: ", e);
+			log.log(Level.SEVERE,"onResume: ", e);
 		}
 	}
 
@@ -2512,7 +2509,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			return this.osmap.onTrackballEvent(event);
 		} catch (Exception e) {
-			log.error("onTrackBallEvent: ", e);
+			log.log(Level.SEVERE,"onTrackBallEvent: ", e);
 			return false;
 		}
 	}
@@ -2523,7 +2520,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			// mSensorManager.unregisterListener(mSensorListener);
 			super.onStop();
 		} catch (Exception e) {
-			log.error("onStop: ", e);
+			log.log(Level.SEVERE,"onStop: ", e);
 		}
 	}
 
@@ -2549,7 +2546,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				}
 			}
 		} catch (Exception e) {
-			log.error("onSensorChanged: ", e);
+			log.log(Level.SEVERE,"onSensorChanged: ", e);
 		}
 	}
 
@@ -2609,7 +2606,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.setContext(context);
 			return context;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}
@@ -2623,7 +2620,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showContext(ItemContext context) {
 		try {
-			log.debug("show context");
+			log.log(Level.FINE, "show context");
 
 			context = updateContextWMS(context);
 			if (context == null)
@@ -2649,7 +2646,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 						view.setOnClickListener(func);
 					c.addView(view);
 				} catch (Exception e) {
-					log.error("show context", e);
+					log.log(Level.SEVERE,"show context", e);
 
 				}
 			}
@@ -2672,7 +2669,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			userContext.setLastExecCircle();
 			backpressedroulette = true;
 		} catch (Exception e) {
-			log.error("showContext: ", e);
+			log.log(Level.SEVERE,"showContext: ", e);
 		}
 	}
 
@@ -2698,7 +2695,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			rl.removeView(c);
 			// switchSlideBar();
 		} catch (Exception e) {
-			log.error("clearContext: ", e);
+			log.log(Level.SEVERE,"clearContext: ", e);
 		}
 	}
 
@@ -2719,7 +2716,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		try {
 			if (context == null) {
 				this.setContext(new DefaultContext(this));
-				log.debug("setContext: " + "DefaultContext");
+				log.log(Level.FINE, "setContext: " + "DefaultContext");
 			} else {
 				try {
 					Functionality f = this.getItemContext()
@@ -2727,16 +2724,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					if (f != null)
 						context.setExecutingFunctionality(f);
 				} catch (Exception e) {
-					log.error("setContext", e);
+					log.log(Level.SEVERE,"setContext", e);
 
 				}
 				this.context = null;
 				this.context = context;
 
-				log.debug("setContext: " + context.getClass().getName());
+				log.log(Level.FINE, "setContext: " + context.getClass().getName());
 			}
 		} catch (Exception e) {
-			log.error("setContext: ", e);
+			log.log(Level.SEVERE,"setContext: ", e);
 		}
 	}
 
@@ -2755,7 +2752,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void showTweetDialog() {
 		try {
-			log.debug("showTweetDialog");
+			log.log(Level.FINE, "showTweetDialog");
 			LayoutInflater factory = LayoutInflater.from(this);
 			final View textEntryView = factory.inflate(
 					R.layout.alert_dialog_text_entry, null);
@@ -2783,7 +2780,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 												R.layout.twitter_image_button)
 												.onClick(null);
 									} catch (Exception e) {
-										log.error("twitter: ", e);
+										log.log(Level.SEVERE,"twitter: ", e);
 									}
 								}
 							}).setNegativeButton(R.string.alert_dialog_cancel,
@@ -2796,7 +2793,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			userContext.setUsedTwitter(true);
 			userContext.setLastExecTwitter();
 		} catch (Exception e) {
-			log.error("showTweetDialog: ", e);
+			log.log(Level.SEVERE,"showTweetDialog: ", e);
 		}
 	}
 
@@ -2816,7 +2813,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.s.setProgress(progress);
 			this.updateZoomControl();
 		} catch (Exception e) {
-			log.error("updateSlider: ", e);
+			log.log(Level.SEVERE,"updateSlider: ", e);
 		}
 	}
 
@@ -2837,7 +2834,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.s.setProgress(progress);
 			this.updateZoomControl();
 		} catch (Exception e) {
-			log.error("updateSlider: ", e);
+			log.log(Level.SEVERE,"updateSlider: ", e);
 		}
 	}
 
@@ -2853,21 +2850,21 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void updateContext(int state) {
 		try {
-			log.debug("updateContext");
+			log.log(Level.FINE, "updateContext");
 			switch (state) {
 			case Map.VOID:
-				log.debug("VOID");
+				log.log(Level.FINE, "VOID");
 				this.setContext(new DefaultContext(this));
 				break;
 			case Map.ROUTE_SUCCEEDED:
-				log.debug("ROUTE_SUCEEDED");
+				log.log(Level.FINE, "ROUTE_SUCEEDED");
 				if (nameds != null && nameds.getNumPoints() > 0)
 					this.setContext(new RoutePOIContext(this));
 				else
 					this.setContext(new RouteContext(this));
 				break;
 			case Map.POI_SUCCEEDED:
-				log.debug("POI_SUCCEEDED");
+				log.log(Level.FINE, "POI_SUCCEEDED");
 				if (route != null
 						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
 					this.setContext(new RoutePOIContext(this));
@@ -2876,7 +2873,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				}
 				break;
 			case Map.POI_CLEARED:
-				log.debug("POI_CLEARED");
+				log.log(Level.FINE, "POI_CLEARED");
 				if (route != null
 						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
 					this.setContext(new RouteContext(this));
@@ -2885,7 +2882,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				}
 				break;
 			case Map.ROUTE_CLEARED:
-				log.debug("ROUTE_CLEARED");
+				log.log(Level.FINE, "ROUTE_CLEARED");
 				if (nameds != null && nameds.getNumPoints() > 0) {
 					this.setContext(new POIContext(this));
 				} else {
@@ -2895,7 +2892,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 			updateContextWMS(this.context);
 		} catch (Exception e) {
-			log.error("updateContext: ", e);
+			log.log(Level.SEVERE,"updateContext: ", e);
 		}
 	}
 
@@ -2928,14 +2925,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			userContext.setLastExecScaleBar();
 
 		} catch (Exception e) {
-			log.error("switchSlideBar: ", e);
+			log.log(Level.SEVERE,"switchSlideBar: ", e);
 		}
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration config) {
 		try {
-			log.debug("onConfigurationChanged");
+			log.log(Level.FINE, "onConfigurationChanged");
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
 				this.mMyLocationOverlay
 						.setOffsetOrientation(ViewSimpleLocationOverlay.PORTRAIT_OFFSET_ORIENTATION);
@@ -2945,7 +2942,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			}
 			super.onConfigurationChanged(config);
 		} catch (Exception e) {
-			log.error("onConfigurationChanged: ", e);
+			log.log(Level.SEVERE,"onConfigurationChanged: ", e);
 		}
 	}
 
@@ -2953,7 +2950,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				log.debug("KEY BACK pressed");
+				log.log(Level.FINE, "KEY BACK pressed");
 				if (!backpressedroulette) {
 					backpressed = true;
 					this.onDestroy();
@@ -2971,7 +2968,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			} 
 			return super.onKeyDown(keyCode, event);			
 		} catch (Exception e) {
-			log.error("onKeyDown: ", e);
+			log.log(Level.SEVERE,"onKeyDown: ", e);
 			return false;
 		}
 		// return false;
@@ -2981,12 +2978,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	@Override
 	public void onLowMemory() {
 		try {
-			log.debug("onLowMemory");
+			log.log(Level.FINE, "onLowMemory");
 			osmap.getMTileProvider().onLowMemory();
 			super.onLowMemory();
 			Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
-			log.error("onLowMemory: ", e);
+			log.log(Level.SEVERE,"onLowMemory: ", e);
 		}
 	}
 
@@ -3017,7 +3014,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					this, 0);
 			cellLocationFunc.launch();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -3026,7 +3023,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	@Override
 	public void onPause() {
 		try {
-			log.debug("onPause");
+			log.log(Level.FINE, "onPause");
 			super.onPause();
 			if (wl != null && wl.isHeld())
 				wl.release();
@@ -3034,7 +3031,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		} catch (Exception e)
 
 		{
-			log.error("onPause: ", e);
+			log.log(Level.SEVERE,"onPause: ", e);
 		}
 	}
 
@@ -3053,14 +3050,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				      searchInNameFinder(query);
 				} else {
 					String mapLayer = i.getStringExtra("layer");
-					log.debug("previous layer: " + mapLayer);
+					log.log(Level.FINE, "previous layer: " + mapLayer);
 					if (mapLayer != null) {
 						osmap.onLayerChanged(mapLayer);
-						log.debug("map loaded");
+						log.log(Level.FINE, "map loaded");
 					}
 				}
 			} catch (Exception e) {
-				log.error("onNewIntent", e);
+				log.log(Level.SEVERE,"onNewIntent", e);
 
 			}
 
@@ -3071,7 +3068,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				t.launch();
 			}
 		} catch (Exception e) {
-			log.error("onNewIntent", e);
+			log.log(Level.SEVERE,"onNewIntent", e);
 		}
 	}
 
@@ -3080,10 +3077,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	public void persist() {
 		try {
-			log.debug("map persist");
+			log.log(Level.FINE, "map persist");
 			mapState.persist();
 		} catch (Exception e) {
-			log.error("persist", e);
+			log.log(Level.SEVERE,"persist", e);
 		}
 	}
 
@@ -3106,7 +3103,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				this.osmap.setMapCenter(location);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -3115,7 +3112,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 */
 	@Override
 	public void enableGPS() {
-		log.debug("enableGPS");
+		log.log(Level.FINE, "enableGPS");
 		super.initLocation();
 		boolean enabled = this.isLocationHandlerEnabled();
 		try {
@@ -3123,7 +3120,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.myNavigator.setEnabled(enabled);
 			this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -3131,7 +3128,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	 * Stops the location handler
 	 */
 	public void disableGPS() {
-		log.debug("disableGPS");
+		log.log(Level.FINE, "disableGPS");
 		super.disableGPS();
 		boolean enabled = this.isLocationHandlerEnabled();
 		try {
@@ -3139,7 +3136,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			this.myNavigator.setEnabled(enabled);
 			this.myGPSButton.setTitle(R.string.Map_26);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -3201,7 +3198,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 				}
 			});
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -3265,6 +3262,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 		tileWaiter.onDownloadCanceled();
 		runOnUiThread(new Runnable() {
 			public void run() {
+				Map.this.enableGPS();
 				Toast.makeText(Map.this, R.string.download_tiles_12,
 						Toast.LENGTH_LONG).show();
 			}
@@ -3284,6 +3282,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	public void onFinishDownload() {
 		runOnUiThread(new Runnable() {
 			public void run() {
+				Map.this.enableGPS();
 				isDownloadTilesFinished = true;
 				Map.this.downloadTilesButton
 						.setText(R.string.alert_dialog_text_ok);
@@ -3314,6 +3313,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	private boolean isDownloadTilesFinished = false;
 
 	public void onStartDownload() {
+		this.disableGPS();
 		isDownloadTilesFinished = false;
 		this.previousTime = 0;
 		tileWaiter.onStartDownload();
@@ -3408,7 +3408,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			myDownloadTiles.setEnabled(false);
 			return false;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return false;
 		}
 	}
@@ -3420,13 +3420,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			m.obj = this.getText(resId);
 			this.getMapHandler().sendMessage(m);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
 	public void showOKDialog(String textBody, int title) {
 		try {
-			log.debug("show ok dialog");
+			log.log(Level.FINE, "show ok dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			
 			if (textBody.contains("<html")) {
@@ -3437,7 +3437,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					wv.loadData(html, "text/html", "UTF-8");
 					alert.setView(wv);
 				} catch (Exception e) {
-					log.error(e);
+					log.log(Level.SEVERE,"",e);
 					ListView l = new ListView(this);
 					l.setAdapter(new LongTextAdapter(textBody, true));
 					l.setClickable(false);
@@ -3446,7 +3446,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 					alert.setView(l);
 				} catch (OutOfMemoryError oe) {
 					onLowMemory();
-					log.error(oe);		
+					log.log(Level.SEVERE,"",oe);		
 					showToast(R.string.MapLocation_3);
 				}
 				
@@ -3468,17 +3468,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 							try {
 								
 							} catch (Exception e) {
-								log.error(e);
+								log.log(Level.SEVERE,"",e);
 							}
 						}
 					});			
 
 			alert.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} catch (OutOfMemoryError oe) {
 			onLowMemory();
-			log.error(oe);
+			log.log(Level.SEVERE,"",oe);
 			showToast(R.string.MapLocation_3);
 		}
 	}

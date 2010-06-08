@@ -1,6 +1,5 @@
 package es.prodevelop.gvsig.mini.tasks.tiledownloader;
 
-import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.tilecache.IDownloadWaiter;

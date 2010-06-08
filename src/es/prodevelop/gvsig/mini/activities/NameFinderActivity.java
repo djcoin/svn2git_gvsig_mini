@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -47,42 +47,28 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-
-import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.util.Utils;
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.LayoutAnimationController;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import es.prodevelop.gvsig.mini.R;
 
 /**
  * Activity to show the results of the NameFinder service. Consists on a ListActivity
@@ -93,15 +79,13 @@ import android.widget.AdapterView.OnItemClickListener;
 public class NameFinderActivity extends ListActivity {
 
 	private int pos = -1;
-	private final static Logger log = LoggerFactory
-			.getLogger(NameFinderActivity.class);
+	private final static Logger log = Logger
+			.getLogger(NameFinderActivity.class.getName());
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		try {
-			log.debug("onCreate NameFinder actvity");
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+			log.log(Level.FINE, "onCreate NameFinder actvity");			
 			super.onCreate(savedInstanceState);
 
 			BulletedTextListAdapter itla = new BulletedTextListAdapter(this);
@@ -109,7 +93,7 @@ public class NameFinderActivity extends ListActivity {
 			String[] results = getIntent().getStringArrayExtra("test");
 
 			final int size = results.length;
-			log.debug("Starting namefinder activity with " + size + " results");
+			log.log(Level.FINE, "Starting namefinder activity with " + size + " results");
 			for (int i = 0; i < results.length; i++) {
 				itla.addItem(new BulletedText(results[i], getResources()
 						.getDrawable(R.drawable.pois)));
@@ -117,7 +101,7 @@ public class NameFinderActivity extends ListActivity {
 
 			setListAdapter(itla);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -126,7 +110,7 @@ public class NameFinderActivity extends ListActivity {
 		try {
 			super.onStop();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -136,7 +120,7 @@ public class NameFinderActivity extends ListActivity {
 		try {
 			super.onListItemClick(l, v, position, id);
 			pos = position;
-			log.debug("Click on position: " + pos);
+			log.log(Level.FINE, "Click on position: " + pos);
 			AlertDialog.Builder alertPOI = new AlertDialog.Builder(this);
 
 			alertPOI.setCancelable(true);
@@ -158,18 +142,18 @@ public class NameFinderActivity extends ListActivity {
 						mIntent.putExtras(bundle);
 						switch (position) {
 						case 0:
-							log.debug("setResult = 0");
+							log.log(Level.FINE, "setResult = 0");
 							setResult(0, mIntent);
 							finish();
 							
 							break;
 						case 1:
-							log.debug("setResult = 1");
+							log.log(Level.FINE, "setResult = 1");
 							setResult(1, mIntent);
 							finish();
 							break;
 						case 2:
-							log.debug("setResult = 2");
+							log.log(Level.FINE, "setResult = 2");
 							setResult(2, mIntent);
 							finish();
 							break;
@@ -179,7 +163,7 @@ public class NameFinderActivity extends ListActivity {
 							break;
 						}
 					} catch (Exception e) {
-						log.error(e);
+						log.log(Level.SEVERE,"",e);
 					}
 				}
 
@@ -209,7 +193,7 @@ public class NameFinderActivity extends ListActivity {
 
 			alertPOI.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -239,7 +223,7 @@ public class NameFinderActivity extends ListActivity {
 				addView(mText, new LinearLayout.LayoutParams(
 						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 
@@ -247,7 +231,7 @@ public class NameFinderActivity extends ListActivity {
 			try {
 				mText.setText(words);
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 
@@ -260,7 +244,7 @@ public class NameFinderActivity extends ListActivity {
 				else
 					mBullet.setImageBitmap((Bitmap) bullet);
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 	}
@@ -279,7 +263,7 @@ public class NameFinderActivity extends ListActivity {
 				mContext = context;
 				mItems = new ArrayList<BulletedText>();
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 
@@ -287,7 +271,7 @@ public class NameFinderActivity extends ListActivity {
 			try {
 				mItems.add(bt);
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 
@@ -299,7 +283,7 @@ public class NameFinderActivity extends ListActivity {
 			try {
 				return mItems.size();
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return 0;
 			}
 		}
@@ -308,7 +292,7 @@ public class NameFinderActivity extends ListActivity {
 			try {
 				return mItems.get(position);
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return null;
 			}
 		}
@@ -321,7 +305,7 @@ public class NameFinderActivity extends ListActivity {
 			try {
 				return mItems.get(position).isSelectable();
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return false;
 			}
 		}
@@ -366,7 +350,7 @@ public class NameFinderActivity extends ListActivity {
 				return btv;
 
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return null;
 			}
 		}
@@ -411,12 +395,12 @@ public class NameFinderActivity extends ListActivity {
 				is.close();
 				return bm;
 			} catch (IOException e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return null;
 			} catch (OutOfMemoryError e) {
 				System.gc();
 				System.gc();
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return null;
 			}
 		}

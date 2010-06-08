@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -39,29 +39,18 @@
 
 package es.prodevelop.gvsig.mini.tasks.twitter;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import winterwell.jtwitter.Twitter;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Looper;
-import android.os.Message;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
 public class ShareMyLocationFunc extends TweetMyLocationFunc {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(ShareMyLocationFunc.class);
+	private final static Logger log = Logger
+			.getLogger(ShareMyLocationFunc.class.getName());
 	private int res = TaskHandler.FINISHED;
 
 	public ShareMyLocationFunc(Map map, int id) {
@@ -77,7 +66,7 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 	 */
 	public void share(String text) {
 		try {
-			log.debug("share");
+			log.log(Level.FINE, "share");
 			final Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TEXT, text);
@@ -85,7 +74,7 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);//
 			getMap().startActivityForResult(i, 2385);
 		} catch (Exception e) {
-			log.error("share", e);
+			log.log(Level.SEVERE,"share", e);
 		}
 	}
 
@@ -103,7 +92,7 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 //						.sendEmptyMessage(Map.SHOW_TWEET_DIALOG);
 //			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			return true;
 		}

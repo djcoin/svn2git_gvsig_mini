@@ -45,9 +45,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -78,14 +77,14 @@ public class YOURSFunctionality extends Functionality {
 	Route route;
 	int res = TaskHandler.INITED;
 	YOURSHandler handler;
-	private final static Logger log = LoggerFactory.getLogger(YOURSFunctionality.class);
+	private final static Logger log = Logger.getLogger(YOURSFunctionality.class.getName());
 
 	public YOURSFunctionality(Map map, int id) {
 		super(map, id);
 		this.route = map.route;
 		handler = new YOURSHandler();
 		this.addObserver(handler);
-		log.setLevel(Utils.LOG_LEVEL);
+//		log.setLevel(Utils.LOG_LEVEL);
 	}
 	
 	public Handler getHandler() {
@@ -100,7 +99,7 @@ public class YOURSFunctionality extends Functionality {
 
 			final String routeString = route.toYOURS(ini, end);
 			
-			log.debug(routeString);
+			log.log(Level.FINE, routeString);
 
 			/* Define the URL we want to load data from. */
 			URL parseURL = new URL(routeString);
@@ -135,7 +134,7 @@ public class YOURSFunctionality extends Functionality {
 			res = TaskHandler.NO_RESPONSE;
 		} catch (Exception e) {
 			res = TaskHandler.ERROR;
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			// handler.sendEmptyMessage(map.ROUTE_SUCCEEDED);
 
@@ -155,7 +154,7 @@ public class YOURSFunctionality extends Functionality {
 					}
 				}
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			} finally {		
 //				super.stop();
 			}

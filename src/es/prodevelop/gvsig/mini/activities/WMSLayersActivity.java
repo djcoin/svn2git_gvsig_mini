@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,26 +40,17 @@
 
 package es.prodevelop.gvsig.mini.activities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.gvsig.remoteclient.utils.BoundaryBox;
 import org.gvsig.remoteclient.wms.WMSLayer;
-import org.gvsig.remoteclient.wms.WMSStatus;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,11 +64,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
-import es.prodevelop.gvsig.mini.wms.WMSCancellable;
 import es.prodevelop.gvsig.mini.wms.WMSException;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
@@ -90,16 +79,16 @@ import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
  */
 public class WMSLayersActivity extends ListActivity {
 
-	private Logger log = LoggerFactory.getLogger(WMSLayersActivity.class);
+	private Logger log = Logger.getLogger(WMSLayersActivity.class.getName());
 	private String server;
 	private String preferredFormat = "png";
 	private String preferredSRS = "EPSG:230";
 
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.debug("onCreate WMSLayersActivity");
-			log.setClientID(this.toString());
+			
+			log.log(Level.FINE, "onCreate WMSLayersActivity");
+			
 			super.onCreate(savedInstanceState);
 			setTitle(R.string.LayersActivity_9);
 			server = getIntent().getStringExtra("server");
@@ -108,7 +97,7 @@ public class WMSLayersActivity extends ListActivity {
 			getListView().setTextFilterEnabled(true);
 			getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -117,7 +106,7 @@ public class WMSLayersActivity extends ListActivity {
 		try {
 			pMenu.add(0, 0, 0, R.string.WMSLayersActivity_0);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return true;
 	}
@@ -140,13 +129,13 @@ public class WMSLayersActivity extends ListActivity {
 
 					for (int i = 0; i < length; i++) {
 						if (selected[i]) {
-							log.debug("selected: " + layerNames.get(i));
+							log.log(Level.FINE, "selected: " + layerNames.get(i));
 							selectedLayers.add(layerNames.get(i));
 						}
 					}
 
 					data.putExtra("server", this.server);
-					log.debug("server: " + server);
+					log.log(Level.FINE, "server: " + server);
 
 					FMapWMSDriver wmsDriver = FMapWMSDriverFactory
 							.getFMapDriverForURL(new URL(server));
@@ -181,18 +170,18 @@ public class WMSLayersActivity extends ListActivity {
 					data.putExtra("minY", bbox.getYmin());
 					data.putExtra("maxX", bbox.getXmax());
 					data.putExtra("maxY", bbox.getYmax());
-					log.debug("name: " + layers[0]);
-					log.debug("srs: " + srs);
-					log.debug("extent: " + bbox.toString());
-					log.debug("format: " + format);
+					log.log(Level.FINE, "name: " + layers[0]);
+					log.log(Level.FINE, "srs: " + srs);
+					log.log(Level.FINE, "extent: " + bbox.toString());
+					log.log(Level.FINE, "format: " + format);
 					setResult(RESULT_OK, data);
 					finish();
 				} catch (WMSException we) {
-					log.error("The layer is not supported: ", we);
+					log.log(Level.SEVERE,"The layer is not supported: ", we);
 					Toast.makeText(this, R.string.WMSLayersActivity_1,
 							Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
-					log.error(e);
+					log.log(Level.SEVERE,"",e);
 					Utils.showSendLogDialog(this, R.string.fatal_error);
 					Toast.makeText(this, R.string.WMSLayersActivity_1,
 							Toast.LENGTH_LONG).show();
@@ -200,7 +189,7 @@ public class WMSLayersActivity extends ListActivity {
 				break;
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return true;
 	}
@@ -209,7 +198,7 @@ public class WMSLayersActivity extends ListActivity {
 		String format = "";
 
 		if (aFormats == null) {
-			log.debug("formats == null");
+			log.log(Level.FINE, "formats == null");
 			throw new WMSException(this.getResources().getString(
 					R.string.WMSLayersActivity_2));
 		}
@@ -238,14 +227,14 @@ public class WMSLayersActivity extends ListActivity {
 		for (int i = 0; i < length; i++) {
 			temp = aSRS.get(i).toString();
 			if (temp.toUpperCase().contains(this.preferredSRS)) {
-				log.debug("selected SRS: " + temp);
+				log.log(Level.FINE, "selected SRS: " + temp);
 				return temp;
 			}
 		}
 
 		for (int i = 0; i < length; i++) {
 			temp = aSRS.get(i).toString();
-			log.debug("SRS: " + temp);
+			log.log(Level.FINE, "SRS: " + temp);
 			if (CRSFactory.isSupportedSRS(temp)) {
 				return temp;
 			}
@@ -266,7 +255,7 @@ public class WMSLayersActivity extends ListActivity {
 				layerNames = getIntent().getStringArrayListExtra("layers");
 				selected = new boolean[layerNames.size()];
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 		}
 
@@ -275,7 +264,7 @@ public class WMSLayersActivity extends ListActivity {
 			try {
 				return layerNames.size();
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 				return 0;
 			}
 		}
@@ -311,7 +300,7 @@ public class WMSLayersActivity extends ListActivity {
 							selected[pos] = !selected[pos];
 							nameView.setChecked(selected[pos]);
 						} catch (Exception e) {
-							log.error(e);
+							log.log(Level.SEVERE,"",e);
 						}
 					}
 				});
@@ -344,20 +333,20 @@ public class WMSLayersActivity extends ListActivity {
 				// img.setImageBitmap(b);
 				//
 				// } catch (WMSException e) {
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// } catch (OutOfMemoryError e) {
 				// System.gc();
 				// System.gc();
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// } catch (Exception e) {
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// }
 				// } catch (ConnectException e) {
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// } catch (MalformedURLException e) {
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// } catch (IOException e) {
-				// log.error(e);
+				// log.log(Level.SEVERE,"",e);
 				// }
 
 				nameView.setChecked(selected[pos]);
@@ -375,7 +364,7 @@ public class WMSLayersActivity extends ListActivity {
 				// mainView.addView(img, 1);
 
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 			return mainView;
 		}

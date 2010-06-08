@@ -58,12 +58,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.android.appender.SDCardAppender;
-import net.sf.microlog.core.Level;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import net.sf.microlog.core.appender.ConsoleAppender;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -79,7 +76,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -107,8 +103,8 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 	protected LocationManager mLocationManager;
 	protected int mBearing = 0;
 	public int mNumSatellites = NOT_SET;
-	private final static Logger log = LoggerFactory
-			.getLogger(MapLocation.class);
+	private final static Logger log = Logger
+			.getLogger(MapLocation.class.getName());
 	// private GPSManager manager;
 	private LocationHandler locationHandler;
 
@@ -120,25 +116,14 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			if (logFile != null) {
 				this.showSendLogDialog();
 			}
-
-			log.addAppender(new ConsoleAppender());
-			SDCardAppender appender = new SDCardAppender();
-			long milis = System.currentTimeMillis();
-			appender.setDir(Utils.APP_DIR + File.separator + Utils.LOG_DIR);
-			appender.setFileName("log" + String.valueOf(milis) + ".txt");
-			appender.setContext(this);
-			log.addAppender(appender);
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
-			log.error("Testing to log error message with Microlog.");
+			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
-		log.setLevel(Level.DEBUG);
-		log.debug("onCreate splash actiivity");
+		
 		try {
 			Config.setContext(this);
-			log.setLevel(Utils.LOG_LEVEL);
+			
 			locationHandler = new LocationHandler(
 					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 					this, this);
@@ -150,57 +135,57 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			// manager.setGPSTask(new LocationTimer(manager));
 			this.initializeSensor(this);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	@Override
 	protected void onPause() {
 		try {
-			log.debug("onPause MapLocation");
+			log.log(Level.FINE, "onPause MapLocation");
 			super.onPause();
 			this.stopSensor(this);
 			disableGPS();
 			// manager.stopLocationProviders();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		try {
-			log.debug("on resume MapLocation");
+			log.log(Level.FINE, "on resume MapLocation");
 			super.onResume();
 			this.initializeSensor(this);
 			enableGPS();
 			// manager.startLocationProviders();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	public void initializeSensor(Context context) {
 		try {
-			log.debug("initialize sensor");
+			log.log(Level.FINE, "initialize sensor");
 			SensorManager mSensorManager = (SensorManager) context
 					.getSystemService(Context.SENSOR_SERVICE);
 			mSensorManager.registerListener(this, mSensorManager
 					.getDefaultSensor(Sensor.TYPE_ORIENTATION),
 					SensorManager.SENSOR_DELAY_NORMAL);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	public void stopSensor(Context context) {
 		try {
-			log.debug("stop sensor");
+			log.log(Level.FINE, "stop sensor");
 			SensorManager mSensorManager = (SensorManager) context
 					.getSystemService(Context.SENSOR_SERVICE);
 			mSensorManager.unregisterListener(this);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -214,16 +199,16 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			List providers = this.getLocationManager().getProviders(true);
 			if (providers.size() == 0) {
-				log.debug("no location providers enabled");
+				log.log(Level.FINE, "no location providers enabled");
 				this.showLocationSourceDialog();
 			} else {
-				log.debug("location handler start");
+				log.log(Level.FINE, "location handler start");
 				locationHandler.start();
 				this.setLocationHandlerEnabled(true);
 				// manager.initLocation();
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -246,7 +231,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 								startActivity(new Intent(
 										"android.settings.LOCATION_SOURCE_SETTINGS"));
 							} catch (Exception e) {
-								log.error(e);
+								log.log(Level.SEVERE,"",e);
 							}
 						}
 					});
@@ -260,7 +245,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 			alert.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -282,7 +267,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 							try {
 								Utils.downloadLayerFile(MapLocation.this);
 							} catch (Exception e) {
-								log.error(e);
+								log.log(Level.SEVERE,"",e);
 							}
 						}
 					});
@@ -296,7 +281,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 			alert.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -335,7 +320,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 				}
 
 			} catch (Exception e) {
-				log.error(e);
+				log.log(Level.SEVERE,"",e);
 			}
 
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -356,7 +341,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 			alert.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -364,7 +349,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			this.showDialogFromFile("about.txt", R.string.Map_28);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -372,7 +357,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			this.showDialogFromFile("license.txt", R.string.Map_29);			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -380,13 +365,13 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			this.showDialogFromFile("whatsnew.txt", R.string.Map_30);			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	public void showSendLogDialog() {
 		try {
-			log.debug("show send log dialog");
+			log.log(Level.FINE, "show send log dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 			alert.setTitle(R.string.warning);
@@ -402,7 +387,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 							try {
 								Utils.sendExceptionEmail(MapLocation.this);
 							} catch (Exception e) {
-								log.error(e);
+								log.log(Level.SEVERE,"",e);
 							}
 						}
 					});
@@ -417,7 +402,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 
 			alert.show();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
@@ -428,7 +413,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			return locationToGeoPoint(this.mLocationManager
 					.getLastKnownLocation(PROVIDER_NAME));
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}
@@ -439,11 +424,11 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 	@Override
 	protected void onDestroy() {
 		try {
-			log.debug("on destroy MapLocation");
+			log.log(Level.FINE, "on destroy MapLocation");
 			super.onDestroy();
 			locationHandler.stop();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -463,7 +448,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 		try {
 			this.initLocation();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -475,7 +460,7 @@ public abstract class MapLocation extends Activity implements GeoUtils,
 			this.locationHandler.stop();
 			this.setLocationHandlerEnabled(false);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 

@@ -1,11 +1,12 @@
 package es.prodevelop.gvsig.mini.map;
 
-import es.prodevelop.tilecache.provider.Downloader;
-import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.os.Handler;
 import android.os.Message;
+import es.prodevelop.tilecache.provider.Downloader;
+import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
 
 /**
  * Handler to manage Messages from Downloader and TileFilesystemProvider
@@ -17,8 +18,8 @@ import android.os.Message;
 public class LoadCallbackHandler extends Handler {
 
 	private Handler mDownloadFinishedListenerHander;
-	private final static Logger log = LoggerFactory
-			.getLogger(LoadCallbackHandler.class);
+	private final static Logger log = Logger
+			.getLogger(LoadCallbackHandler.class.getName());
 
 	public LoadCallbackHandler(Handler handler) {
 		mDownloadFinishedListenerHander = handler;
@@ -50,7 +51,7 @@ public class LoadCallbackHandler extends Handler {
 				break;
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 }

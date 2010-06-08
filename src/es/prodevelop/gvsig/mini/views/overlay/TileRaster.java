@@ -55,9 +55,9 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -138,7 +138,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public int mBearing = 0;
 
 	private MapRenderer mRendererInfo;
-	private final static Logger log = LoggerFactory.getLogger(TileRaster.class);
+	private final static Logger log = Logger.getLogger(TileRaster.class.getName());
 
 	public MapRenderer getMRendererInfo() {
 		return mRendererInfo;
@@ -222,7 +222,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.androidContext = androidContext;
 			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);
 			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 			this.mScaler = new Scaler(context, new LinearInterpolator());
 			this.instantiateTileProvider();
 			this.map = (Map) context;
@@ -238,10 +238,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.setOnClickListener(this);
 			this.setOnLongClickListener(this);
 		} catch (Exception e) {
-			log.error("onCreate:", e);
+			log.log(Level.SEVERE,"onCreate:", e);
 		} catch (OutOfMemoryError e) {
 			System.gc();
-			log.error("onCreate:", e);
+			log.log(Level.SEVERE,"onCreate:", e);
 		}
 	}
 
@@ -265,7 +265,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					.getLatitudeE6() / 1E6);
 
 		} catch (Exception e) {
-			log.error("setMapCenter:", e);
+			log.log(Level.SEVERE,"setMapCenter:", e);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				postInvalidate();
 			}
 		} catch (Exception e) {
-			log.error("setMapCenter:", e);
+			log.log(Level.SEVERE,"setMapCenter:", e);
 		}
 	}
 
@@ -299,7 +299,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 */
 	public void setRenderer(final MapRenderer aRenderer) {
 		try {
-			log.debug("set MapRenderer: " + aRenderer.toString());
+			log.log(Level.FINE, "set MapRenderer: " + aRenderer.toString());
 			this.mRendererInfo = aRenderer;
 			this.map.vp = new ViewPort();
 			this.mRendererInfo.setCenter(aRenderer.getExtent().getCenter()
@@ -311,7 +311,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			return;
 
 		} catch (Exception e) {
-			log.error("setRenderer:", e);
+			log.log(Level.SEVERE,"setRenderer:", e);
 		}
 	}
 
@@ -347,7 +347,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				this.setZoomLevel(zoomLevel);
 			}
 		} catch (Exception e) {
-			log.error("setZoomLevelFromResolution", e);
+			log.log(Level.SEVERE,"setZoomLevelFromResolution", e);
 		}
 	}
 
@@ -398,7 +398,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.mRendererInfo.setZoomLevel(zoomLevel);
 			map.vp.setDist1Pixel(map.vp.resolutions[zoomLevel]);
 		} catch (Exception e) {
-			log.error("setZoomLevel:", e);
+			log.log(Level.SEVERE,"setZoomLevel:", e);
 
 		}
 		// refresh = false;
@@ -462,7 +462,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				this.setZoomLevel(aZoomLevel);
 			}
 		} catch (Exception e) {
-			log.error("setZoomLevel", e);
+			log.log(Level.SEVERE,"setZoomLevel", e);
 		}
 	}
 
@@ -516,7 +516,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// zoomed = true;
 			// mapGraphics.drawImage(zoomImage.scaled(480, 640), -120, -160);
 		} catch (Exception e) {
-			log.error("zoomIn:", e);
+			log.log(Level.SEVERE,"zoomIn:", e);
 		}
 	}
 
@@ -539,7 +539,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				}
 			}
 		} catch (Exception e) {
-			log.error("zoomOut:", e);
+			log.log(Level.SEVERE,"zoomOut:", e);
 		}
 	}
 
@@ -555,7 +555,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 	public boolean onLongPress(MotionEvent e) {
 		if (!panMode || map.navigation) {
-			log.debug("longpress on pan mode or navigation does not work");
+			log.log(Level.FINE, "longpress on pan mode or navigation does not work");
 			return false;
 		}
 
@@ -582,7 +582,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				pixelY = (int) e.getY();
 			}
 		} catch (Exception ex) {
-			log.error("onLongPress:", ex);
+			log.log(Level.SEVERE,"onLongPress:", ex);
 		}
 
 		return true;
@@ -596,7 +596,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					return true;
 
 		} catch (Exception e) {
-			log.error("onkeydown:", e);
+			log.log(Level.SEVERE,"onkeydown:", e);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -608,7 +608,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				if (osmvo.onKeyUp(keyCode, event, this))
 					return true;
 		} catch (Exception e) {
-			log.error("onkeyUp:", e);
+			log.log(Level.SEVERE,"onkeyUp:", e);
 		}
 
 		return super.onKeyUp(keyCode, event);
@@ -628,7 +628,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				if (osmvo.onTrackballEvent(event, this))
 					return true;
 		} catch (Exception e) {
-			log.error("onTrackBallEvent", e);
+			log.log(Level.SEVERE,"onTrackBallEvent", e);
 		}
 		return super.onTrackballEvent(event);
 	}
@@ -646,7 +646,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			}
 
 		} catch (Exception e) {
-			log.error("onTouchEvent:", e);
+			log.log(Level.SEVERE,"onTouchEvent:", e);
 		}
 
 		return super.onTouchEvent(event);
@@ -677,7 +677,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			ViewPort.mapWidth = getWidth();
 			c.drawRect(0, 0, mapWidth, mapHeight, whitePaint);
 
-			// log.debug(map.vp.calculateExtent(mapWidth, mapHeight,
+			// log.log(Level.FINE, map.vp.calculateExtent(mapWidth, mapHeight,
 			// this.getMRendererInfo().getCenter()).toString());
 			final MapRenderer renderer = this.getMRendererInfo();
 
@@ -850,8 +850,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 						r.right = rightTop[0];
 						r.top = rightTop[1];
 
-						// log.debug(offSetX + "," + offSetY);
-						// log.debug(r.left + ", " + r.right + ", " + r.bottom
+						// log.log(Level.FINE, offSetX + "," + offSetY);
+						// log.log(Level.FINE, r.left + ", " + r.right + ", " + r.bottom
 						// + ", " + r.top);
 						// process = r.contains(tileLeft, tileTop);
 						process = r.intersects(tileLeft, tileTop, tileLeft
@@ -998,7 +998,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// c.drawBitmap(bufferBitmap, this.mTouchMapOffsetX,
 			// this.mTouchMapOffsetY, normalPaint);
 		} catch (Exception e) {
-			log.error("onDraw", e);
+			log.log(Level.SEVERE,"onDraw", e);
 		}
 
 	}
@@ -1032,7 +1032,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				}
 			}
 		} catch (final Exception e) {
-			log.error("sortTiles:", e);
+			log.log(Level.SEVERE,"sortTiles:", e);
 		}
 	}
 
@@ -1043,7 +1043,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			array3[first] = array3[second];
 			array3[second] = hold;
 		} catch (final Exception e) {
-			log.error("swap", e);
+			log.log(Level.SEVERE,"swap", e);
 		}
 	}
 
@@ -1063,7 +1063,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					break;
 				}
 			} catch (Exception e) {
-				log.error("SimpleInvalidationHandler", e);
+				log.log(Level.SEVERE,"SimpleInvalidationHandler", e);
 			}
 		}
 	}
@@ -1087,7 +1087,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			try {
 				TileRaster.this.onLongPress(e);
 			} catch (Exception est) {
-				log.error(est);
+				log.log(Level.SEVERE,"",est);
 			}
 		}
 
@@ -1104,14 +1104,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			try {
-				log.debug("double tap");
+				log.log(Level.FINE, "double tap");
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
 				TileRaster.this.setMapCenter(coords[0], coords[1]);
 				TileRaster.this.zoomIn();
 			} catch (Exception ex) {
-				log.error("doubletap", ex);
+				log.log(Level.SEVERE,"doubletap", ex);
 			}
 			return true;
 		}
@@ -1132,7 +1132,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 				map.switchSlideBar();
 			} catch (Exception ex) {
-				log.error("singletapconfirmed", ex);
+				log.log(Level.SEVERE,"singletapconfirmed", ex);
 
 			}
 			return false;
@@ -1156,7 +1156,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// this.zoomIn();
 			// }
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -1170,7 +1170,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// zoomOut();
 			// }
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return true;
 	}
@@ -1186,7 +1186,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	@Override
 	public void onLayerChanged(String layerName) {
 		try {
-			log.debug("on layer changed");
+			log.log(Level.FINE, "on layer changed");
 			this.clearCache();
 			
 			MapRenderer previous = this.getMRendererInfo();
@@ -1196,11 +1196,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			TileConversor.pixelsPerTile = renderer.getMAPTILE_SIZEPX();
 
-			log.debug("from: " + previous.toString());
-			log.debug("to: " + renderer.toString());
+			log.log(Level.FINE, "from: " + previous.toString());
+			log.log(Level.FINE, "to: " + renderer.toString());
 
 			if (renderer instanceof WMSRenderer && !map.navigation) {
-				log.debug("Decreasing size of memory cache");
+				log.log(Level.FINE, "Decreasing size of memory cache");
 				Utils.ROTATE_BUFFER_SIZE = 1;
 			} else {
 				Utils.ROTATE_BUFFER_SIZE = 1;
@@ -1221,7 +1221,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					renderer.reprojectGeometryCoordinates(route.getRoute()
 							.getFeatureAt(0).getGeometry(), previous.getSRS());
 			} catch (Exception e) {
-				log.error("reprojecting route:", e);
+				log.log(Level.SEVERE,"reprojecting route:", e);
 			}
 
 			try {
@@ -1230,7 +1230,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					renderer
 							.reprojectGeometryCoordinates(nm, previous.getSRS());
 			} catch (Exception e) {
-				log.error("reprojecting namefinder:", e);
+				log.log(Level.SEVERE,"reprojecting namefinder:", e);
 			}
 
 			double[] newCenter = previous.transformCenter(renderer.getSRS());
@@ -1287,7 +1287,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 			map.persist();
 		} catch (Exception e) {
-			log.error("onlayerchanged:", e);
+			log.log(Level.SEVERE,"onlayerchanged:", e);
 		} finally {
 			map.updateSlider();
 		}
@@ -1305,7 +1305,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					renderer.getCenter().getY(), CRSFactory.getCRS(renderer
 							.getSRS()), CRSFactory.getCRS("EPSG:4326"));
 		} catch (Exception e) {
-			log.error("getCenterLonLat:", e);
+			log.log(Level.SEVERE,"getCenterLonLat:", e);
 		}
 		return res;
 	}
@@ -1329,7 +1329,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.setMapCenter(coords[0], coords[1]);
 
 		} catch (Exception e) {
-			log.error("setMapCenterFromLonLat", e);
+			log.log(Level.SEVERE,"setMapCenterFromLonLat", e);
 		}
 	}
 
@@ -1447,7 +1447,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 */
 	public void animateTo(final double x, final double y) {
 		// this.stopAnimation(false);
-		// log.debug("animate TO");
+		// log.log(Level.FINE, "animate TO");
 		mCurrentAnimationRunner = new LinearAnimationRunner(x, y, true);
 		WorkQueue.getExclusiveInstance().execute(mCurrentAnimationRunner);
 
@@ -1623,7 +1623,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				return;
 			acetate.drawZoomRectangle(r);
 		} catch (Exception e) {
-			log.error("drawZoomRectangle", e);
+			log.log(Level.SEVERE,"drawZoomRectangle", e);
 		}
 	}
 
@@ -1634,7 +1634,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		try {
 			acetate.cleanZoomRectangle();
 		} catch (Exception e) {
-			log.error("cleanZoomRectangle", e);
+			log.log(Level.SEVERE,"cleanZoomRectangle", e);
 		}
 	}
 
@@ -1650,11 +1650,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.selectedFeature = f;
 			if (f != null) {
 				Point geom = (Point) f.getGeometry();
-				log.debug("selectedFeature: " + geom.toString());
+				log.log(Level.FINE, "selectedFeature: " + geom.toString());
 				this.animateTo(geom.getX(), geom.getY());
 			}
 		} catch (Exception e) {
-			log.error("setSelectedFeature", e);
+			log.log(Level.SEVERE,"setSelectedFeature", e);
 		}
 	}
 
@@ -1851,10 +1851,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 */
 	public void clearCache() {
 		try {
-			log.debug("clearCache");
+			log.log(Level.FINE, "clearCache");
 			this.mTileProvider.clearPendingQueue();
 		} catch (Exception e) {
-			log.error("clearCache", e);
+			log.log(Level.SEVERE,"clearCache", e);
 		}
 	}
 
@@ -1863,7 +1863,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 */
 	public void destroy() {
 		try {
-			log.debug("destroy tileraster");
+			log.log(Level.FINE, "destroy tileraster");
 			acetate.destroy();
 			mTileProvider.destroy();
 
@@ -1875,7 +1875,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// this.mCurrentAnimationRunner.interrupt();
 			// this.mCurrentAnimationRunner = null;
 		} catch (Exception e) {
-			log.error("destroy", e);
+			log.log(Level.SEVERE,"destroy", e);
 		}
 	}
 

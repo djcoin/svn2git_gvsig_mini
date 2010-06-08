@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,16 +40,14 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.util.ResourceLoader;
-import es.prodevelop.gvsig.mini.util.Utils;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -62,6 +60,9 @@ import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * A ViewGroup to layout Views in a Cirle with animation. The length of the
@@ -73,8 +74,8 @@ import android.view.animation.TranslateAnimation;
 public class CircularRouleteView extends ViewGroup {
 	private int radius = 0;
 	private Bitmap center;
-	private final static Logger log = LoggerFactory
-			.getLogger(CircularRouleteView.class);
+	private final static Logger log = Logger
+			.getLogger(CircularRouleteView.class.getName());
 	Paint p;
 	Paint pcenter;
 	Path path;
@@ -86,7 +87,7 @@ public class CircularRouleteView extends ViewGroup {
 	public CircularRouleteView(Context context) {
 		super(context);
 		try {
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 			p = new Paint();
 			pcenter = new Paint();
 			pcenter.setAntiAlias(true);
@@ -97,12 +98,12 @@ public class CircularRouleteView extends ViewGroup {
 
 			p.setStyle(Paint.Style.FILL);
 			center = ResourceLoader.getBitmap(R.drawable.center_focus);
-			log.setLevel(Utils.LOG_LEVEL);
+//			log.setLevel(Utils.LOG_LEVEL);
 		} catch (OutOfMemoryError e) {			
 			System.gc();
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 
 	}
@@ -137,7 +138,7 @@ public class CircularRouleteView extends ViewGroup {
 				setLayoutAnimation(controller);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -169,7 +170,7 @@ public class CircularRouleteView extends ViewGroup {
 			canvas.drawPath(path, p);			
 			super.dispatchDraw(canvas);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 

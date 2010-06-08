@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -41,15 +41,12 @@
 package es.prodevelop.gvsig.mini.views.overlay;
 
 import java.util.ArrayList;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
@@ -62,10 +59,10 @@ import es.prodevelop.gvsig.mini.geom.MultiLineString;
 import es.prodevelop.gvsig.mini.geom.MultiPoint;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
  * Utility class to draw geometries in Android. @see es.prodevelop.gvsig.mini.geom package
@@ -96,12 +93,12 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 	protected Pixel firstRoutePixel, oldFirstRoutePixel, lastRoutePixel,
 			oldLastRoutePixel;
 	protected ArrayList<Pixel> pixelsRoute;
-	private final static Logger log = LoggerFactory
-			.getLogger(AndroidGeometryDrawer.class);
+	private final static Logger log = Logger
+			.getLogger(AndroidGeometryDrawer.class.getName());
 
 	public AndroidGeometryDrawer(TileRaster t, Context con) {
 		try {
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 			tileRaster = t;
 			pixelsRoute = new ArrayList<Pixel>();
 			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.arrowdown);
@@ -131,11 +128,11 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			this.circlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			this.circlePaint.setARGB(50, 137, 0, 182);
 		} catch (Exception e) {
-			log.error("constructor: " ,e);
+			log.log(Level.SEVERE,"constructor: " ,e);
 		} catch (OutOfMemoryError e) {
 			
 			System.gc();
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -150,7 +147,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			// Log.i("", "NotmustDraw");
 			return false;
 		} catch (Exception ex) {
-			log.error("mustDraw: " + ex.getMessage());
+			log.log(Level.SEVERE,"mustDraw: " + ex.getMessage());
 			return false;
 		}
 	}
@@ -166,7 +163,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			// Log.i("", "NotmustDraw");
 			return false;
 		} catch (Exception ex) {
-			log.error(ex.getMessage());
+			log.log(Level.SEVERE,ex.getMessage());
 			return false;
 		}
 	}
@@ -181,7 +178,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				c.drawCircle(coords[0], coords[1], 5, t.mPaint);
 			}
 		} catch (Exception e) {
-			log.error("drawPoint: " ,e);
+			log.log(Level.SEVERE,"drawPoint: " ,e);
 		}
 	}
 
@@ -195,7 +192,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 						- POIS_SPOT.y, t.mPaint);
 			}
 		} catch (Exception e) {
-			log.error("drawpoi: " ,e);
+			log.log(Level.SEVERE,"drawpoi: " ,e);
 		}
 	}
 
@@ -211,7 +208,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			c.drawBitmap(START, coords[0] - START_SPOT.x, coords[1]
 					- START_SPOT.y, t.mPaint);
 		} catch (Exception e) {
-			log.error("drawstart: " ,e);
+			log.log(Level.SEVERE,"drawstart: " ,e);
 		}
 	}
 
@@ -228,7 +225,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			c.drawBitmap(FINISH, coords[0] - FINISH_SPOT.x, coords[1]
 					- FINISH_SPOT.y, t.mPaint);
 		} catch (Exception e) {
-			log.error("drawend: " ,e);
+			log.log(Level.SEVERE,"drawend: " ,e);
 		}
 	}
 
@@ -244,7 +241,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				this.drawpoi(p, graphics, extent, viewPort);
 			}
 		} catch (Exception e) {
-			log.error("drawMultiPoint: " ,e);
+			log.log(Level.SEVERE,"drawMultiPoint: " ,e);
 		}
 	}
 
@@ -259,7 +256,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				this.drawpoi(p, graphics, extent, viewPort);
 			}
 		} catch (Exception e) {
-			log.error("drawN: " ,e);
+			log.log(Level.SEVERE,"drawN: " ,e);
 		}
 	}
 
@@ -285,7 +282,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				draw(lineStrings[i], arg1, arg2, arg3);
 			}
 		} catch (Exception e) {
-			log.error("drawMultiLine: " ,e);
+			log.log(Level.SEVERE,"drawMultiLine: " ,e);
 		}
 	}
 
@@ -374,7 +371,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			c.drawPath(path, this.pathPaint);
 
 		} catch (Exception e) {
-			log.error("drawLine: " ,e);
+			log.log(Level.SEVERE,"drawLine: " ,e);
 		}
 	}
 

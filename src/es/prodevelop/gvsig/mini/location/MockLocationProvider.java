@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -46,12 +46,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import es.prodevelop.gvsig.mini.location.Config;
-
-import net.sf.microlog.core.Level;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.content.Context;
 import android.location.Location;
@@ -59,8 +55,8 @@ import android.location.LocationManager;
 
 public class MockLocationProvider extends Thread {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(MockLocationProvider.class);
+	private final static Logger logger = Logger
+			.getLogger(MockLocationProvider.class.getName());
 	private List<String> data;
 	public static LocationManager locationManager;
 	private String mocLocationProvider;
@@ -79,9 +75,9 @@ public class MockLocationProvider extends Thread {
 		this.data = data;
 		try {
 			// Config.getInstance().setLogLevel(logger);
-			logger.setLevel(Level.DEBUG);
+//			logger.setLevel(Level.DEBUG);
 		} catch (NoSuchFieldError e) {
-			logger.error("Constructor: " + e.getMessage());
+			logger.log(Level.SEVERE,"Constructor: " + e.getMessage());
 		}
 	}
 
@@ -126,7 +122,7 @@ public class MockLocationProvider extends Thread {
 					location.setLongitude(longitude);
 					location.setAltitude(altitude);
 
-					logger.debug(location.toString());
+					logger.log(Level.FINE, location.toString());
 					lastLocation = location;
 					// }
 
@@ -144,7 +140,7 @@ public class MockLocationProvider extends Thread {
 			}
 			this.updateLocationsPeriodically(3000, true);
 		} catch (Exception e) {
-			logger.error("updateLocationsPeriodically" + e.getMessage());
+			logger.log(Level.SEVERE,"updateLocationsPeriodically" + e.getMessage());
 		} finally {
 			isAlive = false;
 		}
@@ -161,7 +157,7 @@ public class MockLocationProvider extends Thread {
 			Thread.sleep(delay);
 			stop = true;
 		} catch (Exception e) {
-			logger.error("stopUpdating: " + e.getMessage());
+			logger.log(Level.SEVERE,"stopUpdating: " + e.getMessage());
 		}
 	}
 
@@ -172,7 +168,7 @@ public class MockLocationProvider extends Thread {
 	
 	public static void startGPSMockLocationsSimulation(Context context, LocationManager manager) {
 		try {
-			logger.debug("startGPSMockLocationsSimulation");
+			logger.log(Level.FINE, "startGPSMockLocationsSimulation");
 			List data = new ArrayList();
 			InputStream is = context.getAssets().open("mock_locations.txt");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -182,7 +178,7 @@ public class MockLocationProvider extends Thread {
 				data.add(line);
 				i++;
 			}
-			logger.debug(String.format("Found (%s) locations", i));
+			logger.log(Level.FINE, String.format("Found (%s) locations", i));
 
 			// Log.e(LOG_TAG, data.size() + " lines");
 
@@ -191,9 +187,9 @@ public class MockLocationProvider extends Thread {
 			manager.addTestProvider("gps", false, true, false, false, true, true, true, 0, 100);
 			manager.setTestProviderEnabled("gps", true);			
 			mockProvider.start();
-			logger.debug("MockProvider started");
+			logger.log(Level.FINE, "MockProvider started");
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.log(Level.SEVERE,e.getMessage());
 		}		
 	}
 }

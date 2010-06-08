@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,19 +40,10 @@
 
 package es.prodevelop.gvsig.mini.context.map;
 
-import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.tasks.namefinder.CleanPOIFunc;
-import es.prodevelop.gvsig.mini.tasks.namefinder.ListPOIFunc;
-import es.prodevelop.gvsig.mini.tasks.namefinder.ShowNameFinderAddressDialog;
-import es.prodevelop.gvsig.mini.tasks.twitter.TweetMyLocationFunc;
-import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
-import es.prodevelop.gvsig.mini.tasks.yours.FinishPointFunctionality;
-import es.prodevelop.gvsig.mini.tasks.yours.StartPointFunctionality;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
@@ -64,25 +55,25 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class GPSItemContext extends DefaultContext {
 	
-private final static Logger log = LoggerFactory.getLogger(GPSItemContext.class);
+private final static Logger log = Logger.getLogger(GPSItemContext.class.getName());
 	
 	public GPSItemContext() {
 		super();
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	public GPSItemContext(Map map) {
 		super(map);
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 	}
 
@@ -93,7 +84,7 @@ private final static Logger log = LoggerFactory.getLogger(GPSItemContext.class);
 //			TweetMyLocationFunc tp = new TweetMyLocationFunc(map, R.layout.twitter_image_button);			
 //			h.put(tp.getID(), tp);			
 //		} catch (Exception e) {
-//			log.error(e);
+//			log.log(Level.SEVERE,"",e);
 //		}		
 //		return h;
 //	}
@@ -103,7 +94,7 @@ private final static Logger log = LoggerFactory.getLogger(GPSItemContext.class);
 //		try {
 //			return new int[] { R.layout.twitter_image_button};
 //		} catch (Exception e) {
-//			log.error(e);
+//			log.log(Level.SEVERE,"",e);
 //			return null;
 //		}		
 //	}

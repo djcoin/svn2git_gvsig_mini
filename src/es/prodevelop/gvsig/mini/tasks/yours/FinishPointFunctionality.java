@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,8 +40,11 @@
 
 package es.prodevelop.gvsig.mini.tasks.yours;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.tilecache.renderer.MapRenderer;
@@ -54,7 +57,7 @@ import es.prodevelop.tilecache.renderer.MapRenderer;
  */
 public class FinishPointFunctionality extends StartPointFunctionality {
 	
-	private final static Logger log = LoggerFactory.getLogger(FinishPointFunctionality.class);
+	private final static Logger log = Logger.getLogger(FinishPointFunctionality.class.getName());
 
 	public FinishPointFunctionality(Map map, int id) {
 		super(map, id);
@@ -69,7 +72,7 @@ public class FinishPointFunctionality extends StartPointFunctionality {
 			Point endPoint = new Point(p[0], p[1]);			
 			getMap().route.setEndPoint(endPoint);
 		} catch (Exception e) {
-			log.error("FinishPointFunc execute: " , e);
+			log.log(Level.SEVERE,"FinishPointFunc execute: " , e);
 		} finally {
 //			super.stop();
 		}

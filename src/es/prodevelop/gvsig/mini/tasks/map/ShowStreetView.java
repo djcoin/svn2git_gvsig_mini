@@ -28,36 +28,22 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es 
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es 
  *   
  */
 
 package es.prodevelop.gvsig.mini.tasks.map;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
-import android.telephony.CellLocation;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -69,7 +55,7 @@ import es.prodevelop.gvsig.mini.tasks.TaskHandler;
  *
  */
 public class ShowStreetView extends Functionality {
-	private final static Logger log = LoggerFactory.getLogger(ShowStreetView.class);
+	private final static Logger log = Logger.getLogger(ShowStreetView.class.getName());
 	public ShowStreetView(Map map, int id) {
 		super(map, id);
 	}
@@ -86,7 +72,7 @@ public class ShowStreetView extends Functionality {
 			getMap().startActivity(intent);
 				
 			} catch (Exception e) {
-				log.error("Street View", e);
+				log.log(Level.SEVERE,"Street View", e);
 			}
 			return true;
 	}

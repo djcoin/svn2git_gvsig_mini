@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -43,13 +43,10 @@ package es.prodevelop.gvsig.mini.tasks.namefinder;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Vector;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -74,8 +71,8 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class NameFinderFunc extends Functionality {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(NameFinderFunc.class);
+	private final static Logger log = Logger
+			.getLogger(NameFinderFunc.class.getName());
 
 	public String[] desc;
 	private int res;
@@ -95,7 +92,7 @@ public class NameFinderFunc extends Functionality {
 				"%20");
 		
 		try {
-			log.debug(query);
+			log.log(Level.FINE, query);
 			InputStream is = Utils.openConnection(query);
 			BufferedInputStream bis = new BufferedInputStream(is);
 
@@ -143,7 +140,7 @@ public class NameFinderFunc extends Functionality {
 				res = TaskHandler.NO_RESPONSE;
 			}
 		} catch (Exception e) {
-			log.error("Namefinder" + e.getMessage(), e);
+			log.log(Level.SEVERE,"Namefinder" + e.getMessage(), e);
 		} finally {
 
 		}

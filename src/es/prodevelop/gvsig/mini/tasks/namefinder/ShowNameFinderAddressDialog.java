@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,8 +40,11 @@
 
 package es.prodevelop.gvsig.mini.tasks.namefinder;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -56,8 +59,8 @@ import es.prodevelop.gvsig.mini.tasks.TaskHandler;
  */
 public class ShowNameFinderAddressDialog extends Functionality {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(ShowNameFinderAddressDialog.class);
+	private final static Logger log = Logger
+			.getLogger(ShowNameFinderAddressDialog.class.getName());
 
 	public final static int POI_DIALOG = 0;
 	public final static int ADDRESS_DIALOG = 1;
@@ -78,7 +81,7 @@ public class ShowNameFinderAddressDialog extends Functionality {
 				getMap().getMapHandler().sendEmptyMessage(Map.SHOW_ADDRESS_DIALOG);
 
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return true;
 	}

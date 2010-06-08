@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -46,12 +46,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 
 import org.anddev.android.weatherforecast.weather.GoogleWeatherHandler;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
@@ -81,8 +80,8 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class WeatherFunctionality extends Functionality {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(WeatherFunctionality.class);
+	private final static Logger log = Logger
+			.getLogger(WeatherFunctionality.class.getName());
 
 	private double lat;
 	private double lon;
@@ -169,7 +168,7 @@ public class WeatherFunctionality extends Functionality {
 				res = TaskHandler.NO_RESPONSE;
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			res = TaskHandler.ERROR;			
 		} finally {
 //			super.stop();
@@ -210,13 +209,13 @@ public class WeatherFunctionality extends Functionality {
 				// kxmlParser.require(KXmlParser.END_DOCUMENT, null, null);
 			}
 		} catch (XmlPullParserException parser_ex) {
-			log.error(parser_ex);
+			log.log(Level.SEVERE,"",parser_ex);
 		} catch (IOException ioe) {
-			log.error(ioe);
+			log.log(Level.SEVERE,"",ioe);
 		} catch (OutOfMemoryError ou) {
 			System.gc();
 			System.gc();
-			log.error(ou);
+			log.log(Level.SEVERE,"",ou);
 		} finally {
 			return s.toString();
 		}

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -51,9 +51,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.util.Utils;
 
@@ -67,7 +67,7 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class ContextPersister{
 
-	private final static Logger log = LoggerFactory.getLogger(ContextPersister.class);
+	private final static Logger log = Logger.getLogger(ContextPersister.class.getName());
 	private String fileName;
 	private String dirPath;
 
@@ -82,7 +82,7 @@ public class ContextPersister{
 		try {
 			this.setFileName(_fileName);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.log(Level.SEVERE,e.getMessage());
 		}
 	}
 	
@@ -103,18 +103,18 @@ public class ContextPersister{
 		try {
 			if ((_fileName != null) && (_fileName != "")){
 				fileName = _fileName;
-				log.setLevel(Utils.LOG_LEVEL);
-				log.setClientID(this.toString());
+//				log.setLevel(Utils.LOG_LEVEL);
+//				log.setClientID(this.toString());
 				String SDDIR = Environment.getExternalStorageDirectory().getPath();
 				String appDir = Utils.APP_DIR;
 				String configDir = Utils.CONFIG_DIR;
 				dirPath = SDDIR + File.separator + appDir + File.separator + configDir + File.separator;
 			} else{
-				log.error("ContextPersister(): fileName cannot be null or empty");
+				log.log(Level.SEVERE,"ContextPersister(): fileName cannot be null or empty");
 				throw new IOException("ContextPersister(): fileName cannot be null");
 			}
 		} catch (Exception e) {
-			log.error("ContextPersister.setFileName(): " + e.getMessage());
+			log.log(Level.SEVERE,"ContextPersister.setFileName(): " + e.getMessage());
 		}	
 	}
 	
@@ -161,7 +161,7 @@ public class ContextPersister{
 		}
 		res = true;		
 	} catch (Exception e) {
-		log.error("ContextPersister.saveContext(): " + e.getMessage());
+		log.log(Level.SEVERE,"ContextPersister.saveContext(): " + e.getMessage());
 		res = false;
 	} finally {
 		Utils.closeStream(out);
@@ -199,7 +199,7 @@ public class ContextPersister{
 			} //else would return null as it'll happen in finally{, as properties remains null
 			  // if the "if" condition is not accomplished
 		} catch (Exception e) {
-			log.error("ContextPersister.loadContext(): " + e.getMessage());
+			log.log(Level.SEVERE,"ContextPersister.loadContext(): " + e.getMessage());
 		} finally {
 			Utils.closeStream(configReader);
 			Utils.closeStream(reader);

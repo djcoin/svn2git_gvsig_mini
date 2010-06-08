@@ -72,7 +72,7 @@ public class AndroidContext implements IContext {
 		String SDDIR = Environment.getExternalStorageDirectory().getPath();
 		return new StringBuffer(SDDIR).append(File.separator).append(
 				Utils.APP_DIR).append(File.separator).append(Utils.LAYERS_DIR)
-				.append(File.separator).toString();
+				.append(File.separator).append("layers.txt").toString();
 	}
 
 	@Override

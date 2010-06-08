@@ -40,8 +40,11 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -68,7 +71,7 @@ public class AcetateOverlay extends MapOverlay {
 	public AcetateOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
 		try {			
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 			filledPaint = new Paint();			
 			filledPaint.setStyle(Style.FILL_AND_STROKE);
 			filledPaint.setAntiAlias(true);
@@ -85,11 +88,11 @@ public class AcetateOverlay extends MapOverlay {
 			path = new Path();
 			t = getTileRaster();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}			
 	}
 
-	private final static Logger log = LoggerFactory.getLogger();
+	private final static Logger log = Logger.getLogger(AcetateOverlay.class.getName());
 	
 	private int mTouchDownX;
 	private int mTouchDownY;
@@ -128,7 +131,7 @@ public class AcetateOverlay extends MapOverlay {
 				c.drawPath(path, rectanglePaint);				
 			}	
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -218,7 +221,7 @@ public class AcetateOverlay extends MapOverlay {
 //				
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			return true;
 		}
@@ -240,7 +243,7 @@ public class AcetateOverlay extends MapOverlay {
 			drawZoomRectangle = true;
 			rectangle = r;			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
@@ -249,7 +252,7 @@ public class AcetateOverlay extends MapOverlay {
 			drawZoomRectangle = false;			
 			rectangle = null;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -277,7 +280,7 @@ public class AcetateOverlay extends MapOverlay {
 			rectanglePaint = null;
 			path = null;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 

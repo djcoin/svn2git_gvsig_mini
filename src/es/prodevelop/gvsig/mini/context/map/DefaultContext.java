@@ -41,9 +41,8 @@
 package es.prodevelop.gvsig.mini.context.map;
 
 import java.util.HashMap;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
@@ -52,11 +51,9 @@ import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.map.ShowStreetView;
 import es.prodevelop.gvsig.mini.tasks.namefinder.ShowNameFinderAddressDialog;
 import es.prodevelop.gvsig.mini.tasks.twitter.ShareMyLocationFunc;
-import es.prodevelop.gvsig.mini.tasks.twitter.TweetMyLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
 import es.prodevelop.gvsig.mini.tasks.yours.FinishPointFunctionality;
 import es.prodevelop.gvsig.mini.tasks.yours.StartPointFunctionality;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * DefaultContext is an ItemContext with common Functionalities, normally is applied
@@ -67,7 +64,7 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class DefaultContext implements ItemContext {
 
-	private final static Logger log = LoggerFactory.getLogger(DefaultContext.class);
+	private final static Logger log = Logger.getLogger(DefaultContext.class.getName());
 	protected Map map;
 	WeatherFunctionality weatherFunc;
 	HashMap h;
@@ -78,10 +75,10 @@ public class DefaultContext implements ItemContext {
 	 */
 	public DefaultContext() {
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -94,7 +91,7 @@ public class DefaultContext implements ItemContext {
 		try {
 			this.map = map;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 	}
 
@@ -102,7 +99,7 @@ public class DefaultContext implements ItemContext {
 	public HashMap getFunctionalities() {
 		h = new HashMap();
 		try {			
-			log.debug("getFunctionalities");
+			log.log(Level.FINE, "getFunctionalities");
 			ShowStreetView ssv = new ShowStreetView(map,
 					R.layout.streetview_image_button);
 			StartPointFunctionality sp = new StartPointFunctionality(map,
@@ -119,7 +116,7 @@ public class DefaultContext implements ItemContext {
 			h.put(sn.getID(), sn);
 			h.put(ssv.getID(), ssv);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 		return h;
 	}
@@ -130,7 +127,7 @@ public class DefaultContext implements ItemContext {
 			return new int[] { R.layout.twitter_image_button, R.layout.weather_image_button,
 					R.layout.route_end_image_button, R.layout.route_start_image_button, R.layout.poi_image_button, R.layout.streetview_image_button };
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}		
 	}
@@ -156,7 +153,7 @@ public class DefaultContext implements ItemContext {
 			if (executing != null)
 				executing.cancel();
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 

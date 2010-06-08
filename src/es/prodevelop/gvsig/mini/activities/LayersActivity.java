@@ -54,9 +54,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
@@ -86,20 +86,21 @@ import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 
 /**
- * An ExpandableListActivity to manage layers. The default layers file is bundled
- * into the apk, the first time the application starts this file is saved on
- * "/sdcard/gvsig/layers/layers.txt". WMS layers are appended to that file and an
- * advanced user is able to edit the layers.txt to add new layer sources. See
+ * An ExpandableListActivity to manage layers. The default layers file is
+ * bundled into the apk, the first time the application starts this file is
+ * saved on "/sdcard/gvsig/layers/layers.txt". WMS layers are appended to that
+ * file and an advanced user is able to edit the layers.txt to add new layer
+ * sources. See
  * 
- *  You can send an Intent with a boolean extra "FROM_FILE_EXPLORER". If is set to false
- *  then it takes the URI of the layer file from getIntent().getDataString() and tries
- *  to download and parse the file. If is set to true, then a local file is passed to the
- *  Activity.	
+ * You can send an Intent with a boolean extra "FROM_FILE_EXPLORER". If is set
+ * to false then it takes the URI of the layer file from
+ * getIntent().getDataString() and tries to download and parse the file. If is
+ * set to true, then a local file is passed to the Activity.
  */
 public class LayersActivity extends ExpandableListActivity {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(LayersActivity.class);
+	private final static Logger log = Logger.getLogger(LayersActivity.class
+			.getName());
 
 	private static final String LAYER = "LAYER";
 	private static final String CHILD = "CHILD";
@@ -116,30 +117,27 @@ public class LayersActivity extends ExpandableListActivity {
 	GetCapabilitiesTask gt;
 	ProgressDialog dialog2;
 	private boolean hasChanges = false;
-	String path;	
+	String path;
 	private String gvTiles;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {		
+	public void onCreate(Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
 			// setContentView(R.layout.layers_view);
-			log.setLevel(Utils.LOG_LEVEL);
-			log.debug("onCreate layers activity");
-			log.setClientID(this.toString());
+			
 			setTitle(R.string.LayersActivity_0);
 			handler = new WMSHandler(this);
-
 			String layersData = this.getIntent().getDataString();
 			Intent i = getIntent();
-			if (layersData != null) {				
+			if (layersData != null) {
 				i.putExtra(FROM_FILE_EXPLORER, true);
-				log.debug("Layers activity from file explorer: " + layersData);
+				log.log(Level.FINE, "Layers activity from file explorer: " + layersData);
 			}
 			onNewIntent(i);
 
 		} catch (Exception e) {
-			log.error("onCreate: ", e);
+			log.log(Level.SEVERE,"onCreate: ", e);
 			Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
@@ -149,56 +147,59 @@ public class LayersActivity extends ExpandableListActivity {
 		InputStream is = null;
 		InputStreamReader isr = null;
 		BufferedReader bf = null;
-		
+
 		try {
-			log.debug("on New intent");
+			log.log(Level.FINE, "on New intent");
 			if (i.getBooleanExtra(FROM_FILE_EXPLORER, false)) {
 				String layersData = this.getIntent().getDataString();
 				if (layersData != null) {
-					log.debug("layersData: " + layersData);
+					log.log(Level.FINE, "layersData: " + layersData);
 					is = Utils.openConnection(layersData);
 					isr = new InputStreamReader(is);
 					bf = new BufferedReader(isr);
 					Layers.getInstance().clearProperties();
 					Layers.getInstance().parseLayersFile(bf);
-					String layerFile = layersData.substring(layersData.lastIndexOf("/"),
-							layersData.length());
-					log.debug("layerFile: " + layerFile);
+					String layerFile = layersData.substring(layersData
+							.lastIndexOf("/"), layersData.length());
+					log.log(Level.FINE, "layerFile: " + layerFile);
 					Layers.getInstance().persist(layerFile);
 					String SDDIR = Environment.getExternalStorageDirectory()
-					.getPath();
+							.getPath();
 					gvTiles = SDDIR + File.separator + Utils.APP_DIR
-					+ File.separator + Utils.LAYERS_DIR + File.separator + layerFile;
-					log.debug("gvTiles: " + gvTiles);
-					String text = this.getResources().getString(R.string.LayersActivity_4);
+							+ File.separator + Utils.LAYERS_DIR
+							+ File.separator + layerFile;
+					log.log(Level.FINE, "gvTiles: " + gvTiles);
+					String text = this.getResources().getString(
+							R.string.LayersActivity_4);
 					if (layersData.startsWith("http")) {
-						text = this.getResources().getString(R.string.download_tiles_03);
+						text = this.getResources().getString(
+								R.string.download_tiles_03);
 					}
-					Toast.makeText(LayersActivity.this, text,
-							Toast.LENGTH_LONG).show();
+					Toast
+							.makeText(LayersActivity.this, text,
+									Toast.LENGTH_LONG).show();
 				}
 			} else {
-				log.debug("layersData is null");
+				log.log(Level.FINE, "layersData is null");
 				String filePath = null;
 				try {
 					filePath = i.getStringExtra(GVTILES);
 					gvTiles = filePath;
-					log.debug("loading filePath: " + filePath);
+					log.log(Level.FINE, "loading filePath: " + filePath);
 				} catch (Exception e) {
-					log.error(e);
+					log.log(Level.SEVERE,"",e);
 				}
-				
+
 				Layers.getInstance().loadProperties(filePath);
 			}
-			
-			
-//			if (i.getBooleanExtra("loadLayers", false)) {			
-				layers = true;
-				Hashtable layers = Layers.getInstance().getLayersForView();
-				this.loadLayersList(layers);
-//			} 
+
+			// if (i.getBooleanExtra("loadLayers", false)) {
+			layers = true;
+			Hashtable layers = Layers.getInstance().getLayersForView();
+			this.loadLayersList(layers);
+			// }
 		} catch (Exception e) {
-			log.error("onNewIntent: ", e);
+			log.log(Level.SEVERE,"onNewIntent: ", e);
 		} finally {
 			Utils.closeStream(is);
 			Utils.closeStream(isr);
@@ -207,16 +208,17 @@ public class LayersActivity extends ExpandableListActivity {
 	}
 
 	/**
-	 * Shows a dialog with the list of files of "sdcard/gvsig/layers". When selecting
-	 * one of them it tries to parse and load the layers into de activity. If the 
-	 * directory is empty, then a toast informs the user about that.
+	 * Shows a dialog with the list of files of "sdcard/gvsig/layers". When
+	 * selecting one of them it tries to parse and load the layers into de
+	 * activity. If the directory is empty, then a toast informs the user about
+	 * that.
 	 */
 	public void showLoadFileAlert() {
 		try {
-			log.debug("showLoadFileAlert");
+			log.log(Level.FINE, "showLoadFileAlert");
 
 			if (!Utils.isSDMounted()) {
-				log.debug("SD not mounted");
+				log.log(Level.FINE, "SD not mounted");
 				Toast.makeText(LayersActivity.this, R.string.LayersActivity_1,
 						Toast.LENGTH_LONG).show();
 			} else {
@@ -226,12 +228,12 @@ public class LayersActivity extends ExpandableListActivity {
 						+ Utils.LAYERS_DIR;
 				File f = new File(path);
 				if (!f.exists()) {
-					log.debug(path +" not exists");
+					log.log(Level.FINE, path + " not exists");
 					f.mkdirs();
 				}
 				final String[] files = f.list();
 				if (files == null) {
-					log.debug(path + " is empty");
+					log.log(Level.FINE, path + " is empty");
 					Toast.makeText(
 							LayersActivity.this,
 							this.getResources().getString(
@@ -240,7 +242,7 @@ public class LayersActivity extends ExpandableListActivity {
 							Toast.LENGTH_LONG).show();
 				} else {
 					if (files.length == 0) {
-						log.debug(path + " is empty");
+						log.log(Level.FINE, path + " is empty");
 						Toast.makeText(
 								LayersActivity.this,
 								this.getResources().getString(
@@ -261,7 +263,8 @@ public class LayersActivity extends ExpandableListActivity {
 										try {
 											server = path + File.separator
 													+ files[item];
-											log.debug("selected layer file: "+ server);
+											log.log(Level.FINE, "selected layer file: "
+													+ server);
 											gvTiles = server;
 											Layers.getInstance()
 													.loadProperties(server);
@@ -269,16 +272,17 @@ public class LayersActivity extends ExpandableListActivity {
 													.loadLayersList(Layers
 															.getInstance()
 															.getLayersForView());
-											log.debug("layer file loaded: "+ server);
+											log.log(Level.FINE, "layer file loaded: "
+													+ server);
 											Toast t = Toast.makeText(
 													LayersActivity.this,
 													R.string.LayersActivity_4,
-													Toast.LENGTH_LONG);											
+													Toast.LENGTH_LONG);
 											t.show();
 										} catch (Exception e) {
-											log
-													.error("LayersActivity onClick: "
-															, e);
+											log.log(Level.SEVERE,
+													"LayersActivity onClick: ",
+													e);
 											Toast t = Toast.makeText(
 													LayersActivity.this,
 													R.string.LayersActivity_5,
@@ -304,7 +308,7 @@ public class LayersActivity extends ExpandableListActivity {
 						// LayersActivity.this.loadLayersList(Layers
 						// .getInstance().getLayersForView());
 						// } catch (Exception e) {
-						// log.error(e.getMessage());
+						// log.log(Level.SEVERE,e.getMessage());
 						// Toast t = Toast
 						// .makeText(
 						// LayersActivity.this,
@@ -327,26 +331,27 @@ public class LayersActivity extends ExpandableListActivity {
 				}
 			}
 		} catch (Exception e) {
-			log.error("onMenuItemSelected: ", e);
+			log.log(Level.SEVERE,"onMenuItemSelected: ", e);
 		}
 	}
 
 	/***
-	 * Shows a dialog to let the user type the address of a WMS server to request 
-	 * getCapabilities
+	 * Shows a dialog to let the user type the address of a WMS server to
+	 * request getCapabilities
 	 */
 	public void showGetCapabilitiesAlert() {
 		try {
-			log.debug("showGetCapabilitiesAlert");
+			log.log(Level.FINE, "showGetCapabilitiesAlert");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 			alert.setIcon(R.drawable.menu02);
 			alert.setTitle(R.string.LayersActivity_6);
 			final EditText input = new EditText(this);
-//			input.setText("http://wms.globexplorer.com/gexservlets/wms");
-//			input.setText("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
-//			input.setText("http://wms.larioja.org/request.asp?");
-			
+			// input.setText("http://wms.globexplorer.com/gexservlets/wms");
+			// input.setText(
+			// "http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
+			// input.setText("http://wms.larioja.org/request.asp?");
+
 			// input
 			// .setText(
 			// "http://osami.prodevelop.es/tilecache/tilecache.py/1.0.0/prode2/"
@@ -372,12 +377,12 @@ public class LayersActivity extends ExpandableListActivity {
 							try {
 								Editable value = input.getText();
 								server = value.toString();
-								log.debug("Get capabilities dialog ok: " + server);
+								log.log(Level.FINE, "Get capabilities dialog ok: "
+										+ server);
 								LayersActivity.this.callGetCapabilities(value
 										.toString());
 							} catch (Exception e) {
-								log.error("onClick positiveButton: "
-										, e);
+								log.log(Level.SEVERE,"onClick positiveButton: ", e);
 							}
 						}
 					});
@@ -386,19 +391,19 @@ public class LayersActivity extends ExpandableListActivity {
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-							log.debug("Get capabilities dialog canceled");
+							log.log(Level.FINE, "Get capabilities dialog canceled");
 						}
 					});
 
 			alert.show();
 		} catch (Exception e) {
-			log.error("onMenuItemSelected: ", e);
+			log.log(Level.SEVERE,"onMenuItemSelected: ", e);
 		}
 	}
 
 	private void loadLayersList(Hashtable layers) {
 		try {
-			log.debug("loadLayersList");
+			log.log(Level.FINE, "loadLayersList");
 			List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 			List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 			final int size = layers.size();
@@ -504,7 +509,7 @@ public class LayersActivity extends ExpandableListActivity {
 							android.R.id.text1, android.R.id.text2 });
 			setListAdapter(mAdapter);
 		} catch (Exception e) {
-			log.error("loadLayersList: ", e);
+			log.log(Level.SEVERE,"loadLayersList: ", e);
 		}
 	}
 
@@ -540,7 +545,7 @@ public class LayersActivity extends ExpandableListActivity {
 							android.R.id.text1, android.R.id.text2 });
 			setListAdapter(mAdapter);
 		} catch (Exception e) {
-			log.error("loadSampleList: ", e);
+			log.log(Level.SEVERE,"loadSampleList: ", e);
 		}
 	}
 
@@ -548,39 +553,42 @@ public class LayersActivity extends ExpandableListActivity {
 	public boolean onChildClick(android.widget.ExpandableListView parent,
 			android.view.View v, int groupPosition, int childPosition, long id) {
 		boolean result = true;
-		
+
 		try {
 			result = super.onChildClick(parent, v, groupPosition,
 					childPosition, id);
-			log.debug("onChildClick");
+			log.log(Level.FINE, "onChildClick");
 			if (groupPosition == 2) {
 				if (childPosition == 0)
 					this.showGetCapabilitiesAlert();
 				else if (childPosition == 1)
 					this.showLoadFileAlert();
 			} else {
-				if (layers) {					
+				if (layers) {
 					TwoLineListItem t = (TwoLineListItem) v;
 					String s = t.getText1().getText().toString();
-					log.debug("layer clicked: " + s);
-					Intent i = new Intent();					
+					log.log(Level.FINE, "layer clicked: " + s);
+					Intent i = new Intent();
 					if (getIntent().getBooleanExtra(FROM_FILE_EXPLORER, false)) {
-						i = new Intent(this, es.prodevelop.gvsig.mini.activities.Map.class);
+						i = new Intent(this,
+								es.prodevelop.gvsig.mini.activities.Map.class);
 						i.putExtra("layer", s);
 						i.putExtra(GVTILES, gvTiles);
-						log.debug("Start activity Map from LayersActivity, layer: " + s);
+						log.log(Level.FINE, "Start activity Map from LayersActivity, layer: "
+										+ s);
 						startActivity(i);
 					} else {
 						i.putExtra("layer", s);
 						i.putExtra(GVTILES, gvTiles);
-						log.debug("Back to Map from LayersActivity, layer: " + s);
-						setResult(RESULT_OK, i);						
-					}					
+						log.log(Level.FINE, "Back to Map from LayersActivity, layer: "
+								+ s);
+						setResult(RESULT_OK, i);
+					}
 					this.finish();
 				}
 			}
 		} catch (Exception e) {
-			log.error("onChildClick: ", e);
+			log.log(Level.SEVERE,"onChildClick: ", e);
 		}
 
 		return result;
@@ -605,14 +613,14 @@ public class LayersActivity extends ExpandableListActivity {
 						if (gt != null)
 							gt.cancel();
 						dialog2.dismiss();
-						log.debug("Get capabilities task canceled");
+						log.log(Level.FINE, "Get capabilities task canceled");
 					} catch (Exception e) {
-						log.error("onCancel progressdialog: ", e);
+						log.log(Level.SEVERE,"onCancel progressdialog: ", e);
 					}
 				}
 			});
 		} catch (Exception e) {
-			log.error("callGetCapabilities: ", e);
+			log.log(Level.SEVERE,"callGetCapabilities: ", e);
 		}
 	}
 
@@ -620,12 +628,12 @@ public class LayersActivity extends ExpandableListActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		try {
 			super.onActivityResult(requestCode, resultCode, intent);
-			log.debug("onActivityResult to layers activity");
+			log.log(Level.FINE, "onActivityResult to layers activity");
 			switch (requestCode) {
 			case 0:
 				switch (resultCode) {
 				case RESULT_OK:
-					log.debug("RESULT_OK");
+					log.log(Level.FINE, "RESULT_OK");
 					String server = intent.getStringExtra("server");
 					String name = intent.getStringExtra("name");
 					String format = intent.getStringExtra("format");
@@ -637,9 +645,11 @@ public class LayersActivity extends ExpandableListActivity {
 					double maxY = intent.getDoubleExtra("maxY", 0);
 					String version = intent.getStringExtra("version");
 
-					WMSRenderer w = WMSRenderer.getWMSRenderer(new String[]{server}, name,
-							format, WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 0, 256, layersName, new Extent(minX, minY,
-									maxX, maxY), srs, version);
+					WMSRenderer w = WMSRenderer.getWMSRenderer(
+							new String[] { server }, name, format,
+							WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 0, 256,
+							layersName, new Extent(minX, minY, maxX, maxY),
+							srs, version);
 					Layers.getInstance().addLayer(w.toString());
 					Layers.getInstance().persist();
 
@@ -654,18 +664,19 @@ public class LayersActivity extends ExpandableListActivity {
 				}
 			}
 		} catch (Exception e) {
-			log.error("LayersActivity onActivityResult: ", e);
+			log.log(Level.SEVERE,"LayersActivity onActivityResult: ", e);
 			Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
 
 	/**
 	 * Handler of the GetCapabilities background task, possible responses are
-	 * LayersActivity.WMS_CONNECTED, LayersActivity.WMS_ERROR, LayersActivity.WMS_CANCEL
+	 * LayersActivity.WMS_CONNECTED, LayersActivity.WMS_ERROR,
+	 * LayersActivity.WMS_CANCEL
 	 * 
-	 * @author aromeu 
- * @author rblanco
-	 *
+	 * @author aromeu
+	 * @author rblanco
+	 * 
 	 */
 	class WMSHandler extends Handler {
 
@@ -681,9 +692,9 @@ public class LayersActivity extends ExpandableListActivity {
 				final int what = msg.what;
 				switch (what) {
 				case LayersActivity.WMS_CONNECTED:
-					log.debug("WMS_CONNECTED");
+					log.log(Level.FINE, "WMS_CONNECTED");
 					if (server == null) {
-						log.warn("server == null");
+						log.log(Level.WARNING, "server == null");
 						return;
 					}
 
@@ -692,17 +703,17 @@ public class LayersActivity extends ExpandableListActivity {
 						w = FMapWMSDriverFactory.getFMapDriverForURL(
 								new URL(server)).getLayersTree();
 					} catch (ConnectException e) {
-						log.error("ConnectException: ", e);
+						log.log(Level.SEVERE,"ConnectException: ", e);
 					} catch (MalformedURLException e) {
-						log.error("MalformedURLException ", e);
+						log.log(Level.SEVERE,"MalformedURLException ", e);
 					} catch (IOException e) {
-						log.error("IOException ", e);
+						log.log(Level.SEVERE,"IOException ", e);
 					}
 
 					Intent intent = new Intent(context, WMSLayersActivity.class);
 
 					if (w == null) {
-						log.warn("WMSLayerNode == null");
+						log.log(Level.WARNING, "WMSLayerNode == null");
 						return;
 					}
 
@@ -712,23 +723,23 @@ public class LayersActivity extends ExpandableListActivity {
 					String name = null;
 					for (int i = 0; i < size; i++) {
 						name = ((WMSLayerNode) w.getChildren().get(i))
-						.getName();
+								.getName();
 						names.add(name);
-						log.debug("name ("+i+")" +name);
+						log.log(Level.FINE, "name (" + i + ")" + name);
 					}
 					intent.putExtra("server", server);
-					log.debug("server: " + server);
+					log.log(Level.FINE, "server: " + server);
 					intent.putStringArrayListExtra("layers", names);
 
 					((Activity) context).startActivityForResult(intent, 0);
 					break;
 				case LayersActivity.WMS_ERROR:
-					log.debug("WMS_ERROR");
+					log.log(Level.FINE, "WMS_ERROR");
 					Toast.makeText(context, R.string.error_connecting_server,
 							2000).show();
 					break;
 				case LayersActivity.WMS_CANCELED:
-					log.debug("WMS_CANCELED");
+					log.log(Level.FINE, "WMS_CANCELED");
 					Toast.makeText(context, R.string.task_canceled, 2000)
 							.show();
 					break;
@@ -736,8 +747,8 @@ public class LayersActivity extends ExpandableListActivity {
 
 				dialog2.dismiss();
 			} catch (Exception e) {
-				log.error("LayersActivity handleMessage: ", e);
-			} finally {				
+				log.log(Level.SEVERE,"LayersActivity handleMessage: ", e);
+			} finally {
 			}
 		}
 	}

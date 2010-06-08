@@ -59,8 +59,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 
-import net.sf.microlog.core.Level;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -86,8 +86,8 @@ public class Utils implements GeoUtils {
 	public final static String MAPS_DIR = "maps";
 	public final static String CONFIG_DIR = "config";
 	public final static String LAYERS_DIR = "layers";
-	public final static Level LOG_LEVEL = Level.DEBUG;
-	public final static Level FS_LOG_LEVEL = Level.ERROR;
+	public final static Level LOG_LEVEL = Level.FINE;
+	public final static Level FS_LOG_LEVEL = Level.SEVERE;
 	public final static String LOG_DIR = "logs";
 	public static int BUFFER_SIZE = 2;
 	public static int ROTATE_BUFFER_SIZE = 2;
@@ -313,7 +313,7 @@ public class Utils implements GeoUtils {
 		try {
 			Utils.showSendLogDialog(context, context.getResources().getString(R.string.fatal_error));
 		} catch (Exception e) {
-//			log.error(e);
+//			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
@@ -321,7 +321,7 @@ public class Utils implements GeoUtils {
 		try {
 			Utils.showSendLogDialog(context, context.getResources().getString(id));
 		} catch (Exception e) {
-//			log.error(e);
+//			log.log(Level.SEVERE,"",e);
 		}
 	}
 	
@@ -342,7 +342,7 @@ public class Utils implements GeoUtils {
 							try {
 								Utils.sendExceptionEmail(context);								
 							} catch (Exception e) {
-//								log.error(e);
+//								log.log(Level.SEVERE,"",e);
 							}
 						}
 					});
@@ -357,7 +357,7 @@ public class Utils implements GeoUtils {
 
 			alert.show();
 		} catch (Exception e) {
-//			log.error(e);
+//			log.log(Level.SEVERE,"",e);
 		}
 	}
 }

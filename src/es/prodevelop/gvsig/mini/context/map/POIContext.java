@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -41,16 +41,13 @@
 package es.prodevelop.gvsig.mini.context.map;
 
 import java.util.HashMap;
-
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.namefinder.CleanPOIFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.ListPOIFunc;
-import es.prodevelop.gvsig.mini.tasks.yours.DeleteRouteFunctionality;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * ItemContext when the NameFinderOverlay is shown. It contains functionalities
@@ -61,25 +58,25 @@ import es.prodevelop.gvsig.mini.util.Utils;
  */
 public class POIContext extends DefaultContext {
 	
-	private final static Logger log = LoggerFactory.getLogger(POIContext.class);
+	private final static Logger log = Logger.getLogger(POIContext.class.getName());
 	
 	public POIContext() {
 		super();
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	public POIContext(Map map) {
 		super(map);
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setLevel(Utils.LOG_LEVEL);
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 	}
 
@@ -92,7 +89,7 @@ public class POIContext extends DefaultContext {
 			h.put(p.getID(), p);
 			h.put(lp.getID(), lp);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}		
 		return h;
 	}
@@ -105,7 +102,7 @@ public class POIContext extends DefaultContext {
 					R.layout.poi_image_button,
 					R.layout.poi_clean_image_button, R.layout.poi_list_image_button,R.layout.streetview_image_button };
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}

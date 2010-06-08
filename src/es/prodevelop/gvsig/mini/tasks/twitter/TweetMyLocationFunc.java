@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,19 +40,11 @@
 
 package es.prodevelop.gvsig.mini.tasks.twitter;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import winterwell.jtwitter.Twitter;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Looper;
 import android.os.Message;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
@@ -60,8 +52,8 @@ import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
 public class TweetMyLocationFunc extends Functionality {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(TweetMyLocationFunc.class);
+	private final static Logger log = Logger
+			.getLogger(TweetMyLocationFunc.class.getName());
 	private int res = TaskHandler.FINISHED;
 
 	public TweetMyLocationFunc(Map map, int id) {
@@ -81,7 +73,7 @@ public class TweetMyLocationFunc extends Functionality {
 						.sendEmptyMessage(Map.SHOW_TWEET_DIALOG);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			return true;
 		}
@@ -95,7 +87,7 @@ public class TweetMyLocationFunc extends Functionality {
 			twitter.setStatus(this.buildTweet(), String.valueOf(lonlat[1]), String.valueOf(lonlat[0]));
 			getMap().getMapHandler().sendEmptyMessage(Map.TWEET_SENT);		
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			Message msg = getMap().getMapHandler().obtainMessage();
 			msg.obj = e.getMessage();
 			msg.what = Map.TWEET_ERROR;
@@ -124,14 +116,14 @@ public class TweetMyLocationFunc extends Functionality {
 			
 			return new double[]{lonDouble, latDouble};
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}
 	
 	/**
 	 * Builds the tweet message: 
-	 * Mi Ubicación : http://www.opentouchmap.org/?lat=39.472393&lon=-0.382493&zoom=14 lat:39.472393 lon:-0.382493
+	 * Mi Ubicaciï¿½n : http://www.opentouchmap.org/?lat=39.472393&lon=-0.382493&zoom=14 lat:39.472393 lon:-0.382493
 	 * @return A string to tweet
 	 */
 	public String buildTweet() {
@@ -159,7 +151,7 @@ public class TweetMyLocationFunc extends Functionality {
 					lonDouble).toString();
 			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}

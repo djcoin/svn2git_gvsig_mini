@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -44,7 +44,7 @@ import java.util.Vector;
 
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
-import net.sf.microlog.core.LoggerFactory;
+
 
 import android.content.DialogInterface;
 import android.view.View;

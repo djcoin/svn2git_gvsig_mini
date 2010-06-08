@@ -1,9 +1,9 @@
 package es.prodevelop.gvsig.mini.context.map.wms;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
@@ -12,16 +12,16 @@ import es.prodevelop.gvsig.mini.util.Utils;
 
 public class WMSPOIContext extends POIContext {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(WMSPOIContext.class);
+	private final static Logger log = Logger
+			.getLogger(WMSPOIContext.class.getName());
 
 	public WMSPOIContext() {
 		super();
 		try {
 			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -29,9 +29,9 @@ public class WMSPOIContext extends POIContext {
 		super(map);
 		try {
 			log.setLevel(Utils.LOG_LEVEL);
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -42,7 +42,7 @@ public class WMSPOIContext extends POIContext {
 			h.put(R.layout.info_image_button, new GetFeatureInfoFunc(map,
 					R.layout.info_image_button));
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 		return h;
 	}
@@ -60,7 +60,7 @@ public class WMSPOIContext extends POIContext {
 			}
 			v[size] = R.layout.info_image_button;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 		return v;

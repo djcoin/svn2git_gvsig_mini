@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,13 +40,16 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
-import es.prodevelop.gvsig.mini.R;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.os.Message;
+import android.view.MotionEvent;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
@@ -57,19 +60,6 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
-import es.prodevelop.gvsig.mini.util.Utils;
-import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Canvas;
-import android.os.Message;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * A MapOverlay that manages draw of NameFinder MultiPoint
@@ -84,11 +74,11 @@ public class NameFinderOverlay extends MapOverlay {
 
 	public NameFinderOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
-		log.setClientID(this.toString());
+//		log.setClientID(this.toString());
 	}
 
-	private final static Logger log = LoggerFactory
-			.getLogger(NameFinderOverlay.class);
+	private final static Logger log = Logger
+			.getLogger(NameFinderOverlay.class.getName());
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
@@ -100,7 +90,7 @@ public class NameFinderOverlay extends MapOverlay {
 				maps.geomDrawer.drawN(maps.map.nameds, c, extent, vp);
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -128,12 +118,12 @@ public class NameFinderOverlay extends MapOverlay {
 						new double[] { p.projectedCoordinates.getX(),
 								p.projectedCoordinates.getY() });
 
-//				log.debug("coordinates to pixel: " + coords[0] + "," + coords[1]);
+//				log.log(Level.FINE, "coordinates to pixel: " + coords[0] + "," + coords[1]);
 				
 				pix = new Pixel(coords[0], coords[1]);
 				long newDistance = pix.distance(new Pixel(pixel.getX(), pixel
 						.getY()));
-//				log.debug("distance: " + newDistance);
+//				log.log(Level.FINE, "distance: " + newDistance);
 
 				if (newDistance >= 0 && newDistance < distance) {
 					distance = newDistance;
@@ -147,7 +137,7 @@ public class NameFinderOverlay extends MapOverlay {
 			if (nearest != -1) {
 				indexPOI = nearest;
 				Named n = (Named) nameds.getPoint(nearest);
-				log.debug("found: " + n.toString());
+				log.log(Level.FINE, "found: " + n.toString());
 				return new Feature(new Point(n.projectedCoordinates.getX(),
 						n.projectedCoordinates.getY()));
 			} else {
@@ -156,7 +146,7 @@ public class NameFinderOverlay extends MapOverlay {
 
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}
@@ -181,7 +171,7 @@ public class NameFinderOverlay extends MapOverlay {
 			}
 			return true;
 		} catch (Exception ex) {
-			log.error(ex);
+			log.log(Level.SEVERE,"",ex);
 			return false;
 		}
 	}
@@ -191,7 +181,7 @@ public class NameFinderOverlay extends MapOverlay {
 		try {
 
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 }

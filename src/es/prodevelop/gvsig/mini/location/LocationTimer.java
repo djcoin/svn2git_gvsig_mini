@@ -42,18 +42,19 @@ package es.prodevelop.gvsig.mini.location;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.util.Utils;
 import android.location.Location;
 import android.location.LocationProvider;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+import es.prodevelop.gvsig.mini.activities.Map;
+
+
 
 public class LocationTimer extends TimerTask {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(LocationTimer.class);
+	private final static Logger logger = Logger
+			.getLogger(LocationTimer.class.getName());
 	private long lastTimeCheck = System.currentTimeMillis();
 	private long sendCellPeriod = 60000;
 	private LocationHandler locationHandler;
@@ -62,11 +63,11 @@ public class LocationTimer extends TimerTask {
 
 	public LocationTimer(LocationHandler locationHandler) {
 		try {
-			logger.setLevel(Utils.LOG_LEVEL);
-			logger.setClientID(this.toString());
+//			logger.setLevel(Utils.LOG_LEVEL);
+//			logger.setClientID(this.toString());
 			map = (Map) locationHandler.mContext;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -90,7 +91,7 @@ public class LocationTimer extends TimerTask {
 				break;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -103,7 +104,7 @@ public class LocationTimer extends TimerTask {
 			}
 			return false;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(Level.SEVERE,"",e);
 			return false;
 		}
 	}
@@ -116,7 +117,7 @@ public class LocationTimer extends TimerTask {
 			}
 			return false;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(Level.SEVERE,"",e);
 			return false;
 		}
 	}
@@ -129,12 +130,12 @@ public class LocationTimer extends TimerTask {
 	 */
 	public void schedule(int period) {
 		try {
-			logger.debug("Scheduling GPSTimerTask with a period of: " + period);
+			logger.log(Level.FINE, "Scheduling GPSTimerTask with a period of: " + period);
 			cancel();
 			timer = new Timer();
 			timer.scheduleAtFixedRate(this, 0, period);
 		} catch (Exception e) {
-			logger.error("schedule: " + e);
+			logger.log(Level.SEVERE,"schedule: " + e);
 		}
 	}
 
@@ -148,7 +149,7 @@ public class LocationTimer extends TimerTask {
 				return super.cancel();
 			}
 		} catch (Exception e) {
-			logger.error("cancel: " + e);
+			logger.log(Level.SEVERE,"cancel: " + e);
 			return false;
 		}
 		return false;

@@ -1,16 +1,14 @@
 package es.prodevelop.gvsig.mini.tasks.wms;
 
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.gvsig.remoteclient.wms.WMSStatus;
 
 import android.os.Message;
-import android.widget.Toast;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -23,7 +21,7 @@ import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 public class GetFeatureInfoFunc extends Functionality {
 
 	private int res;
-	private Logger logger = LoggerFactory.getLogger(GetFeatureInfoFunc.class);
+	private Logger logger = Logger.getLogger(GetFeatureInfoFunc.class.getName());
 
 	public GetFeatureInfoFunc(Map map, int id) {
 		super(map, id);
@@ -63,7 +61,7 @@ public class GetFeatureInfoFunc extends Functionality {
 					String info = driver.getFeatureInfo(status, getMap().osmap
 							.getWidth() / 2, getMap().osmap.getHeight() / 2, 10,
 							new WMSCancellable());
-					logger.debug("GetFeatureInfo: " + info);
+					logger.log(Level.FINE, "GetFeatureInfo: " + info);
 					Message m = Message.obtain();
 					m.what = Map.SHOW_OK_DIALOG;
 					m.obj = info;
@@ -75,7 +73,7 @@ public class GetFeatureInfoFunc extends Functionality {
 				showToastError();
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.log(Level.SEVERE,"",e);
 			res = TaskHandler.ERROR;
 		}
 		return true;

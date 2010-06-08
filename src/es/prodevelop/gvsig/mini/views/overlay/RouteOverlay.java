@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -40,12 +40,11 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
-
-import es.prodevelop.gvsig.mini.R;
+import android.content.Context;
+import android.graphics.Canvas;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
@@ -53,10 +52,6 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.ViewPort;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 
 /**
  * A Map Overlay that manages draw of Route service LineString
@@ -68,14 +63,14 @@ public class RouteOverlay extends MapOverlay {
 
 	public RouteOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
-		log.setClientID(this.toString());
+//		log.setClientID(this.toString());
 		// TODO Auto-generated constructor stub
 	}
 
 	protected final android.graphics.Point CIRCLE_SPOT = new android.graphics.Point(
 			7, 7);	
-	private final static Logger log = LoggerFactory
-			.getLogger(RouteOverlay.class);	
+	private final static Logger log = Logger
+			.getLogger(RouteOverlay.class.getName());	
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
@@ -106,7 +101,7 @@ public class RouteOverlay extends MapOverlay {
 			// c.drawBitmap(CIRCLE, maps.centerPixelX - CIRCLE_SPOT.x,
 			// maps.centerPixelY - CIRCLE_SPOT.y, maps.mPaint);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -133,7 +128,7 @@ public class RouteOverlay extends MapOverlay {
 		try {
 			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 

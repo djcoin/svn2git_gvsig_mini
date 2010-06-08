@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -41,15 +41,16 @@
 package es.prodevelop.gvsig.mini.util;
 
 import java.util.Hashtable;
-
-import es.prodevelop.gvsig.mini.R;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import es.prodevelop.gvsig.mini.R;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
 
 /**
  * Utility class to load once Drawable resources and deliver them staticly to Activities
@@ -59,7 +60,7 @@ import net.sf.microlog.core.LoggerFactory;
  */
 public class ResourceLoader {
 	
-	private static final Logger log = LoggerFactory.getLogger(ResourceLoader.class);
+	private static final Logger log = Logger.getLogger(ResourceLoader.class.getName());
 	static Context context;
 	static Hashtable imgs;
 	public static int MAX_DISTANCE = 50;
@@ -110,7 +111,7 @@ public class ResourceLoader {
 					R.drawable.layer_icon_on));
 			
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} finally {
 			MAX_DISTANCE = getBitmap(R.drawable.startpoi).getWidth();
 			MIN_PAN = MAX_DISTANCE / 4;
@@ -126,7 +127,7 @@ public class ResourceLoader {
 		try {
 			return (Bitmap) imgs.get(id);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 		

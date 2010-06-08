@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -49,13 +49,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import es.prodevelop.gvsig.mini.util.Utils;
-
-import net.sf.microlog.core.Level;
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
 import android.content.Context;
+import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * This class contains some properties to configure the application
@@ -64,8 +62,8 @@ import android.content.Context;
  */
 public class Config {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(Config.class);
+	private final static Logger logger = Logger
+			.getLogger(Config.class.getName());
 
 	private static Hashtable properties;
 	private static Config config;
@@ -101,11 +99,11 @@ public class Config {
 			if (config == null) {
 				config = new Config();				
 				loadProperties(false);
-				Config.getInstance().setLogLevel(logger);
+//				Config.getInstance().setLogLevel(logger);
 			}
 			return config;
 		} catch (Exception e) {
-			logger.error("getInstance: " + e.getMessage());
+			logger.log(Level.SEVERE,"getInstance: " + e.getMessage());
 			return null;
 		}
 	}
@@ -138,22 +136,22 @@ public class Config {
 			while ((line = reader.readLine()) != null) {
 				part = line.split("=");
 				properties.put(part[0], part[1]);
-				logger.debug("Found: " + part[0]+ " with value: " + part[1]);
+				logger.log(Level.FINE, "Found: " + part[0]+ " with value: " + part[1]);
 			}
 			
 			if (isValid()) {
-				logger.debug("Config file is valid");
+				logger.log(Level.FINE, "Config file is valid");
 				if (!fromDisk) {
 					persist();
-					logger.debug("Config file persisted");
+					logger.log(Level.FINE, "Config file persisted");
 				}				
 			} else {
-				logger.debug("Config file is not valid!! Trying to load from asset");
+				logger.log(Level.FINE, "Config file is not valid!! Trying to load from asset");
 				Config.loadProperties(true);
 			}
 		} catch (Exception e) {
-			logger.error("loadProperties: " + e.getMessage());
-			logger.debug("Config file is not valid!! Trying to load from asset");
+			logger.log(Level.SEVERE,"loadProperties: " + e.getMessage());
+			logger.log(Level.FINE, "Config file is not valid!! Trying to load from asset");
 			Config.loadProperties(true);
 		} finally {
 			if (reader != null) {
@@ -234,7 +232,7 @@ public class Config {
 			
 			
 		} catch (Exception e) {
-			logger.error("isValid: " + e.getMessage());
+			logger.log(Level.SEVERE,"isValid: " + e.getMessage());
 			return false;
 		}
 	}
@@ -246,7 +244,7 @@ public class Config {
 			}
 			return true;
 		} catch (Exception e) {
-			logger.error("CheckNotNull: " + e.getMessage());
+			logger.log(Level.SEVERE,"CheckNotNull: " + e.getMessage());
 			return false;
 		}
 	}
@@ -401,20 +399,6 @@ public class Config {
 		}
 	}
 	
-	public void setLogLevel(Logger log) {
-		try {
-			int logLevel = this.getLogLevel();
-			
-			if (logLevel == Level.DEBUG_INT) {
-				log.setLevel(Level.DEBUG);
-			} else {
-				log.setLevel(Level.ERROR);
-			}
-		} catch (Exception e) {
-			logger.error("setLogLevel: " + e.getMessage());
-		}
-	}
-	
 	public static void persist() {
 		try {
 			File f = new File("/sdcard/"+Config.configDirFile+"/"+"conf.txt");
@@ -450,7 +434,7 @@ public class Config {
 			out.close();		
 			
 		} catch (Exception e) {
-			logger.error("persist: " + e.getMessage());
+			logger.log(Level.SEVERE,"persist: " + e.getMessage());
 		}
 	}
 	
@@ -458,7 +442,7 @@ public class Config {
 		try {			
 			properties.put(key, value);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.log(Level.SEVERE,e.getMessage());
 		}
 	}
 	

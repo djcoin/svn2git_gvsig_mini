@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -52,8 +52,11 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -98,8 +101,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	Matrix m = new Matrix();
 	int compass = -1;
 	TileRaster tileraster;
-	private final static Logger log = LoggerFactory
-			.getLogger(ViewSimpleLocationOverlay.class);
+	private final static Logger log = Logger
+			.getLogger(ViewSimpleLocationOverlay.class.getName());
 
 	protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(
 			18, 18);
@@ -115,7 +118,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			final TileRaster tileRaster) {
 		super(ctx, tileRaster);
 		try {
-			log.setClientID(this.toString());
+//			log.setClientID(this.toString());
 			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);
 			this.mPaint.setAntiAlias(true);
 			this.mPaint.setStyle(Paint.Style.STROKE);
@@ -126,10 +129,10 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			this.circlePaint.setStyle(Paint.Style.FILL);
 			this.circlePaint.setARGB(25, 137, 0, 182);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		} catch (OutOfMemoryError e) {
 			System.gc();
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -151,7 +154,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 			if (!osmv.map.navigation) {
 				rotation = -compass - offsetOrientation;
-//				log.debug("orientation: " + offsetOrientation);
+//				log.log(Level.FINE, "orientation: " + offsetOrientation);
 			} else {
 				rotation = -osmv.mBearing - offsetOrientation;
 			}
@@ -248,7 +251,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			p.rewind();
 
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
@@ -307,16 +310,16 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			}
 		} catch (OutOfMemoryError e) {			
 			System.gc();
-			log.error("OutOfMemoryError: ", e);
+			log.log(Level.SEVERE,"OutOfMemoryError: ", e);
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
-			log.debug("get Nearest feature viewsimplelocationoverlay: " + pixel.toString());
+			log.log(Level.FINE, "get Nearest feature viewsimplelocationoverlay: " + pixel.toString());
 			double x = (this.mLocation.getLongitudeE6() / 1E6); 
 			double y = (this.mLocation.getLatitudeE6() / 1E6);
 
@@ -331,19 +334,19 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 			es.prodevelop.gvsig.mini.geom.Point p = new es.prodevelop.gvsig.mini.geom.Point(
 					co[0], co[1]);
-			log.debug("pixel to coordinates: " + p.toString());
+			log.log(Level.FINE, "pixel to coordinates: " + p.toString());
 //			tileRaster.getMRendererInfo().reprojectGeometryCoordinates(p,
 //					"EPSG:4326");
 			int[] pxy = tileRaster.getMRendererInfo().toPixels(co);
-			log.debug("coordinates to pixel: " + pxy[0] + "," + pxy[1]);
+			log.log(Level.FINE, "coordinates to pixel: " + pxy[0] + "," + pxy[1]);
 			final long distance = pixel.distance(new Pixel(pxy[0], pxy[1]));
-			log.debug("distance location overlay: " + distance);
+			log.log(Level.FINE, "distance location overlay: " + distance);
 			if (distance < ResourceLoader.MAX_DISTANCE && distance >= 0) {
 				return new Feature(p);
 			}
 			return null;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 			return null;
 		}
 	}
@@ -381,7 +384,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			}
 			return true;
 		} catch (Exception ex) {
-			log.error(ex);
+			log.log(Level.SEVERE,"",ex);
 			return false;
 		}
 	}
@@ -404,7 +407,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 				outState.putInt("orientation", this.offsetOrientation);
 			}
 		} catch (Exception e) {
-			log.error("saveState", e);
+			log.log(Level.SEVERE,"saveState", e);
 		}
 	}
 
@@ -418,7 +421,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			this.provider = outState.getString("myLocProv");
 			this.offsetOrientation = outState.getInt("orientation");
 		} catch (Exception e) {
-			log.error("loadState", e);
+			log.log(Level.SEVERE,"loadState", e);
 		}
 	}
 
@@ -428,7 +431,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			mLocation = null;
 			p = null;
 		} catch (Exception e) {
-			log.error(e);
+			log.log(Level.SEVERE,"",e);
 		}
 	}
 	

@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -43,11 +43,11 @@ package es.prodevelop.gvsig.mini.user;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import es.prodevelop.gvsig.mini.util.Utils;
 
-import net.sf.microlog.core.Logger;
-import net.sf.microlog.core.LoggerFactory;
+
 
 
 /**
@@ -61,15 +61,15 @@ public class UserContextManager {
 
 	private static UserContextManager instance = null;
 	 
-    private final static Logger log = LoggerFactory.getLogger(ContextPersister.class);
+    private final static Logger log = Logger.getLogger(ContextPersister.class.getName());
 	private ArrayList<UserContextable> contexts;
 	private ContextPersister persister;
 	
 	
 	//Class constructor
 	private UserContextManager(){	
-		log.setLevel(Utils.LOG_LEVEL);
-		log.setClientID(this.toString());
+//		log.setLevel(Utils.LOG_LEVEL);
+//		log.setClientID(this.toString());
 		contexts = new ArrayList<UserContextable>();
 		persister = new ContextPersister();
 	}
@@ -100,10 +100,10 @@ public class UserContextManager {
 	public void Register(UserContextable context){
 		try {
 			if (contexts.add(context) == false) {
-				log.error("UserContextManager.Register(): cannot register UserContextable object");
+				log.log(Level.SEVERE,"UserContextManager.Register(): cannot register UserContextable object");
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.log(Level.SEVERE,e.getMessage());
 		}
 	}
 	
@@ -132,15 +132,15 @@ public class UserContextManager {
 						persister.setFileName(file);
 						// Do save the data
 						if (persister.saveContext(hash) == false) {
-							log.error("UserContextManager.saveContexts(): Context file " + file + " not saved");
+							log.log(Level.SEVERE,"UserContextManager.saveContexts(): Context file " + file + " not saved");
 						}
 					} catch (IOException io) {
-						log.error("UserContextManager.saveContexts(): IOException catched. Context file " + file + " not saved");
+						log.log(Level.SEVERE,"UserContextManager.saveContexts(): IOException catched. Context file " + file + " not saved");
 					}
 				}
 			}
 		} catch (Exception e) {
-			log.error("UserContextManager.saveContexts(): " + e.getMessage());
+			log.log(Level.SEVERE,"UserContextManager.saveContexts(): " + e.getMessage());
 		}
 	}
 
@@ -169,16 +169,16 @@ public class UserContextManager {
 						// If hash were null, it's passed as null anyway to loadContext()
 						if (contexts.get(i).loadContext(hash) == false) {
 							// Problem while loading (maybe hash is null)
-							log.error("UserContextManager.loadContexts(): Context could not be loaded for " + file);
+							log.log(Level.SEVERE,"UserContextManager.loadContexts(): Context could not be loaded for " + file);
 						}
 					} catch (IOException io) {
-						log.error("UserContextManager.loadContexts(): IOException catched. Context file " + file + " not saved");
+						log.log(Level.SEVERE,"UserContextManager.loadContexts(): IOException catched. Context file " + file + " not saved");
 					}
 						
 				}
 			}
 		} catch (Exception e) {
-			log.error("UserContextManager.loadContexts(): " + e.getMessage());
+			log.log(Level.SEVERE,"UserContextManager.loadContexts(): " + e.getMessage());
 		}
 	}
 
