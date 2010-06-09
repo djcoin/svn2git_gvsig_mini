@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.tasks.namefinder.CleanPOIFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.ListPOIFunc;
 
@@ -63,8 +64,7 @@ public class POIContext extends DefaultContext {
 	public POIContext() {
 		super();
 		try {
-//			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
@@ -73,8 +73,7 @@ public class POIContext extends DefaultContext {
 	public POIContext(Map map) {
 		super(map);
 		try {
-//			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}		

@@ -61,6 +61,8 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 
@@ -86,6 +88,12 @@ public class CircularRouleteView extends ViewGroup {
 	 */
 	public CircularRouleteView(Context context) {
 		super(context);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 //			log.setClientID(this.toString());
 			p = new Paint();

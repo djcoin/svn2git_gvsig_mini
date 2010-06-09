@@ -51,6 +51,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.GPSPoint;
 import es.prodevelop.gvsig.mini.geom.IGeometryDrawer;
@@ -97,6 +99,12 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			.getLogger(AndroidGeometryDrawer.class.getName());
 
 	public AndroidGeometryDrawer(TileRaster t, Context con) {
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 //			log.setClientID(this.toString());
 			tileRaster = t;

@@ -64,6 +64,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
@@ -86,7 +87,7 @@ public class WMSLayersActivity extends ListActivity {
 
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		try {
-			
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			log.log(Level.FINE, "onCreate WMSLayersActivity");
 			
 			super.onCreate(savedInstanceState);
@@ -98,6 +99,7 @@ public class WMSLayersActivity extends ListActivity {
 			getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
+			LogFeedbackActivity.showSendLogDialog(this);
 		}
 	}
 
@@ -178,11 +180,13 @@ public class WMSLayersActivity extends ListActivity {
 					finish();
 				} catch (WMSException we) {
 					log.log(Level.SEVERE,"The layer is not supported: ", we);
+					LogFeedbackActivity.showSendLogDialog(this);
 					Toast.makeText(this, R.string.WMSLayersActivity_1,
 							Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
 					log.log(Level.SEVERE,"",e);
-					Utils.showSendLogDialog(this, R.string.fatal_error);
+					LogFeedbackActivity.showSendLogDialog(this);
+//					Utils.showSendLogDialog(this, R.string.fatal_error);
 					Toast.makeText(this, R.string.WMSLayersActivity_1,
 							Toast.LENGTH_LONG).show();
 				}

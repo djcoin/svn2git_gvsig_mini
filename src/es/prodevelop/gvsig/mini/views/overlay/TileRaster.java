@@ -81,8 +81,10 @@ import android.view.animation.LinearInterpolator;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.HandlerAndroid;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
@@ -218,6 +220,12 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public TileRaster(final Context context, final IContext androidContext,
 			final MapRenderer aRendererInfo, int width, int height) {
 		super(context);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			this.androidContext = androidContext;
 			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);

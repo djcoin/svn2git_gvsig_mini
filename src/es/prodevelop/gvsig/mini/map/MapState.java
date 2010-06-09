@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.tilecache.layers.Layers;
@@ -86,8 +87,7 @@ public class MapState {
 	 */
 	public MapState(Map map) {	
 		try {
-//			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			this.map = map;
 			String SDDIR = Environment.getExternalStorageDirectory().getPath();
 			String appDir = Utils.APP_DIR;

@@ -45,6 +45,8 @@ import java.util.logging.Logger;
 import android.content.Intent;
 import android.net.Uri;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
@@ -58,6 +60,12 @@ public class ShowStreetView extends Functionality {
 	private final static Logger log = Logger.getLogger(ShowStreetView.class.getName());
 	public ShowStreetView(Map map, int id) {
 		super(map, id);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

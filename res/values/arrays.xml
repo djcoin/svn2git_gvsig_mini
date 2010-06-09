@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cache_strategies">
+        <item>@string/Map_1</item>
+        <item>@string/Map_2</item>          
+    </string-array>
+    
+    <string-array name="cache_strategies_values">
+        <item>alpha</item>
+        <item>beta</item>          
+    </string-array>
+    
+</resources>

@@ -70,8 +70,10 @@ import android.view.MotionEvent;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
@@ -117,6 +119,12 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	public ViewSimpleLocationOverlay(final Context ctx,
 			final TileRaster tileRaster) {
 		super(ctx, tileRaster);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 //			log.setClientID(this.toString());
 			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);

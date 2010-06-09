@@ -248,36 +248,7 @@ public class Utils implements GeoUtils {
 		URLConnection urlconnec = url.openConnection();
 		urlconnec.setConnectTimeout(30000);
 		return urlconnec.getInputStream();
-	}
-
-	public static String exitedCorrectly() {
-		try {
-			File f = new File(Environment.getExternalStorageDirectory() + "/"
-					+ Utils.APP_DIR + "/" + Utils.LOG_DIR);			
-			
-			File[] files = f.listFiles();
-			final int length = files.length;
-			File lastFile = null;			
-			long lastModified = 0;
-			for (int i = 0; i<length; i++) {
-				File tempFile = files[i];
-				if (lastModified < tempFile.lastModified()) {
-					lastModified = tempFile.lastModified();
-					lastFile = files[i];
-				}
-			}
-			return lastFile.getAbsolutePath();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static void sendExceptionEmail(final Context ctx) {
-		String lastLog = Utils.exitedCorrectly();
-		if (lastLog == null) return;
-		openEmail(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
-				new String[] { "minijira@prodevelop.es" }, lastLog);		
-	}
+	}	
 	
 	public static void downloadLayerFile(final Context ctx) {
 		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
@@ -290,74 +261,5 @@ public class Utils implements GeoUtils {
 	}
 	
 	
-	public static void clearLogs() {
-		try {
-			File f = new File(Environment.getExternalStorageDirectory() + "/"
-					+ Utils.APP_DIR + "/" + Utils.LOG_DIR);
-			File[] files = f.listFiles();
-			final int length = files.length;
-			
-			boolean deleted = false;
-			for (int i = 0; i<length; i++) {
-				deleted = files[i].delete();
-			}
-			
-		    deleted = f.delete();
-			System.out.println(";");
-		} catch (Exception e) {
-			
-		}
-	}
 	
-	public static void showSendLogDialog(final Context context) {
-		try {
-			Utils.showSendLogDialog(context, context.getResources().getString(R.string.fatal_error));
-		} catch (Exception e) {
-//			log.log(Level.SEVERE,"",e);
-		}
-	}
-	
-	public static void showSendLogDialog(final Context context, int id) {
-		try {
-			Utils.showSendLogDialog(context, context.getResources().getString(id));
-		} catch (Exception e) {
-//			log.log(Level.SEVERE,"",e);
-		}
-	}
-	
-	public static void showSendLogDialog(final Context context, String message) {
-		try {
-			AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-			alert.setTitle(R.string.warning);
-			TextView text = new TextView(context);
-			text.setText(message);
-
-			alert.setView(text);
-
-			alert.setPositiveButton(R.string.send_log,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Utils.sendExceptionEmail(context);								
-							} catch (Exception e) {
-//								log.log(Level.SEVERE,"",e);
-							}
-						}
-					});
-
-			alert.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-//							Utils.clearLogs();
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-//			log.log(Level.SEVERE,"",e);
-		}
-	}
 }

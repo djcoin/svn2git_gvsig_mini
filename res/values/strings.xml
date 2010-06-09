@@ -85,6 +85,7 @@
     <string name="Map_Navigator">Navigator</string>
     
     
+    
     <string name="NameFinderActivity_0">POI options</string>
     <string name="NameFinderActivity_1">From here</string>
     <string name="NameFinderActivity_2">To here</string>
@@ -144,5 +145,17 @@
     <string name="download_tiles_14">Download tiles</string>
     <string name="download_tiles_15">Move the slide bar to select the max zoom level to download tiles. The process will download the tiles that fill the screen from the current zoom level of the view to the zoom level selected with the slide bar.</string>
     
-        <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
+    <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
+    
+    <string name="settings_gps">GPS</string>
+    <string name="settings_orientation">Orientation</string>
+    <string name="settings_orientation_enabled">Orientation enabled</string>
+    <string name="settings_orientation_disabled">Orientation disabled</string>
+    <string name="settings_maps_cache">Maps cache</string>
+    <string name="settings_mode">Mode</string>
+    <string name="settings_delete_all">Delete all</string>
+    <string name="settings_downloaded_data">Downloaded data</string>
+    <string name="settings_tilling_strategy">Tiling strategy</string>
+    <string name="settings_tile_name">Tile name suffix</string>
+    <string name="summary_toggle_preference">Esto es una prueba</string>
 </resources>

@@ -76,6 +76,8 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 import android.widget.TwoLineListItem;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.tasks.wms.GetCapabilitiesTask;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -124,7 +126,11 @@ public class LayersActivity extends ExpandableListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-			// setContentView(R.layout.layers_view);
+			try {
+				CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			} catch (BaseException e) {
+				
+			}
 			
 			setTitle(R.string.LayersActivity_0);
 			handler = new WMSHandler(this);
@@ -138,7 +144,8 @@ public class LayersActivity extends ExpandableListActivity {
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"onCreate: ", e);
-			Utils.showSendLogDialog(this, R.string.fatal_error);
+			LogFeedbackActivity.showSendLogDialog(this);
+//			Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
 
@@ -200,6 +207,7 @@ public class LayersActivity extends ExpandableListActivity {
 			// }
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"onNewIntent: ", e);
+			LogFeedbackActivity.showSendLogDialog(this);
 		} finally {
 			Utils.closeStream(is);
 			Utils.closeStream(isr);
@@ -665,7 +673,7 @@ public class LayersActivity extends ExpandableListActivity {
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"LayersActivity onActivityResult: ", e);
-			Utils.showSendLogDialog(this, R.string.fatal_error);
+//			Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
 

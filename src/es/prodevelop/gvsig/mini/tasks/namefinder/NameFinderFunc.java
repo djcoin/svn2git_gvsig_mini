@@ -52,6 +52,8 @@ import org.apache.http.util.ByteArrayBuffer;
 
 import android.os.Message;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
@@ -82,6 +84,12 @@ public class NameFinderFunc extends Functionality {
 		super(map, id);
 		POIHandler handler = new POIHandler();
 		this.addObserver(handler);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

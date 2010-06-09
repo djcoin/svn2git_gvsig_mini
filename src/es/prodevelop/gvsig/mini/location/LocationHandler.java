@@ -45,6 +45,8 @@ package es.prodevelop.gvsig.mini.location;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import es.prodevelop.gvsig.mini.common.CompatManager;
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -73,9 +75,14 @@ public class LocationHandler {
 
 	public LocationHandler(LocationManager lm, LocationListener dest,
 			Context ctx) {
-		mLocationManager = lm;
-		mLocationReceiver = dest;
-		mContext = ctx;
+		try {
+			mLocationManager = lm;
+			mLocationReceiver = dest;
+			mContext = ctx;
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}		
 	}
 
 	public Location getFirstLocation() {
@@ -121,7 +128,7 @@ public class LocationHandler {
 
 		}
 
-		if (timer != null) {
+		if (timer != null) {			
 			timer.schedule(10000);
 		}
 

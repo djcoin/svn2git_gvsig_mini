@@ -50,8 +50,10 @@ import android.graphics.Canvas;
 import android.os.Message;
 import android.view.MotionEvent;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
@@ -74,6 +76,12 @@ public class NameFinderOverlay extends MapOverlay {
 
 	public NameFinderOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		log.setClientID(this.toString());
 	}
 

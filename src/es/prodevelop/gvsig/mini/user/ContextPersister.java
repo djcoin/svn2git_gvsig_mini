@@ -55,6 +55,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.os.Environment;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 	
@@ -83,6 +85,12 @@ public class ContextPersister{
 			this.setFileName(_fileName);
 		} catch (IOException e) {
 			log.log(Level.SEVERE,e.getMessage());
+		}
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

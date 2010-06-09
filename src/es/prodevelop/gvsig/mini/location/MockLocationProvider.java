@@ -52,6 +52,8 @@ import java.util.logging.Logger;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 
 public class MockLocationProvider extends Thread {
 
@@ -73,10 +75,9 @@ public class MockLocationProvider extends Thread {
 		this.locationManager = locationManager;
 		this.mocLocationProvider = mocLocationProvider;
 		this.data = data;
-		try {
-			// Config.getInstance().setLogLevel(logger);
-//			logger.setLevel(Level.DEBUG);
-		} catch (NoSuchFieldError e) {
+		try {			
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(logger);
+		} catch (BaseException e) {
 			logger.log(Level.SEVERE,"Constructor: " + e.getMessage());
 		}
 	}

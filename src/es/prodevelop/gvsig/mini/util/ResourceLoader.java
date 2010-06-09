@@ -48,6 +48,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 
 
 
@@ -71,6 +73,12 @@ public class ResourceLoader {
 	 * @param context The context to take the resources from
 	 */
 	public static void initialize(Context context) {
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			ResourceLoader.context = context;
 			if (imgs != null) return;

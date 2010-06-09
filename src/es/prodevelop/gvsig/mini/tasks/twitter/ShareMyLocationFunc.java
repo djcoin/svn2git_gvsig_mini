@@ -45,6 +45,8 @@ import java.util.logging.Logger;
 import android.content.Intent;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
 public class ShareMyLocationFunc extends TweetMyLocationFunc {
@@ -55,6 +57,12 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 
 	public ShareMyLocationFunc(Map map, int id) {
 		super(map, id);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

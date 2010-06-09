@@ -46,6 +46,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
@@ -61,7 +63,12 @@ public class FinishPointFunctionality extends StartPointFunctionality {
 
 	public FinishPointFunctionality(Map map, int id) {
 		super(map, id);
-		// TODO Auto-generated constructor stub
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -44,6 +44,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -64,6 +66,12 @@ public class StartPointFunctionality extends Functionality {
 		super(map, id);
 		RoutePointHandler handler = new RoutePointHandler(map);
 		this.addObserver(handler);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

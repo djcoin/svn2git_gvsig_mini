@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.map.ShowStreetView;
@@ -75,8 +76,7 @@ public class DefaultContext implements ItemContext {
 	 */
 	public DefaultContext() {
 		try {
-//			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}

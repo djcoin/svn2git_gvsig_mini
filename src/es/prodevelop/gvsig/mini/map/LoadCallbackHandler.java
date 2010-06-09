@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import android.os.Handler;
 import android.os.Message;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.tilecache.provider.Downloader;
 import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
 
@@ -22,7 +23,12 @@ public class LoadCallbackHandler extends Handler {
 			.getLogger(LoadCallbackHandler.class.getName());
 
 	public LoadCallbackHandler(Handler handler) {
-		mDownloadFinishedListenerHander = handler;
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			mDownloadFinishedListenerHander = handler;
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}		
 	}
 
 	@Override

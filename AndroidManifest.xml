@@ -15,7 +15,7 @@
 				-->
 			</intent-filter>
 		</activity>
-		<activity android:name=".activities.Map" android:screenOrientation="sensor" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask" android:configChanges="orientation">
+		<activity android:name=".activities.Map" android:screenOrientation="sensor" android:theme="@android:style/Theme.NoTitleBar" android:configChanges="orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -58,6 +58,7 @@
 		</uses-library>
 
 		<activity android:name=".activities.WMSLayersActivity"></activity>
+		<activity android:name=".activities.SettingsActivity"></activity>
 
         <!-- Provides search suggestions for previous queries -->
         <provider android:name=".search.SearchSuggestionsMiniProvider"

@@ -50,22 +50,16 @@
 
 package es.prodevelop.gvsig.mini.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.view.KeyEvent;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.settings.LogHandler;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * gvSIG Mini splash. Waits SPLASH_DISPLAY_LENGHT to start the Map Activity
@@ -79,7 +73,6 @@ public class SplashActivity extends Activity {
 	private final int SPLASH_DISPLAY_LENGHT = 500;
 	private final static Logger logger = Logger.getLogger(SplashActivity.class
 			.getName());
-	
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -91,11 +84,13 @@ public class SplashActivity extends Activity {
 				@Override
 				public void run() {
 					try {
-						LogHandler.getInstance().configureLog();
+						Initializer.getInstance().initialize(
+								getApplicationContext());
 						Intent mainIntent = new Intent(SplashActivity.this,
 								Map.class);
-						SplashActivity.this.startActivity(mainIntent);
-						SplashActivity.this.finish();
+						SplashActivity.this.startActivityForResult(mainIntent,
+								0);
+						// SplashActivity.this.finish();
 					} catch (Exception e) {
 						logger.log(Level.SEVERE, "", e);
 					}
@@ -105,5 +100,57 @@ public class SplashActivity extends Activity {
 			logger.log(Level.SEVERE, "", e);
 		}
 	}
+	
+	public void onPause() {
+		super.onPause();
+	}
+	
+	public void onResume() {
+		super.onResume();
+		Intent i = getIntent();
+		if (i == null) return;
+		if (i.hasExtra("exit")) {
+			finish();
+			android.os.Process.killProcess(android.os.Process.myPid());
+		}
+	}
 
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		try {
+			super.onActivityResult(requestCode, resultCode, intent);
+
+			if (requestCode == 0) {
+				switch (resultCode) {
+				case RESULT_OK:
+					finish();
+					android.os.Process.killProcess(android.os.Process.myPid());
+					break;				
+				default:
+//					finish();
+					break;
+				}
+			} else {
+//				finish();
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "", e);
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				logger.log(Level.FINE, "KEY BACK pressed");
+				finish();
+				android.os.Process.killProcess(android.os.Process.myPid());
+			} 
+			return super.onKeyDown(keyCode, event);			
+		} catch (Exception e) {
+			logger.log(Level.SEVERE,"onKeyDown: ", e);
+			return false;
+		}
+		// return false;
+
+	}
 }

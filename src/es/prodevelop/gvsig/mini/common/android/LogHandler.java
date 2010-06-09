@@ -37,58 +37,51 @@
  *   
  */
 
-package es.prodevelop.gvsig.mini.settings;
+package es.prodevelop.gvsig.mini.common.android;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import android.os.Environment;
+import es.prodevelop.gvsig.mini.common.ILogHandler;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
- * Utility class to manage and configure the logging files, sending log reports,
- * clean logs, etc.
+ * Base implementation of ILogHandler using java.util.logging
  * 
  * @author aromeu
  * 
  */
-public class LogHandler {
+public class LogHandler implements ILogHandler {
 
 	/**
 	 * Log file size
 	 */
-	public static final int FILE_SIZE = 1024;
+	public static final int FILE_SIZE = 1024 * 1024;
 
 	/**
 	 * The base log level
 	 */
-	public static Level LOG_LEVEL = Level.FINE;
+	public static Level LOG_LEVEL = Level.FINEST;
 
 	/**
 	 * The log level for tilecache
 	 */
 	public static Level FS_LEVEL = Level.FINE;
 
-	private static LogHandler instance;
-
 	private final static Logger logger = Logger.getLogger(LogHandler.class
 			.getName());
 
 	private FileHandler handler;
-
-	public static LogHandler getInstance() {
-		if (instance == null) {
-			instance = new LogHandler();
-		}
-		return instance;
-	}
+	private ConsoleHandler consoleHandler;
 
 	/**
-	 * Creates a rolling file handler with a maximum of 5 log files of
+	 * Creates a rolling file handler with a maximum of 1 log files of
 	 * FILE_SIZE. Log files are stored at Environment
 	 * .getExternalStorageDirectory() + File.separator + Utils.APP_DIR +
 	 * File.separator + Utils.LOG_DIR, and a SimpleFormatter is used
@@ -100,22 +93,20 @@ public class LogHandler {
 			// sequences.
 			//			
 			if (Utils.isSDMounted()) {
-				File f = new File(Environment.getExternalStorageDirectory()
-						+ File.separator + Utils.APP_DIR + File.separator
-						+ Utils.LOG_DIR + File.separator);
+				File f = new File(getLogDirectory());
 				f.mkdirs();
+				
+				consoleHandler = new ConsoleHandler();
+				consoleHandler.setFormatter(new SimpleFormatter());
+				consoleHandler.setLevel(LOG_LEVEL);
 
-				handler = new FileHandler(Environment
-						.getExternalStorageDirectory()
-						+ File.separator
-						+ Utils.APP_DIR
-						+ File.separator
-						+ Utils.LOG_DIR + File.separator + "gvsig.log",
-						FILE_SIZE, 5, true);
-
+				handler = new FileHandler(getLogDirectory() + getLogFileName(),
+						FILE_SIZE, 1, true);
 				handler.setFormatter(new SimpleFormatter());
 				handler.setLevel(LOG_LEVEL);
+				
 				logger.addHandler(handler);
+				logger.addHandler(consoleHandler);
 				logger.setUseParentHandlers(false);
 			}
 
@@ -128,20 +119,37 @@ public class LogHandler {
 	}
 
 	/**
-	 * The current file handler
-	 * 
-	 * @return
-	 */
-	public FileHandler getHandler() {
-		return handler;
-	}
-	
-	/**
+	 * Sets the params to a Logger instance
 	 * 
 	 * @param log
+	 *            The logger
 	 */
-	public void setLogLevel(Logger log) {
-		
+	public void configureLogger(Object log) {
+		((Logger) log).setLevel(LogHandler.LOG_LEVEL);
+		((Logger) log).addHandler(handler);
+		((Logger) log).addHandler(consoleHandler);
 	}
 
+	@Override
+	public void log(Object logger, String message, Throwable exception,
+			int level) {
+		Level l = Level.FINE;
+		if (level == 1) {
+			l = Level.SEVERE;
+		}
+		((Logger) logger).log(l, message, exception);
+	}
+
+	@Override
+	public String getLogDirectory() {
+		return new StringBuffer().append(
+				Environment.getExternalStorageDirectory()).append(
+				File.separator).append(Utils.APP_DIR).append(File.separator)
+				.append(Utils.LOG_DIR).append(File.separator).toString();
+	}
+	
+	@Override
+	public String getLogFileName() {
+		return "gvsig.log";
+	}
 }

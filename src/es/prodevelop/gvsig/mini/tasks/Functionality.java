@@ -46,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
 /**
@@ -68,8 +69,13 @@ public abstract class Functionality extends Task {
 	 * Functionality in a button
 	 */
 	public Functionality(Map map, int id) {
-		this.map = map;
-		this.id = id;
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			this.map = map;
+			this.id = id;
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}		
 	}	
 
 	public void run() {

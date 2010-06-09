@@ -53,7 +53,9 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Paint.Style;
 import android.view.MotionEvent;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
@@ -70,6 +72,12 @@ public class AcetateOverlay extends MapOverlay {
 	
 	public AcetateOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {			
 //			log.setClientID(this.toString());
 			filledPaint = new Paint();			

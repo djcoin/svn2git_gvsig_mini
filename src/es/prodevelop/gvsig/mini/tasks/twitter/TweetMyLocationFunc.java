@@ -47,6 +47,8 @@ import winterwell.jtwitter.Twitter;
 import android.os.Message;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
@@ -58,6 +60,12 @@ public class TweetMyLocationFunc extends Functionality {
 
 	public TweetMyLocationFunc(Map map, int id) {
 		super(map, id);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

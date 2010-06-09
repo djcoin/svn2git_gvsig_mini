@@ -53,6 +53,8 @@ import org.apache.http.util.ByteArrayBuffer;
 import android.os.Handler;
 import android.os.Message;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -61,32 +63,39 @@ import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.yours.Route;
 
 /**
- * Queries the YOURS service with the start and end point, set by the user, parses 
- * the response and notifies the MapHandler:
- * Map.ROUTE_CANCELED = The user cancels the route task
- * Map.ROUTE_SUCCEEDED = The route has been calculated
- * Map.ROUTE_INITED = THe route task inits
- * Map.ROUTE_NO_CALCULATED = The server can't calculate the route
- * Map.ROUTE_NO_RESPONSE = The server is busy				
- * @author aromeu 
+ * Queries the YOURS service with the start and end point, set by the user,
+ * parses the response and notifies the MapHandler: Map.ROUTE_CANCELED = The
+ * user cancels the route task Map.ROUTE_SUCCEEDED = The route has been
+ * calculated Map.ROUTE_INITED = THe route task inits Map.ROUTE_NO_CALCULATED =
+ * The server can't calculate the route Map.ROUTE_NO_RESPONSE = The server is
+ * busy
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class YOURSFunctionality extends Functionality {
 
 	Route route;
 	int res = TaskHandler.INITED;
 	YOURSHandler handler;
-	private final static Logger log = Logger.getLogger(YOURSFunctionality.class.getName());
+	private final static Logger log = Logger.getLogger(YOURSFunctionality.class
+			.getName());
 
 	public YOURSFunctionality(Map map, int id) {
 		super(map, id);
 		this.route = map.route;
 		handler = new YOURSHandler();
 		this.addObserver(handler);
-//		log.setLevel(Utils.LOG_LEVEL);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
+
 	public Handler getHandler() {
 		return handler;
 	}
@@ -98,7 +107,7 @@ public class YOURSFunctionality extends Functionality {
 			final Point end = (Point) route.getEndPoint().clone();
 
 			final String routeString = route.toYOURS(ini, end);
-			
+
 			log.log(Level.FINE, routeString);
 
 			/* Define the URL we want to load data from. */
@@ -134,7 +143,7 @@ public class YOURSFunctionality extends Functionality {
 			res = TaskHandler.NO_RESPONSE;
 		} catch (Exception e) {
 			res = TaskHandler.ERROR;
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		} finally {
 			// handler.sendEmptyMessage(map.ROUTE_SUCCEEDED);
 
@@ -145,7 +154,7 @@ public class YOURSFunctionality extends Functionality {
 					res = TaskHandler.NO_RESPONSE;
 				} else if (res == -3) {
 					res = TaskHandler.BAD_RESPONSE;
-				} else if (res == 1){
+				} else if (res == 1) {
 					res = TaskHandler.FINISHED;
 					if (route.getState() == Tags.ROUTE_WITH_START_AND_PASS_POINT) {
 						route.setState(Tags.ROUTE_WITH_N_POINT);
@@ -154,9 +163,9 @@ public class YOURSFunctionality extends Functionality {
 					}
 				}
 			} catch (Exception e) {
-				log.log(Level.SEVERE,"",e);
-			} finally {		
-//				super.stop();
+				log.log(Level.SEVERE, "", e);
+			} finally {
+				// super.stop();
 			}
 			return true;
 		}
@@ -172,7 +181,7 @@ public class YOURSFunctionality extends Functionality {
 
 		@Override
 		public void handleMessage(final Message msg) {
-			switch (msg.what) {						
+			switch (msg.what) {
 			case TaskHandler.CANCELED:
 				getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_CANCELED);
 				break;
@@ -183,18 +192,21 @@ public class YOURSFunctionality extends Functionality {
 				getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_INITED);
 				break;
 			case TaskHandler.ERROR:
-				getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_NO_CALCULATED);
+				getMap().getMapHandler().sendEmptyMessage(
+						Map.ROUTE_NO_CALCULATED);
 				break;
 			case TaskHandler.NO_RESPONSE:
-				getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_NO_RESPONSE);
+				getMap().getMapHandler()
+						.sendEmptyMessage(Map.ROUTE_NO_RESPONSE);
 				break;
 			case TaskHandler.BAD_RESPONSE:
-				getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_NO_CALCULATED);
+				getMap().getMapHandler().sendEmptyMessage(
+						Map.ROUTE_NO_CALCULATED);
 				break;
 			case Map.ROUTE_ORIENTATION_CHANGED:
-//				route.deleteRoute();				
-//				cancel();
-				break;			
+				// route.deleteRoute();
+				// cancel();
+				break;
 			}
 		}
 	}

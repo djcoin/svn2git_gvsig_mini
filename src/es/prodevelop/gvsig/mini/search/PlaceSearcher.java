@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 import android.content.Context;
 import android.provider.SearchRecentSuggestions;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 
@@ -66,11 +67,16 @@ public class PlaceSearcher {
 	 * @param query Text to be sought as a place, POI or address
 	 */
 	public PlaceSearcher(Map map, String query){
-		this.map = map;
-		//First save the query for the recent suggestion provider
-		saveQuery(this.map.getBaseContext(),query);
-		
-		doSearch(query);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			this.map = map;
+			//First save the query for the recent suggestion provider
+			saveQuery(this.map.getBaseContext(),query);
+			
+			doSearch(query);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}		
 	}
 	
 	/**

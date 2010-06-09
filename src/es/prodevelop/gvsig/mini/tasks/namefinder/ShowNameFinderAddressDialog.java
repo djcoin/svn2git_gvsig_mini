@@ -46,6 +46,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
@@ -70,6 +72,12 @@ public class ShowNameFinderAddressDialog extends Functionality {
 	public ShowNameFinderAddressDialog(Map map, int id, int type) {
 		super(map, id);
 		this.type = type;
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

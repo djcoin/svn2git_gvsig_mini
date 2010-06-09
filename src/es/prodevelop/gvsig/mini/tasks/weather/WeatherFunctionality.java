@@ -62,6 +62,8 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.os.Message;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -96,6 +98,12 @@ public class WeatherFunctionality extends Functionality {
 		this.lat = center[1];
 		WeatherHandler handler = new WeatherHandler();
 		this.addObserver(handler);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public WeatherFunctionality(Map map, int id, double lat, double lon) {

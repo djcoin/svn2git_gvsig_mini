@@ -69,6 +69,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 
 /**
  * Activity to show the results of the NameFinder service. Consists on a ListActivity
@@ -85,6 +86,7 @@ public class NameFinderActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			log.log(Level.FINE, "onCreate NameFinder actvity");			
 			super.onCreate(savedInstanceState);
 
@@ -102,6 +104,7 @@ public class NameFinderActivity extends ListActivity {
 			setListAdapter(itla);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
+			LogFeedbackActivity.showSendLogDialog(this);
 		}
 	}
 

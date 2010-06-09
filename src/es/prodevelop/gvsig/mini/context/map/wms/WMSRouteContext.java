@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.map.RouteContext;
 import es.prodevelop.gvsig.mini.tasks.wms.GetFeatureInfoFunc;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -18,8 +19,7 @@ public class WMSRouteContext extends RouteContext {
 	public WMSRouteContext() {
 		super();
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
@@ -28,8 +28,7 @@ public class WMSRouteContext extends RouteContext {
 	public WMSRouteContext(Map map) {
 		super(map);
 		try {
-			log.setLevel(Utils.LOG_LEVEL);
-//			log.setClientID(this.toString());
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}

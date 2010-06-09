@@ -9,6 +9,8 @@ import org.gvsig.remoteclient.wms.WMSStatus;
 import android.os.Message;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -25,6 +27,12 @@ public class GetFeatureInfoFunc extends Functionality {
 
 	public GetFeatureInfoFunc(Map map, int id) {
 		super(map, id);
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(logger);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -75,6 +83,7 @@ public class GetFeatureInfoFunc extends Functionality {
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,"",e);
 			res = TaskHandler.ERROR;
+			super.stop();
 		}
 		return true;
 	}

@@ -46,6 +46,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
+
 
 
 
@@ -72,6 +75,12 @@ public class UserContextManager {
 //		log.setClientID(this.toString());
 		contexts = new ArrayList<UserContextable>();
 		persister = new ContextPersister();
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//Let's make the singleton thread-safe just in case it's being used in

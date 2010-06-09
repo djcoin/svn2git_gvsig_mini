@@ -53,6 +53,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.content.Context;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
@@ -113,6 +115,12 @@ public class Config {
 	}
 
 	public static void loadProperties(boolean fromAsset) {
+		try {
+			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(logger);
+		} catch (BaseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		File f = null;
 		FileReader configReader = null;
 		BufferedReader reader = null;
