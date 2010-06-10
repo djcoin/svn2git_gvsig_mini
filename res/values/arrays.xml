@@ -6,20 +6,18 @@
     </string-array>
     
     <string-array name="cache_strategies_values">
-        <item>tilex</item>
+        <item>flatx</item> 
         <item>quadkey</item>          
     </string-array>
     
     <string-array name="cache_modes">
-        <item>@string/settings_online</item>
-        <item>@string/settings_offline</item>
+        <item>@string/settings_online</item>        
         <item>@string/settings_update</item>
         <item>@string/settings_connected</item>          
     </string-array>
 	
     <string-array name="cache_modes_values">
-        <item>0</item>
-        <item>1</item>
+        <item>0</item>        
         <item>2</item>
         <item>4</item>          
     </string-array>
@@ -27,7 +25,8 @@
     <string-array name="settings_properties">    
         <item>@string/settings_key_gps</item>
         <item>@string/settings_key_orientation</item>
-        <item>@string/settings_key_data_transfer</item>
+<!--        <item>@string/settings_key_data_transfer</item>-->
+		<item>@string/settings_key_offline_maps</item>
         <item>@string/settings_key_tile_name</item>
         <item>@string/settings_key_list_strategy</item>
         <item>@string/settings_key_list_mode</item>              

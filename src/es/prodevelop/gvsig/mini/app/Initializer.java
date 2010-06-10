@@ -39,11 +39,17 @@
 
 package es.prodevelop.gvsig.mini.app;
 
+import java.util.logging.Level;
+
 import android.content.Context;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.common.android.LogHandler;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.settings.Settings;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
 
 /**
  * A Facade to do all the initialization stuff
@@ -66,10 +72,16 @@ public class Initializer {
 	}
 	
 	public void initialize(Context applicationContext) throws BaseException {
-		this.applicationContext = applicationContext;		
+		this.applicationContext = applicationContext;
+		
 		CompatManager.getInstance().registerContext(new AndroidContext(this.applicationContext));
 		CompatManager.getInstance().registerLogHandler(new LogHandler());
 		CompatManager.getInstance().getRegisteredLogHandler().configureLog();
+		
+		Settings.getInstance().initializeFromSharedPreferences(applicationContext);		
+		
+		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(new FlatXFileSystemStrategy());
+		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(new QuadKeyFileSystemStrategy());
 	}
 	
 	/**

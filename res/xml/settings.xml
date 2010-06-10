@@ -4,30 +4,38 @@
 	<PreferenceCategory android:title="@string/settings_gps">
 		<CheckBoxPreference android:key="@string/settings_key_gps"
 			android:title="@string/settings_switch_gps" android:summaryOn="@string/Map_27"
-			android:summaryOff="@string/Map_26" />
+			android:summaryOff="@string/Map_26" android:defaultValue="true"/>
 		<CheckBoxPreference android:key="@string/settings_key_orientation"
 			android:dependency="@string/settings_key_gps" android:layout="?android:attr/preferenceLayoutChild"
 			android:title="@string/settings_switch_orientation"
 			android:summaryOn="@string/settings_orientation_enabled"
-			android:summaryOff="@string/settings_orientation_disabled" />
+			android:summaryOff="@string/settings_orientation_disabled" android:defaultValue="true"/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/settings_maps_cache">
-		<Preference android:key="@string/settings_key_data_transfer"
-			android:title="@string/settings_downloaded_data" android:summary="@string/summary_settings_downloaded_data" />
+		<!--		<Preference android:key="@string/settings_key_data_transfer"-->
+		<!--
+			android:title="@string/settings_downloaded_data"
+			android:summary="@string/summary_settings_downloaded_data" />
+		-->
 		<EditTextPreference android:key="@string/settings_key_tile_name"
 			android:title="@string/settings_tile_name" android:summary=""
 			android:defaultValue="tile.gvsig" />
 		<ListPreference android:key="@string/settings_key_list_strategy"
-			android:title="@string/settings_tilling_strategy" android:summary=""
+			android:title="@string/settings_tilling_strategy" android:summary="@string/settings_quadkey"
 			android:entries="@array/cache_strategies" android:entryValues="@array/cache_strategies_values"
 			android:dialogTitle="@string/title_settings_tilling_strategy"
-			android:defaultValue="@string/settings_quadkey" />
+			android:defaultValue="quadkey" />
+		<CheckBoxPreference android:key="@string/settings_key_offline_maps"
+			android:title="@string/settings_mode_offline" android:summaryOn="@string/settings_mode_offline_on"
+			android:summaryOff="@string/settings_mode_offline_off" />
 		<ListPreference android:key="@string/settings_key_list_mode"
-			android:title="@string/settings_tilling_mode" android:summary=""
+			android:title="@string/settings_tilling_mode" android:summary="@string/settings_online"
 			android:entries="@array/cache_modes" android:entryValues="@array/cache_modes_values"
 			android:dialogTitle="@string/title_settings_tilling_mode"
-			android:defaultValue="@string/settings_online" />
+			android:defaultValue="0" />
+<!--			android:dependency="@string/settings_key_offline_maps"-->
+<!--			android:layout="?android:attr/preferenceLayoutChild" -->			
 	</PreferenceCategory>
 
 

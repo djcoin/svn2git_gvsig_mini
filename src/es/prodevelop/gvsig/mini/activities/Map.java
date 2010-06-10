@@ -194,7 +194,8 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSettingsChangedListener {
+public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
+		OnSettingsChangedListener {
 	SlideBar s;
 
 	AlertDialog downloadTileAlert;
@@ -235,7 +236,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 	private MenuItem mySearchDirection;
 	private MenuItem myDownloadLayers;
 	private MenuItem myDownloadTiles;
-	private MenuItem myGPSButton;
+	private MenuItem mySettings;
 	private MenuItem myAbout;
 	private MenuItem myWhats;
 	private MenuItem myLicense;
@@ -693,11 +694,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 					.setIcon(R.drawable.menu_download);
 			myNavigator = pMenu.add(0, 6, 6, R.string.Map_Navigator).setIcon(
 					R.drawable.menu_navigation).setEnabled(connection);
-			myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
-					R.drawable.menu_location).setCheckable(true).setChecked(
-					true);
-			pMenu.add(0, 1, 1, R.string.Map_31).setIcon(
-				android.R.drawable.ic_menu_preferences);
+			// myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
+			// R.drawable.menu_location).setCheckable(true).setChecked(
+			// true);
+			mySettings = pMenu.add(0, 7, 7, R.string.Map_31).setIcon(
+					android.R.drawable.ic_menu_preferences);
 			myWhats = pMenu.add(0, 8, 8, R.string.Map_30).setIcon(
 					R.drawable.menu_location);
 			myLicense = pMenu.add(0, 9, 9, R.string.Map_29).setIcon(
@@ -724,9 +725,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 				}
 				break;
 			case 1:
-//				
-				Intent i = new Intent(this, SettingsActivity.class);
-				startActivity(i);
+				//				
+
 				break;
 			case 2:
 				try {
@@ -810,7 +810,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 						myZoomRectangle.setEnabled(!recenterOnGPS);
 					myDownloadLayers.setEnabled(!recenterOnGPS);
 					mySearchDirection.setEnabled(!recenterOnGPS);
-					myGPSButton.setEnabled(!recenterOnGPS);
+					mySettings.setEnabled(!recenterOnGPS);
+
+					// myGPSButton.setEnabled(!recenterOnGPS);
 
 					if (!recenterOnGPS) {
 						log.log(Level.FINE,
@@ -844,8 +846,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 						// setRequestedOrientation(ActivityInfo.
 						// SCREEN_ORIENTATION_PORTRAIT);
 						// navigation = true;
+						this.initializeSensor(this, true);
 						this.showNavigationModeAlert();
 					} else {
+						try {
+							if (Settings.getInstance().getBooleanValue(
+									getText(R.string.settings_key_orientation)
+											.toString()))
+								this.stopSensor(this);
+						} catch (Exception e) {
+							log.log(Level.SEVERE, "navigation mode off", e);
+						}
+
 						log.log(Level.FINE, "navigation mode off");
 						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						navigation = false;
@@ -865,14 +877,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 				}
 				break;
 			case 7:
-				if (this.isLocationHandlerEnabled()) {
-					disableGPS();
-					myGPSButton.setChecked(false);
-				} else {
-					enableGPS();
-					myGPSButton.setChecked(true);
-
-				}
+				Intent i = new Intent(this, SettingsActivity.class);
+				startActivity(i);
 				break;
 			case 8:
 				try {
@@ -3066,13 +3072,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 	 */
 	@Override
 	public void enableGPS() {
-		log.log(Level.FINE, "enableGPS");
-		super.initLocation();		
-		boolean enabled = this.isLocationHandlerEnabled();
 		try {
+			log.log(Level.FINE, "enableGPS");
+			super.initLocation();
+			boolean enabled = this.isLocationHandlerEnabled();
 			this.myLocationButton.setEnabled(enabled);
 			this.myNavigator.setEnabled(enabled);
-			this.myGPSButton.setTitle(R.string.Map_27);
+			// this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
@@ -3082,13 +3088,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 	 * Stops the location handler
 	 */
 	public void disableGPS() {
-		log.log(Level.FINE, "disableGPS");
-		super.disableGPS();
-		boolean enabled = this.isLocationHandlerEnabled();
 		try {
+			log.log(Level.FINE, "disableGPS");
+			super.disableGPS();
+			boolean enabled = this.isLocationHandlerEnabled();
 			this.myLocationButton.setEnabled(enabled);
 			this.myNavigator.setEnabled(enabled);
-			this.myGPSButton.setTitle(R.string.Map_26);
+			// this.myGPSButton.setTitle(R.string.Map_26);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
@@ -3454,22 +3460,60 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSet
 	@Override
 	public void onSettingChange(String key, Object value) {
 		try {
-			if (key.compareTo(getText(R.string.settings_gps).toString()) == 0) {
+			if (key.compareTo(getText(R.string.settings_key_gps).toString()) == 0) {
 				if (Boolean.valueOf(value.toString()).booleanValue()) {
 					this.enableGPS();
 				} else {
 					this.disableGPS();
 				}
-			} else if (key.compareTo(getText(R.string.settings_orientation).toString()) == 0) {
+			} else if (key.compareTo(getText(R.string.settings_key_orientation)
+					.toString()) == 0) {
 				if (Boolean.valueOf(value.toString()).booleanValue()) {
 					this.initializeSensor(this);
 				} else {
 					this.stopSensor(this);
 				}
-			} 
-			
+			} else if (key.compareTo(getText(R.string.settings_key_tile_name)
+					.toString()) == 0) {
+				String current = osmap.getMTileProvider().getMFSTileProvider()
+						.getStrategy().getTileNameSuffix();
+
+				// tile suffix has changed
+				if (current.compareTo("." + value.toString()) != 0) {
+					osmap.instantiateTileProviderfromSettings();
+				}
+
+			} else if (key
+					.compareTo(getText(R.string.settings_key_offline_maps)
+							.toString()) == 0) {
+				if (Boolean.valueOf(value.toString()).booleanValue()) {
+					osmap.getMTileProvider().setMode(TileProvider.MODE_OFFLINE);
+				} else {
+					int mode = Settings.getInstance()
+							.getIntValue(
+									getText(R.string.settings_key_list_mode)
+											.toString());
+					osmap.getMTileProvider().setMode(mode);
+				}
+			} else if (key.compareTo(getText(R.string.settings_key_list_mode)
+					.toString()) == 0) {
+				if (Settings.getInstance().getBooleanValue(
+						getText(R.string.settings_key_offline_maps).toString())) {
+					osmap.getMTileProvider().setMode(TileProvider.MODE_OFFLINE);
+				} else {
+					osmap.getMTileProvider().setMode(
+							Integer.valueOf(value.toString()).intValue());
+				}
+			} else if (key.compareTo(getText(
+					R.string.settings_key_list_strategy).toString()) == 0) {
+				osmap.instantiateTileProviderfromSettings();
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onSettingChange", e);
 		}
+	}
+
+	private void updateModeTileProvider() {
+
 	}
 }

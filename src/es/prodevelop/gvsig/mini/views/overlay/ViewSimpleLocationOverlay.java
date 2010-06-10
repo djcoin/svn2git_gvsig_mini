@@ -77,6 +77,7 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
+import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Tags;
@@ -159,7 +160,16 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	private void drawOrientation(Canvas c, TileRaster osmv, int[] coords) {
 		try {
-
+			try {
+				if (!Settings.getInstance().getBooleanValue(
+						osmv.map.getText(R.string.settings_key_orientation).toString())) {
+					log.log(Level.FINE, "orientation is disabled in settings");
+					return;
+				}
+			} catch (NoSuchFieldError e) {
+				log.log(Level.SEVERE, "", e);
+			}
+			
 			if (!osmv.map.navigation) {
 				rotation = -compass - offsetOrientation;
 //				log.log(Level.FINE, "orientation: " + offsetOrientation);

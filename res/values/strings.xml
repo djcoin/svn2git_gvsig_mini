@@ -164,12 +164,16 @@
     <string name="settings_quadkey">Quadkey</string>
     <string name="settings_online">Online</string>
     <string name="settings_offline">Offline</string>
-    <string name="settings_connected">Connected</string>
+    <string name="settings_connected">No storage</string>
     <string name="settings_update">Overwrite</string>
     <string name="settings_tilling_mode">Cache mode</string>
+    <string name="settings_mode_offline">Offline maps</string>
+    <string name="settings_mode_offline_on">Get maps exclusively from SD card</string>
+    <string name="settings_mode_offline_off">Select cache mode</string>
     <string name="title_settings_tilling_mode">Select cache mode</string>
     
     <string name="settings_key_gps">gps state</string>
+    <string name="settings_key_offline_maps">offline maps</string>
     <string name="settings_key_orientation">orientation state</string>
     <string name="settings_key_data_transfer">data transfer</string>
     <string name="settings_key_tile_name">tile name</string>

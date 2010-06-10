@@ -14,6 +14,7 @@ import android.preference.PreferenceActivity;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.settings.Settings;
+import es.prodevelop.gvsig.mini.user.UserContextManager;
 
 /**
  * This is the Activity to let the user to configure the settings for the
@@ -51,8 +52,8 @@ public class SettingsActivity extends PreferenceActivity implements
 
 			getPreferenceScreen().getSharedPreferences()
 					.registerOnSharedPreferenceChangeListener(this);
-			updateSummaries();
 
+			 updateSummaries();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreate", e);
 			LogFeedbackActivity.showSendLogDialog(this);
@@ -63,7 +64,29 @@ public class SettingsActivity extends PreferenceActivity implements
 	public void onSharedPreferenceChanged(SharedPreferences preferences,
 			String key) {
 		try {
-			updateSummaries();
+			updateSetting(key);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "onSharedPreferenceChanged", e);
+		}
+	}
+
+	private void updateSetting(String key) {
+		try {
+			processPreference(this.getPreference(key), false);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}
+	}
+
+	private void updateSummaries() {
+		try {
+			String[] properties = getResources().getStringArray(
+					R.array.settings_properties);
+
+			for (String s : properties) {
+				Preference p = this.getPreference(s);
+				processPreference(p, true);
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onSharedPreferenceChanged", e);
 		}
@@ -73,14 +96,14 @@ public class SettingsActivity extends PreferenceActivity implements
 	 * Iterates the settings_properties string-array in arrays.xml and process
 	 * the Preferences
 	 */
-	public void updateSummaries() {
+	public void updateSettings() {
 		try {
 			String[] properties = getResources().getStringArray(
 					R.array.settings_properties);
 
 			for (String s : properties) {
 				Preference p = this.getPreference(s);
-				processPreference(p);
+				processPreference(p, false);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onSharedPreferenceChanged", e);
@@ -93,24 +116,28 @@ public class SettingsActivity extends PreferenceActivity implements
 	 * of the Preference) and updating the summary text
 	 * 
 	 * @param p
+	 * @param onlySummary
+	 *            Updates only the preference summary
 	 */
-	private void processPreference(Preference p) {
+	private void processPreference(Preference p, boolean onlySummary) {
 		try {
 			if (p instanceof CheckBoxPreference) {
-				processCheckBoxPreference((CheckBoxPreference) p);
+				processCheckBoxPreference((CheckBoxPreference) p, onlySummary);
 			} else if (p instanceof EditTextPreference) {
-				processEditTextPreference((EditTextPreference) p);
+				processEditTextPreference((EditTextPreference) p, onlySummary);
 			} else if (p instanceof ListPreference) {
-				processListPreference((ListPreference) p);
+				processListPreference((ListPreference) p, onlySummary);
 			} else if (p instanceof Preference) {
-				processSimplePreference(p);
+				processSimplePreference(p, onlySummary);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onSharedPreferenceChanged", e);
 		}
 	}
 
-	private void processCheckBoxPreference(CheckBoxPreference p) {
+	private void processCheckBoxPreference(CheckBoxPreference p,
+			boolean onlySummary) {
+		// checkboxes updates summaries automatically
 		boolean isChecked = false;
 		if (p.isChecked())
 			isChecked = true;
@@ -122,20 +149,33 @@ public class SettingsActivity extends PreferenceActivity implements
 			Settings.getInstance().putValue(c.getKey(), new Boolean(isChecked));
 		}
 
+		ListPreference c = (ListPreference) this
+				.findPreference(getText(R.string.settings_key_list_mode));
+
+		CheckBoxPreference cb = (CheckBoxPreference) this
+				.findPreference(getText(R.string.settings_key_offline_maps));
+
+		c.setEnabled(!cb.isChecked());
+
 		Settings.getInstance().putValue(p.getKey(), new Boolean(isChecked));
 	}
 
-	private void processEditTextPreference(EditTextPreference p) {
-		Settings.getInstance().putValue(p.getKey(), p.getText());
+	private void processEditTextPreference(EditTextPreference p,
+			boolean onlySummary) {
+		if (!onlySummary)
+			Settings.getInstance().putValue(p.getKey(), p.getText());
 		p.setSummary(p.getText());
 	}
 
-	private void processListPreference(ListPreference p) {
-		Settings.getInstance().putValue(p.getKey(), p.getValue());
-		p.setSummary(p.getEntry());
+	private void processListPreference(ListPreference p, boolean onlySummary) {
+		if (!onlySummary)
+			Settings.getInstance().putValue(p.getKey(), p.getValue());
+		String summary = p.getEntry().toString();
+		if (summary.compareTo("") != 0)
+			p.setSummary(p.getEntry());
 	}
 
-	private void processSimplePreference(Preference p) {
+	private void processSimplePreference(Preference p, boolean onlySummary) {
 		String s = "";
 		try {
 			s = Settings.getInstance().getValue(p.getKey()).toString();
@@ -157,6 +197,15 @@ public class SettingsActivity extends PreferenceActivity implements
 	private Preference getPreference(String id) {
 		return this.getPreferenceScreen().findPreference(id);
 
+	}
+
+	public void onDestroy() {
+		try {
+			super.onDestroy();
+			Settings.getInstance().notifyObserversWithChanges();
+		} catch (Exception e) {
+
+		}
 	}
 
 }

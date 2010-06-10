@@ -82,6 +82,7 @@ import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.LocationHandler;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
+import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 
@@ -108,7 +109,8 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
 			Config.setContext(this);
 
 			locationHandler = new LocationHandler(
@@ -154,6 +156,27 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 
 	public void initializeSensor(Context context) {
 		try {
+
+			this.initializeSensor(context, false);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}
+	}
+
+	public void initializeSensor(Context context, boolean forceNavigationMode) {
+		try {
+
+			try {
+				if (!Settings.getInstance().getBooleanValue(
+						getText(R.string.settings_key_orientation).toString())
+						&& !forceNavigationMode) {
+					log.log(Level.FINE, "Orientation is disabled in settings");
+					return;
+				}
+			} catch (NoSuchFieldError e) {
+				log.log(Level.SEVERE, "", e);
+			}
+
 			log.log(Level.FINE, "initialize sensor");
 			SensorManager mSensorManager = (SensorManager) context
 					.getSystemService(Context.SENSOR_SERVICE);
@@ -184,6 +207,15 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 
 	public void initLocation() {
 		try {
+			try {
+				if (!Settings.getInstance().getBooleanValue(
+						getText(R.string.settings_key_gps).toString())) {
+					log.log(Level.FINE, "GPS is disabled in settings");
+					return;
+				}
+			} catch (NoSuchFieldError e) {
+				log.log(Level.SEVERE, "", e);
+			}
 			List providers = this.getLocationManager().getProviders(true);
 			if (providers.size() == 0) {
 				log.log(Level.FINE, "no location providers enabled");
@@ -270,7 +302,7 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
-	}	
+	}
 
 	public GPSPoint getLastLocation() {
 		try {
@@ -289,7 +321,7 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 	public void onDestroy() {
 		try {
 			super.onDestroy();
-			log.log(Level.FINE, "on destroy MapLocation");			
+			log.log(Level.FINE, "on destroy MapLocation");
 			locationHandler.stop();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
