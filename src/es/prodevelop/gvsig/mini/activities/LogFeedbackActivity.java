@@ -31,6 +31,9 @@ public class LogFeedbackActivity extends Activity {
 			super.onCreate(savedInstanceState);
 			
 			try {
+				clearLogs();
+				Initializer.getInstance().initialize(
+						getApplicationContext());				
 				CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			} catch (BaseException e) {
 				

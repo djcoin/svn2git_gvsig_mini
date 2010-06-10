@@ -107,7 +107,7 @@ import es.prodevelop.tilecache.provider.Downloader;
 import es.prodevelop.tilecache.provider.Tile;
 import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
-import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
@@ -1188,7 +1188,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		this.mTileProvider = new TileProvider(this.androidContext,
 				new HandlerAndroid(lh), mapWidth, mapHeight, 256,
 				R.drawable.maptile_loading, TileProvider.MODE_ONLINE,
-				new FlatXFileSystemStrategy(".tile.gvSIG"));
+				new QuadKeyFileSystemStrategy(".tile.gvSIG"));
 	}
 
 	@Override

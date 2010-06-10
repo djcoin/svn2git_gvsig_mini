@@ -58,7 +58,7 @@
 		</uses-library>
 
 		<activity android:name=".activities.WMSLayersActivity"></activity>
-		<activity android:name=".activities.SettingsActivity"></activity>
+		<activity android:name=".activities.SettingsActivity" android:theme="@android:style/Theme.NoTitleBar"></activity>
 
         <!-- Provides search suggestions for previous queries -->
         <provider android:name=".search.SearchSuggestionsMiniProvider"

@@ -148,14 +148,31 @@
     <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
     
     <string name="settings_gps">GPS</string>
+    <string name="settings_switch_gps">GPS on/off</string>
     <string name="settings_orientation">Orientation</string>
+    <string name="settings_switch_orientation">Orientation sensor on/off</string>
     <string name="settings_orientation_enabled">Orientation enabled</string>
     <string name="settings_orientation_disabled">Orientation disabled</string>
     <string name="settings_maps_cache">Maps cache</string>
-    <string name="settings_mode">Mode</string>
-    <string name="settings_delete_all">Delete all</string>
+    <string name="settings_mode">Mode</string>    
     <string name="settings_downloaded_data">Downloaded data</string>
+    <string name="summary_settings_downloaded_data">{0} MB downloaded for this session</string>
     <string name="settings_tilling_strategy">Tiling strategy</string>
+    <string name="title_settings_tilling_strategy">Select tiling strategy</string>
     <string name="settings_tile_name">Tile name suffix</string>
-    <string name="summary_toggle_preference">Esto es una prueba</string>
+    <string name="settings_tilex">Z/X/Y</string>
+    <string name="settings_quadkey">Quadkey</string>
+    <string name="settings_online">Online</string>
+    <string name="settings_offline">Offline</string>
+    <string name="settings_connected">Connected</string>
+    <string name="settings_update">Overwrite</string>
+    <string name="settings_tilling_mode">Cache mode</string>
+    <string name="title_settings_tilling_mode">Select cache mode</string>
+    
+    <string name="settings_key_gps">gps state</string>
+    <string name="settings_key_orientation">orientation state</string>
+    <string name="settings_key_data_transfer">data transfer</string>
+    <string name="settings_key_tile_name">tile name</string>
+    <string name="settings_key_list_strategy">list strategy</string>
+    <string name="settings_key_list_mode">list mode</string>
 </resources>

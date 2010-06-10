@@ -77,7 +77,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.location.Location;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -93,7 +92,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -105,11 +103,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -137,13 +133,14 @@ import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.location.Config;
-import es.prodevelop.gvsig.mini.location.MockLocationProvider;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
+import es.prodevelop.gvsig.mini.settings.OnSettingsChangedListener;
+import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
@@ -197,7 +194,7 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
+public class Map extends MapLocation implements GeoUtils, IDownloadWaiter, OnSettingsChangedListener {
 	SlideBar s;
 
 	AlertDialog downloadTileAlert;
@@ -308,6 +305,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			try {
 				CompatManager.getInstance().getRegisteredLogHandler()
 						.configureLogger(log);
+				Settings.getInstance().addOnSettingsChangedListener(this);
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
 
@@ -3069,7 +3067,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 	@Override
 	public void enableGPS() {
 		log.log(Level.FINE, "enableGPS");
-		super.initLocation();
+		super.initLocation();		
 		boolean enabled = this.isLocationHandlerEnabled();
 		try {
 			this.myLocationButton.setEnabled(enabled);
@@ -3450,6 +3448,28 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter {
 			onLowMemory();
 			log.log(Level.SEVERE, "", oe);
 			showToast(R.string.MapLocation_3);
+		}
+	}
+
+	@Override
+	public void onSettingChange(String key, Object value) {
+		try {
+			if (key.compareTo(getText(R.string.settings_gps).toString()) == 0) {
+				if (Boolean.valueOf(value.toString()).booleanValue()) {
+					this.enableGPS();
+				} else {
+					this.disableGPS();
+				}
+			} else if (key.compareTo(getText(R.string.settings_orientation).toString()) == 0) {
+				if (Boolean.valueOf(value.toString()).booleanValue()) {
+					this.initializeSensor(this);
+				} else {
+					this.stopSensor(this);
+				}
+			} 
+			
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "onSettingChange", e);
 		}
 	}
 }

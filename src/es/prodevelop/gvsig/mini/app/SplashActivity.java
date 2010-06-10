@@ -83,9 +83,7 @@ public class SplashActivity extends Activity {
 			new Handler().postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						Initializer.getInstance().initialize(
-								getApplicationContext());
+					try {						
 						Intent mainIntent = new Intent(SplashActivity.this,
 								Map.class);
 						SplashActivity.this.startActivityForResult(mainIntent,
