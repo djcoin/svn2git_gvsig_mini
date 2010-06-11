@@ -171,6 +171,8 @@ import es.prodevelop.tilecache.TileDownloaderTask;
 import es.prodevelop.tilecache.generator.impl.FitScreenBufferStrategy;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.TileProvider;
+import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
+import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.MapRendererManager;
@@ -2195,6 +2197,32 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			MapRenderer currentRenderer = Map.this.osmap.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(
 					currentRenderer.getNAME());
+			
+			String tileName = "tile.gvsig";
+			String dot = ".";
+			String strategy = ITileFileSystemStrategy.QUADKEY;
+			ITileFileSystemStrategy ts = FileSystemStrategyManager.getInstance()
+					.getStrategyByName(strategy);			
+
+			try {
+				tileName = Settings.getInstance().getStringValue(
+						getText(R.string.settings_key_tile_name).toString());
+			} catch (Exception e) {
+
+			}
+
+			try {
+				strategy = Settings.getInstance()
+						.getStringValue(
+								getText(R.string.settings_key_list_strategy)
+										.toString());
+			} catch (Exception e) {
+
+			}
+
+			String tileSuffix = dot + tileName;
+			ts = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
+			ts.setTileNameSuffix(tileSuffix);
 
 			int fromZoomLevel = currentRenderer.getZoomLevel();
 
@@ -2260,7 +2288,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					.getRegisteredContext(), renderer, fromZoomLevel,
 					toZoomLevel, downloadCancellable, renderer.getExtent(),
 					null, callBackHandler, null, mode,
-					new FlatXFileSystemStrategy(),
+					ts,
 					new FitScreenBufferStrategy());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3357,29 +3385,32 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	public boolean isRendererAllowedToDownloadTiles(MapRenderer renderer) {
 		try {
-			String name = renderer.getNAME();
-			if (name.contains("OPEN STREET MAP") || name.contains("OSMARENDER") /*
-																				 * ||
-																				 * name
-																				 * .
-																				 * contains
-																				 * (
-																				 * "Cloudmade"
-																				 * )
-																				 * ||
-																				 * name
-																				 * .
-																				 * contains
-																				 * (
-																				 * "Cloudmade Fresh"
-																				 * )
-																				 */
-					|| name.contains("CYCLE MAP")) {
-				myDownloadTiles.setEnabled(true);
-				return true;
-			}
-			myDownloadTiles.setEnabled(false);
-			return false;
+//			String name = renderer.getNAME();
+//			if (name.contains("OPEN STREET MAP") || name.contains("OSMARENDER") /*
+//																				 * ||
+//																				 * name
+//																				 * .
+//																				 * contains
+//																				 * (
+//																				 * "Cloudmade"
+//																				 * )
+//																				 * ||
+//																				 * name
+//																				 * .
+//																				 * contains
+//																				 * (
+//																				 * "Cloudmade Fresh"
+//																				 * )
+//																				 */
+//					|| name.contains("CYCLE MAP")) {
+//				myDownloadTiles.setEnabled(true);
+//				return true;
+//			}
+//			myDownloadTiles.setEnabled(false);
+//			return false;
+			//FIXME: only for debug
+			myDownloadTiles.setEnabled(true);
+			return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 			return false;
