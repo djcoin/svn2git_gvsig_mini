@@ -1449,6 +1449,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "load map from saved instance");
 			String mapLayer = outState.getString("maplayer");
 			log.log(Level.FINE, "previous layer: " + mapLayer);
+//			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
+//			this.osmap = new TileRaster(this, aContext, t, metrics.widthPixels,
+//					metrics.heightPixels);
 			osmap.onLayerChanged(mapLayer);
 			this.mMyLocationOverlay.loadState(outState);
 			log.log(Level.FINE, "map loaded");

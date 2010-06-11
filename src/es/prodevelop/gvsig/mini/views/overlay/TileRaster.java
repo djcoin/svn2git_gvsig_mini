@@ -1210,8 +1210,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		ITileFileSystemStrategy t = FileSystemStrategyManager.getInstance()
 				.getStrategyByName(strategy);
 
+		boolean offline = false;
 		try {
-			boolean offline = Settings.getInstance().getBooleanValue(
+			offline = Settings.getInstance().getBooleanValue(
 					map.getText(R.string.settings_key_offline_maps).toString());
 
 			if (offline)
@@ -1221,14 +1222,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 						.getIntValue(
 								map.getText(R.string.settings_key_list_mode)
 										.toString());
-		} catch (Exception e) {
+		} catch (NoSuchFieldError e) {
 
 		}
 
 		try {
 			tileName = Settings.getInstance().getStringValue(
 					map.getText(R.string.settings_key_tile_name).toString());
-		} catch (Exception e) {
+		} catch (NoSuchFieldError e) {
 
 		}
 
@@ -1237,7 +1238,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					.getStringValue(
 							map.getText(R.string.settings_key_list_strategy)
 									.toString());
-		} catch (Exception e) {
+		} catch (NoSuchFieldError e) {
 
 		}
 

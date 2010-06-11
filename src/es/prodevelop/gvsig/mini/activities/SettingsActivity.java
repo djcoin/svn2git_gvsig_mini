@@ -210,7 +210,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	}
 
 	private void processSimplePreference(Preference p, boolean onlySummary) {
-		String s = "";
+		String s = "";  
 		try {
 			s = Settings.getInstance().getValue(p.getKey()).toString();
 		} catch (Exception ignore) {
@@ -228,10 +228,6 @@ public class SettingsActivity extends PreferenceActivity implements
 				getText(R.string.settings_key_clear_suggestions).toString()) == 0) {
 				p.setSummary(R.string.settings_clear_suggestions_summary);
 		}
-
-		p.setSummary(String.format(getText(
-				R.string.summary_settings_downloaded_data).toString(), s));
-
 	}
 
 	private Preference getPreference(String id) {

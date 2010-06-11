@@ -28,7 +28,8 @@
 			android:defaultValue="quadkey" />
 		<CheckBoxPreference android:key="@string/settings_key_offline_maps"
 			android:title="@string/settings_mode_offline" android:summaryOn="@string/settings_mode_offline_on"
-			android:summaryOff="@string/settings_mode_offline_off" />
+			android:summaryOff="@string/settings_mode_offline_off" 
+			android:defaultValue="false"/>
 		<ListPreference android:key="@string/settings_key_list_mode"
 			android:title="@string/settings_tilling_mode" android:summary="@string/settings_online"
 			android:entries="@array/cache_modes" android:entryValues="@array/cache_modes_values"

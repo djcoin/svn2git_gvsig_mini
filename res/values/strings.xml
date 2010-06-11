@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">gvSIG Mini Maps</string>
-    <string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0</string>
+    <string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0 alpha</string>
     
     <string name="warning">Warning</string>
     <string name="error">Error</string>
@@ -159,7 +159,7 @@
     <string name="settings_maps_cache">Maps cache</string>
     <string name="settings_mode">Mode</string>    
     <string name="settings_downloaded_data">Downloaded data</string>
-    <string name="summary_settings_downloaded_data">{0} MB downloaded for this session</string>
+    <string name="summary_settings_downloaded_data">(%s) MB downloaded for this session</string>
     <string name="settings_tilling_strategy">Tiling strategy</string>
     <string name="title_settings_tilling_strategy">Select tiling strategy</string>
     <string name="settings_tile_name">Tile name suffix</string>
