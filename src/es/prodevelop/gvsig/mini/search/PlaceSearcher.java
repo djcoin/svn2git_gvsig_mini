@@ -53,15 +53,24 @@ import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 
 /**
  * Class for performing searches of places or addreses in a common way for all
- * the application
+ * the application, as well as being a utility for clearing searches history
  * @author mmontesinos
  *
  */
 public class PlaceSearcher {
 
 	private Map map;
+	private Context ctx;
 	private final static Logger log = Logger.getLogger(PlaceSearcher.class.getName());
 
+	/**
+	 * Simple constructor aimed "only" at clearing recent suggestions history
+	 * @param ctx: Context to be used for clearing the history
+	 */
+	public PlaceSearcher(Context ctx){
+		this.ctx = ctx;
+	}
+	
 	/**
 	 * Class simple constructor, that performs a search with a query string only 
 	 * @param query Text to be sought as a place, POI or address
@@ -71,7 +80,7 @@ public class PlaceSearcher {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			this.map = map;
 			//First save the query for the recent suggestion provider
-			saveQuery(this.map.getBaseContext(),query);
+			saveQuery(query);
 			
 			doSearch(query);
 		} catch (Exception e) {
@@ -90,33 +99,53 @@ public class PlaceSearcher {
 	 */
 	public PlaceSearcher(Map map, String query, double centerX, double centerY){
 		this.map = map;
+		this.ctx = map.getBaseContext();
 		//First save the query for the recent suggestion provider
 		//Save before adding "near" suffixes
-		saveQuery(this.map.getBaseContext(),query);
+		saveQuery(query);
 		
 		query += " near " + centerY + "," + centerX;
 		doSearch(query);
 	}
 	
+	/**
+	 * Erases the history of strings used for searching
+	 */
+	public void clearSearchHistory(){
+		try {
+			// Get an instance of SearchRecentSuggestions and call ClearHistory()
+	        // queries suggestions provider.
+	        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this.ctx, 
+	                SearchSuggestionsMiniProvider.AUTHORITY, 
+	                SearchSuggestionsMiniProvider.MODE);
+	        suggestions.clearHistory();
+		} catch (Exception e) {
+			log.log(Level.SEVERE,"PlaceSearcher.Clearhistory() error: ", e);
+		}
+		
+	}
+	
 	private void doSearch(String query){
 		try {
-			if (!query.trim().equals("")) {
-				
-				NameFinder.parms = query;
-				NameFinderFunc func = new NameFinderFunc(
-					this.map, 0);
-				func.onClick(null);
+			if (this.map != null) {
+				if (!query.trim().equals("")) {
+					
+					NameFinder.parms = query;
+					NameFinderFunc func = new NameFinderFunc(
+						this.map, 0);
+					func.onClick(null);
+				}
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"PlaceSearcher.doSearch() error: ", e);
 		}
 	}
 	
-	private void saveQuery(Context context, String query){
+	private void saveQuery(String query){
 		try {
 			// Record the query string in the recent 
 	        // queries suggestions provider.
-	        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context, 
+	        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this.ctx, 
 	                SearchSuggestionsMiniProvider.AUTHORITY, 
 	                SearchSuggestionsMiniProvider.MODE);
 	        suggestions.saveRecentQuery(query, null);
