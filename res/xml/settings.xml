@@ -37,6 +37,11 @@
 <!--			android:dependency="@string/settings_key_offline_maps"-->
 <!--			android:layout="?android:attr/preferenceLayoutChild" -->			
 	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/settings_generic">
+		<Preference android:key="@string/settings_key_clear_suggestions"
+			android:title="@string/settings_clear_suggestions"
+			android:summary="@string/settings_clear_suggestions_summary" />
+	</PreferenceCategory>
 
 
 	<!--    <string name="settings_maps_cache">Maps cache</string>-->

@@ -29,7 +29,8 @@
 		<item>@string/settings_key_offline_maps</item>
         <item>@string/settings_key_tile_name</item>
         <item>@string/settings_key_list_strategy</item>
-        <item>@string/settings_key_list_mode</item>              
+        <item>@string/settings_key_list_mode</item>
+        <item>@string/settings_key_clear_suggestions</item>
     </string-array>
     
 </resources>

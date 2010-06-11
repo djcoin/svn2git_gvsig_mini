@@ -11,6 +11,8 @@
     <string name="task_canceled">Task canceled</string>
     <string name="ok">OK</string>
     <string name="back">Back</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="server_busy">Server is busy</string>
     <string name="search">Search</string>
     <string name="lat">lat</string>
@@ -27,7 +29,8 @@
     <string name="landscape">Landscape</string>
     <string name="send_log">Send exception log</string>
     <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
-    <string name="search_hint">Search places and addresses</string>
+    <string name="search_hint">Search places/addresses</string>
+    <string name="search_clear_yesno">Do you want to erase all the previously typed search text (search suggestions)?</string>
     <string name="getFeatureInfo">GetFeatureInfo</string>   
     <string name="stop">stop</string> 
     
@@ -171,6 +174,9 @@
     <string name="settings_mode_offline_on">Get maps exclusively from SD card</string>
     <string name="settings_mode_offline_off">Select cache mode</string>
     <string name="title_settings_tilling_mode">Select cache mode</string>
+    <string name="settings_generic">Generic settings</string>
+    <string name="settings_clear_suggestions">Clear suggestions</string>
+    <string name="settings_clear_suggestions_summary">Erase search history</string>
     
     <string name="settings_key_gps">gps state</string>
     <string name="settings_key_offline_maps">offline maps</string>
@@ -179,4 +185,6 @@
     <string name="settings_key_tile_name">tile name</string>
     <string name="settings_key_list_strategy">list strategy</string>
     <string name="settings_key_list_mode">list mode</string>
+    <string name="settings_key_clear_suggestions">clear suggestions</string>
+    
 </resources>

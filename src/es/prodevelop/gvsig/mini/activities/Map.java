@@ -2164,7 +2164,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			if (!query.trim().equals("")) {
 				PlaceSearcher search;
 
-				if (nearopt != 0) {
+				if ((nearopt == 0) || (osmap == null)) {
 					search = new PlaceSearcher(this, query);
 				} else {
 					double[] center = osmap.getCenterLonLat();
