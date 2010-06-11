@@ -3,6 +3,8 @@ package es.prodevelop.gvsig.mini.activities;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -11,8 +13,10 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.Preference.OnPreferenceClickListener;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.search.PlaceSearcher;
 import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.user.UserContextManager;
 
@@ -52,6 +56,36 @@ public class SettingsActivity extends PreferenceActivity implements
 
 			getPreferenceScreen().getSharedPreferences()
 					.registerOnSharedPreferenceChangeListener(this);
+			
+			/* Add Listener for Preference "@string/settings_key_clear_suggestions"
+			 * which acts like a button
+			 */
+			Preference customPref = (Preference) this.findPreference(getText(R.string.settings_key_clear_suggestions).toString());
+			
+			customPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				 
+				public boolean onPreferenceClick(Preference preference) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+					builder.setMessage(R.string.search_hint)
+					       .setCancelable(false)
+					       .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					        	   // Yes selected, let's clear the search history
+					        	   PlaceSearcher searcher = new PlaceSearcher(SettingsActivity.this);
+					        	   searcher.clearSearchHistory();
+					           }
+					       })
+					       .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					                dialog.cancel();
+					           }
+					       });
+					AlertDialog alert = builder.create();
+					builder.show();
+					
+					return true;
+				}
+			});
 
 			 updateSummaries();
 		} catch (Exception e) {
@@ -185,8 +219,14 @@ public class SettingsActivity extends PreferenceActivity implements
 
 		if (p.getKey().compareTo(
 				getText(R.string.settings_key_data_transfer).toString()) == 0) {
-			if (s.compareTo("") == 0)
+			if (s.compareTo("") == 0) {
 				s = "0";
+				p.setSummary(String.format(getText(
+						R.string.summary_settings_downloaded_data).toString(), s));
+			}
+		} else if (p.getKey().compareTo(
+				getText(R.string.settings_key_clear_suggestions).toString()) == 0) {
+				p.setSummary(R.string.settings_clear_suggestions_summary);
 		}
 
 		p.setSummary(String.format(getText(
