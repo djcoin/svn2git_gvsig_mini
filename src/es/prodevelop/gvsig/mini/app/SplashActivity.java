@@ -57,7 +57,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 
@@ -73,6 +78,7 @@ public class SplashActivity extends Activity {
 	private final int SPLASH_DISPLAY_LENGHT = 500;
 	private final static Logger logger = Logger.getLogger(SplashActivity.class
 			.getName());
+	private Handler handler = new InitializerHandler();
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -80,33 +86,51 @@ public class SplashActivity extends Activity {
 		try {
 			super.onCreate(icicle);
 			setContentView(R.layout.main);
-			new Handler().postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					try {						
-						Intent mainIntent = new Intent(SplashActivity.this,
-								Map.class);
-						SplashActivity.this.startActivityForResult(mainIntent,
-								0);
-						// SplashActivity.this.finish();
-					} catch (Exception e) {
-						logger.log(Level.SEVERE, "", e);
+			if (Initializer.isInitialized) {
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Intent mainIntent = new Intent(SplashActivity.this,
+									Map.class);
+							Initializer.getInstance().initialize(
+									getApplicationContext());
+							SplashActivity.this.startActivityForResult(
+									mainIntent, 0);
+							// SplashActivity.this.finish();
+						} catch (Exception e) {
+							logger.log(Level.SEVERE, "", e);
+						}
 					}
-				}
-			}, SPLASH_DISPLAY_LENGHT);
+				}, SPLASH_DISPLAY_LENGHT);
+			} else {
+				new Thread(new Runnable() {
+					public void run() {
+						Initializer.getInstance()
+								.addInitializeListener(handler);
+						try {
+							Initializer.getInstance().initialize(
+									getApplicationContext());
+						} catch (Exception e) {
+							Log.e("", e.getMessage());
+						}
+					}
+				}).start();
+			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "", e);
 		}
 	}
-	
+
 	public void onPause() {
 		super.onPause();
 	}
-	
+
 	public void onResume() {
 		super.onResume();
 		Intent i = getIntent();
-		if (i == null) return;
+		if (i == null)
+			return;
 		if (i.hasExtra("exit")) {
 			finish();
 			android.os.Process.killProcess(android.os.Process.myPid());
@@ -122,19 +146,19 @@ public class SplashActivity extends Activity {
 				case RESULT_OK:
 					finish();
 					android.os.Process.killProcess(android.os.Process.myPid());
-					break;				
+					break;
 				default:
-//					finish();
+					// finish();
 					break;
 				}
 			} else {
-//				finish();
+				// finish();
 			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "", e);
 		}
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
@@ -142,13 +166,38 @@ public class SplashActivity extends Activity {
 				logger.log(Level.FINE, "KEY BACK pressed");
 				finish();
 				android.os.Process.killProcess(android.os.Process.myPid());
-			} 
-			return super.onKeyDown(keyCode, event);			
+			}
+			return super.onKeyDown(keyCode, event);
 		} catch (Exception e) {
-			logger.log(Level.SEVERE,"onKeyDown: ", e);
+			logger.log(Level.SEVERE, "onKeyDown: ", e);
 			return false;
 		}
 		// return false;
+	}
 
+	private class InitializerHandler extends Handler {
+
+		public void handleMessage(Message msg) {
+			try {
+				switch (msg.what) {
+				case Initializer.INITIALIZE_STARTED:
+					LayoutInflater factory = LayoutInflater
+							.from(SplashActivity.this);
+
+					View l = (View) factory.inflate(R.layout.main, null);
+
+					TextView t = (TextView) l.findViewById(R.id.app_name);
+					t.setText(t.getText() + " . . .");
+					break;
+				case Initializer.INITIALIZE_FINISHED:
+					Intent mainIntent = new Intent(SplashActivity.this,
+							Map.class);
+					SplashActivity.this.startActivityForResult(mainIntent, 0);
+					break;
+				}
+			} catch (Exception e) {
+
+			}
+		}
 	}
 }

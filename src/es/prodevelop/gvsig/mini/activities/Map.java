@@ -126,6 +126,7 @@ import es.prodevelop.gvsig.mini.context.map.wms.WMSGPSItemContext;
 import es.prodevelop.gvsig.mini.context.map.wms.WMSPOIContext;
 import es.prodevelop.gvsig.mini.context.map.wms.WMSRouteContext;
 import es.prodevelop.gvsig.mini.context.map.wms.WMSRoutePOIContext;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.FeatureCollection;
@@ -294,8 +295,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
-	private UserContext userContext;
-	private IContext aContext;
+	private UserContext userContext;	
 	LinearLayout downloadTilesLayout;
 	ProgressBar downloadTilesPB;
 
@@ -326,23 +326,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// log.addAppender(new ConsoleAppender());
 				// log.setLevel(Utils.LOG_LEVEL);
 				// log.log(Level.SEVERE,
-				// "Testing to log error message with Microlog.");
-				MapRendererManager.getInstance().registerMapRendererFactory(
-						new WMSMapRendererFactory());
+				// "Testing to log error message with Microlog.");				
 				onNewIntent(getIntent());
-				Config.setContext(this.getApplicationContext());
-				ResourceLoader.initialize(this.getApplicationContext());
-
-				aContext = new AndroidContext(this.getApplicationContext());
-				CompatManager.getInstance().registerContext(aContext);
-				Layers.getInstance().initialize(true);
-
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onCreate", e);
 				// log.log(Level.SEVERE,e.getMessage());
 			} finally {
-				Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
-						.getAbsolutePath();
+				
 			}
 
 			mapState = new MapState(this);
@@ -1442,8 +1432,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * 
 	 * @param outState
 	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
+	 * @throws BaseException 
 	 */
-	public void loadMap(Bundle outState) {
+	public void loadMap(Bundle outState) throws BaseException {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		try {
@@ -1460,7 +1451,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadMap: ", e);
 			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
-			this.osmap = new TileRaster(this, aContext, t, metrics.widthPixels,
+			this.osmap = new TileRaster(this, CompatManager.getInstance().getRegisteredContext(), t, metrics.widthPixels,
 					metrics.heightPixels);
 
 		} finally {

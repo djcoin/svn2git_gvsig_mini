@@ -31,9 +31,7 @@ public class LogFeedbackActivity extends Activity {
 			super.onCreate(savedInstanceState);
 			
 			try {
-				clearLogs();
-				Initializer.getInstance().initialize(
-						getApplicationContext());				
+				clearLogs();								
 				CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			} catch (BaseException e) {
 				
@@ -62,7 +60,7 @@ public class LogFeedbackActivity extends Activity {
 	public void onResume() {
 		try {
 			super.onResume();
-			Initializer.getInstance().initialize(this.getApplicationContext());
+//			Initializer.getInstance().initialize(this.getApplicationContext());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onResume", e);
 		}

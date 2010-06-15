@@ -39,30 +39,46 @@
 
 package es.prodevelop.gvsig.mini.app;
 
-import java.util.logging.Level;
-
 import android.content.Context;
+import android.os.Environment;
+import android.os.Handler;
 import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.common.android.LogHandler;
-import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.settings.Settings;
+import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.utiles.Constants;
+import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
+import es.prodevelop.tilecache.renderer.MapRendererManager;
+import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
 
 /**
  * A Facade to do all the initialization stuff
+ * 
  * @author aromeu
- *
+ * 
  */
 public class Initializer {
-	
+
 	private static Initializer instance;
 	private Context applicationContext;
+
+	private IContext aContext;
 	
+	public static boolean isInitialized = false;
+	private Handler handler;
+	
+	public final static int INITIALIZE_STARTED = 0;
+	public final static int INITIALIZE_FINISHED = 1;
+
 	/**
 	 * A Singleton
+	 * 
 	 * @return
 	 */
 	public static Initializer getInstance() {
@@ -70,26 +86,56 @@ public class Initializer {
 			instance = new Initializer();
 		return instance;
 	}
-	
-	public void initialize(Context applicationContext) throws BaseException {
-		this.applicationContext = applicationContext;
+
+	public void initialize(Context applicationContext) throws Exception {
+		if (this.handler != null) 
+			handler.sendEmptyMessage(INITIALIZE_STARTED);
 		
-		CompatManager.getInstance().registerContext(new AndroidContext(this.applicationContext));
+		this.applicationContext = applicationContext;
+
+		CompatManager.getInstance().registerContext(
+				new AndroidContext(this.applicationContext));
 		CompatManager.getInstance().registerLogHandler(new LogHandler());
 		CompatManager.getInstance().getRegisteredLogHandler().configureLog();
 		
-		Settings.getInstance().initializeFromSharedPreferences(applicationContext);		
+		Settings.getInstance().initializeFromSharedPreferences(
+				applicationContext);
+
+		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
+				new FlatXFileSystemStrategy());
+		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
+				new QuadKeyFileSystemStrategy());
+
+		MapRendererManager.getInstance().registerMapRendererFactory(
+				new WMSMapRendererFactory());
+
+		Config.setContext(this.getApplicationContext());
+		ResourceLoader.initialize(this.getApplicationContext());
+
+		aContext = new AndroidContext(this.getApplicationContext());
+		CompatManager.getInstance().registerContext(aContext);
+		Layers.getInstance().initialize(true);
+
+		Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
 		
-		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(new FlatXFileSystemStrategy());
-		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(new QuadKeyFileSystemStrategy());
+		if (this.handler != null) 
+			handler.sendEmptyMessage(INITIALIZE_FINISHED);
+		
+		isInitialized = true;
 	}
-	
+
 	/**
 	 * The application context
+	 * 
 	 * @return
 	 */
 	public Context getApplicationContext() {
 		return applicationContext;
+	}
+	
+	public void addInitializeListener(Handler handler) {
+		this.handler =  handler;
 	}
 
 }
