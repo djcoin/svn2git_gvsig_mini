@@ -202,6 +202,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		OnSettingsChangedListener {
 	SlideBar s;
 
+	public final static int CODE_SETTINGS = 3215;
+
 	AlertDialog downloadTileAlert;
 	Cancellable downloadCancellable;
 	Button downloadTilesButton;
@@ -263,6 +265,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public static final int SHOW_TOAST = 113;
 	public static final int SHOW_OK_DIALOG = 114;
 	public static final int GETFEATURE_INITED = 115;
+	public static final int SHOW_TWEET_DIALOG_SETTINGS = 116;
 	public static final int POI_CANCELED = 1;
 	public static final int POI_SUCCEEDED = 2;
 	public static final int ROUTE_SUCCEEDED = 3;
@@ -295,7 +298,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
-	private UserContext userContext;	
+	private UserContext userContext;
 	LinearLayout downloadTilesLayout;
 	ProgressBar downloadTilesPB;
 
@@ -326,13 +329,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// log.addAppender(new ConsoleAppender());
 				// log.setLevel(Utils.LOG_LEVEL);
 				// log.log(Level.SEVERE,
-				// "Testing to log error message with Microlog.");				
+				// "Testing to log error message with Microlog.");
 				onNewIntent(getIntent());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onCreate", e);
 				// log.log(Level.SEVERE,e.getMessage());
 			} finally {
-				
+
 			}
 
 			mapState = new MapState(this);
@@ -560,7 +563,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			super.onActivityResult(requestCode, resultCode, intent);
 			log.log(Level.FINE, "onActivityResult (code, resultCode): "
 					+ requestCode + ", " + resultCode);
-			if (intent == null) {
+			if (requestCode != CODE_SETTINGS && intent == null) {
 				log.log(Level.FINE,
 						"intent was null, returning from onActivityResult");
 				return;
@@ -616,6 +619,21 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					}
 					break;
 				}
+			case CODE_SETTINGS:
+				String user = Settings.getInstance().getStringValue(
+						getText(R.string.settings_key_twitter_user).toString());
+				String pass = Settings.getInstance().getStringValue(
+						getText(R.string.settings_key_twitter_pass).toString());
+				if (pass != null && pass.trim().compareTo("") != 0
+						&& user != null && user.trim().compareTo("") != 0) {
+					TweetMyLocationFunc t = new TweetMyLocationFunc(this, 0);
+					t.launch();
+				} else {
+					Toast.makeText(this,
+							getText(R.string.settings_twitter_not_configured),
+							Toast.LENGTH_LONG).show();
+				}
+				break;
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Map onActivityResult: ", e);
@@ -1432,7 +1450,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * 
 	 * @param outState
 	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
-	 * @throws BaseException 
+	 * @throws BaseException
 	 */
 	public void loadMap(Bundle outState) throws BaseException {
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -1451,7 +1469,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadMap: ", e);
 			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
-			this.osmap = new TileRaster(this, CompatManager.getInstance().getRegisteredContext(), t, metrics.widthPixels,
+			this.osmap = new TileRaster(this, CompatManager.getInstance()
+					.getRegisteredContext(), t, metrics.widthPixels,
 					metrics.heightPixels);
 
 		} finally {
@@ -2033,6 +2052,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					log.log(Level.FINE, "SHOW_TWEET_DIALOG");
 					Map.this.showTweetDialog();
 					break;
+				case Map.SHOW_TWEET_DIALOG_SETTINGS:
+					log.log(Level.FINE, "SHOW_TWEET_DIALOG_SETTINGS");
+					Map.this.showTweetDialogSettings();
+					break;
 				case Map.SHOW_POI_DIALOG:
 					log.log(Level.FINE, "SHOW_POI_DIALOG");
 					Map.this.showPOIDialog();
@@ -2367,7 +2390,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								log.log(Level.SEVERE,
 										"clickNameFinderAddress: ", e);
 							} finally {
-//								setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+								// setRequestedOrientation(ActivityInfo.
+								// SCREEN_ORIENTATION_SENSOR);
 							}
 							return;
 						}
@@ -2377,11 +2401,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-//							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+							// setRequestedOrientation(ActivityInfo.
+							// SCREEN_ORIENTATION_SENSOR);
 						}
 					});
 
-//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+			//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			alert.show();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -2732,6 +2757,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	/**
 	 * Shows an AlertDialog to the user to input his/her twitter account
 	 * credentials
+	 * 
+	 * @deprecated
 	 */
 	public void showTweetDialog() {
 		try {
@@ -2772,6 +2799,46 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 										int whichButton) {
 								}
 							}).create();
+			alertTweet.show();
+			userContext.setUsedTwitter(true);
+			userContext.setLastExecTwitter();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showTweetDialog: ", e);
+		}
+	}
+
+	/**
+	 * Shows an AlertDialog to the user to input his/her twitter account
+	 * credentials
+	 * 
+	 */
+	public void showTweetDialogSettings() {
+		try {
+			log.log(Level.FINE, "showTweetDialogSettings");
+			LayoutInflater factory = LayoutInflater.from(this);
+			TextView t = new TextView(this);
+			t.setText(R.string.twitter_go_settings);
+			AlertDialog.Builder alertTweet = new AlertDialog.Builder(this);
+			alertTweet.setView(t).setIcon(R.drawable.menu04).setTitle(
+					R.string.alert_dialog_text_entry).setPositiveButton(
+					R.string.ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								Intent i = new Intent(Map.this,
+										SettingsActivity.class);
+								i.putExtra("twitter", true);
+								startActivityForResult(i, CODE_SETTINGS);
+							} catch (Exception e) {
+								log.log(Level.SEVERE, "twitter: ", e);
+							}
+						}
+					}).setNegativeButton(R.string.alert_dialog_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					}).create();
 			alertTweet.show();
 			userContext.setUsedTwitter(true);
 			userContext.setLastExecTwitter();
@@ -3539,13 +3606,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			} else if (key.compareTo(getText(
 					R.string.settings_key_list_strategy).toString()) == 0) {
 				osmap.instantiateTileProviderfromSettings();
-			} else if (key.compareTo(getText(
-					R.string.settings_key_os_key).toString()) == 0 || key.compareTo(getText(
-							R.string.settings_key_os_url).toString()) == 0 || key.compareTo(getText(
-									R.string.settings_key_os_custom).toString()) == 0) {
+			} else if (key.compareTo(getText(R.string.settings_key_os_key)
+					.toString()) == 0
+					|| key.compareTo(getText(R.string.settings_key_os_url)
+							.toString()) == 0
+					|| key.compareTo(getText(R.string.settings_key_os_custom)
+							.toString()) == 0) {
 				if (osmap.getMRendererInfo() instanceof OSRenderer) {
-					OSRenderer osr = (OSRenderer)osmap.getMRendererInfo();
-					OSSettingsUpdater.synchronizeRendererWithSettings(osr, this);
+					OSRenderer osr = (OSRenderer) osmap.getMRendererInfo();
+					OSSettingsUpdater
+							.synchronizeRendererWithSettings(osr, this);
 				}
 			}
 		} catch (Exception e) {

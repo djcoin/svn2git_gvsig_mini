@@ -33,7 +33,8 @@
         <item>@string/settings_key_clear_suggestions</item>
         <item>@string/settings_key_os_key</item>
         <item>@string/settings_key_os_url</item>
-        
+        <item>@string/settings_key_twitter_user</item>
+        <item>@string/settings_key_twitter_pass</item>        
     </string-array>
     
 </resources>

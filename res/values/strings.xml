@@ -1,66 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">gvSIG Mini Maps</string>
-    <string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0 alpha</string>
-    
-    <string name="warning">Warning</string>
-    <string name="error">Error</string>
-    <string name="cancel">Cancel</string>
-    <string name="please_wait">Please wait</string>
-    <string name="error_connecting_server">Error while connecting to the server</string>
-    <string name="task_canceled">Task cancelled</string>
-    <string name="ok">OK</string>
-    <string name="back">Back</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="server_busy">Server is busy</string>
-    <string name="search">Search</string>
-    <string name="lat">lat</string>
-    <string name="lon">lon</string>
-    <string name="latitude">latitude</string>
-    <string name="longitude">longitude</string>                
-    <string name="typeof">Geo using</string> 
-    <string name="share">gvSIG Mini Geo Share</string> 
-    <string name="select_mail_client">Select mail client</string>
-    <string name="select_web_browser">Select web browser</string>  
-    <string name="minitwitter">gvSIG Mini Twitter</string> 
-    <string name="not_ask">Don\'t ask again</string>
-    <string name="portrait">Portrait</string>
-    <string name="landscape">Landscape</string>
-    <string name="send_log">Send exception log</string>
-    <string name="fatal_error">gvSIG Mini has detected an error. Would you like to send the exception log to the developers to allow them to fix it?</string>    
-    <string name="search_hint">Search places/addresses</string>
-    <string name="search_clear_yesno">Do you want to erase all the previously typed search text (search suggestions)?</string>
-    <string name="getFeatureInfo">GetFeatureInfo</string>   
-    <string name="stop">stop</string> 
-    
-    <string name="LayersActivity_0">Layers</string>
-    <string name="LayersActivity_1">No SD card mounted</string>
-    <string name="LayersActivity_2">There are no files in</string>
-    <string name="LayersActivity_3">Select layers file</string>
-    <string name="LayersActivity_4">Layers file loaded successfully</string>
-    <string name="LayersActivity_5">Can\'t load file! The path you typed does not exist</string>
-    <string name="LayersActivity_6">Type WMS server URL:</string>
-    <string name="LayersActivity_7">Get capabilities</string>
-    <string name="LayersActivity_8">Tile map service</string>
-    <string name="LayersActivity_9">WMS layers</string>
-    <string name="LayersActivity_10">Add layer...</string>
-    <string name="LayersActivity_11">From WMS server</string>
-    <string name="LayersActivity_12">Requests GetCapabilities...</string>
-    <string name="LayersActivity_13">From layers file</string>
-    <string name="LayersActivity_14">Load a file from SD card...</string>        
-    
-    <string name="Map_0">Error while creating map</string>
-    <string name="Map_1">No results were found</string>
-    <string name="Map_2">Error while calculating route</string>
-    <string name="Map_3">Search address</string>
-    <string name="Map_4">My location</string>
-    <string name="Map_5">Maps/Layers</string>
-    <string name="Map_6">Zoom rectangle mode</string>
-    <string name="Map_7">Pan mode</string>
-    <string name="Map_8">Can\'t get weather. Check another location or maybe Internet connection is broken</string>
-    <string name="Map_9">Unknown place</string>
-    <string name="Map_10">The weather in (%s) is not available</string>    
+	<string name="app_name">gvSIG Mini Maps</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0 alpha</string>
+
+	<string name="warning">Warning</string>
+	<string name="error">Error</string>
+	<string name="cancel">Cancel</string>
+	<string name="please_wait">Please wait</string>
+	<string name="error_connecting_server">Error while connecting to the server</string>
+	<string name="task_canceled">Task cancelled</string>
+	<string name="ok">OK</string>
+	<string name="back">Back</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="server_busy">Server is busy</string>
+	<string name="search">Search</string>
+	<string name="lat">lat</string>
+	<string name="lon">lon</string>
+	<string name="latitude">latitude</string>
+	<string name="longitude">longitude</string>
+	<string name="typeof">Geo using</string>
+	<string name="share">gvSIG Mini Geo Share</string>
+	<string name="select_mail_client">Select mail client</string>
+	<string name="select_web_browser">Select web browser</string>
+	<string name="minitwitter">gvSIG Mini Twitter</string>
+	<string name="not_ask">Don\'t ask again</string>
+	<string name="portrait">Portrait</string>
+	<string name="landscape">Landscape</string>
+	<string name="send_log">Send exception log</string>
+	<string name="fatal_error">gvSIG Mini has detected an error. Would you
+		like to send the exception log to the developers to allow them to fix
+		it?</string>
+	<string name="search_hint">Search places/addresses</string>
+	<string name="search_clear_yesno">Do you want to erase all the previously typed
+		search text (search suggestions)?</string>
+	<string name="getFeatureInfo">GetFeatureInfo</string>
+	<string name="stop">stop</string>
+
+	<string name="LayersActivity_0">Layers</string>
+	<string name="LayersActivity_1">No SD card mounted</string>
+	<string name="LayersActivity_2">There are no files in</string>
+	<string name="LayersActivity_3">Select layers file</string>
+	<string name="LayersActivity_4">Layers file loaded successfully</string>
+	<string name="LayersActivity_5">Can\'t load file! The path you typed does not
+		exist</string>
+	<string name="LayersActivity_6">Type WMS server URL:</string>
+	<string name="LayersActivity_7">Get capabilities</string>
+	<string name="LayersActivity_8">Tile map service</string>
+	<string name="LayersActivity_9">WMS layers</string>
+	<string name="LayersActivity_10">Add layer...</string>
+	<string name="LayersActivity_11">From WMS server</string>
+	<string name="LayersActivity_12">Requests GetCapabilities...</string>
+	<string name="LayersActivity_13">From layers file</string>
+	<string name="LayersActivity_14">Load a file from SD card...</string>
+
+	<string name="Map_0">Error while creating map</string>
+	<string name="Map_1">No results were found</string>
+	<string name="Map_2">Error while calculating route</string>
+	<string name="Map_3">Search address</string>
+	<string name="Map_4">My location</string>
+	<string name="Map_5">Maps/Layers</string>
+	<string name="Map_6">Zoom rectangle mode</string>
+	<string name="Map_7">Pan mode</string>
+	<string name="Map_8">Can\'t get weather. Check another location or
+		maybe Internet connection is broken</string>
+	<string name="Map_9">Unknown place</string>
+	<string name="Map_10">The weather in (%s) is not available</string>    
     <string name="Map_11">Weather</string>
     <string name="Map_12">Today</string>
     <string name="Map_13">Route has not been found</string>
@@ -181,6 +186,12 @@
     <string name="settings_OS_enable">Custom OS API settings</string>
     <string name="settings_OS_key">OS API custom key</string>
     <string name="settings_OS_url">OS API custom URL</string>
+    <string name="settings_twitter_not_configured">Your Twitter account is not configured...</string>
+    <string name="settings_twitter">Twitter account</string>
+    <string name="settings_twitter_user">Twitter user</string>
+    <string name="settings_twitter_pass">Twitter password</string>
+    <string name="twitter_go_settings">You must configure your Twitter account. Would you like to open the settings activity in order to fill your Twitter user and password?</string>
+    
     
     <string name="settings_key_gps">gps state</string>
     <string name="settings_key_offline_maps">offline maps</string>
@@ -193,5 +204,7 @@
     <string name="settings_key_os_key">os key</string>
     <string name="settings_key_os_url">os url</string>
     <string name="settings_key_os_custom">os custom</string>
+    <string name="settings_key_twitter_user">twitter user</string>
+    <string name="settings_key_twitter_pass">twitter pass</string>
     
 </resources>

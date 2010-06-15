@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
 import es.prodevelop.gvsig.mini.settings.Settings;
-import es.prodevelop.gvsig.mini.user.UserContextManager;
 
 /**
  * This is the Activity to let the user to configure the settings for the
@@ -56,38 +56,55 @@ public class SettingsActivity extends PreferenceActivity implements
 
 			getPreferenceScreen().getSharedPreferences()
 					.registerOnSharedPreferenceChangeListener(this);
-			
-			/* Add Listener for Preference "@string/settings_key_clear_suggestions"
-			 * which acts like a button
-			 */
-			Preference customPref = (Preference) this.findPreference(getText(R.string.settings_key_clear_suggestions).toString());
-			
-			customPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				 
-				public boolean onPreferenceClick(Preference preference) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-					builder.setMessage(R.string.settings_clear_suggestions_summary)
-					       .setCancelable(false)
-					       .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					           public void onClick(DialogInterface dialog, int id) {
-					        	   // Yes selected, let's clear the search history
-					        	   PlaceSearcher searcher = new PlaceSearcher(SettingsActivity.this);
-					        	   searcher.clearSearchHistory();
-					           }
-					       })
-					       .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-					           public void onClick(DialogInterface dialog, int id) {
-					                dialog.cancel();
-					           }
-					       });
-					AlertDialog alert = builder.create();
-					builder.show();
-					
-					return true;
-				}
-			});
 
-			 updateSummaries();
+			/*
+			 * Add Listener for Preference
+			 * "@string/settings_key_clear_suggestions" which acts like a button
+			 */
+			Preference customPref = (Preference) this.findPreference(getText(
+					R.string.settings_key_clear_suggestions).toString());
+
+			customPref
+					.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+						public boolean onPreferenceClick(Preference preference) {
+							AlertDialog.Builder builder = new AlertDialog.Builder(
+									SettingsActivity.this);
+							builder
+									.setMessage(
+											R.string.settings_clear_suggestions_summary)
+									.setCancelable(false)
+									.setPositiveButton(
+											R.string.yes,
+											new DialogInterface.OnClickListener() {
+												public void onClick(
+														DialogInterface dialog,
+														int id) {
+													// Yes selected, let's clear
+													// the search history
+													PlaceSearcher searcher = new PlaceSearcher(
+															SettingsActivity.this);
+													searcher
+															.clearSearchHistory();
+												}
+											})
+									.setNegativeButton(
+											R.string.no,
+											new DialogInterface.OnClickListener() {
+												public void onClick(
+														DialogInterface dialog,
+														int id) {
+													dialog.cancel();
+												}
+											});
+							AlertDialog alert = builder.create();
+							builder.show();
+
+							return true;
+						}
+					});
+
+			updateSummaries();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreate", e);
 			LogFeedbackActivity.showSendLogDialog(this);
@@ -197,8 +214,11 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void processEditTextPreference(EditTextPreference p,
 			boolean onlySummary) {
 		if (!onlySummary)
-			Settings.getInstance().putValue(p.getKey(), p.getText());
-		p.setSummary(p.getText());
+			Settings.getInstance().putValue(p.getKey(), p.getText());		
+		if (p.getKey().contains("pass"))
+			p.setSummary("********");
+		else
+			p.setSummary(p.getText());
 	}
 
 	private void processListPreference(ListPreference p, boolean onlySummary) {
@@ -210,7 +230,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	}
 
 	private void processSimplePreference(Preference p, boolean onlySummary) {
-		String s = "";  
+		String s = "";
 		try {
 			s = Settings.getInstance().getValue(p.getKey()).toString();
 		} catch (Exception ignore) {
@@ -222,11 +242,12 @@ public class SettingsActivity extends PreferenceActivity implements
 			if (s.compareTo("") == 0) {
 				s = "0";
 				p.setSummary(String.format(getText(
-						R.string.summary_settings_downloaded_data).toString(), s));
+						R.string.summary_settings_downloaded_data).toString(),
+						s));
 			}
 		} else if (p.getKey().compareTo(
 				getText(R.string.settings_key_clear_suggestions).toString()) == 0) {
-				p.setSummary(R.string.settings_clear_suggestions_summary);
+			p.setSummary(R.string.settings_clear_suggestions_summary);
 		}
 	}
 
@@ -235,13 +256,13 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	}
 
+	@Override
 	public void onDestroy() {
 		try {
-			super.onDestroy();
+			super.onDestroy();			
 			Settings.getInstance().notifyObserversWithChanges();
 		} catch (Exception e) {
 
 		}
 	}
-
 }
