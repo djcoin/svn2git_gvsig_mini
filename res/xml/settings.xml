@@ -4,12 +4,13 @@
 	<PreferenceCategory android:title="@string/settings_gps">
 		<CheckBoxPreference android:key="@string/settings_key_gps"
 			android:title="@string/settings_switch_gps" android:summaryOn="@string/Map_27"
-			android:summaryOff="@string/Map_26" android:defaultValue="true"/>
+			android:summaryOff="@string/Map_26" android:defaultValue="true" />
 		<CheckBoxPreference android:key="@string/settings_key_orientation"
 			android:dependency="@string/settings_key_gps" android:layout="?android:attr/preferenceLayoutChild"
 			android:title="@string/settings_switch_orientation"
 			android:summaryOn="@string/settings_orientation_enabled"
-			android:summaryOff="@string/settings_orientation_disabled" android:defaultValue="true"/>
+			android:summaryOff="@string/settings_orientation_disabled"
+			android:defaultValue="true" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/settings_maps_cache">
@@ -28,20 +29,31 @@
 			android:defaultValue="quadkey" />
 		<CheckBoxPreference android:key="@string/settings_key_offline_maps"
 			android:title="@string/settings_mode_offline" android:summaryOn="@string/settings_mode_offline_on"
-			android:summaryOff="@string/settings_mode_offline_off" 
-			android:defaultValue="false"/>
+			android:summaryOff="@string/settings_mode_offline_off"
+			android:defaultValue="false" />
 		<ListPreference android:key="@string/settings_key_list_mode"
 			android:title="@string/settings_tilling_mode" android:summary="@string/settings_online"
 			android:entries="@array/cache_modes" android:entryValues="@array/cache_modes_values"
 			android:dialogTitle="@string/title_settings_tilling_mode"
 			android:defaultValue="0" />
-<!--			android:dependency="@string/settings_key_offline_maps"-->
-<!--			android:layout="?android:attr/preferenceLayoutChild" -->			
+		<!--			android:dependency="@string/settings_key_offline_maps"-->
+		<!--			android:layout="?android:attr/preferenceLayoutChild" -->
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/settings_generic">
 		<Preference android:key="@string/settings_key_clear_suggestions"
-			android:title="@string/settings_clear_suggestions"
-			android:summary="@string/settings_clear_suggestions_summary" />
+			android:title="@string/settings_clear_suggestions" android:summary="@string/settings_clear_suggestions_summary" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/settings_OS">
+		<CheckBoxPreference android:key="@string/settings_key_os_custom"
+			android:title="@string/settings_OS_enable" android:defaultValue="false" />
+		<EditTextPreference android:key="@string/settings_key_os_key"
+			android:dependency="@string/settings_key_os_custom" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="@string/settings_OS_key"			
+			android:defaultValue="88013ECD7A8F379FE0405F0ACA607F60" />
+		<EditTextPreference android:key="@string/settings_key_os_url"
+			android:dependency="@string/settings_key_os_custom" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="@string/settings_OS_url"			
+			android:defaultValue="http://www.prodevelop.es" />
 	</PreferenceCategory>
 
 
@@ -156,3 +168,4 @@
 	<!--    </PreferenceCategory>-->
 
 </PreferenceScreen>
+

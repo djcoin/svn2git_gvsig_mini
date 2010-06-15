@@ -31,6 +31,10 @@
         <item>@string/settings_key_list_strategy</item>
         <item>@string/settings_key_list_mode</item>
         <item>@string/settings_key_clear_suggestions</item>
+        <item>@string/settings_key_os_key</item>
+        <item>@string/settings_key_os_url</item>
+        
     </string-array>
     
 </resources>
+

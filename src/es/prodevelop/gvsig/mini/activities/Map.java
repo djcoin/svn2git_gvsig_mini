@@ -139,6 +139,7 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
+import es.prodevelop.gvsig.mini.settings.OSSettingsUpdater;
 import es.prodevelop.gvsig.mini.settings.OnSettingsChangedListener;
 import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
@@ -173,10 +174,10 @@ import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
-import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FlatXFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.MapRendererManager;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
+import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
 import es.prodevelop.tilecache.util.Cancellable;
 import es.prodevelop.tilecache.util.ConstantsTileCache;
@@ -1449,9 +1450,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "load map from saved instance");
 			String mapLayer = outState.getString("maplayer");
 			log.log(Level.FINE, "previous layer: " + mapLayer);
-//			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
-//			this.osmap = new TileRaster(this, aContext, t, metrics.widthPixels,
-//					metrics.heightPixels);
+			// OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
+			// this.osmap = new TileRaster(this, aContext, t,
+			// metrics.widthPixels,
+			// metrics.heightPixels);
 			osmap.onLayerChanged(mapLayer);
 			this.mMyLocationOverlay.loadState(outState);
 			log.log(Level.FINE, "map loaded");
@@ -2042,7 +2044,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					break;
 				case Map.SHOW_POI_DIALOG:
 					log.log(Level.FINE, "SHOW_POI_DIALOG");
-					Map.this.showSearchDialog();
+					Map.this.showPOIDialog();
 					break;
 				case Map.SHOW_ADDRESS_DIALOG:
 					log.log(Level.FINE, "SHOW_ADDRESS_DIALOG");
@@ -2119,39 +2121,40 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void showSearchDialog() {
 		try {
-			this.onSearchRequested();
-			// log.log(Level.FINE, "show address dialog");
-			// AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			//
-			// alert.setIcon(R.drawable.menu00);
-			// alert.setTitle(R.string.Map_3);
-			// final EditText input = new EditText(this);
-			// alert.setView(input);
-			//
-			// alert.setPositiveButton(R.string.alert_dialog_text_search,
-			// new DialogInterface.OnClickListener() {
-			// public void onClick(DialogInterface dialog,
-			// int whichButton) {
-			// try {
-			// Editable value = input.getText();
-			// //Call to NameFinder with the text
-			// searchInNameFinder(value.toString());
-			//								
-			// } catch (Exception e) {
-			// log.log(Level.SEVERE,"clickNameFinderAddress: ", e);
-			// }
-			// return;
-			// }
-			// });
-			//
-			// alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-			// new DialogInterface.OnClickListener() {
-			// public void onClick(DialogInterface dialog,
-			// int whichButton) {
-			// }
-			// });
-			//
-			// alert.show();
+			// this.onSearchRequested();
+			log.log(Level.FINE, "show address dialog");
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			alert.setIcon(R.drawable.menu00);
+			alert.setTitle(R.string.Map_3);
+			final EditText input = new EditText(this);
+			alert.setView(input);
+
+			alert.setPositiveButton(R.string.alert_dialog_text_search,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								Editable value = input.getText();
+								// Call to NameFinder with the text
+								searchInNameFinder(value.toString());
+
+							} catch (Exception e) {
+								log.log(Level.SEVERE,
+										"clickNameFinderAddress: ", e);
+							}
+							return;
+						}
+					});
+
+			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -2200,12 +2203,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			MapRenderer currentRenderer = Map.this.osmap.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(
 					currentRenderer.getNAME());
-			
+
 			String tileName = "tile.gvsig";
 			String dot = ".";
 			String strategy = ITileFileSystemStrategy.QUADKEY;
-			ITileFileSystemStrategy ts = FileSystemStrategyManager.getInstance()
-					.getStrategyByName(strategy);			
+			ITileFileSystemStrategy ts = FileSystemStrategyManager
+					.getInstance().getStrategyByName(strategy);
 
 			try {
 				tileName = Settings.getInstance().getStringValue(
@@ -2224,7 +2227,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			}
 
 			String tileSuffix = dot + tileName;
-			ts = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
+			ts = FileSystemStrategyManager.getInstance().getStrategyByName(
+					strategy);
 			ts.setTileNameSuffix(tileSuffix);
 
 			int fromZoomLevel = currentRenderer.getZoomLevel();
@@ -2290,8 +2294,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			t = new TileDownloaderTask(CompatManager.getInstance()
 					.getRegisteredContext(), renderer, fromZoomLevel,
 					toZoomLevel, downloadCancellable, renderer.getExtent(),
-					null, callBackHandler, null, mode,
-					ts,
+					null, callBackHandler, null, mode, ts,
 					new FitScreenBufferStrategy());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -2372,6 +2375,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							} catch (Exception e) {
 								log.log(Level.SEVERE,
 										"clickNameFinderAddress: ", e);
+							} finally {
+//								setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 							}
 							return;
 						}
@@ -2381,10 +2386,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-
+//							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						}
 					});
 
+//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			alert.show();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3388,30 +3394,31 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	public boolean isRendererAllowedToDownloadTiles(MapRenderer renderer) {
 		try {
-//			String name = renderer.getNAME();
-//			if (name.contains("OPEN STREET MAP") || name.contains("OSMARENDER") /*
-//																				 * ||
-//																				 * name
-//																				 * .
-//																				 * contains
-//																				 * (
-//																				 * "Cloudmade"
-//																				 * )
-//																				 * ||
-//																				 * name
-//																				 * .
-//																				 * contains
-//																				 * (
-//																				 * "Cloudmade Fresh"
-//																				 * )
-//																				 */
-//					|| name.contains("CYCLE MAP")) {
-//				myDownloadTiles.setEnabled(true);
-//				return true;
-//			}
-//			myDownloadTiles.setEnabled(false);
-//			return false;
-			//FIXME: only for debug
+			// String name = renderer.getNAME();
+			// if (name.contains("OPEN STREET MAP") ||
+			// name.contains("OSMARENDER") /*
+			// * ||
+			// * name
+			// * .
+			// * contains
+			// * (
+			// * "Cloudmade"
+			// * )
+			// * ||
+			// * name
+			// * .
+			// * contains
+			// * (
+			// * "Cloudmade Fresh"
+			// * )
+			// */
+			// || name.contains("CYCLE MAP")) {
+			// myDownloadTiles.setEnabled(true);
+			// return true;
+			// }
+			// myDownloadTiles.setEnabled(false);
+			// return false;
+			// FIXME: only for debug
 			myDownloadTiles.setEnabled(true);
 			return true;
 		} catch (Exception e) {
@@ -3541,6 +3548,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			} else if (key.compareTo(getText(
 					R.string.settings_key_list_strategy).toString()) == 0) {
 				osmap.instantiateTileProviderfromSettings();
+			} else if (key.compareTo(getText(
+					R.string.settings_key_os_key).toString()) == 0 || key.compareTo(getText(
+							R.string.settings_key_os_url).toString()) == 0 || key.compareTo(getText(
+									R.string.settings_key_os_custom).toString()) == 0) {
+				if (osmap.getMRendererInfo() instanceof OSRenderer) {
+					OSRenderer osr = (OSRenderer)osmap.getMRendererInfo();
+					OSSettingsUpdater.synchronizeRendererWithSettings(osr, this);
+				}
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onSettingChange", e);

@@ -78,7 +78,7 @@ public class LogHandler implements ILogHandler {
 			.getName());
 
 	private FileHandler handler;
-	private ConsoleHandler consoleHandler;
+	private static ConsoleHandler consoleHandler;
 
 	/**
 	 * Creates a rolling file handler with a maximum of 1 log files of
@@ -96,17 +96,20 @@ public class LogHandler implements ILogHandler {
 				File f = new File(getLogDirectory());
 				f.mkdirs();
 				
-				consoleHandler = new ConsoleHandler();
-				consoleHandler.setFormatter(new SimpleFormatter());
-				consoleHandler.setLevel(LOG_LEVEL);
+				if (consoleHandler == null) {
+					consoleHandler = new ConsoleHandler();
+					consoleHandler.setFormatter(new SimpleFormatter());
+					consoleHandler.setLevel(LOG_LEVEL);
+					logger.addHandler(consoleHandler);
+				}
+				
 
 				handler = new FileHandler(getLogDirectory() + getLogFileName(),
 						FILE_SIZE, 1, true);
 				handler.setFormatter(new SimpleFormatter());
 				handler.setLevel(LOG_LEVEL);
 				
-				logger.addHandler(handler);
-				logger.addHandler(consoleHandler);
+				logger.addHandler(handler);				
 				logger.setUseParentHandlers(false);
 			}
 

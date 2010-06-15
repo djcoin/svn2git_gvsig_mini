@@ -65,8 +65,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -90,13 +92,17 @@ import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
-import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.LoadCallbackHandler;
+import es.prodevelop.gvsig.mini.map.MultiTouchController;
 import es.prodevelop.gvsig.mini.map.ViewPort;
+import es.prodevelop.gvsig.mini.map.MultiTouchController.MultiTouchObjectCanvas;
+import es.prodevelop.gvsig.mini.map.MultiTouchController.PointInfo;
+import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
+import es.prodevelop.gvsig.mini.settings.OSSettingsUpdater;
 import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -110,9 +116,9 @@ import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
-import es.prodevelop.tilecache.provider.filesystem.strategy.impl.QuadKeyFileSystemStrategy;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
+import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 import es.prodevelop.tilecache.util.Cancellable;
 import es.prodevelop.tilecache.util.Tags;
@@ -133,11 +139,18 @@ import es.prodevelop.tilecache.util.Utilities;
  * 
  */
 public class TileRaster extends View implements GeoUtils, OnClickListener,
-		OnLongClickListener, LayerChangedListener {
+		OnLongClickListener, LayerChangedListener,
+		MultiTouchObjectCanvas<Object> {
 
 	Cancellable cancellable = Utilities.getNewCancellable();
 	AcetateOverlay acetate;
 	boolean panMode = true;
+
+	private float xOff = 0.0f, yOff = 0.0f, relativeScale = 1.0f;
+
+	private PointInfo currTouchPoint;
+
+	private MultiTouchController<Object> multiTouchController;
 
 	private boolean zoomflag = false;
 	public int mBearing = 0;
@@ -182,6 +195,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	private Feature selectedFeature = null;
 	private IContext androidContext;
 
+	private MotionEvent lastTouchEvent;
+
 	// ZoomRefreshTask zoomTask = new ZoomRefreshTask();
 	// Timer t;
 
@@ -209,6 +224,36 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	// Canvas frontCanvas = new Canvas();
 	// Bitmap frontBitmap;
 
+	private Paint mLinePaintSingleTouch = new Paint();
+
+	private Paint mLinePaintMultiTouchCoords = new Paint();
+
+	private Paint mLinePaintMultiTouchCenter = new Paint();
+
+	private Paint mLinePaintCrossHairs = new Paint();
+
+	//--------------------------------------------------------------------------
+	// ----------
+
+	private void initializePainters() {
+		mLinePaintSingleTouch.setColor(Color.GREEN);
+		mLinePaintSingleTouch.setStrokeWidth(5);
+		mLinePaintSingleTouch.setStyle(Style.STROKE);
+		mLinePaintSingleTouch.setAntiAlias(true);
+		mLinePaintMultiTouchCoords.setColor(Color.RED);
+		mLinePaintMultiTouchCoords.setStrokeWidth(5);
+		mLinePaintMultiTouchCoords.setStyle(Style.STROKE);
+		mLinePaintMultiTouchCoords.setAntiAlias(true);
+		mLinePaintMultiTouchCenter.setColor(Color.YELLOW);
+		mLinePaintMultiTouchCenter.setStrokeWidth(5);
+		mLinePaintMultiTouchCenter.setStyle(Style.STROKE);
+		mLinePaintMultiTouchCenter.setAntiAlias(true);
+		mLinePaintCrossHairs.setColor(Color.BLUE);
+		mLinePaintCrossHairs.setStrokeWidth(5);
+		mLinePaintCrossHairs.setStyle(Style.STROKE);
+		mLinePaintCrossHairs.setAntiAlias(true);
+	}
+
 	/**
 	 * The Constructor.
 	 * 
@@ -225,6 +270,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			final MapRenderer aRendererInfo, int width, int height) {
 		super(context);
 		try {
+			initializePainters();
 			CompatManager.getInstance().getRegisteredLogHandler()
 					.configureLogger(log);
 		} catch (BaseException e) {
@@ -234,6 +280,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		try {
 			this.androidContext = androidContext;
 			this.map = (Map) context;
+			multiTouchController = new MultiTouchController<Object>(this,
+					getResources(), false);
 			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);
 			log.setLevel(Utils.LOG_LEVEL);
 			// log.setClientID(this.toString());
@@ -567,7 +615,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public int i = 0;
 
 	public boolean onLongPress(MotionEvent e) {
-		if (!panMode || map.navigation) {
+		if (!panMode || map.navigation
+				|| (currTouchPoint != null && currTouchPoint.isDown())) {
 			log.log(Level.FINE,
 					"longpress on pan mode or navigation does not work");
 			return false;
@@ -650,13 +699,21 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		try {
+			// Log.d("", event.getX() + ", " + event.getY());
+			this.lastTouchEvent = MotionEvent.obtain(event);
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				lastTouchEventProcessed = false;
+			}
 			if (!map.navigation) {
 				for (MapOverlay osmvo : this.mOverlays)
 					if (osmvo.onTouchEvent(event, this))
 						return true;
 
 				this.mGestureDetector.onTouchEvent(event);
-				acetate.onTouchEvent(event);
+
+				if (!multiTouchController.onTouchEvent(event)) {
+					acetate.onTouchEvent(event);
+				}
 			}
 
 		} catch (Exception e) {
@@ -666,6 +723,33 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		return super.onTouchEvent(event);
 
 	}
+	
+	protected void processMultiTouchEvent() {
+		if (lastTouchEvent != null
+				&& this.lastTouchEvent.getAction() == MotionEvent.ACTION_UP
+				&& this.currTouchPoint != null && !lastTouchEventProcessed) {
+			int multiTouchZoom = this.getZoomLevel();
+			double scale = this.mScaler.mCurrScale;
+			if (scale > 1) {
+				multiTouchZoom += Math.ceil(scale - 1);
+			} else {
+				scale *= 0.1;
+				double decimals = scale - Math.ceil(scale);
+				if (decimals > 0.5)
+					multiTouchZoom -= Math.floor(scale);
+				else
+					multiTouchZoom -= Math.ceil(scale);
+
+			}
+
+			this.setZoomLevel(multiTouchZoom);
+			mScaler.forceFinished(true);
+			this.currTouchPoint = null;
+			this.lastTouchEventProcessed = true;
+		}
+	}
+
+	private boolean lastTouchEventProcessed = false;
 
 	@Override
 	public void onDraw(final Canvas c) {
@@ -695,15 +779,20 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// this.getMRendererInfo().getCenter()).toString());
 			final MapRenderer renderer = this.getMRendererInfo();
 
-			if (!mScaler.isFinished()) {
+			if (!mScaler.isFinished()
+					|| (this.currTouchPoint != null && this.currTouchPoint
+							.isDown())) {
 				Matrix m = c.getMatrix();
+				Log.d("", "Scale: " + mScaler.mCurrScale);
 				m.preScale(mScaler.mCurrScale, mScaler.mCurrScale,
 						c.getWidth() / 2, c.getHeight() / 2);
 
 				c.setMatrix(m);
 				// bufferCanvas.setMatrix(m);
 				// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
-			}
+			}	
+			
+			processMultiTouchEvent();
 
 			if (map.navigation) {
 				// TileRaster.this.rotatePaint.setAntiAlias(true);
@@ -814,7 +903,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 								/ tileSizePx);
 
 			}
-			final int mapTileUpperBound = (int) Math.pow(2, zoomLevel + 1) + 1;
+			// final int mapTileUpperBound = (int) Math.pow(2, zoomLevel + 2) +
+			// 1;
 			final int[] mapTileCoords = new int[] {
 					centerMapTileCoords[MAPTILE_LATITUDE_INDEX],
 					centerMapTileCoords[MAPTILE_LONGITUDE_INDEX] };
@@ -875,14 +965,20 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 					}
 
 					if (process) {
-						mapTileCoords[MAPTILE_LATITUDE_INDEX] = GeoMath.mod(
-								centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
-										+ this.mRendererInfo.isTMS() * y,
-								mapTileUpperBound);
+						// mapTileCoords[MAPTILE_LATITUDE_INDEX] = GeoMath.mod(
+						// centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
+						// + this.mRendererInfo.isTMS() * y,
+						// mapTileUpperBound);
+						//
+						// mapTileCoords[MAPTILE_LONGITUDE_INDEX] = GeoMath.mod(
+						// centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
+						// + x, mapTileUpperBound);
 
-						mapTileCoords[MAPTILE_LONGITUDE_INDEX] = GeoMath.mod(
-								centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
-										+ x, mapTileUpperBound);
+						mapTileCoords[MAPTILE_LATITUDE_INDEX] = centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
+								+ this.mRendererInfo.isTMS() * y;
+
+						mapTileCoords[MAPTILE_LONGITUDE_INDEX] = centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
+								+ x;
 
 						final String tileURLString = this.mRendererInfo
 								.getTileURLString(mapTileCoords, zoomLevel);
@@ -1004,7 +1100,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// final long endMs = System.currentTimeMillis();
 			// Log.i(DEBUGTAG, "Rendering overall: " + (endMs - startMs) +
 			// "ms");
-			computeScale();
+			if (currTouchPoint == null)
+				computeScale();
 			// if (canDraw && mScaler.isFinished()) {
 			// c.drawBitmap(frontBitmap, 0, 0, normalPaint);
 			// // bufferCanvas.drawBitmap(frontBitmap, 0, 0, normalPaint);
@@ -1013,6 +1110,38 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			// // c.save();
 			// c.drawBitmap(bufferBitmap, this.mTouchMapOffsetX,
 			// this.mTouchMapOffsetY, normalPaint);
+			// if (this.currTouchPoint == null)
+			// return;
+			// if (currTouchPoint.isDown()) {
+			// float x_ = currTouchPoint.getX(), y_ = currTouchPoint.getY();
+			// boolean isMultiTouch_ = currTouchPoint.isMultiTouch();
+			// // c.drawLine(0, y, cw, y, mLinePaintCrossHairs);
+			// // c.drawLine(x, 0, x, ch, mLinePaintCrossHairs);
+			// // c.drawCircle(x, y, 70 + pressure * 120, (isMultiTouch ?
+			// // mLinePaintMultiTouchCenter : mLinePaintSingleTouch));
+			// if (isMultiTouch_) {
+			// float multiTouchDiameter = currTouchPoint
+			// .getMultiTouchDiameter();
+			// float r = multiTouchDiameter / 2;
+			// // c.drawCircle(x, y, r, mLinePaintMultiTouchCoords);
+			// float dx2 = currTouchPoint.getMultiTouchWidth() / 2, dy2 =
+			// currTouchPoint
+			// .getMultiTouchHeight() / 2;
+			//
+			// c.drawLine(x_ + dx2, y_ - dy2, x_ + dx2, y_ + dy2,
+			// mLinePaintMultiTouchCoords);
+			// c.drawLine(x_ - dx2, y_ - dy2, x_ - dx2, y_ + dy2,
+			// mLinePaintMultiTouchCoords);
+			// c.drawLine(x_ - dx2, y_ + dy2, x_ + dx2, y_ + dy2,
+			// mLinePaintMultiTouchCoords);
+			// c.drawLine(x_ - dx2, y_ - dy2, x_ + dx2, y_ - dy2,
+			// mLinePaintMultiTouchCoords);
+			// // c.drawLine(x + dx2, y + dy2, x - dx2, y - dy2,
+			// // mLinePaintMultiTouchCoords);
+			// // c.drawLine(x + dx2, y - dy2, x - dx2, y + dy2,
+			// // mLinePaintMultiTouchCoords);
+			// }
+			// }
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onDraw", e);
 		}
@@ -1248,7 +1377,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 		this.mTileProvider = new TileProvider(this.androidContext,
 				new HandlerAndroid(lh), mapWidth, mapHeight, 256,
-				R.drawable.maptile_loading, mode, t);
+				R.drawable.maptile_loading, R.drawable.maptile_loadingoffline,
+				mode, t);
 	}
 
 	@Override
@@ -1259,6 +1389,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 			MapRenderer previous = this.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(layerName);
+			
+			if (renderer instanceof OSRenderer)
+				OSSettingsUpdater.synchronizeRendererWithSettings((OSRenderer)renderer, map);
 
 			Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer
@@ -1409,9 +1542,52 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 *            The extent to fit
 	 * @param layerChanged
 	 *            If true then the Scaler is not applied when zooming
+	 * @param currentZoomLevel
+	 *            The zoom level to get the resolution from
+	 */
+	public void zoomToExtent(final Extent extent, boolean layerChanged,
+			int currentZoomLevel) {
+		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged,
+				currentZoomLevel);
+	}
+
+	/**
+	 * Zooms the view to fit an Extent
+	 * 
+	 * @param extent
+	 *            The extent to fit
+	 * @param layerChanged
+	 *            If true then the Scaler is not applied when zooming
 	 */
 	public void zoomToExtent(final Extent extent, boolean layerChanged) {
-		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged);
+		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged, this
+				.getZoomLevel());
+	}
+
+	/**
+	 * Zooms the view to a width, height
+	 * 
+	 * @param width
+	 *            The width to fit the zoom
+	 * @param height
+	 *            The height to fit the zoom
+	 * @param layerChanged
+	 *            If true then the Scaler is not applied when zooming
+	 * @param currentZoomLevel
+	 *            The zoom level to get the resolution from
+	 */
+	public void zoomToSpan(final double width, final double height,
+			boolean layerChanged, int currentZoomLevel) {
+		if (width <= 0 || height <= 0) {
+			return;
+		}
+
+		int zoomLevel = getZoomLevelFitsExtent(width, height, currentZoomLevel);
+		if (zoomLevel != -1) {
+			if (!layerChanged && zoomLevel <= this.getZoomLevel())
+				zoomLevel++;
+			setZoomLevel(zoomLevel, !layerChanged);
+		}
 	}
 
 	/**
@@ -1445,12 +1621,17 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	 *            The width of the extent
 	 * @param height
 	 *            The height of the extent
+	 * @param currentZoomLevel
+	 *            the current zoom level to get resolution from
 	 * @return The zoom level that fits the extent
 	 */
-	public int getZoomLevelFitsExtent(final double width, final double height) {
-		final Extent mapExtent = map.vp.calculateExtent(mapWidth, mapHeight,
-				this.getMRendererInfo().getCenter());
-		final int curZoomLevel = getZoomLevel();
+	public int getZoomLevelFitsExtent(final double width, final double height,
+			final int currentZoomLevel) {
+		final Extent mapExtent = ViewPort.calculateExtent(this
+				.getMRendererInfo().getCenter(),
+				this.getMRendererInfo().resolutions[currentZoomLevel],
+				mapWidth, mapHeight);
+		final int curZoomLevel = currentZoomLevel;
 
 		final double curWidth = mapExtent.getWidth();
 		final double curHeight = mapExtent.getHeight();
@@ -1472,6 +1653,19 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		} else {
 			return curZoomLevel;
 		}
+	}
+
+	/**
+	 * Calculates a zoom level that fits an extent
+	 * 
+	 * @param width
+	 *            The width of the extent
+	 * @param height
+	 *            The height of the extent
+	 * @return The zoom level that fits the extent
+	 */
+	public int getZoomLevelFitsExtent(final double width, final double height) {
+		return this.getZoomLevelFitsExtent(width, height, getZoomLevel());
 	}
 
 	// @Override
@@ -1946,6 +2140,51 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "destroy", e);
 		}
+	}
+
+	//--------------------------------------------------------------------------
+	// -----------------
+
+	@Override
+	public Object getDraggableObjectAtPoint(PointInfo pt) {
+		// Just return something non-null, we don't need to keep track of which
+		// specific object is being dragged
+		return this;
+	}
+
+	@Override
+	public void getPositionAndScale(Object obj,
+			PositionAndScale objPosAndScaleOut) {
+		// We start at 0.0f each time the drag position is replaced, because we
+		// just want the relative drag distance
+		objPosAndScaleOut.set(xOff, yOff, relativeScale);
+	}
+
+	@Override
+	public void selectObject(Object obj, PointInfo pt) {
+
+	}
+
+	@Override
+	public boolean setPositionAndScale(Object obj, PositionAndScale update,
+			PointInfo touchPoint) {
+		try {
+			if (!touchPoint.isMultiTouch()) {
+				// currTouchPoint = null;
+			} else {
+				if (touchPoint.getMultiTouchDiameter() != 0)
+					currTouchPoint = touchPoint;
+				if (this.currTouchPoint.isDown()) {
+					mScaler.mCurrScale = update.getScale();
+					// this.zoomToExtent(e, false);
+				}
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+
+		}
+
+		return true;
 	}
 
 }

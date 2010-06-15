@@ -177,6 +177,10 @@
     <string name="settings_generic">Generic settings</string>
     <string name="settings_clear_suggestions">Clear suggestions</string>
     <string name="settings_clear_suggestions_summary">Erase search history</string>
+    <string name="settings_OS">OpenSpace API settings</string>
+    <string name="settings_OS_enable">Custom OS API settings</string>
+    <string name="settings_OS_key">OS API custom key</string>
+    <string name="settings_OS_url">OS API custom URL</string>
     
     <string name="settings_key_gps">gps state</string>
     <string name="settings_key_offline_maps">offline maps</string>
@@ -186,5 +190,8 @@
     <string name="settings_key_list_strategy">list strategy</string>
     <string name="settings_key_list_mode">list mode</string>
     <string name="settings_key_clear_suggestions">clear suggestions</string>
+    <string name="settings_key_os_key">os key</string>
+    <string name="settings_key_os_url">os url</string>
+    <string name="settings_key_os_custom">os custom</string>
     
 </resources>
