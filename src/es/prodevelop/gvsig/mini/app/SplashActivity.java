@@ -181,12 +181,7 @@ public class SplashActivity extends Activity {
 			try {
 				switch (msg.what) {
 				case Initializer.INITIALIZE_STARTED:
-					LayoutInflater factory = LayoutInflater
-							.from(SplashActivity.this);
-
-					View l = (View) factory.inflate(R.layout.main, null);
-
-					TextView t = (TextView) l.findViewById(R.id.app_name);
+					TextView t = (TextView) SplashActivity.this.findViewById(R.id.app_name);
 					t.setText(t.getText() + " . . .");
 					break;
 				case Initializer.INITIALIZE_FINISHED:
@@ -196,7 +191,7 @@ public class SplashActivity extends Activity {
 					break;
 				}
 			} catch (Exception e) {
-
+				Log.d("", e.getMessage());
 			}
 		}
 	}

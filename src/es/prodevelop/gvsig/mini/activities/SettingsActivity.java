@@ -66,7 +66,7 @@ public class SettingsActivity extends PreferenceActivity implements
 				 
 				public boolean onPreferenceClick(Preference preference) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-					builder.setMessage(R.string.search_hint)
+					builder.setMessage(R.string.settings_clear_suggestions_summary)
 					       .setCancelable(false)
 					       .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {

@@ -403,7 +403,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 				String query = i.getStringExtra(SearchManager.QUERY);
-				searchInNameFinder(query);
+				searchInNameFinder(query, false);
 			}
 
 			int hintId = 0;
@@ -2084,7 +2084,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							try {
 								Editable value = inputPOI.getText();
 								// Call to NameFinder with the text
-								searchInNameFinder(value.toString());
+								searchInNameFinder(value.toString(), true);
 
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "clickNameFinder: ", e);
@@ -2128,7 +2128,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							try {
 								Editable value = input.getText();
 								// Call to NameFinder with the text
-								searchInNameFinder(value.toString());
+								searchInNameFinder(value.toString(), false);
 
 							} catch (Exception e) {
 								log.log(Level.SEVERE,
@@ -2158,12 +2158,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * all searches launched from Map activity to be resolved by the NameFinder
 	 * query: text to be sought
 	 */
-	private void searchInNameFinder(String query) {
+	private void searchInNameFinder(String query, boolean nearOfCenter) {
 		try {
 			if (!query.trim().equals("")) {
 				PlaceSearcher search;
 
-				if ((nearopt == 0) || (osmap == null)) {
+				if (!nearOfCenter) {
 					search = new PlaceSearcher(this, query);
 				} else {
 					double[] center = osmap.getCenterLonLat();
@@ -3035,7 +3035,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					String query = i.getStringExtra(SearchManager.QUERY);
 					// Execute the search (common with POI and address as of
 					// 0.3.0 version)
-					searchInNameFinder(query);
+					searchInNameFinder(query, false);
 				} else {
 					String mapLayer = i.getStringExtra("layer");
 					log.log(Level.FINE, "previous layer: " + mapLayer);

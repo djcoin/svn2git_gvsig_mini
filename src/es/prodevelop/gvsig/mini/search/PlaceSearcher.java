@@ -78,7 +78,7 @@ public class PlaceSearcher {
 	public PlaceSearcher(Map map, String query){
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
-			this.map = map;
+			this.map = map;			 
 			//First save the query for the recent suggestion provider
 			saveQuery(query);
 			
@@ -148,7 +148,7 @@ public class PlaceSearcher {
 	        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this.ctx, 
 	                SearchSuggestionsMiniProvider.AUTHORITY, 
 	                SearchSuggestionsMiniProvider.MODE);
-	        suggestions.saveRecentQuery(query, null);
+	        suggestions.saveRecentQuery(query, "");
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"PlaceSearcher.saveQuery() error: ", e);
 		}

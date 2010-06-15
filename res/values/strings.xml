@@ -8,7 +8,7 @@
     <string name="cancel">Cancel</string>
     <string name="please_wait">Please wait</string>
     <string name="error_connecting_server">Error while connecting to the server</string>
-    <string name="task_canceled">Task canceled</string>
+    <string name="task_canceled">Task cancelled</string>
     <string name="ok">OK</string>
     <string name="back">Back</string>
     <string name="yes">Yes</string>
