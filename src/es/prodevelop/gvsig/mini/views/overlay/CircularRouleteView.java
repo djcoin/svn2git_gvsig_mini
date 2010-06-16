@@ -77,9 +77,7 @@ public class CircularRouleteView extends ViewGroup {
 	private int radius = 0;
 	private Bitmap center;
 	private final static Logger log = Logger
-			.getLogger(CircularRouleteView.class.getName());
-	Paint p;
-	Paint pcenter;
+			.getLogger(CircularRouleteView.class.getName());	
 	Path path;
 
 	/**
@@ -96,15 +94,7 @@ public class CircularRouleteView extends ViewGroup {
 		}
 		try {
 //			log.setClientID(this.toString());
-			p = new Paint();
-			pcenter = new Paint();
-			pcenter.setAntiAlias(true);
-			pcenter.setAlpha(230);
-			p.setAntiAlias(true);
-			p.setARGB(75, 49, 49, 49);
 			path = new Path();
-
-			p.setStyle(Paint.Style.FILL);
 			center = ResourceLoader.getBitmap(R.drawable.center_focus);
 //			log.setLevel(Utils.LOG_LEVEL);
 		} catch (OutOfMemoryError e) {			
@@ -168,14 +158,14 @@ public class CircularRouleteView extends ViewGroup {
 	protected void dispatchDraw(final Canvas canvas) {
 		try {
 			canvas.drawBitmap(center, (width / 2) - (center.getWidth() / 2),
-					(height / 2) - (center.getHeight() / 2), pcenter);
+					(height / 2) - (center.getHeight() / 2), Paints.pcenter);
 			path.rewind();
 			path.addCircle(width / 2, height / 2, radius, Path.Direction.CW);
 			path.moveTo(0, 0);
 			path.lineTo(0, height);
 			path.lineTo(width, height);
 			path.lineTo(width, 0);
-			canvas.drawPath(path, p);			
+			canvas.drawPath(path, Paints.p);			
 			super.dispatchDraw(canvas);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);

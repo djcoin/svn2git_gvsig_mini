@@ -78,9 +78,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 	protected static Bitmap FINISH;
 	String datalog = null;
 	protected static Bitmap POIS;
-	protected static Bitmap BT;
-	private Paint pathPaint;
-	private Paint circlePaint;
+	protected static Bitmap BT;	
 	private Path path;
 	protected android.graphics.Point START_SPOT;
 	protected android.graphics.Point FINISH_SPOT;
@@ -123,18 +121,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			BT = ResourceLoader.getBitmap(R.drawable.bt);
 
 			this.t = t;
-			path = new Path();
-			this.pathPaint = new Paint();
-			this.pathPaint.setAntiAlias(false);
-			this.pathPaint.setStrokeWidth(4);
-			this.pathPaint.setStyle(Paint.Style.STROKE);
-			this.pathPaint.setARGB(150, 137, 0, 182);
-
-			this.circlePaint = new Paint();
-			this.circlePaint.setAntiAlias(false);
-			this.circlePaint.setStrokeWidth(4);
-			this.circlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			this.circlePaint.setARGB(50, 137, 0, 182);
+			path = new Path();			
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"constructor: " ,e);
 		} catch (OutOfMemoryError e) {
@@ -183,7 +170,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				Canvas c = (Canvas) graphics;
 				int[] coords = tileRaster.getMRendererInfo().toPixels(
 						new double[] { p.getX(), p.getY() });
-				c.drawCircle(coords[0], coords[1], 5, t.mPaint);
+				c.drawCircle(coords[0], coords[1], 5, Paints.mPaintR);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"drawPoint: " ,e);
@@ -197,7 +184,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				int[] coords = tileRaster.getMRendererInfo().toPixels(
 						new double[] { p.getX(), p.getY() });
 				c.drawBitmap(POIS, coords[0] - POIS_SPOT.x, coords[1]
-						- POIS_SPOT.y, t.mPaint);
+						- POIS_SPOT.y, Paints.mPaintR);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"drawpoi: " ,e);
@@ -214,7 +201,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 							.getSRS()));
 			final int[] coords = renderer.toPixels(xy);
 			c.drawBitmap(START, coords[0] - START_SPOT.x, coords[1]
-					- START_SPOT.y, t.mPaint);
+					- START_SPOT.y, Paints.mPaintR);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"drawstart: " ,e);
 		}
@@ -231,7 +218,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 			// double[]{p.getX(), p.getY()});
 			final int[] coords = renderer.toPixels(xy);
 			c.drawBitmap(FINISH, coords[0] - FINISH_SPOT.x, coords[1]
-					- FINISH_SPOT.y, t.mPaint);
+					- FINISH_SPOT.y, Paints.mPaintR);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"drawend: " ,e);
 		}
@@ -376,7 +363,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 				else
 					path.lineTo(current.getX(), current.getY());
 			}
-			c.drawPath(path, this.pathPaint);
+			c.drawPath(path, Paints.pathPaint);
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"drawLine: " ,e);

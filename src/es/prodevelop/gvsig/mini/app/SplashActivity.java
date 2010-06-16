@@ -114,12 +114,13 @@ public class SplashActivity extends Activity {
 					public void run() {
 						Initializer.getInstance()
 								.addInitializeListener(handler);
-						try {							
+						try {
 							Initializer.getInstance().initialize(
 									getApplicationContext());
 						} catch (Exception e) {
 							logger.log(Level.SEVERE, "onCreate", e);
-							LogFeedbackActivity.showSendLogDialog(SplashActivity.this);
+							LogFeedbackActivity
+									.showSendLogDialog(SplashActivity.this);
 						}
 					}
 				}).start();
@@ -140,8 +141,8 @@ public class SplashActivity extends Activity {
 	public void onResume() {
 		try {
 			if (singleTaskActivityResulted) {
-				Toast.makeText(this, R.string.relaunch, Toast.LENGTH_LONG)
-						.show();
+				((TextView) SplashActivity.this.findViewById(R.id.app_name))
+						.setText(R.string.relaunch);
 			}
 			singleTaskActivityResulted = true;
 			super.onResume();

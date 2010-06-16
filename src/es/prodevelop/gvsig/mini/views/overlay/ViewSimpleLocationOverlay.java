@@ -92,9 +92,7 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
  *
  */
 public class ViewSimpleLocationOverlay extends MapOverlay {
-
-	protected final Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
-	protected final Paint circlePaint = new Paint();
+	
 	protected Bitmap ob = null;
 	protected Bitmap PERSON_ICON = null;
 	public int rotation;
@@ -128,15 +126,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 		}
 		try {
 //			log.setClientID(this.toString());
-			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);
-			this.mPaint.setAntiAlias(true);
-			this.mPaint.setStyle(Paint.Style.STROKE);
-			this.mPaint.setARGB(255, 137, 0, 182);
-			this.mPaint.setStrokeWidth(1);
-
-			this.circlePaint.setAntiAlias(true);
-			this.circlePaint.setStyle(Paint.Style.FILL);
-			this.circlePaint.setARGB(25, 137, 0, 182);
+			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);			
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		} catch (OutOfMemoryError e) {
@@ -263,8 +253,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			 *****/
 
 			// p.addOval(rect, Direction.CW);
-			c.drawPath(p, circlePaint);
-			c.drawPath(p, mPaint);
+			c.drawPath(p, Paints.circlePaintV);
+			c.drawPath(p, Paints.mPaint);
 
 			p.rewind();
 
@@ -312,7 +302,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 						if (distancePixels <= max) {
 							path.addCircle(coords[0], coords[1],
 									(float) distancePixels, Direction.CCW);
-							c.drawPath(path, this.circlePaint);
+							c.drawPath(path, Paints.circlePaintV);
 						}
 					}
 				}
@@ -323,7 +313,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 				this.drawOrientation(c, osmv, coords);
 				c.drawBitmap(PERSON_ICON, coords[0] - PERSON_ICON.getWidth()
 						/ 2, coords[1] - PERSON_ICON.getHeight() / 2,
-						this.mPaint);
+						Paints.mPaint);
 
 			}
 		} catch (OutOfMemoryError e) {			

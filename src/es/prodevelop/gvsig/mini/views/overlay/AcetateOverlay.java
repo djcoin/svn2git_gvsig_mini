@@ -47,11 +47,8 @@ import java.util.logging.Logger;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.graphics.Paint.Style;
 import android.view.MotionEvent;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
@@ -79,19 +76,7 @@ public class AcetateOverlay extends MapOverlay {
 			e.printStackTrace();
 		}
 		try {			
-//			log.setClientID(this.toString());
-			filledPaint = new Paint();			
-			filledPaint.setStyle(Style.FILL_AND_STROKE);
-			filledPaint.setAntiAlias(true);
-			filledPaint.setStrokeWidth(3);			
-			filledPaint.setColor(Color.RED);
-			filledPaint.setAlpha(50);
-			
-			rectanglePaint = new Paint();
-			rectanglePaint.setStyle(Style.STROKE);
-			filledPaint.setStrokeWidth(3);	
-			rectanglePaint.setAntiAlias(true);
-			rectanglePaint.setColor(Color.RED);
+//			log.setClientID(this.toString());			
 			
 			path = new Path();
 			t = getTileRaster();
@@ -110,9 +95,7 @@ public class AcetateOverlay extends MapOverlay {
 	private int fromY = -1;
 	private int toX = -1;
 	private int toY = -1;
-	TileRaster t;
-	Paint filledPaint;
-	Paint rectanglePaint;
+	TileRaster t;	
 	Path path;
 
 
@@ -126,7 +109,7 @@ public class AcetateOverlay extends MapOverlay {
 					rectangle.top -= 1;
 					rectangle.bottom +=1;
 				}
-				c.drawRect(rectangle, rectanglePaint);
+				c.drawRect(rectangle, Paints.rectanglePaint);
 			}
 			if (toX >= 0 && toY >= 0 && fromX >= 0 && fromY >= 0 && !maps.panMode) {
 				path.rewind();				
@@ -135,8 +118,8 @@ public class AcetateOverlay extends MapOverlay {
 				path.lineTo(toX, toY);
 				path.lineTo(toX, fromY);
 				path.lineTo(fromX, fromY);
-				c.drawPath(path, filledPaint);
-				c.drawPath(path, rectanglePaint);				
+				c.drawPath(path, Paints.filledPaint);
+				c.drawPath(path, Paints.rectanglePaint);				
 			}	
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
@@ -284,8 +267,8 @@ public class AcetateOverlay extends MapOverlay {
 	@Override
 	public void destroy() {
 		try {
-			filledPaint = null;
-			rectanglePaint = null;
+			Paints.filledPaint = null;
+			Paints.rectanglePaint = null;
 			path = null;
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);

@@ -173,86 +173,26 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	private int previousRotation = 999;
 	public int pixelX;
 	public int pixelY;
-	public Paint mPaint = new Paint();
-	public Paint whitePaint = new Paint();
-	public Paint normalPaint = new Paint();
-	public Paint rotatePaint = new Paint();
 	int mTouchDownX;
 	int mTouchDownY;
 	public static int mTouchMapOffsetX;
 	public static int mTouchMapOffsetY;
 	String datalog = null;
 	Map map;
-	private boolean invalidateActionDown = false;
-	private int prevX = 0;
-	private int prevY = 0;
 	int centerPixelX = 0;
 	int centerPixelY = 0;
 	AndroidGeometryDrawer geomDrawer;
 	public static int mapWidth = 0;
 	public static int mapHeight = 0;
 	public static boolean CLEAR_ROUTE = false;
-	private Feature selectedFeature = null;
 	private IContext androidContext;
-
 	private MotionEvent lastTouchEvent;
+	private Feature selectedFeature = null;
 
-	// ZoomRefreshTask zoomTask = new ZoomRefreshTask();
-	// Timer t;
+	private Canvas bufferCanvas = new Canvas();
+	private Bitmap bufferBitmap;
 
-	// private Canvas bufferCanvas = new Canvas();
-	// private Bitmap bufferBitmap;
-	// Paint recPaint;
-	// boolean zoomed = false;
-
-	// public TileRaster(Context context, AttributeSet attrs) {
-	// super(context, attrs);
-	//
-	// this.map = (Map) context;
-	//
-	// this.mTileProvider = new TileProvider(context,
-	// new SimpleInvalidationHandler());
-	// geomDrawer = new AndroidGeometryDrawer(this, context);
-	// this.CIRCLE = BitmapFactory.decodeResource(context.getResources(),
-	// R.drawable.cross);
-	//
-	// }
 	Scaler mScaler;
-
-	// Canvas bufferCanvas = new Canvas();
-	// Bitmap bufferBitmap;
-	// Canvas frontCanvas = new Canvas();
-	// Bitmap frontBitmap;
-
-	private Paint mLinePaintSingleTouch = new Paint();
-
-	private Paint mLinePaintMultiTouchCoords = new Paint();
-
-	private Paint mLinePaintMultiTouchCenter = new Paint();
-
-	private Paint mLinePaintCrossHairs = new Paint();
-
-	//--------------------------------------------------------------------------
-	// ----------
-
-	private void initializePainters() {
-		mLinePaintSingleTouch.setColor(Color.GREEN);
-		mLinePaintSingleTouch.setStrokeWidth(5);
-		mLinePaintSingleTouch.setStyle(Style.STROKE);
-		mLinePaintSingleTouch.setAntiAlias(true);
-		mLinePaintMultiTouchCoords.setColor(Color.RED);
-		mLinePaintMultiTouchCoords.setStrokeWidth(5);
-		mLinePaintMultiTouchCoords.setStyle(Style.STROKE);
-		mLinePaintMultiTouchCoords.setAntiAlias(true);
-		mLinePaintMultiTouchCenter.setColor(Color.YELLOW);
-		mLinePaintMultiTouchCenter.setStrokeWidth(5);
-		mLinePaintMultiTouchCenter.setStyle(Style.STROKE);
-		mLinePaintMultiTouchCenter.setAntiAlias(true);
-		mLinePaintCrossHairs.setColor(Color.BLUE);
-		mLinePaintCrossHairs.setStrokeWidth(5);
-		mLinePaintCrossHairs.setStyle(Style.STROKE);
-		mLinePaintCrossHairs.setAntiAlias(true);
-	}
 
 	/**
 	 * The Constructor.
@@ -270,7 +210,6 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			final MapRenderer aRendererInfo, int width, int height) {
 		super(context);
 		try {
-			initializePainters();
 			CompatManager.getInstance().getRegisteredLogHandler()
 					.configureLogger(log);
 		} catch (BaseException e) {
@@ -282,7 +221,6 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			this.map = (Map) context;
 			multiTouchController = new MultiTouchController<Object>(this,
 					getResources(), false);
-			TileRaster.this.rotatePaint.setFlags(Paint.FILTER_BITMAP_FLAG);
 			log.setLevel(Utils.LOG_LEVEL);
 			// log.setClientID(this.toString());
 			this.mScaler = new Scaler(context, new LinearInterpolator());
@@ -292,7 +230,6 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			acetate = new AcetateOverlay(context, this);
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
 					false);
-			whitePaint.setColor(Color.WHITE);
 			this.setFocusable(true);
 			this.setClickable(true);
 			this.setLongClickable(true);
@@ -723,7 +660,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		return super.onTouchEvent(event);
 
 	}
-	
+
 	protected void processMultiTouchEvent() {
 		if (lastTouchEvent != null
 				&& this.lastTouchEvent.getAction() == MotionEvent.ACTION_UP
@@ -756,11 +693,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		boolean canDraw = false;
 
 		try {
-			// if (bufferBitmap == null) {
-			// bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
-			// Bitmap.Config.RGB_565);
-			// bufferCanvas.setBitmap(bufferBitmap);
-			// }
+			if (bufferBitmap == null) {
+				bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
+						Bitmap.Config.RGB_565);
+				bufferCanvas.setBitmap(bufferBitmap);
+			}
 			//				
 			// if (frontBitmap == null) {
 			// frontBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
@@ -773,7 +710,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			mapHeight = getHeight();
 			ViewPort.mapHeight = getHeight();
 			ViewPort.mapWidth = getWidth();
-			c.drawRect(0, 0, mapWidth, mapHeight, whitePaint);
+			c.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
 
 			// log.log(Level.FINE, map.vp.calculateExtent(mapWidth, mapHeight,
 			// this.getMRendererInfo().getCenter()).toString());
@@ -790,13 +727,13 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				c.setMatrix(m);
 				// bufferCanvas.setMatrix(m);
 				// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
-			}	
-			
+			}
+
 			processMultiTouchEvent();
 
 			if (map.navigation) {
 				// TileRaster.this.rotatePaint.setAntiAlias(true);
-				normalPaint = rotatePaint;
+				Paints.normalPaint = Paints.rotatePaint;
 				int rotationToDraw = -mBearing
 						- map.getmMyLocationOverlay().getOffsetOrientation();
 				if (Math.abs(Math.abs(rotationToDraw)
@@ -837,16 +774,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				// }
 
 			} else {
-				normalPaint = mPaint;
+				Paints.normalPaint = Paints.mPaintR;
 			}
-			// Log.d("Map center: ", this.getMRendererInfo().getCenter()
-			// .toString());
-
-			// if (bufferBitmap == null) {
-			// bufferBitmap = Bitmap.createBitmap(this.getWidth(),
-			// this.getHeight(), Bitmap.Config.ARGB_4444);
-			// bufferCanvas.setBitmap(bufferBitmap);
-			// }
+	
 			final long startMs = System.currentTimeMillis();
 
 			final int zoomLevel = renderer.getZoomLevel();
@@ -915,13 +845,6 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 							+ additionalTilesNeededToLeftOfCenter + 1);
 			Tile[] tiles = new Tile[size];
 			int cont = 0;
-
-			// if (singleTile) {
-			// additionalTilesNeededToLeftOfCenter = 0;
-			// additionalTilesNeededToRightOfCenter = 0;
-			// additionalTilesNeededToTopOfCenter = 0;
-			// additionalTilesNeededToBottomOfCenter = 0;
-			// }
 
 			final Extent maxExtent = renderer.getExtent();
 			final Extent viewExtent = map.vp.calculateExtent(mapWidth,
@@ -1002,11 +925,11 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 							tiles[cont] = t;
 
 						if (DEBUGMODE) {
-							c
-									.drawLine(tileLeft, tileTop, tileLeft
-											+ tileSizePx, tileTop, this.mPaint);
+							c.drawLine(tileLeft, tileTop,
+									tileLeft + tileSizePx, tileTop,
+									Paints.mPaintR);
 							c.drawLine(tileLeft, tileTop, tileLeft, tileTop
-									+ tileSizePx, this.mPaint);
+									+ tileSizePx, Paints.mPaintR);
 						}
 					}
 					cont++;
@@ -1040,7 +963,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 						c.drawBitmap(currentMapTile, temp.distanceFromCenter
 								.getX(), temp.distanceFromCenter.getY(),
-								this.normalPaint);
+								Paints.normalPaint);
 						// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
 
 						temp.destroy();
@@ -1067,81 +990,20 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			}
 
 			tiles = null;
-			// }
-
-			// FeatureCollection r = this.map.route.getRoute();
-			// if (r != null && r.getSize() > 0) {
-			// Feature f = r.getFeatureAt(0);
-			// LineString l = (LineString) f.getGeometry();
-			//
-			// HashMap wh = new HashMap();
-			// wh.put("width", getWidth());
-			// wh.put("height", getHeight());
-			//
-			// geomDrawer.draw(l, c, wh, null);
-			// }
+			// }			
 
 			/* Draw all Overlays. */
 			for (MapOverlay osmvo : this.mOverlays)
 				osmvo.onManagedDraw(c, this);
 
 			acetate.onManagedDraw(c, this);
-
-			// this.mPaint.setStyle(Style.STROKE);
-			//
-			// GeoMath bbox = this.getBoundingBox(this.getWidth(), this
-			// .getHeight());
-			//
-			//			
-			//
-			//			
-			//			
-			//
+			
 			// final long endMs = System.currentTimeMillis();
 			// Log.i(DEBUGTAG, "Rendering overall: " + (endMs - startMs) +
-			// "ms");
+			// "ms");			
+//			c.drawBitmap(bufferBitmap, 0, 0, Paints.mPaintR);
 			if (currTouchPoint == null)
-				computeScale();
-			// if (canDraw && mScaler.isFinished()) {
-			// c.drawBitmap(frontBitmap, 0, 0, normalPaint);
-			// // bufferCanvas.drawBitmap(frontBitmap, 0, 0, normalPaint);
-			// }
-			// else
-			// // c.save();
-			// c.drawBitmap(bufferBitmap, this.mTouchMapOffsetX,
-			// this.mTouchMapOffsetY, normalPaint);
-			// if (this.currTouchPoint == null)
-			// return;
-			// if (currTouchPoint.isDown()) {
-			// float x_ = currTouchPoint.getX(), y_ = currTouchPoint.getY();
-			// boolean isMultiTouch_ = currTouchPoint.isMultiTouch();
-			// // c.drawLine(0, y, cw, y, mLinePaintCrossHairs);
-			// // c.drawLine(x, 0, x, ch, mLinePaintCrossHairs);
-			// // c.drawCircle(x, y, 70 + pressure * 120, (isMultiTouch ?
-			// // mLinePaintMultiTouchCenter : mLinePaintSingleTouch));
-			// if (isMultiTouch_) {
-			// float multiTouchDiameter = currTouchPoint
-			// .getMultiTouchDiameter();
-			// float r = multiTouchDiameter / 2;
-			// // c.drawCircle(x, y, r, mLinePaintMultiTouchCoords);
-			// float dx2 = currTouchPoint.getMultiTouchWidth() / 2, dy2 =
-			// currTouchPoint
-			// .getMultiTouchHeight() / 2;
-			//
-			// c.drawLine(x_ + dx2, y_ - dy2, x_ + dx2, y_ + dy2,
-			// mLinePaintMultiTouchCoords);
-			// c.drawLine(x_ - dx2, y_ - dy2, x_ - dx2, y_ + dy2,
-			// mLinePaintMultiTouchCoords);
-			// c.drawLine(x_ - dx2, y_ + dy2, x_ + dx2, y_ + dy2,
-			// mLinePaintMultiTouchCoords);
-			// c.drawLine(x_ - dx2, y_ - dy2, x_ + dx2, y_ - dy2,
-			// mLinePaintMultiTouchCoords);
-			// // c.drawLine(x + dx2, y + dy2, x - dx2, y - dy2,
-			// // mLinePaintMultiTouchCoords);
-			// // c.drawLine(x + dx2, y - dy2, x - dx2, y + dy2,
-			// // mLinePaintMultiTouchCoords);
-			// }
-			// }
+				computeScale();			
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onDraw", e);
 		}
@@ -1389,9 +1251,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 			MapRenderer previous = this.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(layerName);
-			
+
 			if (renderer instanceof OSRenderer)
-				OSSettingsUpdater.synchronizeRendererWithSettings((OSRenderer)renderer, map);
+				OSSettingsUpdater.synchronizeRendererWithSettings(
+						(OSRenderer) renderer, map);
 
 			Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer
@@ -2027,7 +1890,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		 */
 		public boolean computeScale() {
 			if (mFinished) {
-				TileRaster.this.mPaint = new Paint();
+				Paints.mPaintR = new Paint();
 				mCurrScale = 1.0f;
 				return false;
 			}
@@ -2069,7 +1932,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		 *            Duration of the scroll in milliseconds.
 		 */
 		public void startScale(float startScale, float finalScale, int duration) {
-			TileRaster.this.mPaint.setFlags(Paint.FILTER_BITMAP_FLAG);
+			Paints.mPaintR.setFlags(Paint.FILTER_BITMAP_FLAG);
 
 			mFinished = false;
 			mDuration = duration;
@@ -2092,7 +1955,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		 * @see #setFinalScale(float)
 		 */
 		public void extendDuration(int extend) {
-			TileRaster.this.mPaint.setFlags(Paint.FILTER_BITMAP_FLAG);
+			Paints.mPaintR.setFlags(Paint.FILTER_BITMAP_FLAG);
 
 			int passed = (int) (AnimationUtils.currentAnimationTimeMillis() - mStartTime);
 			mDuration = passed + extend;
