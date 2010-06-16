@@ -61,9 +61,12 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Map;
 
 /**
@@ -87,6 +90,8 @@ public class SplashActivity extends Activity {
 		try {
 			super.onCreate(icicle);
 			setContentView(R.layout.main);
+			((ProgressBar) SplashActivity.this.findViewById(R.id.ProgressBar01))
+					.setVisibility(View.INVISIBLE);
 			if (Initializer.isInitialized) {
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -109,11 +114,12 @@ public class SplashActivity extends Activity {
 					public void run() {
 						Initializer.getInstance()
 								.addInitializeListener(handler);
-						try {
+						try {							
 							Initializer.getInstance().initialize(
 									getApplicationContext());
 						} catch (Exception e) {
-							Log.e("", e.getMessage());
+							logger.log(Level.SEVERE, "onCreate", e);
+							LogFeedbackActivity.showSendLogDialog(SplashActivity.this);
 						}
 					}
 				}).start();
@@ -134,14 +140,15 @@ public class SplashActivity extends Activity {
 	public void onResume() {
 		try {
 			if (singleTaskActivityResulted) {
-				Toast.makeText(this, R.string.relaunch, Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.relaunch, Toast.LENGTH_LONG)
+						.show();
 			}
 			singleTaskActivityResulted = true;
 			super.onResume();
 			Intent i = getIntent();
 			if (i == null)
 				return;
-			if (i.hasExtra("exit") /*|| singleTaskActivityResulted*/) {
+			if (i.hasExtra("exit") /* || singleTaskActivityResulted */) {
 				finish();
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
@@ -155,7 +162,7 @@ public class SplashActivity extends Activity {
 			super.onActivityResult(requestCode, resultCode, intent);
 
 			if (requestCode == 0) {
-//				singleTaskActivityResulted = true;
+				// singleTaskActivityResulted = true;
 				switch (resultCode) {
 				case RESULT_OK:
 					finish();
@@ -188,10 +195,11 @@ public class SplashActivity extends Activity {
 		}
 		// return false;
 	}
-	
+
 	public boolean onTouchEvent(MotionEvent e) {
-		try {			
-			this.handler.sendEmptyMessage(Initializer.INITIALIZE_FINISHED);
+		try {
+			if (singleTaskActivityResulted)
+				this.handler.sendEmptyMessage(Initializer.INITIALIZE_FINISHED);
 			return true;
 		} catch (Exception e1) {
 			logger.log(Level.SEVERE, "onKeyDown: ", e1);
@@ -201,18 +209,32 @@ public class SplashActivity extends Activity {
 
 	private class InitializerHandler extends Handler {
 
-		public void handleMessage(Message msg) {
+		public void handleMessage(final Message msg) {
 			try {
 				switch (msg.what) {
 				case Initializer.INITIALIZE_STARTED:
-					TextView t = (TextView) SplashActivity.this
-							.findViewById(R.id.app_name);
-					t.setText(t.getText() + " . . .");
+					ProgressBar t = (ProgressBar) SplashActivity.this
+							.findViewById(R.id.ProgressBar01);
+					t.setVisibility(View.VISIBLE);
+					t.setIndeterminate(true);
 					break;
 				case Initializer.INITIALIZE_FINISHED:
 					Intent mainIntent = new Intent(SplashActivity.this,
 							Map.class);
 					SplashActivity.this.startActivityForResult(mainIntent, 0);
+					((ProgressBar) SplashActivity.this
+							.findViewById(R.id.ProgressBar01))
+							.setVisibility(View.INVISIBLE);
+					break;
+				default:
+					runOnUiThread(new Runnable() {
+						public void run() {
+							TextView t1 = (TextView) SplashActivity.this
+									.findViewById(R.id.app_name);
+							t1.setText(String.valueOf(msg.what));
+						}
+					});
+
 					break;
 				}
 			} catch (Exception e) {

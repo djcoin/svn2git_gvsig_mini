@@ -2,23 +2,23 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView  
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent" 
-        android:scaleType="center"
-        android:src="@drawable/splash" />
-    
-    <TextView
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content" 
-        android:layout_marginBottom="120dip"
-        android:layout_gravity="center_horizontal|bottom"
-        android:padding="12dip"
-        android:background="#080808"
-        android:textColor="#ffffffff"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/app_name_itemizedoverlay" 
-        android:id="@+id/app_name"/>
+	<ImageView android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:scaleType="center"
+		android:src="@drawable/splash" />
 
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_marginBottom="120dip"
+		android:layout_gravity="center_horizontal|bottom" android:padding="12dip"
+		android:background="#080808" android:textColor="#ffffffff"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:text="@string/app_name_itemizedoverlay" android:id="@+id/app_name" />
+
+	<ProgressBar android:id="@+id/ProgressBar01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_marginBottom="150dip" android:layout_gravity="center_horizontal|bottom"
+		android:padding="12dip" android:background="#080808"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:text="@string/please_wait" android:textColor="#ffffffff"
+		></ProgressBar>
 </merge>
 

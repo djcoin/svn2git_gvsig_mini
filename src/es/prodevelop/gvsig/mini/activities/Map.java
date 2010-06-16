@@ -639,7 +639,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Map onActivityResult: ", e);
 		}
-
 	}
 
 	@Override

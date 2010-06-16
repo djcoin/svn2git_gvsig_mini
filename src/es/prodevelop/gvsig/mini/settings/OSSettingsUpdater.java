@@ -10,22 +10,37 @@ import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 
 public class OSSettingsUpdater {
-	
-	private final static Logger log = Logger.getLogger(OSSettingsUpdater.class.getName());
-	
-	public static void synchronizeRendererWithSettings(OSRenderer osr, Context context) {		
+
+	private final static Logger log = Logger.getLogger(OSSettingsUpdater.class
+			.getName());
+
+	public static void synchronizeRendererWithSettings(OSRenderer osr,
+			Context context) {
 		try {
-			if (osr.getType() != MapRenderer.OS_RENDERER) return;
-			boolean isCustomEnabled = Settings.getInstance().getBooleanValue(context.getText(R.string.settings_key_os_custom).toString());
-			if (isCustomEnabled) {
-				osr.setKey(Settings.getInstance().getStringValue(context.getText(R.string.settings_key_os_key).toString()));
-				osr.setKeyURL(Settings.getInstance().getStringValue(context.getText(R.string.settings_key_os_url).toString()));
-			} else {
-				osr.setDefaultKeysAndURLs();						
+			if (osr.getType() != MapRenderer.OS_RENDERER)
+				return;
+			boolean isCustomEnabled = false;
+			try {
+				isCustomEnabled = Settings.getInstance().getBooleanValue(
+						context.getText(R.string.settings_key_os_custom)
+								.toString());
+			} catch (NoSuchFieldError ignore) {
+
 			}
-//			Layers.getInstance().persist();
+
+			if (isCustomEnabled) {
+				osr.setKey(Settings.getInstance().getStringValue(
+						context.getText(R.string.settings_key_os_key)
+								.toString()));
+				osr.setKeyURL(Settings.getInstance().getStringValue(
+						context.getText(R.string.settings_key_os_url)
+								.toString()));
+			} else {
+				osr.setDefaultKeysAndURLs();
+			}
+			// Layers.getInstance().persist();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
-		}		
+		}
 	}
 }

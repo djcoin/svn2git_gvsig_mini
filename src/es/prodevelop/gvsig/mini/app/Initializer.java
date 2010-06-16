@@ -92,32 +92,46 @@ public class Initializer {
 			handler.sendEmptyMessage(INITIALIZE_STARTED);
 		
 		this.applicationContext = applicationContext;
+//		handler.sendEmptyMessage(0);
 
 		CompatManager.getInstance().registerContext(
 				new AndroidContext(this.applicationContext));
+//		handler.sendEmptyMessage(1);
 		CompatManager.getInstance().registerLogHandler(new LogHandler());
+//		handler.sendEmptyMessage(2);
 		CompatManager.getInstance().getRegisteredLogHandler().configureLog();
+//		handler.sendEmptyMessage(3);
 		
 		Settings.getInstance().initializeFromSharedPreferences(
 				applicationContext);
+//		handler.sendEmptyMessage(4);
 
 		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
 				new FlatXFileSystemStrategy());
+//		handler.sendEmptyMessage(5);
 		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
 				new QuadKeyFileSystemStrategy());
+//		handler.sendEmptyMessage(6);
 
 		MapRendererManager.getInstance().registerMapRendererFactory(
 				new WMSMapRendererFactory());
+//		handler.sendEmptyMessage(7);
 
 		Config.setContext(this.getApplicationContext());
+//		handler.sendEmptyMessage(8);
 		ResourceLoader.initialize(this.getApplicationContext());
+//		handler.sendEmptyMessage(9);
 
 		aContext = new AndroidContext(this.getApplicationContext());
+//		handler.sendEmptyMessage(10);
 		CompatManager.getInstance().registerContext(aContext);
+//		handler.sendEmptyMessage(11);
 		Layers.getInstance().initialize(true);
+//		handler.sendEmptyMessage(12);
 
 		Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
+//		handler.sendEmptyMessage(13);
 		
 		if (this.handler != null) 
 			handler.sendEmptyMessage(INITIALIZE_FINISHED);

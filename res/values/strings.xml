@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0 alpha</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 0.3.0 beta BN 402</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>

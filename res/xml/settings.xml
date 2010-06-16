@@ -15,7 +15,7 @@
 
 	<PreferenceCategory android:title="@string/settings_maps_cache">
 		<!--		<Preference android:key="@string/settings_key_data_transfer"-->
-		<!--
+		<!-- 
 			android:title="@string/settings_downloaded_data"
 			android:summary="@string/summary_settings_downloaded_data" />
 		-->
@@ -41,7 +41,8 @@
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/settings_generic">
 		<Preference android:key="@string/settings_key_clear_suggestions"
-			android:title="@string/settings_clear_suggestions" android:summary="@string/settings_clear_suggestions_summary" />
+			android:title="@string/settings_clear_suggestions" android:summary="@string/settings_clear_suggestions_summary" 
+			android:defaultValue=""/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/settings_OS">
 		<CheckBoxPreference android:key="@string/settings_key_os_custom"
