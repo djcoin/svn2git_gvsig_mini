@@ -20,9 +20,11 @@ Cartography license & attributions
 
 gvSIG Mini displays maps with the following license restrictions or attributions:
 
-- PNOA & Cartociudad images. Author and owner: � Instituto Geogr�fico Nacional de Espa�a-Institut Cartogr�fic de Catalunya.
+- PNOA & Cartociudad images. Author and owner: Instituto Geográfico Nacional de España - Institut Cartogràfic de Catalunya.
 
-- Ordnance Survey (UK). Contains Ordnance Survey data � Crown copyright and database right 2010
+- ICC layer images. Author and owner: Institut Cartogràfic de Catalunya.
+
+- OpenSpace & Ordnance Survey (UK). Contains Ordnance Survey data Crown copyright and database right 2010
 
 gvSIG Mini for Android uses these icons with license restrictions or attributions:
 

@@ -1,4 +1,42 @@
-gvSIG Mini Copyright v. 0.2.2
+gvSIG Mini Copyright v. 0.3.0
+
+v. 0.3.0
+
+New Features:
+
+* Multitouch compatibility for devices with SDK > 2.0
+
+* Added support for Android search dialog 
+
+* Added Ordnance Survey OpenSpace layer support with custom KEY
+
+* Added ICC layers to default layers.txt
+
+* Added a Settings Activity
+
+* Support for Z/X/Y cache strategy
+
+* Allow caching tiles from the device
+
+* Allow enable/disable GPS and orientation to save battery
+
+* Allow to set tile name suffix to make cache interoperable
+
+* Offline cache mode
+
+--------
+
+Bugs fixed:
+
+* Fixed contextual menu behaviour
+	
+* Send exception logs fails when the application is closed with a task killer
+
+* Stop location handlers on pause
+
+* Fixed German translation by Lubomir Schmidt
+
+* Persistent Twitter acount credentials
 
 v. 0.2.2
 
@@ -24,7 +62,7 @@ Bugs fixed:
 
 * Fixed log level on YOURSFunctionality
 
-* Fixed a bug when instantiating LocationTimer	
+* Fixed a bug when instantiating LocationTimer
 	
 * Fixed resolutions for zoom levels higher than 19
 
