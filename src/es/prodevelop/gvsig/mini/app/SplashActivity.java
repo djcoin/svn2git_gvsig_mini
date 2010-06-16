@@ -60,9 +60,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.MotionEvent;
 import android.widget.TextView;
+import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 
@@ -79,6 +79,7 @@ public class SplashActivity extends Activity {
 	private final static Logger logger = Logger.getLogger(SplashActivity.class
 			.getName());
 	private Handler handler = new InitializerHandler();
+	private boolean singleTaskActivityResulted = false;
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -123,17 +124,29 @@ public class SplashActivity extends Activity {
 	}
 
 	public void onPause() {
-		super.onPause();
+		try {
+			super.onPause();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "", e);
+		}
 	}
 
 	public void onResume() {
-		super.onResume();
-		Intent i = getIntent();
-		if (i == null)
-			return;
-		if (i.hasExtra("exit")) {
-			finish();
-			android.os.Process.killProcess(android.os.Process.myPid());
+		try {
+			if (singleTaskActivityResulted) {
+				Toast.makeText(this, R.string.relaunch, Toast.LENGTH_LONG).show();
+			}
+			singleTaskActivityResulted = true;
+			super.onResume();
+			Intent i = getIntent();
+			if (i == null)
+				return;
+			if (i.hasExtra("exit") /*|| singleTaskActivityResulted*/) {
+				finish();
+				android.os.Process.killProcess(android.os.Process.myPid());
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "", e);
 		}
 	}
 
@@ -142,6 +155,7 @@ public class SplashActivity extends Activity {
 			super.onActivityResult(requestCode, resultCode, intent);
 
 			if (requestCode == 0) {
+//				singleTaskActivityResulted = true;
 				switch (resultCode) {
 				case RESULT_OK:
 					finish();
@@ -174,6 +188,16 @@ public class SplashActivity extends Activity {
 		}
 		// return false;
 	}
+	
+	public boolean onTouchEvent(MotionEvent e) {
+		try {			
+			this.handler.sendEmptyMessage(Initializer.INITIALIZE_FINISHED);
+			return true;
+		} catch (Exception e1) {
+			logger.log(Level.SEVERE, "onKeyDown: ", e1);
+			return true;
+		}
+	}
 
 	private class InitializerHandler extends Handler {
 
@@ -181,7 +205,8 @@ public class SplashActivity extends Activity {
 			try {
 				switch (msg.what) {
 				case Initializer.INITIALIZE_STARTED:
-					TextView t = (TextView) SplashActivity.this.findViewById(R.id.app_name);
+					TextView t = (TextView) SplashActivity.this
+							.findViewById(R.id.app_name);
 					t.setText(t.getText() + " . . .");
 					break;
 				case Initializer.INITIALIZE_FINISHED:

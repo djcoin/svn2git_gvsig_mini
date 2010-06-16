@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="warning">Atención</string>
-    <string name="error">Error</string>
-    <string name="cancel">Cancelar</string>
-    <string name="please_wait">Por favor, espere</string>
-    <string name="error_connecting_server">Error al conectar con el servidor</string>
-    <string name="task_canceled">Tarea cancelada</string>
-    <string name="ok">Ok</string>
-    <string name="back">Volver</string>
-    <string name="server_busy">El servidor está ocupado</string>
-    <string name="search">Buscar</string>
-    <string name="lat">lat</string>
-    <string name="lon">lon</string>
-    <string name="latitude">latitud</string>
-    <string name="longitude">longitud</string>                
-    <string name="typeof">Geoposicionado usando</string> 
-    <string name="share">gvSIG Mini Geo Share</string> 
-    <string name="portrait">Vertical</string>
-    <string name="landscape">Horizontal</string>
-    <string name="send_log">Enviar archivo de errores</string>
-    <string name="fatal_error">gvSIG Mini ha detectado un error. ¿Desea enviar el archivo de log a los desarrolladores para que puedan resolverlo?</string>   
-    
-    <string name="LayersActivity_0">Capas</string>
-    <string name="LayersActivity_1">No se detecta Tarjeta SD</string>
-    <string name="LayersActivity_2">No hay ficheros en</string>
-    <string name="LayersActivity_3">Elija un fichero de capas</string>
-    <string name="LayersActivity_4">Fichero de capas cargado con éxito</string>
-    <string name="LayersActivity_5">¡No se puede cargar el fichero! La ruta especificada no existe</string>
-    <string name="LayersActivity_6">Dirección URL del servidor WMS:</string>
-    <string name="LayersActivity_7">Get capabilities</string>
-    <string name="LayersActivity_8">Servicios de Mapas</string>
-    <string name="LayersActivity_9">Capas WMS</string>
-    <string name="LayersActivity_10">Añadir capa...</string>
-    <string name="LayersActivity_11">Desde servidor WMS</string>
-    <string name="LayersActivity_12">Pedir GetCapabilities...</string>
-    <string name="LayersActivity_13">Desde fichero de capas</string>
-    <string name="LayersActivity_14">Cargar fichero desde tarjeta SD...</string>        
-    
-    <string name="Map_0">Error al crear el mapa</string>
-    <string name="Map_1">No se han encontrado resultados</string>
-    <string name="Map_2">Error calculando la ruta</string>
-    <string name="Map_3">Buscar dirección</string>
-    <string name="Map_4">Mi Ubicación</string>
-    <string name="Map_5">Mapas/Capas</string>
-    <string name="Map_6">Modo Zoom Rectángulo</string>
-    <string name="Map_7">Modo Desplazamiento</string>
-    <string name="Map_8">Imposible obtener el tiempo, pruebe en otra ubicación. Compruebe la conexión a Internet</string>
-    <string name="Map_9">Sitio desconocido</string>
-    <string name="Map_10">La predicción del tiempo en (%s) no se encuentra disponible</string>    
+
+	<string name="warning">Atención</string>
+	<string name="error">Error</string>
+	<string name="cancel">Cancelar</string>
+	<string name="please_wait">Por favor, espere</string>
+	<string name="error_connecting_server">Error al conectar con el servidor</string>
+	<string name="task_canceled">Tarea cancelada</string>
+	<string name="ok">Ok</string>
+	<string name="back">Volver</string>
+	<string name="server_busy">El servidor está ocupado</string>
+	<string name="search">Buscar</string>
+	<string name="lat">lat</string>
+	<string name="lon">lon</string>
+	<string name="latitude">latitud</string>
+	<string name="longitude">longitud</string>
+	<string name="typeof">Geoposicionado usando</string>
+	<string name="share">gvSIG Mini Geo Share</string>
+	<string name="portrait">Vertical</string>
+	<string name="landscape">Horizontal</string>
+	<string name="send_log">Enviar archivo de errores</string>
+	<string name="fatal_error">gvSIG Mini ha detectado un error. ¿Desea
+		enviar el archivo de log a los desarrolladores para que puedan
+		resolverlo?</string>
+
+	<string name="LayersActivity_0">Capas</string>
+	<string name="LayersActivity_1">No se detecta Tarjeta SD</string>
+	<string name="LayersActivity_2">No hay ficheros en</string>
+	<string name="LayersActivity_3">Elija un fichero de capas</string>
+	<string name="LayersActivity_4">Fichero de capas cargado con éxito</string>
+	<string name="LayersActivity_5">¡No se puede cargar el fichero! La ruta
+		especificada no existe</string>
+	<string name="LayersActivity_6">Dirección URL del servidor WMS:</string>
+	<string name="LayersActivity_7">Get capabilities</string>
+	<string name="LayersActivity_8">Servicios de Mapas</string>
+	<string name="LayersActivity_9">Capas WMS</string>
+	<string name="LayersActivity_10">Añadir capa...</string>
+	<string name="LayersActivity_11">Desde servidor WMS</string>
+	<string name="LayersActivity_12">Pedir GetCapabilities...</string>
+	<string name="LayersActivity_13">Desde fichero de capas</string>
+	<string name="LayersActivity_14">Cargar fichero desde tarjeta SD...</string>
+
+	<string name="Map_0">Error al crear el mapa</string>
+	<string name="Map_1">No se han encontrado resultados</string>
+	<string name="Map_2">Error calculando la ruta</string>
+	<string name="Map_3">Buscar dirección</string>
+	<string name="Map_4">Mi Ubicación</string>
+	<string name="Map_5">Mapas/Capas</string>
+	<string name="Map_6">Modo Zoom Rectángulo</string>
+	<string name="Map_7">Modo Desplazamiento</string>
+	<string name="Map_8">Imposible obtener el tiempo, pruebe en
+		otra ubicación. Compruebe la conexión a Internet</string>
+	<string name="Map_9">Sitio desconocido</string>
+	<string name="Map_10">La predicción del tiempo en (%s) no se encuentra disponible</string>    
     <string name="Map_11">Predicción del tiempo</string>
     <string name="Map_12">Hoy</string>
     <string name="Map_13">No se ha encontrado la ruta</string>
@@ -119,4 +123,67 @@
 <string name="Map_30">Novedades</string>
 <string name="Map_29">Licencia</string>
 
+<!-- Missing prefs -->
+<string name="no">No</string>
+<string name="settings_quadkey">Quadkey</string>
+<string name="settings_maps_cache">Mapas cacheados</string>
+<string name="download_tiles_13">Presiona el botón de cancelar para parar el proceso</string>
+<string name="download_tiles_12">Descarga de mapas cancelada</string>
+<string name="download_tiles_11">Tiempo restante estimado: </string>
+<string name="download_tiles_10">Tiempo transcurrido: </string>
+<string name="download_tiles_15">Desplaza la barra para seleccionar el nivel de zoom máximo para descargar mapas. El proceso descargará las teselas que se ven en pantalla desde el nivel de zoom actual hasta el seleccionado con la barra de desplazamiento.</string>
+<string name="download_tiles_14">Descargar mapas</string>
+<string name="settings_orientation">Orientación</string>
+<string name="settings_mode_offline_off">Selecciona modo de caché</string>
+<string name="MapLocation_3">La información es demasiado grande para ser mostrada</string>
+<string name="settings_offline">Desconectado</string>
+<string name="settings_tilling_mode">Modo de caché</string>
+<string name="settings_generic">Ajustes generales</string>
+<string name="Map_32">Mantener la pantalla encendida</string>
+<string name="Map_33">Forzar el encendido de la pantalla</string>
+<string name="Map_31">Ajustes</string>
+<string name="download_tiles_04">Selecciona los niveles de zoom a descargar</string>
+<string name="Map_34">Toca una vez para mostrar/ocultar la barra de zoom</string>
+<string name="download_tiles_06">Número total de teselas a descargar: </string>
+<string name="download_tiles_05">Min/max. niveles de zoom: </string>
+<string name="download_tiles_08">¿Sobreescribir anterior caché?</string>
+<string name="download_tiles_07">Total MB a descargar: </string>
+<string name="settings_OS_key">OS API key</string>
+<string name="download_tiles_09">Total MB descargados: </string>
+<string name="GetFeatureInfoFunc_0">No se puede consultar la capa</string>
+<string name="settings_switch_gps">Activar/desactivar GPS</string>
+<string name="settings_online">Conectado</string>
+<string name="twitter_go_settings">Debe configurar su cuenta de Twitter. ¿Desea abrir la pantalla de Ajustes para rellenar su usuario y contraseña de Twitter?</string>
+<string name="settings_clear_suggestions_summary">Eliminar historial de búsquedas</string>
+<string name="settings_update">Sobreescribir</string>
+<string name="settings_OS_url">OS API URL</string>
+<string name="settings_twitter_not_configured">Su cuenta de Twitter no está configurada...</string>
+<string name="settings_tilling_strategy">Estrategia de caché</string>
+<string name="settings_clear_suggestions">Limpiar sugerencias</string>
+<string name="getFeatureInfo">GetFeatureInfo</string>
+<string name="settings_twitter">Cuenta de Twitter</string>
+<string name="settings_OS_enable">Ajustes OS API</string>
+<string name="yes">Sí</string>
+<string name="settings_mode_offline">Mapas offline</string>
+<string name="search_clear_yesno">¿Desea eliminar todas las cadenas de búsqueda anteriores?</string>
+<string name="settings_orientation_disabled">Orientación desactivada</string>
+<string name="settings_mode">Modo</string>
+<string name="search_hint">Buscar lugares/direcciones</string>
+<string name="settings_tilex">Z/X/Y</string>
+<string name="title_settings_tilling_mode">Seleccione modo de caché</string>
+<string name="settings_twitter_user">Usuario Twitter</string>
+<string name="settings_tile_name">Sufijo de nombre de tesela</string>
+<string name="title_settings_tilling_strategy">Seleccione estrategia de cacheado</string>
+<string name="settings_twitter_pass">Password de Twitter</string>
+<string name="summary_settings_downloaded_data">(%s) MB descargados durante esta sesión</string>
+<string name="stop">parar</string>
+<string name="settings_mode_offline_on">Obtener mapas sólo desde la tarjeta SD</string>
+<string name="settings_connected">No almacenar datos</string>
+<string name="settings_OS">Ajustes API OpenSpace</string>
+<string name="settings_gps">GPS</string>
+<string name="settings_switch_orientation">Activar/desactivar orientación</string>
+<string name="settings_orientation_enabled">Orientación activada</string>
+<string name="settings_downloaded_data">Datos descargados</string>
+
+<string name="relaunch">Toca la pantalla para mostrar el mapa o pulsa la tecla atrás para salir de gvSIG Mini</string>
 </resources>

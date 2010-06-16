@@ -72,7 +72,7 @@ public class SettingsActivity extends PreferenceActivity implements
 									SettingsActivity.this);
 							builder
 									.setMessage(
-											R.string.settings_clear_suggestions_summary)
+											R.string.search_clear_yesno)
 									.setCancelable(false)
 									.setPositiveButton(
 											R.string.yes,

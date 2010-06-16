@@ -207,4 +207,6 @@
     <string name="settings_key_twitter_user">twitter user</string>
     <string name="settings_key_twitter_pass">twitter pass</string>
     
+    <string name="relaunch">Tap the screen to show the map view or press the back key to exit gvSIG Mini</string>
+    
 </resources>

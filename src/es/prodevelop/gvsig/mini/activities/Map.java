@@ -619,6 +619,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					}
 					break;
 				}
+				break;
 			case CODE_SETTINGS:
 				String user = Settings.getInstance().getStringValue(
 						getText(R.string.settings_key_twitter_user).toString());
@@ -1084,7 +1085,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			adapter.addItem(new BulletedText(new StringBuffer().append(
 					this.getResources().getString(R.string.Map_12)).append(
-					" - ").append(wc.getTempCelcius()).append(" �C").append(
+					" - ").append(wc.getTempCelcius()).append(" C").append(
 					"\n").append(wc.getCondition()).append("\n").append(
 					wc.getWindCondition()).append("\n")
 					.append(wc.getHumidity()).toString(), BulletedText
@@ -3007,9 +3008,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					Intent i = new Intent();
 					i.putExtra("exit", true);
 					setResult(RESULT_OK, i);
-					finish();
-					// TODO: Hacer esto bien, liberando recursos y cerrando la
-					// aplicaci�n
+					finish();					
 
 					// return false;
 					super.onKeyDown(keyCode, event);
