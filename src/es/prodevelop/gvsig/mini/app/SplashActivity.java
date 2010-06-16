@@ -84,7 +84,7 @@ public class SplashActivity extends Activity {
 	private Handler handler = new InitializerHandler();
 	private boolean singleTaskActivityResulted = false;
 
-	/** Splash Screen gvSIG. */
+	/** Splash Screen gvSIG. */ 
 	@Override
 	public void onCreate(Bundle icicle) {
 		try {
