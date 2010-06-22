@@ -816,12 +816,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				try {
 					recenterOnGPS = !recenterOnGPS;
 
-					myLocationButton.setEnabled(!recenterOnGPS);
+					if (myLocationButton != null)
+						myLocationButton.setEnabled(!recenterOnGPS);
 					if (myZoomRectangle != null)
 						myZoomRectangle.setEnabled(!recenterOnGPS);
-					myDownloadLayers.setEnabled(!recenterOnGPS);
-					mySearchDirection.setEnabled(!recenterOnGPS);
-					mySettings.setEnabled(!recenterOnGPS);
+					if (myDownloadLayers != null
+						myDownloadLayers.setEnabled(!recenterOnGPS);
+					if (mySearchDirection != null)
+						mySearchDirection.setEnabled(!recenterOnGPS);
+					if (mySettings != null)
+						mySettings.setEnabled(!recenterOnGPS);
 
 					// myGPSButton.setEnabled(!recenterOnGPS);
 
@@ -3145,7 +3149,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			ViewSimpleLocationOverlay mMyLocationOverlay) {
 		this.mMyLocationOverlay = mMyLocationOverlay;
 	}
-
+	
 	/**
 	 * Sets the TileRaster center on the GPS location
 	 */
@@ -3169,8 +3173,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "enableGPS");
 			super.initLocation();
 			boolean enabled = this.isLocationHandlerEnabled();
-			this.myLocationButton.setEnabled(enabled);
-			this.myNavigator.setEnabled(enabled);
+			
+			if (myLocationButton != null && myNavigator != null) {			
+				this.myLocationButton.setEnabled(enabled);
+				this.myNavigator.setEnabled(enabled);
+			}
 			// this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3185,9 +3192,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "disableGPS");
 			super.disableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
-			this.myLocationButton.setEnabled(enabled);
-			this.myNavigator.setEnabled(enabled);
-			// this.myGPSButton.setTitle(R.string.Map_26);
+			
+			if (myLocationButton != null && myNavigator != null) {			
+				this.myLocationButton.setEnabled(enabled);
+				this.myNavigator.setEnabled(enabled);
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
@@ -3475,7 +3484,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// myDownloadTiles.setEnabled(false);
 			// return false;
 			// FIXME: only for debug
-			myDownloadTiles.setEnabled(true);
+			if (myDownloadTiles != null)
+				myDownloadTiles.setEnabled(this.osmap.getMRendererInfo().allowsMassiveDownload());
 			return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
