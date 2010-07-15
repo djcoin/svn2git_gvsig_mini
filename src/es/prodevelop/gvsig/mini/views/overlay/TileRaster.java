@@ -61,17 +61,16 @@ import java.util.logging.Logger;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -80,12 +79,15 @@ import android.view.View.OnLongClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Scroller;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.common.IBitmap;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.HandlerAndroid;
+import es.prodevelop.gvsig.mini.common.impl.Tile;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
@@ -106,13 +108,15 @@ import es.prodevelop.gvsig.mini.settings.OSSettingsUpdater;
 import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
+import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.Downloader;
-import es.prodevelop.tilecache.provider.Tile;
 import es.prodevelop.tilecache.provider.TileProvider;
+import es.prodevelop.tilecache.provider.android.AndroidTileProvider;
+import es.prodevelop.tilecache.provider.event.TileEvent;
 import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
@@ -120,7 +124,6 @@ import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
-import es.prodevelop.tilecache.util.Cancellable;
 import es.prodevelop.tilecache.util.Tags;
 import es.prodevelop.tilecache.util.Utilities;
 
@@ -138,9 +141,16 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class TileRaster extends View implements GeoUtils, OnClickListener,
-		OnLongClickListener, LayerChangedListener,
-		MultiTouchObjectCanvas<Object> {
+public class TileRaster extends SurfaceView implements GeoUtils,
+		OnClickListener, OnLongClickListener, LayerChangedListener,
+		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
+
+	Point scrollingCenter;
+	private boolean isScrolling = false;
+	private boolean invalidateLongPress = false;
+	private static final int UPDATE_ZOOM_CONTROLS = 147;
+	private static final int ANIMATION_FINISHED_NEED_ZOOM = 148;
+	private TileRasterThread surfaceThread;
 
 	Cancellable cancellable = Utilities.getNewCancellable();
 	AcetateOverlay acetate;
@@ -177,6 +187,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	int mTouchDownY;
 	public static int mTouchMapOffsetX;
 	public static int mTouchMapOffsetY;
+	public static int lastTouchMapOffsetX;
+	public static int lastTouchMapOffsetY;
 	String datalog = null;
 	Map map;
 	int centerPixelX = 0;
@@ -189,10 +201,20 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	private MotionEvent lastTouchEvent;
 	private Feature selectedFeature = null;
 
-	private Canvas bufferCanvas = new Canvas();
-	private Bitmap bufferBitmap;
+	Canvas bufferCanvas = new Canvas();
+	Bitmap bufferBitmap;
+
+	private Canvas zoomCanvas = new Canvas();
+	private Bitmap zoomBitmap;
 
 	Scaler mScaler;
+
+	private boolean scale = false;
+
+	private SurfaceHolder holder;
+	private boolean hasSurface;
+	private SimpleInvalidationHandler simpleInvalidationHandler = new SimpleInvalidationHandler();
+	private Scroller mScroller;
 
 	/**
 	 * The Constructor.
@@ -217,6 +239,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			e.printStackTrace();
 		}
 		try {
+			init();
+			this.mScroller = new Scroller(context);
 			this.androidContext = androidContext;
 			this.map = (Map) context;
 			multiTouchController = new MultiTouchController<Object>(this,
@@ -229,12 +253,13 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			geomDrawer = new AndroidGeometryDrawer(this, context);
 			acetate = new AcetateOverlay(context, this);
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
-					false);
+					false, false);
 			this.setFocusable(true);
 			this.setClickable(true);
 			this.setLongClickable(true);
 			this.setOnClickListener(this);
 			this.setOnLongClickListener(this);
+			this.initializeCanvas(width, height);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreate:", e);
 		} catch (OutOfMemoryError e) {
@@ -399,12 +424,13 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 			log.log(Level.SEVERE, "setZoomLevel:", e);
 
 		}
+		scale = true;
 		// refresh = false;
 		// }
-		map.updateSlider();
-		map.updateZoomControl();
-		cleanZoomRectangle();
-		this.postInvalidate();
+
+		this.simpleInvalidationHandler
+				.sendEmptyMessage(TileRaster.UPDATE_ZOOM_CONTROLS);
+
 		// try {
 		// // t.cancel();
 		// // t.purge();
@@ -552,8 +578,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public int i = 0;
 
 	public boolean onLongPress(MotionEvent e) {
+
 		if (!panMode || map.navigation
-				|| (currTouchPoint != null && currTouchPoint.isDown())) {
+				|| (currTouchPoint != null && currTouchPoint.isDown())
+				|| invalidateLongPress) {
 			log.log(Level.FINE,
 					"longpress on pan mode or navigation does not work");
 			return false;
@@ -618,15 +646,16 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public boolean onTrackballEvent(MotionEvent event) {
 		try {
 			int x = (int) Math.ceil(event.getX() * 10);
-			int y = (int) Math.ceil(event.getY() * 10);
+			int y = (int) Math.ceil(event.getY() * 10);			
 			double[] coords = TileRaster.this.getMRendererInfo()
 					.fromPixels(
 							new int[] { (int) centerPixelX + x,
 									(int) centerPixelY + y });
+			System.out.println("x, y: " + coords[0] + ", " + coords[1]);			
 			this.setMapCenter(coords[0], coords[1]);
-			for (MapOverlay osmvo : this.mOverlays)
-				if (osmvo.onTrackballEvent(event, this))
-					return true;
+//			for (MapOverlay osmvo : this.mOverlays)
+//				if (osmvo.onTrackballEvent(event, this))
+//					return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onTrackBallEvent", e);
 		}
@@ -636,20 +665,28 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		try {
+			// System.out.println("onTouchEvent");
 			// Log.d("", event.getX() + ", " + event.getY());
 			this.lastTouchEvent = MotionEvent.obtain(event);
 			if (event.getAction() == MotionEvent.ACTION_UP) {
 				lastTouchEventProcessed = false;
 			}
 			if (!map.navigation) {
-				for (MapOverlay osmvo : this.mOverlays)
-					if (osmvo.onTouchEvent(event, this))
-						return true;
+//				for (MapOverlay osmvo : this.mOverlays)
+//					if (osmvo.onTouchEvent(event, this))
+//						return true;
 
 				this.mGestureDetector.onTouchEvent(event);
 
 				if (!multiTouchController.onTouchEvent(event)) {
-					acetate.onTouchEvent(event);
+//					System.out.println("onTouchEvent acetate");
+					if (acetate.isFirstTouch()) {						
+						acetate.onTouchEvent(event);
+					}					
+					else
+						synchronized (holder) {							
+							acetate.onTouchEvent(event);
+						}
 				}
 			}
 
@@ -690,320 +727,275 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 	@Override
 	public void onDraw(final Canvas c) {
-		boolean canDraw = false;
 
 		try {
-			if (bufferBitmap == null) {
-				bufferBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
-						Bitmap.Config.RGB_565);
-				bufferCanvas.setBitmap(bufferBitmap);
-			}
-			//				
-			// if (frontBitmap == null) {
-			// frontBitmap = Bitmap.createBitmap(c.getWidth(), c.getHeight(),
-			// Bitmap.Config.RGB_565);
-			// frontCanvas.setBitmap(frontBitmap);
-			// }
-
-			// frontCanvas = c;
-			mapWidth = getWidth();
-			mapHeight = getHeight();
-			ViewPort.mapHeight = getHeight();
-			ViewPort.mapWidth = getWidth();
-			c.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
-
-			// log.log(Level.FINE, map.vp.calculateExtent(mapWidth, mapHeight,
-			// this.getMRendererInfo().getCenter()).toString());
+			// System.out.println(getScrollX() +", " + getScrollY());
 			final MapRenderer renderer = this.getMRendererInfo();
+			boolean someTileNull = false;
+			
+			final double originX = renderer.getOriginX();
+			final double originY = renderer.getOriginY();			
 
+			// c.drawColor(0, PorterDuff.Mode.CLEAR);
 			if (!mScaler.isFinished()
 					|| (this.currTouchPoint != null && this.currTouchPoint
 							.isDown())) {
+				c.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
 				Matrix m = c.getMatrix();
-				Log.d("", "Scale: " + mScaler.mCurrScale);
+				// Log.d("", "Scale: " + mScaler.mCurrScale);
 				m.preScale(mScaler.mCurrScale, mScaler.mCurrScale,
-						c.getWidth() / 2, c.getHeight() / 2);
+						mapWidth / 2, mapHeight / 2);
 
 				c.setMatrix(m);
-				// bufferCanvas.setMatrix(m);
-				// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
-			}
-
-			processMultiTouchEvent();
-
-			if (map.navigation) {
-				// TileRaster.this.rotatePaint.setAntiAlias(true);
-				Paints.normalPaint = Paints.rotatePaint;
-				int rotationToDraw = -mBearing
-						- map.getmMyLocationOverlay().getOffsetOrientation();
-				if (Math.abs(Math.abs(rotationToDraw)
-						- Math.abs(previousRotation)) < Utils.MIN_ROTATION) {
-					rotationToDraw = previousRotation;
-				} else {
-					previousRotation = rotationToDraw;
-				}
-				c.rotate(rotationToDraw, mapWidth / 2, mapHeight / 2);
-				// if (map.getmMyLocationOverlay().rotationBearingFlag >
-				// (mBearing + Utils.COMPASS_ACCURACY)
-				// || map.getmMyLocationOverlay().rotationBearingFlag <
-				// (mBearing
-				// - Utils.COMPASS_ACCURACY)) {
-				// c.rotate(mBearing, c.getWidth() / 2, c.getHeight() / 2);
-				// }else{
-				// c.rotate(map.getmMyLocationOverlay().rotationFlag,
-				// c.getWidth() / 2, c.getHeight() / 2);
-				// }
-
-				// if ((map.getmMyLocationOverlay().rotationBearingFlag /
-				// (mBearing + Utils.COMPASS_ACCURACY))
-				// > 1 || (map.getmMyLocationOverlay().rotationBearingFlag
-				// /(mBearing
-				// - Utils.COMPASS_ACCURACY))<1)
-				// c.rotate(mBearing, c.getWidth() / 2, c.getHeight() / 2);
-				//				
-				// if ((map.getmMyLocationOverlay().rotationBearingFlag /
-				// (mBearing + Utils.COMPASS_ACCURACY))
-				// > 1 || (map.getmMyLocationOverlay().rotationBearingFlag
-				// /(mBearing
-				// - Utils.COMPASS_ACCURACY))<1) {
-				// map.getmMyLocationOverlay().rotationBearingFlag = mBearing;
-				// }
-				// }else{
-				// c.rotate(map.getmMyLocationOverlay().rotationFlag,
-				// c.getWidth() / 2, c.getHeight() / 2);
-				// }
-
-			} else {
-				Paints.normalPaint = Paints.mPaintR;
-			}
-	
-			final long startMs = System.currentTimeMillis();
-
-			final int zoomLevel = renderer.getZoomLevel();
-			final int viewWidth = this.getWidth();
-			final int viewHeight = this.getHeight();
-			this.centerPixelX = this.getWidth() / 2;
-			this.centerPixelY = this.getHeight() / 2;
-			final int tileSizePx = renderer.getMAPTILE_SIZEPX();
-
-			int[] centerMapTileCoords = renderer.getMapTileFromCenter();
-
-			final int additionalTilesNeededToLeftOfCenter;
-			final int additionalTilesNeededToRightOfCenter;
-			final int additionalTilesNeededToTopOfCenter;
-			final int additionalTilesNeededToBottomOfCenter;
-
-			Pixel upperLeftCornerOfCenterMapTile = renderer
-					.getUpperLeftCornerOfCenterMapTileInScreen(null);
-
-			final int centerMapTileScreenLeft = upperLeftCornerOfCenterMapTile
-					.getX();
-			final int centerMapTileScreenTop = upperLeftCornerOfCenterMapTile
-					.getY();
-
-			final int centerMapTileScreenRight = centerMapTileScreenLeft
-					+ tileSizePx;
-			final int centerMapTileScreenBottom = centerMapTileScreenTop
-					+ tileSizePx;
-			if (!map.navigation) {
-
-				additionalTilesNeededToLeftOfCenter = (int) Math
-						.ceil((float) centerMapTileScreenLeft / tileSizePx);
-				additionalTilesNeededToRightOfCenter = (int) Math
-						.ceil((float) (viewWidth - centerMapTileScreenRight)
-								/ tileSizePx);
-				additionalTilesNeededToTopOfCenter = (int) Math
-						.ceil((float) centerMapTileScreenTop / tileSizePx);
-				additionalTilesNeededToBottomOfCenter = (int) Math
-						.ceil((float) (viewHeight - centerMapTileScreenBottom)
-								/ tileSizePx);
+				c.drawBitmap(bufferBitmap, ViewPort.mTouchMapOffsetX,
+						ViewPort.mTouchMapOffsetY, Paints.normalPaint);
+				// System.out.println("scalling");
+				// return;
 			} else {
 
-				additionalTilesNeededToLeftOfCenter = (int) Math
-						.ceil((float) (viewWidth + centerMapTileScreenLeft)
-								/ tileSizePx);
-				additionalTilesNeededToRightOfCenter = (int) Math
-						.ceil((float) (Utils.ROTATE_BUFFER_SIZE * viewWidth - centerMapTileScreenRight)
-								/ tileSizePx);
-				additionalTilesNeededToTopOfCenter = (int) Math
-						.ceil((float) (viewHeight + centerMapTileScreenTop)
-								/ tileSizePx);
-				additionalTilesNeededToBottomOfCenter = (int) Math
-						.ceil((float) (Utils.ROTATE_BUFFER_SIZE * viewHeight - centerMapTileScreenBottom)
-								/ tileSizePx);
+				processMultiTouchEvent();
 
-			}
-			// final int mapTileUpperBound = (int) Math.pow(2, zoomLevel + 2) +
-			// 1;
-			final int[] mapTileCoords = new int[] {
-					centerMapTileCoords[MAPTILE_LATITUDE_INDEX],
-					centerMapTileCoords[MAPTILE_LONGITUDE_INDEX] };
-
-			final int size = (additionalTilesNeededToBottomOfCenter
-					+ additionalTilesNeededToTopOfCenter + 1)
-					* (additionalTilesNeededToRightOfCenter
-							+ additionalTilesNeededToLeftOfCenter + 1);
-			Tile[] tiles = new Tile[size];
-			int cont = 0;
-
-			final Extent maxExtent = renderer.getExtent();
-			final Extent viewExtent = map.vp.calculateExtent(mapWidth,
-					mapHeight, renderer.getCenter());
-
-			boolean process = true;
-
-			for (int y = -additionalTilesNeededToTopOfCenter; y <= additionalTilesNeededToBottomOfCenter; y++) {
-				for (int x = -additionalTilesNeededToLeftOfCenter; x <= additionalTilesNeededToRightOfCenter; x++) {
-					process = true;
-					if (viewExtent.intersect(maxExtent)) {
-						final int tileLeft = this.mTouchMapOffsetX
-								+ centerMapTileScreenLeft + (x * tileSizePx);
-						final int tileTop = this.mTouchMapOffsetY
-								+ centerMapTileScreenTop + (y * tileSizePx);
-
-						double[] coords = new double[] {
-								maxExtent.getLefBottomCoordinate().getX(),
-								maxExtent.getLefBottomCoordinate().getY() };
-
-						final int[] leftBottom = renderer.toPixels(coords);
-						coords = new double[] {
-								maxExtent.getRightTopCoordinate().getX(),
-								maxExtent.getRightTopCoordinate().getY() };
-						final int[] rightTop = renderer.toPixels(coords);
-
-						final Rect r = new Rect();
-						r.bottom = leftBottom[1];
-						r.left = leftBottom[0];
-						r.right = rightTop[0];
-						r.top = rightTop[1];
-
-						// log.log(Level.FINE, offSetX + "," + offSetY);
-						// log.log(Level.FINE, r.left + ", " + r.right + ", " +
-						// r.bottom
-						// + ", " + r.top);
-						// process = r.contains(tileLeft, tileTop);
-						process = r.intersects(tileLeft, tileTop, tileLeft
-								+ tileSizePx / 2, tileTop + tileSizePx / 2);
-
+				if (map.navigation) {
+					// TileRaster.this.rotatePaint.setAntiAlias(true);
+					Paints.normalPaint = Paints.rotatePaint;
+					int rotationToDraw = -mBearing
+							- map.getmMyLocationOverlay()
+									.getOffsetOrientation();
+					if (Math.abs(Math.abs(rotationToDraw)
+							- Math.abs(previousRotation)) < Utils.MIN_ROTATION) {
+						rotationToDraw = previousRotation;
+					} else {
+						previousRotation = rotationToDraw;
 					}
+					c.rotate(rotationToDraw, mapWidth / 2, mapHeight / 2);
+				} else {
+					Paints.normalPaint = Paints.mPaintR;
+				}
 
-					if (process) {
-						// mapTileCoords[MAPTILE_LATITUDE_INDEX] = GeoMath.mod(
-						// centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
-						// + this.mRendererInfo.isTMS() * y,
-						// mapTileUpperBound);
-						//
-						// mapTileCoords[MAPTILE_LONGITUDE_INDEX] = GeoMath.mod(
-						// centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
-						// + x, mapTileUpperBound);
+				final long startMs = System.currentTimeMillis();
 
-						mapTileCoords[MAPTILE_LATITUDE_INDEX] = centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
-								+ this.mRendererInfo.isTMS() * y;
+				final int zoomLevel = renderer.getZoomLevel();
+				final double resolution = renderer.resolutions[zoomLevel];
+				final int viewWidth = this.mapWidth;
+				final int viewHeight = this.mapHeight;
+//				this.centerPixelX = this.getWidth() / 2;
+//				this.centerPixelY = this.getHeight() / 2;
+				final int tileSizePx = renderer.getMAPTILE_SIZEPX();
 
-						mapTileCoords[MAPTILE_LONGITUDE_INDEX] = centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
-								+ x;
+				int[] centerMapTileCoords = renderer.getMapTileFromCenter();
 
-						final String tileURLString = this.mRendererInfo
-								.getTileURLString(mapTileCoords, zoomLevel);
+				final int additionalTilesNeededToLeftOfCenter;
+				final int additionalTilesNeededToRightOfCenter;
+				final int additionalTilesNeededToTopOfCenter;
+				final int additionalTilesNeededToBottomOfCenter;
 
-						final int[] tile = new int[] { mapTileCoords[0],
-								mapTileCoords[1] };
-						// final Bitmap currentMapTile = this.mTileProvider
-						// .getMapTile(tileURLString, tile, this.mRendererInfo
-						// .getNAME(), this.getZoomLevel());
-						final int tileLeft = this.mTouchMapOffsetX
-								+ centerMapTileScreenLeft + (x * tileSizePx);
-						final int tileTop = this.mTouchMapOffsetY
-								+ centerMapTileScreenTop + (y * tileSizePx);
-						// c
-						// .drawBitmap(currentMapTile, tileLeft, tileTop,
-						// this.mPaint);
+				Pixel upperLeftCornerOfCenterMapTile = renderer
+						.getUpperLeftCornerOfCenterMapTileInScreen(null);
 
-						final Tile t = new Tile(tileURLString, tile, new Pixel(
-								tileLeft, tileTop));
-						if (cont < tiles.length)
-							tiles[cont] = t;
+				final int centerMapTileScreenLeft = upperLeftCornerOfCenterMapTile
+						.getX();
+				final int centerMapTileScreenTop = upperLeftCornerOfCenterMapTile
+						.getY();
 
-						if (DEBUGMODE) {
-							c.drawLine(tileLeft, tileTop,
-									tileLeft + tileSizePx, tileTop,
-									Paints.mPaintR);
-							c.drawLine(tileLeft, tileTop, tileLeft, tileTop
-									+ tileSizePx, Paints.mPaintR);
+				final int centerMapTileScreenRight = centerMapTileScreenLeft
+						+ tileSizePx;
+				final int centerMapTileScreenBottom = centerMapTileScreenTop
+						+ tileSizePx;
+				if (!map.navigation) {
+
+					additionalTilesNeededToLeftOfCenter = (int) Math
+							.ceil((float) centerMapTileScreenLeft / tileSizePx);
+					additionalTilesNeededToRightOfCenter = (int) Math
+							.ceil((float) (viewWidth - centerMapTileScreenRight)
+									/ tileSizePx);
+					additionalTilesNeededToTopOfCenter = (int) Math
+							.ceil((float) centerMapTileScreenTop / tileSizePx);
+					additionalTilesNeededToBottomOfCenter = (int) Math
+							.ceil((float) (viewHeight - centerMapTileScreenBottom)
+									/ tileSizePx);
+				} else {
+
+					additionalTilesNeededToLeftOfCenter = (int) Math
+							.ceil((float) (viewWidth + centerMapTileScreenLeft)
+									/ tileSizePx);
+					additionalTilesNeededToRightOfCenter = (int) Math
+							.ceil((float) (Utils.ROTATE_BUFFER_SIZE * viewWidth - centerMapTileScreenRight)
+									/ tileSizePx);
+					additionalTilesNeededToTopOfCenter = (int) Math
+							.ceil((float) (viewHeight + centerMapTileScreenTop)
+									/ tileSizePx);
+					additionalTilesNeededToBottomOfCenter = (int) Math
+							.ceil((float) (Utils.ROTATE_BUFFER_SIZE
+									* viewHeight - centerMapTileScreenBottom)
+									/ tileSizePx);
+
+				}
+
+				final int[] mapTileCoords = new int[] {
+						centerMapTileCoords[MAPTILE_LATITUDE_INDEX],
+						centerMapTileCoords[MAPTILE_LONGITUDE_INDEX] };
+
+				final int size = (additionalTilesNeededToBottomOfCenter
+						+ additionalTilesNeededToTopOfCenter + 1)
+						* (additionalTilesNeededToRightOfCenter
+								+ additionalTilesNeededToLeftOfCenter + 1);
+				Tile[] tiles = new Tile[size];
+				int cont = 0;
+
+				final Extent maxExtent = renderer.getExtent();
+				final Extent viewExtent = map.vp.calculateExtent(mapWidth,
+						mapHeight, renderer.getCenter());
+//				this.getMTileProvider().setViewExtent(viewExtent);
+
+				final String layerName = this.getMRendererInfo().getNAME();
+
+				boolean process = true;
+
+				for (int y = -additionalTilesNeededToTopOfCenter; y <= additionalTilesNeededToBottomOfCenter; y++) {
+					for (int x = -additionalTilesNeededToLeftOfCenter; x <= additionalTilesNeededToRightOfCenter; x++) {
+						process = true;
+						if (viewExtent.intersect(maxExtent)) {
+							final int tileLeft = this.mTouchMapOffsetX
+									+ centerMapTileScreenLeft
+									+ (x * tileSizePx);
+							final int tileTop = this.mTouchMapOffsetY
+									+ centerMapTileScreenTop + (y * tileSizePx);
+
+							double[] coords = new double[] {
+									maxExtent.getLefBottomCoordinate().getX(),
+									maxExtent.getLefBottomCoordinate().getY() };
+
+							final int[] leftBottom = renderer.toPixels(coords);
+							coords = new double[] {
+									maxExtent.getRightTopCoordinate().getX(),
+									maxExtent.getRightTopCoordinate().getY() };
+							final int[] rightTop = renderer.toPixels(coords);
+
+							final Rect r = new Rect();
+							r.bottom = leftBottom[1];
+							r.left = leftBottom[0];
+							r.right = rightTop[0];
+							r.top = rightTop[1];
+
+							process = r.intersects(tileLeft, tileTop, tileLeft
+									+ tileSizePx / 2, tileTop + tileSizePx / 2);
+
+						}
+
+						if (process) {
+							mapTileCoords[MAPTILE_LATITUDE_INDEX] = centerMapTileCoords[MAPTILE_LATITUDE_INDEX]
+									+ this.mRendererInfo.isTMS() * y;
+
+							mapTileCoords[MAPTILE_LONGITUDE_INDEX] = centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
+									+ x;
+
+							final String tileURLString = this.mRendererInfo
+									.getTileURLString(mapTileCoords, zoomLevel);
+
+							final int[] tile = new int[] { mapTileCoords[0],
+									mapTileCoords[1] };
+							final int tileLeft = this.mTouchMapOffsetX
+									+ centerMapTileScreenLeft
+									+ (x * tileSizePx);
+							final int tileTop = this.mTouchMapOffsetY
+									+ centerMapTileScreenTop + (y * tileSizePx);
+
+//							final Extent ext = TileConversor.tileMeterBounds(tile[0], tile[1], resolution, -originX, -originY);
+//							System.out.println("Tile: " + tile[0] + ", " + tile[1] + "Extent: " + ext.toString());
+							final Tile t = new Tile(tileURLString, tile,
+									new Pixel(tileLeft, tileTop), zoomLevel,
+									layerName, this.cancellable, null);
+							if (cont < tiles.length)
+								tiles[cont] = t;
+
+							if (DEBUGMODE) {
+								c.drawLine(tileLeft, tileTop, tileLeft
+										+ tileSizePx, tileTop, Paints.mPaintR);
+								c.drawLine(tileLeft, tileTop, tileLeft, tileTop
+										+ tileSizePx, Paints.mPaintR);
+							}
+						}
+						cont++;
+					}
+				}
+
+				this.sortTiles(tiles);
+				final int length = tiles.length;
+				Tile temp;
+				c.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
+				// bufferCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+				for (int j = 0; j < length; j++) {
+					temp = tiles[j];
+					if (temp != null) {
+						final IBitmap currentMapTile = this.mTileProvider
+								.getMapTile(temp, cancellable, null);
+						if (currentMapTile != null) {
+							TileRaster.lastTouchMapOffsetX = 0;
+							TileRaster.lastTouchMapOffsetY = 0;
+							if (j == 0)
+								bufferCanvas.drawRect(0, 0, mapWidth,
+										mapHeight, Paints.whitePaint);
+
+							// /*****/
+							// Shader gradientShader = new LinearGradient(0, 0,
+							// mapWidth, mapHeight,
+							// Color.argb(0, 0, 0, 0), Color.argb(255, 0,
+							// 0, 0), TileMode.CLAMP);
+							//
+							// Shader bitmapShader = new BitmapShader(
+							// (Bitmap) currentMapTile.getBitmap(),
+							// TileMode.CLAMP, TileMode.CLAMP);
+							//
+							// Shader composeShader = new ComposeShader(
+							// bitmapShader, gradientShader,
+							// new PorterDuffXfermode(Mode.DST_OUT));
+							// Paint mPaint = new Paint();
+							// mPaint.setShader(composeShader);
+							// /******/
+							c.drawBitmap((Bitmap) currentMapTile.getBitmap(),
+									temp.distanceFromCenter.getX(),
+									temp.distanceFromCenter.getY(),
+									Paints.normalPaint);
+
+							bufferCanvas.drawBitmap((Bitmap) currentMapTile
+									.getBitmap(), temp.distanceFromCenter
+									.getX(), temp.distanceFromCenter.getY(),
+									Paints.normalPaint);
+							TileRaster.lastTouchMapOffsetX = 0;
+							TileRaster.lastTouchMapOffsetY = 0;
+							// System.out.println("paint tile");
+
+							// temp.destroy();
+							temp = null;
+						} else {
+							// System.out.println("tile null");
+							someTileNull = true;
+							c.drawBitmap(bufferBitmap,
+									TileRaster.lastTouchMapOffsetX,
+									TileRaster.lastTouchMapOffsetY,
+									Paints.normalPaint);
 						}
 					}
-					cont++;
 				}
-			}
-			// if (zoomed) {
-			// c.drawBitmap(bufferBitmap, 0, 0, this.mPaint);
-			// zoomed = false;
-			// }
-
-			this.sortTiles(tiles);
-			final int length = tiles.length;
-			Tile temp;
-			for (int j = 0; j < length; j++) {
-				temp = tiles[j];
-				if (temp != null) {
-					final Bitmap currentMapTile = (Bitmap) this.mTileProvider
-							.getMapTile(temp.mURL, temp.tile,
-									this.mRendererInfo.getNAME(),
-									this.getZoomLevel(), cancellable)
-							.getBitmap();
-					if (currentMapTile != null) {
-						// bufferCanvas
-						// .drawBitmap(currentMapTile,
-						// temp.distanceFromCenter.getX(),
-						// temp.distanceFromCenter.getY(),
-						// this.mPaint);
-						// if (currentMapTile !=
-						// this.mTileProvider.mLoadingMapTile)
-						canDraw = true;
-
-						c.drawBitmap(currentMapTile, temp.distanceFromCenter
-								.getX(), temp.distanceFromCenter.getY(),
-								Paints.normalPaint);
-						// c.drawBitmap(bufferBitmap, 0, 0, normalPaint);
-
-						temp.destroy();
-						temp = null;
-						// Paint paint = new Paint();
-						// paint.setColor(Color.WHITE);
-						// paint.setStyle(Style.STROKE);
-						// c.drawRect(temp.distanceFromCenter.getX(),
-						// temp.distanceFromCenter.getY(),
-						// temp.distanceFromCenter.getX() + 256,
-						// temp.distanceFromCenter.getY() + 256, paint);
-						//					
-						// paint.setTextSize(20);
-						// c.drawText(temp.tile[1] + "," + temp.tile[0],
-						// temp.distanceFromCenter.getX() + 128,
-						// temp.distanceFromCenter.getY() + 128, paint);
-						// paint.setColor(Color.BLACK);
-						//					
-						// c.drawText(temp.tile[1] + "," + temp.tile[0],
-						// temp.distanceFromCenter.getX()+129,
-						// temp.distanceFromCenter.getY()+129, paint);
-					}
-				}
+				tiles = null;
 			}
 
-			tiles = null;
-			// }			
+			if (!someTileNull) {
+				TileRaster.lastTouchMapOffsetX = 0;
+				TileRaster.lastTouchMapOffsetY = 0;
+				this.mTileProvider.setLastZoomLevelRequested(this
+						.getZoomLevel());
+			}
 
 			/* Draw all Overlays. */
 			for (MapOverlay osmvo : this.mOverlays)
 				osmvo.onManagedDraw(c, this);
 
 			acetate.onManagedDraw(c, this);
-			
-			// final long endMs = System.currentTimeMillis();
-			// Log.i(DEBUGTAG, "Rendering overall: " + (endMs - startMs) +
-			// "ms");			
-//			c.drawBitmap(bufferBitmap, 0, 0, Paints.mPaintR);
+
+			// c.drawBitmap(bufferBitmap, 0, 0, Paints.mPaintR);
 			if (currTouchPoint == null)
-				computeScale();			
+				computeScale();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onDraw", e);
 		}
@@ -1064,13 +1056,30 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				switch (msg.what) {
 				case Downloader.MAPTILEDOWNLOADER_SUCCESS_ID:
 					// if (!Utils.isSDMounted()) {
-					TileRaster.this.invalidate();
+//					TileRaster.this.invalidate();
+					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					// }
 					break;
+//				case Downloader.REMOVE_CACHE_URL:
+//					// if (!Utils.isSDMounted()) {
+//					TileRaster.this.getMTileProvider().getDownloader().
+//					// }
+//					break;
 				case TileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
-					TileRaster.this.invalidate();
+//					TileRaster.this.invalidate();
+					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
+					break;
+				case TileRaster.UPDATE_ZOOM_CONTROLS:
+					map.updateSlider();
+					map.updateZoomControl();
+					cleanZoomRectangle();
+					TileRaster.this.postInvalidate();
+					break;
+				case TileRaster.ANIMATION_FINISHED_NEED_ZOOM:
+					TileRaster.this.zoomIn();
 					break;
 				}
+
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "SimpleInvalidationHandler", e);
 			}
@@ -1082,13 +1091,27 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 		@Override
 		public boolean onDown(MotionEvent e) {
+			if (!TileRaster.this.getScroller().isFinished()) {
+				TileRaster.this.getScroller().forceFinished(true);
+				invalidateLongPress = true;
+			} else {
+				invalidateLongPress = false;
+			}
+			isScrolling = false;
+
 			return false;
 		}
 
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
-			return false;
+			// System.out.println("onFling");
+			startScrolling();
+			final int worldSize = getWorldSizePx();
+			mScroller.fling(getScrollX(), getScrollY(),
+					(int) (-velocityX * 2 / 5), (int) (-velocityY * 2 / 5),
+					-worldSize, worldSize, -worldSize, worldSize);
+			return true;
 		}
 
 		@Override
@@ -1103,7 +1126,9 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
-			return false;
+			// System.out.println("onScroll");
+			scrollBy((int) distanceX, (int) distanceY);
+			return true;
 		}
 
 		@Override
@@ -1117,8 +1142,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
-				TileRaster.this.setMapCenter(coords[0], coords[1]);
-				TileRaster.this.zoomIn();
+				TileRaster.this.animateTo(coords[0], coords[1], true);
+				// TileRaster.this.zoomIn();
 			} catch (Exception ex) {
 				log.log(Level.SEVERE, "doubletap", ex);
 			}
@@ -1133,6 +1158,8 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
+			if (invalidateLongPress)
+				return false;
 
 			try {
 				for (MapOverlay osmvo : TileRaster.this.mOverlays)
@@ -1193,7 +1220,7 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	// }
 
 	public void instantiateTileProviderfromSettings() {
-		Handler lh = new LoadCallbackHandler(new SimpleInvalidationHandler());
+		Handler lh = new LoadCallbackHandler(simpleInvalidationHandler);
 		int mode = TileProvider.MODE_ONLINE;
 		String tileName = "tile.gvSIG";
 		String dot = ".";
@@ -1237,15 +1264,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
 		t.setTileNameSuffix(tileSuffix);
 
-		this.mTileProvider = new TileProvider(this.androidContext,
-				new HandlerAndroid(lh), mapWidth, mapHeight, 256,
-				R.drawable.maptile_loading, R.drawable.maptile_loadingoffline,
-				mode, t);
+		this.mTileProvider = new AndroidTileProvider(this.androidContext,
+				new HandlerAndroid(lh), mapWidth, mapHeight, 256, mode, t);
 	}
 
 	@Override
 	public void onLayerChanged(String layerName) {
 		try {
+			clearBufferCanvas();
 			log.log(Level.FINE, "on layer changed");
 			this.clearCache();
 
@@ -1533,14 +1559,14 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 
 	// @Override
 	// public void postInvalidate() {
-	// if (refresh)
-	// super.postInvalidate();
+	// // if (refresh)
+	// // super.postInvalidate();
 	// }
 	//
 	// @Override
 	// public void invalidate() {
-	// if (refresh)
-	// super.invalidate();
+	// // if (refresh)
+	// // super.invalidate();
 	// }
 
 	// public boolean refresh = true;
@@ -1574,9 +1600,32 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	public void animateTo(final double x, final double y) {
 		// this.stopAnimation(false);
 		// log.log(Level.FINE, "animate TO");
-		mCurrentAnimationRunner = new LinearAnimationRunner(x, y, true);
-		WorkQueue.getExclusiveInstance().execute(mCurrentAnimationRunner);
+		this.animateTo(x, y, false);
+	}
 
+	/**
+	 * Applies a LinearAnimation to center the view to a xy coordinates
+	 * 
+	 * @param x
+	 *            The x coordinate
+	 * @param y
+	 *            The y coordinate
+	 * @param zoomChanged
+	 *            if true, when the animation ends applies a zoomIn
+	 */
+	public void animateTo(final double x, final double y,
+			final boolean zoomChanged) {
+		// this.stopAnimation(false);
+		// log.log(Level.FINE, "animate TO");
+//		 final Scroller aScroller = getScroller();
+//		 int xy[] = this.getMRendererInfo().toPixels(new double[] { x, y });
+//		 startScrolling();
+//		 aScroller.startScroll(getScrollX(), getScrollY(),
+//		 (int) (xy[0] - this.centerPixelX),
+//		 (int) (xy[1] - this.centerPixelY), 1000);
+		mCurrentAnimationRunner = new LinearAnimationRunner(x, y, true,
+				zoomChanged);
+		WorkQueue.getExclusiveInstance().execute(mCurrentAnimationRunner);
 	}
 
 	/**
@@ -1647,10 +1696,13 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 	private class LinearAnimationRunner extends AnimationRunner {
 
 		protected double mPanPerStepX, mPanPerStepY;
+		private boolean zoomChanged = false;
 
 		public LinearAnimationRunner(final double aTargetX,
-				final double aTargetY, final boolean animate) {
+				final double aTargetY, final boolean animate,
+				final boolean zoomChanged) {
 			this(aTargetX, aTargetY, 10, 1000, animate);
+			this.zoomChanged = zoomChanged;
 			// start();
 		}
 
@@ -1711,6 +1763,10 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 				// }
 			} catch (final Exception e) {
 				// this.interrupt();
+			} finally {
+				if (zoomChanged)
+					TileRaster.this.simpleInvalidationHandler
+							.sendEmptyMessage(TileRaster.ANIMATION_FINISHED_NEED_ZOOM);
 			}
 		}
 	}
@@ -2050,4 +2106,289 @@ public class TileRaster extends View implements GeoUtils, OnClickListener,
 		return true;
 	}
 
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		if (this.surfaceThread != null)
+			this.surfaceThread.onWindowResize(width, height);
+	}
+
+	public void surfaceCreated(SurfaceHolder holder) {
+		hasSurface = true;
+		startST();
+	}
+
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		hasSurface = false;
+		destroyST();
+	}
+
+	private void clearBufferCanvas() {
+		if (this.bufferCanvas != null) {
+			bufferCanvas.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
+		}
+
+		if (this.zoomCanvas != null) {
+			zoomCanvas.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
+		}
+	}
+
+	public void initializeCanvas(int width, int height) throws BaseException {
+		mapWidth = width;
+		mapHeight = height;
+
+		if (bufferBitmap != null) {
+			bufferBitmap.recycle();
+			bufferBitmap = null;
+		}
+
+		if (bufferBitmap == null) {
+			bufferBitmap = Bitmap.createBitmap(mapWidth, mapHeight,
+					Bitmap.Config.RGB_565);
+			bufferCanvas.setBitmap(bufferBitmap);
+		}
+
+		if (zoomBitmap != null) {
+			zoomBitmap.recycle();
+			zoomBitmap = null;
+		}
+
+		if (zoomBitmap == null) {
+			zoomBitmap = Bitmap.createBitmap(mapWidth, mapHeight,
+					Bitmap.Config.RGB_565);
+			zoomCanvas.setBitmap(zoomBitmap);
+		}
+
+		ViewPort.mapHeight = height;
+		ViewPort.mapWidth = width;
+		this.centerPixelX = width / 2;
+		this.centerPixelY = height / 2;
+	}
+
+	boolean scaleCanvasForZoom() {
+		try {
+			if (scale) {
+				zoomCanvas.drawBitmap((Bitmap) bufferBitmap, 0, 0,
+						Paints.normalPaint);
+				bufferCanvas.drawRect(0, 0, mapWidth, mapHeight,
+						Paints.whitePaint);
+
+				if (mScaler.mFinalScale > 0) {
+					if (mScaler.mFinalScale < 1) {
+						final int scaledWidth = (int) (mapWidth * mScaler.mFinalScale);
+						final int scaledHeight = (int) (mapHeight * mScaler.mFinalScale);
+						// if width and height are lower than 0, the VM will
+						// crash
+						if (scaledWidth > 0 && scaledHeight > 0) {
+							final Bitmap scaledBitmap = Bitmap
+									.createScaledBitmap(zoomBitmap,
+											scaledWidth, scaledHeight, true);
+							bufferCanvas.drawBitmap(scaledBitmap,
+									(mapWidth - (int) (scaledWidth)) / 2,
+									(mapHeight - (int) (scaledHeight)) / 2,
+									Paints.normalPaint);
+						}
+					} else {
+						final float inverseScale = 1 / mScaler.mFinalScale;
+						final int x = (mapWidth - (int) ((mapWidth * inverseScale))) / 2;
+						final int y = (mapHeight - (int) ((mapHeight * inverseScale))) / 2;
+						final int width = (int) (mapWidth * inverseScale);
+						final int height = (int) (mapHeight * inverseScale);
+						final Bitmap cropBitmap = Bitmap.createBitmap(
+								zoomBitmap, x, y, width, height);
+						final Bitmap scaledBitmap = Bitmap.createScaledBitmap(
+								cropBitmap, (int) (mapWidth),
+								(int) (mapHeight), true);
+						bufferCanvas.drawBitmap(scaledBitmap, 0, 0,
+								Paints.normalPaint);
+					}
+				}
+				return true;
+			}
+		} catch (Exception ignore) {
+		} catch (OutOfMemoryError out) {
+
+		} finally {
+			scale = false;
+		}
+		return false;
+	}
+
+	private void init() {
+		holder = getHolder();
+		holder.addCallback(this);
+		hasSurface = false;
+	}
+
+	/**
+	 * Starts the surfaceThread
+	 */
+	public void startST() {
+		if (this.surfaceThread == null) {
+			this.surfaceThread = new TileRasterThread(holder, this);
+
+			if (hasSurface) {
+				surfaceThread.start();
+			}
+		}
+	}
+
+	/**
+	 * Destroys the surfaceThread
+	 */
+	public void destroyST() {
+		if (this.surfaceThread != null) {
+			surfaceThread.requestExitAndWait();
+			this.surfaceThread = null;
+		}
+	}
+
+	public Scroller getScroller() {
+		return mScroller;
+	}
+
+	@Override
+	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+		if ((oldl == 0 && oldt == 0) || !isScrolling)
+			return;
+		resetTouchOffset();
+//		System.out.println(l + ", " + t + ", " + oldl + ", " + oldt);
+		int px = l - oldl;
+		int py = t - oldt;
+
+		// System.out.println("px, py: " + px / 2 + ", " + py / 2);
+
+		int newCenterPx = this.centerPixelX + px;
+		int newCenterPy = this.centerPixelY + py;
+		// System.out.println("npx, npy: " + newCenterPx + ", " + newCenterPy);
+
+		double[] newCenter = ViewPort.toMapPoint(new int[] { newCenterPx,
+				newCenterPy }, mapWidth, mapHeight, scrollingCenter, this
+				.getMRendererInfo().resolutions[this.getZoomLevel()]);
+
+		synchronized (holder) {
+			scrollingCenter.setCoordinates(newCenter);
+			this.setMapCenter(scrollingCenter.getX(), scrollingCenter.getY());
+		}
+
+		// System.out.println("wpx; wpy: " + newCenter[0] + ", " +
+		// newCenter[1]);
+	}
+
+	private void startScrolling() {
+		isScrolling = true;
+		this.scrollingCenter = this.getMRendererInfo().getCenter();
+	}
+
+	private void resetTouchOffset() {
+		TileRaster.mTouchMapOffsetX = 0;
+		TileRaster.mTouchMapOffsetY = 0;
+		ViewPort.mTouchMapOffsetX = 0;
+		ViewPort.mTouchMapOffsetY = 0;
+	}
+
+	@Override
+	public void computeScroll() {
+		// System.out.println("computeScroll");
+		if (mScroller.computeScrollOffset()) {
+			if (mScroller.isFinished()) {
+				setZoomLevel(tempZoomLevel);
+				isScrolling = false;
+			} else
+				scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+			postInvalidate(); // Keep on drawing until the animation has
+			// finished.
+		}
+	}
+
+	int getPixelZoomLevel() {
+		double extentWidth = this.getMRendererInfo().getExtent().getWidth();
+		double extentHeight = this.getMRendererInfo().getExtent().getHeight();
+
+		double size = Math.max(extentWidth, extentHeight);
+
+		return (int) (size * this.getMRendererInfo().getMAPTILE_SIZEPX());
+	}
+
+	int getWorldSizePx() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public void scrollTo(int x, int y) {
+		// System.out.println("scrollTo");
+		final int worldSize = getWorldSizePx();
+		x %= worldSize;
+		y %= worldSize;
+		super.scrollTo(x, y);
+	}
+
+	public void pauseDraw() {
+		if (this.surfaceThread != null)
+			this.surfaceThread.pause = true;
+	}
+
+	public void resumeDraw() {
+		if (this.surfaceThread != null)
+			this.surfaceThread.pause = false;
+	}
+}
+
+class TileRasterThread extends Thread {
+	private SurfaceHolder surfaceHolder;
+	private TileRaster view;
+	private boolean done = false;
+	public boolean pause = false;
+
+	public TileRasterThread(SurfaceHolder surfaceHolder, TileRaster view) {
+		this.surfaceHolder = surfaceHolder;
+		this.view = view;
+	}
+
+	// public void setRunning(boolean run) {
+	// this.run = run;
+	// }
+
+	public SurfaceHolder getSurfaceHolder() {
+		return surfaceHolder;
+	}
+
+	@Override
+	public void run() {
+		Canvas c;
+		while (!done) {
+			while (pause) {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			c = null;
+			try {
+				c = surfaceHolder.lockCanvas();
+				synchronized (surfaceHolder) {
+					this.view.onDraw(c);
+					this.view.scaleCanvasForZoom();
+				}
+			} finally {
+				if (c != null) {
+					surfaceHolder.unlockCanvasAndPost(c);
+				}
+			}
+		}
+	}
+
+	public void requestExitAndWait() {
+		done = true;
+		try {
+			join();
+		} catch (InterruptedException ex) {
+
+		}
+	}
+
+	public void onWindowResize(int w, int h) {
+
+	}
 }

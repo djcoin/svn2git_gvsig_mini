@@ -4,6 +4,14 @@ v. 0.3.0
 
 New Features:
 
+* Implemented onScroll and onFling panning
+
+* Use of SurfaceView to get a responsiveness UI
+
+* Double buffer scaled zoom transitions 
+
+* Background initialization
+
 * Multitouch compatibility for devices with SDK > 2.0
 
 * Added support for Android search dialog 
@@ -16,13 +24,17 @@ New Features:
 
 * Support for Z/X/Y cache strategy
 
-* Allow caching tiles from the device
+* Added a new dialog to allow download tiles from the device
 
 * Allow enable/disable GPS and orientation to save battery
 
 * Allow to set tile name suffix to make cache interoperable
 
-* Offline cache mode
+* Off-line/Overwrite/Not store tiles cache mode
+
+* Faster and reliable tile provider
+
+* Added retries when the download of a tile fails
 
 --------
 
@@ -36,7 +48,7 @@ Bugs fixed:
 
 * Fixed German translation by Lubomir Schmidt
 
-* Persistent Twitter acount credentials
+* Persistent Twitter account credentials
 
 v. 0.2.2
 

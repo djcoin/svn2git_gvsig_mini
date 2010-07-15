@@ -10,8 +10,10 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.IBitmap;
 import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.IEvent;
 import es.prodevelop.gvsig.mini.common.IHandler;
 import es.prodevelop.gvsig.mini.common.IRect;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
@@ -32,10 +34,11 @@ public class AndroidContext implements IContext {
 	}
 
 	@Override
-	public IBitmap decodeByteArray(byte[] data, int offset, int length) throws IOException {		
-		Bitmap b = BitmapFactory.decodeByteArray(data, offset,
-				length);
-		if (b == null) throw new IOException("BitmapFactory failed");
+	public IBitmap decodeByteArray(byte[] data, int offset, int length)
+			throws IOException {
+		Bitmap b = BitmapFactory.decodeByteArray(data, offset, length);
+		if (b == null)
+			throw new IOException("BitmapFactory failed");
 		return new BitmapAndroid(b);
 	}
 
@@ -47,7 +50,8 @@ public class AndroidContext implements IContext {
 	@Override
 	public String getExternalStorageDirectoryPath() {
 		if (externalStoragePath == null)
-			this.externalStoragePath = Environment.getExternalStorageDirectory().getPath();
+			this.externalStoragePath = Environment
+					.getExternalStorageDirectory().getPath();
 		return this.externalStoragePath;
 	}
 
@@ -57,9 +61,9 @@ public class AndroidContext implements IContext {
 	}
 
 	@Override
-	public synchronized void sendMessage(IHandler handler, String message, int ID) {
+	public synchronized void sendMessage(IHandler handler, IEvent event, int ID) {
 		Handler h = (Handler) handler.getHandler();
-		Message.obtain(h, ID, message).sendToTarget();
+		Message.obtain(h, ID, event).sendToTarget();
 	}
 
 	@Override
@@ -93,14 +97,32 @@ public class AndroidContext implements IContext {
 	@Override
 	public IBitmap decodeByteArray(InputStream in) throws IOException {
 		Bitmap b = BitmapFactory.decodeStream(in);
-		if (b == null) throw new IOException("BitmapFactory failed");
+		if (b == null)
+			throw new IOException("BitmapFactory failed");
 		return new BitmapAndroid(b);
 	}
 
 	@Override
 	public IBitmap decodeByteArray(String filePath) throws IOException {
 		Bitmap b = BitmapFactory.decodeFile(filePath);
-		if (b == null) throw new IOException("BitmapFactory failed");
+		if (b == null)
+			throw new IOException("BitmapFactory failed");
 		return new BitmapAndroid(b);
+	}
+
+	@Override
+	public int getDefaultLoadingTileID() {
+		return R.drawable.maptile_loading;
+	}
+
+	@Override
+	public int getDefaultOfflineTileID() {
+		return R.drawable.maptile_loadingoffline;
+	}
+
+	@Override
+	public IBitmap createBitmap(int width, int height) {
+		return new BitmapAndroid(Bitmap.createBitmap(width, height,
+				Bitmap.Config.RGB_565));
 	}
 }

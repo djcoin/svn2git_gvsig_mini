@@ -67,6 +67,9 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
  */
 public class AcetateOverlay extends MapOverlay {
 	
+	int touchCounter = 0;
+	final static int TOUCH_COUNTER = 20;
+	
 	public AcetateOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
 		try {
@@ -102,25 +105,26 @@ public class AcetateOverlay extends MapOverlay {
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		try {	
-			if (drawZoomRectangle && rectangle != null) {
-				if (rectangle.width() <= 0 || rectangle.height()<= 0) {
-					rectangle.left -=1;
-					rectangle.right += 1;
-					rectangle.top -= 1;
-					rectangle.bottom +=1;
-				}
-				c.drawRect(rectangle, Paints.rectanglePaint);
-			}
-			if (toX >= 0 && toY >= 0 && fromX >= 0 && fromY >= 0 && !maps.panMode) {
-				path.rewind();				
-				path.moveTo(fromX, fromY);
-				path.lineTo(fromX, toY);
-				path.lineTo(toX, toY);
-				path.lineTo(toX, fromY);
-				path.lineTo(fromX, fromY);
-				c.drawPath(path, Paints.filledPaint);
-				c.drawPath(path, Paints.rectanglePaint);				
-			}	
+			//FIXME
+//			if (drawZoomRectangle && rectangle != null) {
+//				if (rectangle.width() <= 0 || rectangle.height()<= 0) {
+//					rectangle.left -=1;
+//					rectangle.right += 1;
+//					rectangle.top -= 1;
+//					rectangle.bottom +=1;
+//				}				
+//				c.drawRect(rectangle, Paints.rectanglePaint);
+//			}
+//			if (toX >= 0 && toY >= 0 && fromX >= 0 && fromY >= 0 && !maps.panMode) {
+//				path.rewind();				
+//				path.moveTo(fromX, fromY);
+//				path.lineTo(fromX, toY);
+//				path.lineTo(toX, toY);
+//				path.lineTo(toX, fromY);
+//				path.lineTo(fromX, fromY);
+//				c.drawPath(path, Paints.filledPaint);
+//				c.drawPath(path, Paints.rectanglePaint);				
+//			}	
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
@@ -173,6 +177,8 @@ public class AcetateOverlay extends MapOverlay {
 					t.mTouchMapOffsetY = (int) event.getY() - t.mTouchDownY;					
 					ViewPort.mTouchMapOffsetX = (int) event.getX() - t.mTouchDownX;
 					ViewPort.mTouchMapOffsetY = (int) event.getY() - t.mTouchDownY;
+					TileRaster.lastTouchMapOffsetX = ViewPort.mTouchMapOffsetX;
+					TileRaster.lastTouchMapOffsetY = ViewPort.mTouchMapOffsetY;
 				} else {
 					mTouchMapOffsetX = (int) event.getX() - mTouchDownX;
 					mTouchMapOffsetY = (int) event.getY() - mTouchDownY;
@@ -187,11 +193,14 @@ public class AcetateOverlay extends MapOverlay {
 				if (t.panMode) {					
 					double[] center = t.getMRendererInfo().fromPixels(
 							new int[] {viewWidth_2, viewHeight_2});
+					TileRaster.lastTouchMapOffsetX = ViewPort.mTouchMapOffsetX;
+					TileRaster.lastTouchMapOffsetY = ViewPort.mTouchMapOffsetY;
 					t.mTouchMapOffsetX = 0;
 					t.mTouchMapOffsetY = 0;
 					ViewPort.mTouchMapOffsetX = 0;
 					ViewPort.mTouchMapOffsetY = 0;
 					t.setMapCenter(center[0], center[1]);
+					t.scrollingCenter.setCoordinates(center);
 				} else {					
 					this.updateRectangle();
 					
@@ -274,5 +283,11 @@ public class AcetateOverlay extends MapOverlay {
 			log.log(Level.SEVERE,"",e);
 		}
 	}
-
+	
+	public boolean isFirstTouch() {
+		touchCounter++;
+		if (touchCounter == TOUCH_COUNTER)
+			return true;
+		return false;
+	}
 }

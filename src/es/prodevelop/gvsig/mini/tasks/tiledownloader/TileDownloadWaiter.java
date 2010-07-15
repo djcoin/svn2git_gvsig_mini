@@ -1,6 +1,7 @@
 package es.prodevelop.gvsig.mini.tasks.tiledownloader;
 
 import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.IEvent;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.tilecache.IDownloadWaiter;
 
@@ -75,7 +76,7 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 		System.out.println("onStartDownload");
 	}
 
-	public void onTileDownloaded(String URL) {
+	public void onTileDownloaded(IEvent event) {
 		tilesDownloaded++;
 //		System.out.println(tilesDownloaded + "-" + URL);
 		if (this.checkHasFinished()) {
@@ -92,7 +93,7 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 		return this;
 	}
 
-	public void onNewMessage(int ID, String message) {
+	public void onNewMessage(int ID, IEvent event) {
 		switch (ID) {
 		case IContext.DOWNLOAD_CANCELED:
 			this.onDownloadCanceled();
@@ -104,31 +105,31 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 			this.onStartDownload();
 			break;
 		case IContext.TILE_DOWNLOADED:
-			this.onTileDownloaded(message);
+			this.onTileDownloaded(event);
 			break;
 		case IContext.TOTAL_TILES_COUNT:
-			this.onTotalNumTilesRetrieved(Integer.valueOf(message));
+			this.onTotalNumTilesRetrieved(Integer.valueOf(event.getMessage()));
 			break;
 		}
 	}
 
-	public void onFailDownload(String URL) {
-		System.out.println("onFailDownload: " + URL);
+	public void onFailDownload(IEvent event) {
+		System.out.println("onFailDownload: " + event.getMessage());
 		this.tilesFailed++;
 		if (this.checkHasFinished()) {
 			this.onFinishDownload();
 		}
 	}
 
-	public void onFatalError(String URL) {
-		System.out.println("onFatalError: " + URL);
+	public void onFatalError(IEvent event) {
+		System.out.println("onFatalError: " + event.getMessage());
 		this.tilesFailed++;
 		if (this.checkHasFinished()) {
 			this.onFinishDownload();
 		}
 	}
 
-	public void onTileLoadedFromFileSystem(String URL) {
+	public void onTileLoadedFromFileSystem(IEvent event) {
 //		System.out.println("onTileLoadedFromFileSystem: " + URL);
 		this.tilesFromFS++;
 		if (this.checkHasFinished()) {
@@ -146,7 +147,7 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 		return this;
 	}
 
-	public void onTileSkipped(String URL) {
+	public void onTileSkipped(IEvent event) {
 //		System.out.println("onTileSkipped: " + URL);
 		this.tilesSkipped++;
 		if (this.checkHasFinished()) {
@@ -154,7 +155,7 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 		}
 	}
 
-	public void onTileDeleted(String URL) {
+	public void onTileDeleted(IEvent event) {
 //		System.out.println("onTileDeleted: " + URL);
 		this.tilesDeleted++;
 		if (this.checkHasFinished()) {
@@ -162,8 +163,8 @@ public class TileDownloadWaiter implements IDownloadWaiter, GeoUtils {
 		}
 	}
 
-	public void onTileNotFound(String URL) {
-		System.out.println("onTileNotFound: " + URL);
+	public void onTileNotFound(IEvent event) {
+		System.out.println("onTileNotFound: " + event.getMessage());
 		this.tilesNotFound++;
 		if (this.checkHasFinished()) {
 			this.onFinishDownload();

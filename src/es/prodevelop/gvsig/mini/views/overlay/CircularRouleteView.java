@@ -159,12 +159,12 @@ public class CircularRouleteView extends ViewGroup {
 		try {
 			canvas.drawBitmap(center, (width / 2) - (center.getWidth() / 2),
 					(height / 2) - (center.getHeight() / 2), Paints.pcenter);
-			path.rewind();
-			path.addCircle(width / 2, height / 2, radius, Path.Direction.CW);
-			path.moveTo(0, 0);
-			path.lineTo(0, height);
-			path.lineTo(width, height);
-			path.lineTo(width, 0);
+//			path.rewind();
+//			path.addCircle(width / 2, height / 2, radius, Path.Direction.CW);
+//			path.moveTo(0, 0);
+//			path.lineTo(0, height);
+//			path.lineTo(width, height);
+//			path.lineTo(width, 0);
 			canvas.drawPath(path, Paints.p);			
 			super.dispatchDraw(canvas);
 		} catch (Exception e) {

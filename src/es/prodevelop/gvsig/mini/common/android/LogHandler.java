@@ -87,35 +87,35 @@ public class LogHandler implements ILogHandler {
 	 * File.separator + Utils.LOG_DIR, and a SimpleFormatter is used
 	 */
 	public void configureLog() {
-		try {
-			//
-			// Creating an instance of FileHandler with 5 logging files
-			// sequences.
-			//			
-			if (Utils.isSDMounted()) {
-				File f = new File(getLogDirectory());
-				f.mkdirs();
-				
-				if (consoleHandler == null) {
-					consoleHandler = new ConsoleHandler();
-					consoleHandler.setFormatter(new SimpleFormatter());
-					consoleHandler.setLevel(LOG_LEVEL);
-					logger.addHandler(consoleHandler);
-				}
-				
-
-				handler = new FileHandler(getLogDirectory() + getLogFileName(),
-						FILE_SIZE, 1, true);
-				handler.setFormatter(new SimpleFormatter());
-				handler.setLevel(LOG_LEVEL);
-				
-				logger.addHandler(handler);				
-				logger.setUseParentHandlers(false);
-			}
-
-		} catch (IOException e) {
-			logger.warning("Failed to initialize logger handler.");
-		}
+//		try {
+////			
+////			 Creating an instance of FileHandler with 5 logging files
+////			 sequences.
+//						
+//			if (Utils.isSDMounted()) {
+//				File f = new File(getLogDirectory());
+//				f.mkdirs();
+//				
+//				if (consoleHandler == null) {
+//					consoleHandler = new ConsoleHandler();
+//					consoleHandler.setFormatter(new SimpleFormatter());
+//					consoleHandler.setLevel(LOG_LEVEL);
+//					logger.addHandler(consoleHandler);
+//				}
+//				
+//
+//				handler = new FileHandler(getLogDirectory() + getLogFileName(),
+//						FILE_SIZE, 1, true);
+//				handler.setFormatter(new SimpleFormatter());
+//				handler.setLevel(LOG_LEVEL);
+//				
+//				logger.addHandler(handler);				
+//				logger.setUseParentHandlers(false);
+//			}
+//
+//		} catch (IOException e) {
+//			logger.warning("Failed to initialize logger handler.");
+//		}
 
 		logger.info("Logging information message.");
 		logger.warning("Logging warning message.");
@@ -128,9 +128,9 @@ public class LogHandler implements ILogHandler {
 	 *            The logger
 	 */
 	public void configureLogger(Object log) {
-		((Logger) log).setLevel(LogHandler.LOG_LEVEL);
-		((Logger) log).addHandler(handler);
-		((Logger) log).addHandler(consoleHandler);
+//		((Logger) log).setLevel(LogHandler.LOG_LEVEL);
+//		((Logger) log).addHandler(handler);
+//		((Logger) log).addHandler(consoleHandler);
 	}
 
 	@Override

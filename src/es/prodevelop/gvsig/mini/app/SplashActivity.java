@@ -144,7 +144,8 @@ public class SplashActivity extends Activity {
 				((TextView) SplashActivity.this.findViewById(R.id.app_name))
 						.setText(R.string.relaunch);
 			}
-			singleTaskActivityResulted = true;
+			if (Initializer.isInitialized)
+				singleTaskActivityResulted = true;
 			super.onResume();
 			Intent i = getIntent();
 			if (i == null)

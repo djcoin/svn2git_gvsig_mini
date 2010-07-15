@@ -78,7 +78,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -115,7 +114,7 @@ import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
-import es.prodevelop.gvsig.mini.common.android.AndroidContext;
+import es.prodevelop.gvsig.mini.common.IEvent;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.DefaultContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
@@ -133,7 +132,6 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
-import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
@@ -154,9 +152,8 @@ import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
 import es.prodevelop.gvsig.mini.tasks.yours.YOURSFunctionality;
 import es.prodevelop.gvsig.mini.user.UserContext;
 import es.prodevelop.gvsig.mini.user.UserContextManager;
-import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
-import es.prodevelop.gvsig.mini.utiles.Constants;
+import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
@@ -176,11 +173,8 @@ import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
 import es.prodevelop.tilecache.renderer.MapRenderer;
-import es.prodevelop.tilecache.renderer.MapRendererManager;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
-import es.prodevelop.tilecache.renderer.wms.WMSMapRendererFactory;
-import es.prodevelop.tilecache.util.Cancellable;
 import es.prodevelop.tilecache.util.ConstantsTileCache;
 import es.prodevelop.tilecache.util.Utilities;
 
@@ -820,7 +814,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						myLocationButton.setEnabled(!recenterOnGPS);
 					if (myZoomRectangle != null)
 						myZoomRectangle.setEnabled(!recenterOnGPS);
-					if (myDownloadLayers != null
+					if (myDownloadLayers != null)
 						myDownloadLayers.setEnabled(!recenterOnGPS);
 					if (mySearchDirection != null)
 						mySearchDirection.setEnabled(!recenterOnGPS);
@@ -1088,10 +1082,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			adapter.addItem(new BulletedText(new StringBuffer().append(
 					this.getResources().getString(R.string.Map_12)).append(
-					" - ").append(wc.getTempCelcius()).append(" C").append(
-					"\n").append(wc.getCondition()).append("\n").append(
-					wc.getWindCondition()).append("\n")
-					.append(wc.getHumidity()).toString(), BulletedText
+					" - ").append(wc.getTempCelcius()).append(" C")
+					.append("\n").append(wc.getCondition()).append("\n")
+					.append(wc.getWindCondition()).append("\n").append(
+							wc.getHumidity()).toString(), BulletedText
 					.getRemoteImage(new URL("http://www.google.com"
 							+ wc.getIconURL()))).setSelectable(false));
 
@@ -1473,10 +1467,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadMap: ", e);
 			OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
-			this.osmap = new TileRaster(this, CompatManager.getInstance()
-					.getRegisteredContext(), t, metrics.widthPixels,
-					metrics.heightPixels);
-
+			try {
+				this.osmap = new TileRaster(this, CompatManager.getInstance()
+						.getRegisteredContext(), t, metrics.widthPixels,
+						metrics.heightPixels);
+				// osmap.initializeCanvas(metrics.widthPixels,
+				// metrics.heightPixels);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		} finally {
 			try {
 				if (outState == null)
@@ -2325,6 +2324,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void showDownloadTilesDialog() {
 		try {
+			this.osmap.pauseDraw();
 			log.log(Level.FINE, "show address dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -2407,12 +2407,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								int whichButton) {
 							// setRequestedOrientation(ActivityInfo.
 							// SCREEN_ORIENTATION_SENSOR);
+							Map.this.osmap.resumeDraw();
 						}
 					});
 
 			//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			alert.show();
 		} catch (Exception e) {
+			this.osmap.resumeDraw();
 			log.log(Level.SEVERE, "", e);
 		}
 	}
@@ -2986,6 +2988,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	@Override
 	public void onConfigurationChanged(Configuration config) {
 		try {
+			super.onConfigurationChanged(config);
 			log.log(Level.FINE, "onConfigurationChanged");
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
 				this.mMyLocationOverlay
@@ -2994,7 +2997,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				this.mMyLocationOverlay
 						.setOffsetOrientation(ViewSimpleLocationOverlay.LANDSCAPE_OFFSET_ORIENTATION);
 			}
-			super.onConfigurationChanged(config);
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			osmap.initializeCanvas(metrics.widthPixels, metrics.heightPixels);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onConfigurationChanged: ", e);
 		}
@@ -3011,7 +3016,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					Intent i = new Intent();
 					i.putExtra("exit", true);
 					setResult(RESULT_OK, i);
-					finish();					
+					finish();
 
 					// return false;
 					super.onKeyDown(keyCode, event);
@@ -3149,7 +3154,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			ViewSimpleLocationOverlay mMyLocationOverlay) {
 		this.mMyLocationOverlay = mMyLocationOverlay;
 	}
-	
+
 	/**
 	 * Sets the TileRaster center on the GPS location
 	 */
@@ -3173,8 +3178,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "enableGPS");
 			super.initLocation();
 			boolean enabled = this.isLocationHandlerEnabled();
-			
-			if (myLocationButton != null && myNavigator != null) {			
+
+			if (myLocationButton != null && myNavigator != null) {
 				this.myLocationButton.setEnabled(enabled);
 				this.myNavigator.setEnabled(enabled);
 			}
@@ -3192,8 +3197,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "disableGPS");
 			super.disableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
-			
-			if (myLocationButton != null && myNavigator != null) {			
+
+			if (myLocationButton != null && myNavigator != null) {
 				this.myLocationButton.setEnabled(enabled);
 				this.myNavigator.setEnabled(enabled);
 			}
@@ -3339,17 +3344,30 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				Map.this.enableGPS();
 				Toast.makeText(Map.this, R.string.download_tiles_12,
 						Toast.LENGTH_LONG).show();
+				Map.this.reloadLayerAfterDownload();				
 			}
 		});
 	}
 
-	public void onFailDownload(String URL) {
-		tileWaiter.onFailDownload(URL);
+	private void reloadLayerAfterDownload() {
+		Map.this.osmap.resumeDraw();
+		Map.this.osmap.onLayerChanged(Map.this.osmap.getMRendererInfo()
+				.getNAME());
+		try {
+			Map.this.osmap.initializeCanvas(TileRaster.mapWidth, TileRaster.mapHeight);
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void onFailDownload(IEvent event) {
+		tileWaiter.onFailDownload(event);
 		this.updateDownloadTilesDialog();
 	}
 
-	public void onFatalError(String URL) {
-		tileWaiter.onFatalError(URL);
+	public void onFatalError(IEvent event) {
+		tileWaiter.onFatalError(event);
 		this.updateDownloadTilesDialog();
 	}
 
@@ -3360,11 +3378,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				isDownloadTilesFinished = true;
 				Map.this.downloadTilesButton
 						.setText(R.string.alert_dialog_text_ok);
+				Map.this.reloadLayerAfterDownload();
 			}
 		});
 	}
 
-	public void onNewMessage(int ID, String message) {
+	public void onNewMessage(int ID, IEvent event) {
 		switch (ID) {
 		case IContext.DOWNLOAD_CANCELED:
 			this.onDownloadCanceled();
@@ -3376,10 +3395,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			this.onStartDownload();
 			break;
 		case IContext.TILE_DOWNLOADED:
-			this.onTileDownloaded(message);
+			this.onTileDownloaded(event);
 			break;
 		case IContext.TOTAL_TILES_COUNT:
-			this.onTotalNumTilesRetrieved(Integer.valueOf(message));
+			this.onTotalNumTilesRetrieved(Integer.valueOf(event.getMessage()));
 			break;
 		}
 	}
@@ -3400,27 +3419,27 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		});
 	}
 
-	public void onTileDeleted(String URL) {
-		tileWaiter.onTileDeleted(URL);
+	public void onTileDeleted(IEvent event) {
+		tileWaiter.onTileDeleted(event);
 	}
 
-	public void onTileDownloaded(String URL) {
-		tileWaiter.onTileDownloaded(URL);
+	public void onTileDownloaded(IEvent event) {
+		tileWaiter.onTileDownloaded(event);
 		this.updateDownloadTilesDialog();
 	}
 
-	public void onTileLoadedFromFileSystem(String URL) {
-		tileWaiter.onTileLoadedFromFileSystem(URL);
+	public void onTileLoadedFromFileSystem(IEvent event) {
+		tileWaiter.onTileLoadedFromFileSystem(event);
 		this.updateDownloadTilesDialog();
 	}
 
-	public void onTileNotFound(String URL) {
-		tileWaiter.onTileNotFound(URL);
+	public void onTileNotFound(IEvent event) {
+		tileWaiter.onTileNotFound(event);
 		this.updateDownloadTilesDialog();
 	}
 
-	public void onTileSkipped(String URL) {
-		tileWaiter.onTileSkipped(URL);
+	public void onTileSkipped(IEvent event) {
+		tileWaiter.onTileSkipped(event);
 		this.updateDownloadTilesDialog();
 	}
 
@@ -3485,7 +3504,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// return false;
 			// FIXME: only for debug
 			if (myDownloadTiles != null)
-				myDownloadTiles.setEnabled(this.osmap.getMRendererInfo().allowsMassiveDownload());
+				myDownloadTiles.setEnabled(this.osmap.getMRendererInfo()
+						.allowsMassiveDownload());
 			return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);

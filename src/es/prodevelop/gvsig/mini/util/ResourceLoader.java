@@ -90,7 +90,7 @@ public class ResourceLoader {
 			imgs.put(R.drawable.maptile_loading, BitmapFactory.decodeResource(context
 					.getResources(), R.drawable.maptile_loading));
 			imgs.put(R.drawable.maptile_loadingoffline, BitmapFactory.decodeResource(context
-					.getResources(), R.drawable.maptile_loadingoffline));
+					.getResources(), R.drawable.maptile_loadingoffline));			
 			imgs.put(R.drawable.arrowdown, BitmapFactory.decodeResource(context.getResources(),
 					R.drawable.arrowdown));
 			imgs.put(R.drawable.startpoi, BitmapFactory.decodeResource(context.getResources(),

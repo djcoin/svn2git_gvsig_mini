@@ -114,6 +114,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	public final static int LANDSCAPE_OFFSET_ORIENTATION = 90;
 	public final static int NAVIGATION_MODE = 0;
 	Path p;
+	
+	private Pixel lastGPSPosition; 
 
 	public ViewSimpleLocationOverlay(final Context ctx,
 			final TileRaster tileRaster) {
@@ -282,6 +284,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 								.getCRS(renderer.getSRS()));
 
 				int[] coords = osmv.getMRendererInfo().toPixels(co);
+				
+				lastGPSPosition = new Pixel(coords[0], coords[1]);
 
 				if (this.mLocation.acc != 0) {
 					Path path = new Path();

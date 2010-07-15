@@ -42,6 +42,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.IEvent;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.tilecache.IDownloadCallbackHandler;
 import es.prodevelop.tilecache.IDownloadWaiter;
@@ -83,54 +84,54 @@ public class TileDownloadCallbackHandler extends Handler implements
 		try {
 			if (m == null)
 				return;
-			String message = "";
+			IEvent event = null;
 			if (m.obj != null) {
-				message = m.obj.toString();
+				event = (IEvent)m.obj;
 			}
-			this.onNewMessage(m.what, message);
+			this.onNewMessage(m.what, event);
 		} catch (Exception e) {
 			Log.d("", e.getMessage());
 		}
 	}
 
-	public synchronized void onNewMessage(int ID, String message) {
+	public synchronized void onNewMessage(int ID, IEvent event) {
 		switch (ID) {
 		case TILEPROVIDER_SKIPPED:
-			this.downloadWaiter.onTileSkipped(message);
+			this.downloadWaiter.onTileSkipped(event);
 			break;
 		case TILEPROVIDER_CANCELED:
 			this.downloadWaiter.onDownloadCanceled();
 			break;
 		case GeoUtils.TILEPROVIDER_TOTAL_TILES:
 			this.downloadWaiter.onTotalNumTilesRetrieved(Long
-					.parseLong(message));
+					.parseLong(event.getMessage()));
 			break;
 		case MAPTILEFSLOADER_SUCCESS_ID:
-			this.downloadWaiter.onTileLoadedFromFileSystem(message);
+			this.downloadWaiter.onTileLoadedFromFileSystem(event);
 			break;
 		case MAPTILEFSLOADER_FAIL_ID:
-			this.downloadWaiter.onFailDownload(message);
+			this.downloadWaiter.onFailDownload(event);
 			break;
 		case MAPTILEFSLOADER_OOM_ID:
-			this.downloadWaiter.onFatalError(message);
+			this.downloadWaiter.onFatalError(event);
 			break;
 		case MAPTILEDOWNLOADER_SUCCESS_ID:
-			this.downloadWaiter.onNewMessage(IContext.TILE_DOWNLOADED, message);
+			this.downloadWaiter.onNewMessage(IContext.TILE_DOWNLOADED, event);
 			break;
 		case MAPTILEDOWNLOADER_FAIL_ID:
-			this.downloadWaiter.onFailDownload(message);
+			this.downloadWaiter.onFailDownload(event);
 			break;
 		case MAPTILEDOWNLOADER_OOM_ID:
-			this.downloadWaiter.onFatalError(message);
+			this.downloadWaiter.onFatalError(event);
 			break;
 		case MAPTILEDOWNLOADER_SUCCESS_SIZE:
-			this.downloadWaiter.updateDataTransfer(Integer.parseInt(message));
+			this.downloadWaiter.updateDataTransfer(Integer.parseInt(event.getMessage()));
 			break;
 		case MAPTILEFSLOADER_DELETED_ID:
-			this.downloadWaiter.onTileDeleted(message);
+			this.downloadWaiter.onTileDeleted(event);
 			break;
 		case MAPTILEFSLOADER_NOTFOUND_ID:
-			this.downloadWaiter.onTileNotFound(message);
+			this.downloadWaiter.onTileNotFound(event);
 			break;
 		}
 	}
