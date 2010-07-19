@@ -680,13 +680,15 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				if (!multiTouchController.onTouchEvent(event)) {
 //					System.out.println("onTouchEvent acetate");
-					if (acetate.isFirstTouch()) {						
+//					if (acetate.isFirstTouch()) {	
+//						System.out.println("first touch");
 						acetate.onTouchEvent(event);
-					}					
-					else
-						synchronized (holder) {							
-							acetate.onTouchEvent(event);
-						}
+//					}					
+//					else
+//						synchronized (holder) {
+//							System.out.println("not first touch");
+//							acetate.onTouchEvent(event);
+//						}
 				}
 			}
 
@@ -1057,7 +1059,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				case Downloader.MAPTILEDOWNLOADER_SUCCESS_ID:
 					// if (!Utils.isSDMounted()) {
 //					TileRaster.this.invalidate();
-					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
+//					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					// }
 					break;
 //				case Downloader.REMOVE_CACHE_URL:
@@ -1067,7 +1069,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 //					break;
 				case TileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
 //					TileRaster.this.invalidate();
-					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
+//					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					break;
 				case TileRaster.UPDATE_ZOOM_CONTROLS:
 					map.updateSlider();

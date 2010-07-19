@@ -284,10 +284,7 @@ public class AcetateOverlay extends MapOverlay {
 		}
 	}
 	
-	public boolean isFirstTouch() {
-		touchCounter++;
-		if (touchCounter == TOUCH_COUNTER)
-			return true;
-		return false;
+	public boolean isFirstTouch() {		
+		return ++touchCounter < TOUCH_COUNTER;			
 	}
 }

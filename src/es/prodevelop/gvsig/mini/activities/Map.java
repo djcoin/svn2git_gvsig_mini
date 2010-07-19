@@ -2408,6 +2408,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							// setRequestedOrientation(ActivityInfo.
 							// SCREEN_ORIENTATION_SENSOR);
 							Map.this.osmap.resumeDraw();
+							Map.this.reloadLayerAfterDownload();
 						}
 					});
 
