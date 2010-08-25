@@ -27,4 +27,3 @@ v0.2.2
 8|ICC ORTO;3,http://sagitari.icc.cat/tilecache/tilecache.py/1.0.0/orto/,jpeg,11,0,256,258000,4485000,258000,4485000,536000,4752000,EPSG:23031,1100:550:275:100:50:25:10:5:2:1:0.5:0.25
 8|ICC TOPO;3,http://sagitari.icc.cat/tilecache/tilecache.py/1.0.0/topo/,jpeg,11,0,256,258000,4485000,258000,4485000,536000,4752000,EPSG:23031,1100:550:275:100:50:25:10:5:2:1:0.5:0.25
 8|ICC GEOL;3,http://sagitari.icc.cat/tilecache/tilecache.py/1.0.0/geol/,jpeg,7,0,256,258000,4485000,258000,4485000,536000,4752000,EPSG:23031,1100:550:275:100:50:25:10:5
-                   
