@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.settings;
+package es.prodevelop.gvsig.mini.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;

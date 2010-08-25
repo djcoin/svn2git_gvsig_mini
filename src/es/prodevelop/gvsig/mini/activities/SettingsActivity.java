@@ -18,7 +18,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
-import es.prodevelop.gvsig.mini.settings.Settings;
 
 /**
  * This is the Activity to let the user to configure the settings for the

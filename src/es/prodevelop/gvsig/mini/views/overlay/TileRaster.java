@@ -83,6 +83,8 @@ import android.widget.Scroller;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.activities.OSSettingsUpdater;
+import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IBitmap;
 import es.prodevelop.gvsig.mini.common.IContext;
@@ -104,8 +106,6 @@ import es.prodevelop.gvsig.mini.map.MultiTouchController.PointInfo;
 import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
-import es.prodevelop.gvsig.mini.settings.OSSettingsUpdater;
-import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -680,15 +680,15 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				if (!multiTouchController.onTouchEvent(event)) {
 //					System.out.println("onTouchEvent acetate");
-//					if (acetate.isFirstTouch()) {	
+					if (acetate.isFirstTouch()) {	
 //						System.out.println("first touch");
 						acetate.onTouchEvent(event);
-//					}					
-//					else
-//						synchronized (holder) {
-//							System.out.println("not first touch");
-//							acetate.onTouchEvent(event);
-//						}
+					}					
+					else
+						synchronized (holder) {
+							System.out.println("not first touch");
+							acetate.onTouchEvent(event);
+						}
 				}
 			}
 

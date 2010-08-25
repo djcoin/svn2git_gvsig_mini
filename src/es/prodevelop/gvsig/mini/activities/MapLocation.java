@@ -82,7 +82,6 @@ import es.prodevelop.gvsig.mini.location.Config;
 import es.prodevelop.gvsig.mini.location.LocationHandler;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
-import es.prodevelop.gvsig.mini.settings.Settings;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 

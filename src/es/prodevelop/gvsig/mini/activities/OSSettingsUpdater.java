@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.settings;
+package es.prodevelop.gvsig.mini.activities;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
