@@ -12,10 +12,15 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-				<!--
-					<action android:name="android.intent.category.HOME" />
-				-->
+<!--				<action android:name="es.prodevelop.action.OFFLINEMAP" /> -->
 			</intent-filter>
+			
+			<intent-filter>
+<!--				<action android:name="android.intent.action.MAIN" />-->
+<!--				<category android:name="android.intent.category.LAUNCHER" />-->
+				<action android:name="es.prodevelop.action.OFFLINEMAP" /> 
+			</intent-filter>
+			
 		</activity>
 		<activity android:name=".activities.Map"
 			android:screenOrientation="sensor" android:theme="@android:style/Theme.NoTitleBar"

@@ -112,6 +112,7 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
+import es.prodevelop.gvsig.mini.app.SplashActivity;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.IEvent;
@@ -170,6 +171,7 @@ import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
 import es.prodevelop.tilecache.renderer.MapRenderer;
+import es.prodevelop.tilecache.renderer.MapRendererManager;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 import es.prodevelop.tilecache.util.ConstantsTileCache;
@@ -3103,6 +3105,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			try {
 				setIntent(i);
+				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
+					MapRenderer renderer = MapRendererManager.getInstance().getMapRendererFactory().getMapRenderer(i.getStringExtra(MapRenderer.NAME_STRING), i.getStringExtra(MapRenderer.URL_STRING).split(","));
+					renderer.setOfflineExtent(Extent.parseString(i.getStringExtra(MapRenderer.EXTENT_STRING)));
+					Layers.getInstance().addLayer(renderer.toString());
+					Layers.getInstance().persist();
+				} else 						
 				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					String query = i.getStringExtra(SearchManager.QUERY);
 					// Execute the search (common with POI and address as of

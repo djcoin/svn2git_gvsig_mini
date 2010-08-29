@@ -420,7 +420,7 @@ public class LayersActivity extends ExpandableListActivity {
 				groupData.add(curGroupMap);
 				Vector layersList = (Vector) layers.get(new Integer(i));
 				String text = null;
-				if (i == 0) {
+				if (i == 0) {					
 					text = this.getResources().getString(
 							R.string.LayersActivity_8);
 					curGroupMap.put(LAYER, text);
@@ -657,7 +657,7 @@ public class LayersActivity extends ExpandableListActivity {
 							new String[] { server }, name, format,
 							WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 0, 256,
 							layersName, new Extent(minX, minY, maxX, maxY),
-							srs, version);
+							srs, version, null);
 					Layers.getInstance().addLayer(w.toString());
 					Layers.getInstance().persist();
 

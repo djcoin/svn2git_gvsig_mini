@@ -68,6 +68,7 @@ import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
  * gvSIG Mini splash. Waits SPLASH_DISPLAY_LENGHT to start the Map Activity
@@ -83,6 +84,7 @@ public class SplashActivity extends Activity {
 			.getName());
 	private Handler handler = new InitializerHandler();
 	private boolean singleTaskActivityResulted = false;
+	public final static String OFFLINE_INTENT_ACTION = "es.prodevelop.action.OFFLINEMAP";
 
 	/** Splash Screen gvSIG. */ 
 	@Override
@@ -101,6 +103,7 @@ public class SplashActivity extends Activity {
 									Map.class);
 							Initializer.getInstance().initialize(
 									getApplicationContext());
+							fillIntent(mainIntent);
 							SplashActivity.this.startActivityForResult(
 									mainIntent, 0);
 							// SplashActivity.this.finish();
@@ -128,6 +131,19 @@ public class SplashActivity extends Activity {
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "", e);
 		}
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		if (intent.getAction().compareTo(OFFLINE_INTENT_ACTION) == 0) {
+			this.setIntent(intent);
+			Bundle b = new Bundle();
+			b.putString(OFFLINE_INTENT_ACTION, "");
+			this.onCreate(b);
+		}
+		
 	}
 
 	public void onPause() {
@@ -208,6 +224,22 @@ public class SplashActivity extends Activity {
 			return true;
 		}
 	}
+	
+	private void fillIntent(Intent mainIntent) {
+		Intent activityIntent = this.getIntent();
+		if (activityIntent == null) return;
+		
+		String name = activityIntent.getStringExtra(MapRenderer.NAME_STRING);
+		String URL = activityIntent.getStringExtra(MapRenderer.URL_STRING);
+		String extentString = activityIntent.getStringExtra(MapRenderer.EXTENT_STRING);
+		
+		if (name != null && URL != null && extentString != null) {
+			mainIntent.putExtra(MapRenderer.NAME_STRING, name);
+			mainIntent.putExtra(MapRenderer.URL_STRING, URL);
+			mainIntent.putExtra(MapRenderer.EXTENT_STRING, extentString);
+			mainIntent.setAction(SplashActivity.OFFLINE_INTENT_ACTION);
+		}
+	}
 
 	private class InitializerHandler extends Handler {
 
@@ -223,6 +255,7 @@ public class SplashActivity extends Activity {
 				case Initializer.INITIALIZE_FINISHED:
 					Intent mainIntent = new Intent(SplashActivity.this,
 							Map.class);
+					fillIntent(mainIntent);
 					SplashActivity.this.startActivityForResult(mainIntent, 0);
 					((ProgressBar) SplashActivity.this
 							.findViewById(R.id.ProgressBar01))
