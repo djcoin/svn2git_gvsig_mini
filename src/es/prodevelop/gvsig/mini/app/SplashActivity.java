@@ -230,13 +230,11 @@ public class SplashActivity extends Activity {
 		if (activityIntent == null) return;
 		
 		String name = activityIntent.getStringExtra(MapRenderer.NAME_STRING);
-		String URL = activityIntent.getStringExtra(MapRenderer.URL_STRING);
-		String extentString = activityIntent.getStringExtra(MapRenderer.EXTENT_STRING);
+		String URL = activityIntent.getStringExtra(MapRenderer.URL_STRING);		
 		
-		if (name != null && URL != null && extentString != null) {
+		if (name != null && URL != null) {
 			mainIntent.putExtra(MapRenderer.NAME_STRING, name);
-			mainIntent.putExtra(MapRenderer.URL_STRING, URL);
-			mainIntent.putExtra(MapRenderer.EXTENT_STRING, extentString);
+			mainIntent.putExtra(MapRenderer.URL_STRING, URL);			
 			mainIntent.setAction(SplashActivity.OFFLINE_INTENT_ACTION);
 		}
 	}

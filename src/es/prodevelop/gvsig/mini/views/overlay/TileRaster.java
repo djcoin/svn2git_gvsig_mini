@@ -284,8 +284,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 */
 	public void setMapCenter(final GPSPoint aCenter) {
 		try {
-			this.setMapCenterFromLonLat(aCenter.getLongitudeE6() / 1E6, aCenter
-					.getLatitudeE6() / 1E6);
+			this.setMapCenterFromLonLat(aCenter.getLongitudeE6() / 1E6,
+					aCenter.getLatitudeE6() / 1E6);
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setMapCenter:", e);
@@ -536,7 +536,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// Bitmap resizedBitmap = Bitmap.createBitmap(bufferBitmap, 0, 0,
 			// this.getWidth(), this.getHeight(), m, true);
 			// bufferBitmap = resizedBitmap;
-			//		  
+			//
 			// zoomed = true;
 			// mapGraphics.drawImage(zoomImage.scaled(480, 640), -120, -160);
 		} catch (Exception e) {
@@ -646,16 +646,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public boolean onTrackballEvent(MotionEvent event) {
 		try {
 			int x = (int) Math.ceil(event.getX() * 10);
-			int y = (int) Math.ceil(event.getY() * 10);			
+			int y = (int) Math.ceil(event.getY() * 10);
 			double[] coords = TileRaster.this.getMRendererInfo()
 					.fromPixels(
 							new int[] { (int) centerPixelX + x,
 									(int) centerPixelY + y });
-			System.out.println("x, y: " + coords[0] + ", " + coords[1]);			
+			System.out.println("x, y: " + coords[0] + ", " + coords[1]);
 			this.setMapCenter(coords[0], coords[1]);
-//			for (MapOverlay osmvo : this.mOverlays)
-//				if (osmvo.onTrackballEvent(event, this))
-//					return true;
+			// for (MapOverlay osmvo : this.mOverlays)
+			// if (osmvo.onTrackballEvent(event, this))
+			// return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onTrackBallEvent", e);
 		}
@@ -672,23 +672,22 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				lastTouchEventProcessed = false;
 			}
 			if (!map.navigation) {
-//				for (MapOverlay osmvo : this.mOverlays)
-//					if (osmvo.onTouchEvent(event, this))
-//						return true;
+				// for (MapOverlay osmvo : this.mOverlays)
+				// if (osmvo.onTouchEvent(event, this))
+				// return true;
 
 				this.mGestureDetector.onTouchEvent(event);
 
 				if (!multiTouchController.onTouchEvent(event)) {
-//					System.out.println("onTouchEvent acetate");
-					if (acetate.isFirstTouch()) {	
-//						System.out.println("first touch");
+					// System.out.println("onTouchEvent acetate");
+					if (acetate.isFirstTouch()) {
+						// System.out.println("first touch");
 						acetate.onTouchEvent(event);
-					}					
-					else
-						synchronized (holder) {
-							System.out.println("not first touch");
-							acetate.onTouchEvent(event);
-						}
+					} else
+						// synchronized (holder) {
+						// System.out.println("not first touch");
+						acetate.onTouchEvent(event);
+					// }
 				}
 			}
 
@@ -734,9 +733,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// System.out.println(getScrollX() +", " + getScrollY());
 			final MapRenderer renderer = this.getMRendererInfo();
 			boolean someTileNull = false;
-			
+
 			final double originX = renderer.getOriginX();
-			final double originY = renderer.getOriginY();			
+			final double originY = renderer.getOriginY();
 
 			// c.drawColor(0, PorterDuff.Mode.CLEAR);
 			if (!mScaler.isFinished()
@@ -780,8 +779,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				final double resolution = renderer.resolutions[zoomLevel];
 				final int viewWidth = this.mapWidth;
 				final int viewHeight = this.mapHeight;
-//				this.centerPixelX = this.getWidth() / 2;
-//				this.centerPixelY = this.getHeight() / 2;
+				// this.centerPixelX = this.getWidth() / 2;
+				// this.centerPixelY = this.getHeight() / 2;
 				final int tileSizePx = renderer.getMAPTILE_SIZEPX();
 
 				int[] centerMapTileCoords = renderer.getMapTileFromCenter();
@@ -847,7 +846,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				final Extent maxExtent = renderer.getExtent();
 				final Extent viewExtent = map.vp.calculateExtent(mapWidth,
 						mapHeight, renderer.getCenter());
-//				this.getMTileProvider().setViewExtent(viewExtent);
+				// this.getMTileProvider().setViewExtent(viewExtent);
 
 				final String layerName = this.getMRendererInfo().getNAME();
 
@@ -902,8 +901,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 							final int tileTop = this.mTouchMapOffsetY
 									+ centerMapTileScreenTop + (y * tileSizePx);
 
-//							final Extent ext = TileConversor.tileMeterBounds(tile[0], tile[1], resolution, -originX, -originY);
-//							System.out.println("Tile: " + tile[0] + ", " + tile[1] + "Extent: " + ext.toString());
+							// final Extent ext =
+							// TileConversor.tileMeterBounds(tile[0], tile[1],
+							// resolution, -originX, -originY);
+							// System.out.println("Tile: " + tile[0] + ", " +
+							// tile[1] + "Extent: " + ext.toString());
 							final Tile t = new Tile(tileURLString, tile,
 									new Pixel(tileLeft, tileTop), zoomLevel,
 									layerName, this.cancellable, null);
@@ -959,9 +961,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 									temp.distanceFromCenter.getY(),
 									Paints.normalPaint);
 
-							bufferCanvas.drawBitmap((Bitmap) currentMapTile
-									.getBitmap(), temp.distanceFromCenter
-									.getX(), temp.distanceFromCenter.getY(),
+							bufferCanvas.drawBitmap(
+									(Bitmap) currentMapTile.getBitmap(),
+									temp.distanceFromCenter.getX(),
+									temp.distanceFromCenter.getY(),
 									Paints.normalPaint);
 							TileRaster.lastTouchMapOffsetX = 0;
 							TileRaster.lastTouchMapOffsetY = 0;
@@ -1058,18 +1061,18 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				switch (msg.what) {
 				case Downloader.MAPTILEDOWNLOADER_SUCCESS_ID:
 					// if (!Utils.isSDMounted()) {
-//					TileRaster.this.invalidate();
-//					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
+					// TileRaster.this.invalidate();
+					// TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					// }
 					break;
-//				case Downloader.REMOVE_CACHE_URL:
-//					// if (!Utils.isSDMounted()) {
-//					TileRaster.this.getMTileProvider().getDownloader().
-//					// }
-//					break;
+				// case Downloader.REMOVE_CACHE_URL:
+				// // if (!Utils.isSDMounted()) {
+				// TileRaster.this.getMTileProvider().getDownloader().
+				// // }
+				// break;
 				case TileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
-//					TileRaster.this.invalidate();
-//					TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
+					// TileRaster.this.invalidate();
+					// TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					break;
 				case TileRaster.UPDATE_ZOOM_CONTROLS:
 					map.updateSlider();
@@ -1320,8 +1323,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			try {
 				final NamedMultiPoint nm = map.nameds;
 				if (nm != null)
-					renderer
-							.reprojectGeometryCoordinates(nm, previous.getSRS());
+					renderer.reprojectGeometryCoordinates(nm, previous.getSRS());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "reprojecting namefinder:", e);
 			}
@@ -1329,30 +1331,37 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			double[] newCenter = previous.transformCenter(renderer.getSRS());
 			boolean contains = renderer.getExtent().contains(newCenter);
 
-			double[] minXY = ConversionCoords.reproject(previousExtent
-					.getMinX(), previousExtent.getMinY(), CRSFactory
-					.getCRS(previous.getSRS()), CRSFactory.getCRS(renderer
-					.getSRS()));
-			double[] maxXY = ConversionCoords.reproject(previousExtent
-					.getMaxX(), previousExtent.getMaxY(), CRSFactory
-					.getCRS(previous.getSRS()), CRSFactory.getCRS(renderer
-					.getSRS()));
+			double[] minXY = ConversionCoords.reproject(
+					previousExtent.getMinX(), previousExtent.getMinY(),
+					CRSFactory.getCRS(previous.getSRS()),
+					CRSFactory.getCRS(renderer.getSRS()));
+			double[] maxXY = ConversionCoords.reproject(
+					previousExtent.getMaxX(), previousExtent.getMaxY(),
+					CRSFactory.getCRS(previous.getSRS()),
+					CRSFactory.getCRS(renderer.getSRS()));
 			Extent currentExtent = new Extent(minXY[0], minXY[1], maxXY[0],
 					maxXY[1]);
-			if (contains) {
-				this.setMapCenter(newCenter[0], newCenter[1]);
-				if (previous instanceof OSMMercatorRenderer
-						&& renderer instanceof OSMMercatorRenderer) {
-					setZoomLevel(previous.getZoomLevel(), false);
-				} else {
-					this.zoomToExtent(currentExtent, true);
-				}
-			} else {
+			if (renderer.isOffline()) {
 				renderer.centerOnBBox();
 				this.setMapCenter(renderer.getCenter().getX(), renderer
 						.getCenter().getY());
-				// Point p = renderer.getExtent().getCenter();
-				// this.setMapCenter(p.getX(), p.getY());
+				this.zoomToExtent(renderer.getOfflineExtent(), true);
+			} else {
+				if (contains) {
+					this.setMapCenter(newCenter[0], newCenter[1]);
+					if (previous instanceof OSMMercatorRenderer
+							&& renderer instanceof OSMMercatorRenderer) {
+						setZoomLevel(previous.getZoomLevel(), false);
+					} else {
+						this.zoomToExtent(currentExtent, true);
+					}
+				} else {
+					renderer.centerOnBBox();
+					this.setMapCenter(renderer.getCenter().getX(), renderer
+							.getCenter().getY());
+					// Point p = renderer.getExtent().getCenter();
+					// this.setMapCenter(p.getX(), p.getY());
+				}
 			}
 
 			// this.setZoomLevel(previous.getZoomLevel());
@@ -1364,14 +1373,14 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			//
 			// Point leftBottom = previousExtent.getLefBottomCoordinate();
 			// Point rigthTop = previousExtent.getRightTopCoordinate();
-			//	
+			//
 			// double[] leftB = ConversionCoords.reproject(leftBottom.getX(),
 			// leftBottom.getY(), CRSFactory.getCRS(previous.getSRS()),
 			// CRSFactory.getCRS(renderer.getSRS()));
 			// double[] rightT = ConversionCoords.reproject(rigthTop.getX(),
 			// rigthTop.getY(), CRSFactory.getCRS(previous.getSRS()),
 			// CRSFactory.getCRS(renderer.getSRS()));
-			//				
+			//
 			// Extent currentExtent = new Extent(leftB[0], leftB[1], rightT[0],
 			// rightT[1]);
 			// int zoom = this.findZoomFitExtent(currentExtent);
@@ -1395,8 +1404,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		try {
 			final MapRenderer renderer = this.mRendererInfo;
 			res = ConversionCoords.reproject(renderer.getCenter().getX(),
-					renderer.getCenter().getY(), CRSFactory.getCRS(renderer
-							.getSRS()), CRSFactory.getCRS("EPSG:4326"));
+					renderer.getCenter().getY(),
+					CRSFactory.getCRS(renderer.getSRS()),
+					CRSFactory.getCRS("EPSG:4326"));
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "getCenterLonLat:", e);
 		}
@@ -1416,9 +1426,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		try {
 			if (lon == 0.0 && lat == 0.0)
 				return;
-			double[] coords = ConversionCoords.reproject(lon, lat, CRSFactory
-					.getCRS("EPSG:4326"), CRSFactory.getCRS(this.mRendererInfo
-					.getSRS()));
+			double[] coords = ConversionCoords.reproject(lon, lat,
+					CRSFactory.getCRS("EPSG:4326"),
+					CRSFactory.getCRS(this.mRendererInfo.getSRS()));
 			this.setMapCenter(coords[0], coords[1]);
 
 		} catch (Exception e) {
@@ -1451,8 +1461,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 *            If true then the Scaler is not applied when zooming
 	 */
 	public void zoomToExtent(final Extent extent, boolean layerChanged) {
-		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged, this
-				.getZoomLevel());
+		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged,
+				this.getZoomLevel());
 	}
 
 	/**
@@ -1619,12 +1629,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			final boolean zoomChanged) {
 		// this.stopAnimation(false);
 		// log.log(Level.FINE, "animate TO");
-//		 final Scroller aScroller = getScroller();
-//		 int xy[] = this.getMRendererInfo().toPixels(new double[] { x, y });
-//		 startScrolling();
-//		 aScroller.startScroll(getScrollX(), getScrollY(),
-//		 (int) (xy[0] - this.centerPixelX),
-//		 (int) (xy[1] - this.centerPixelY), 1000);
+		// final Scroller aScroller = getScroller();
+		// int xy[] = this.getMRendererInfo().toPixels(new double[] { x, y });
+		// startScrolling();
+		// aScroller.startScroll(getScrollX(), getScrollY(),
+		// (int) (xy[0] - this.centerPixelX),
+		// (int) (xy[1] - this.centerPixelY), 1000);
 		mCurrentAnimationRunner = new LinearAnimationRunner(x, y, true,
 				zoomChanged);
 		WorkQueue.getExclusiveInstance().execute(mCurrentAnimationRunner);
@@ -1796,8 +1806,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					center);
 			double[] minXY = new double[] { extent.getMinX(), extent.getMinY() };
 			double[] maxXY = new double[] { extent.getMaxX(), extent.getMaxY() };
-			int[] leftBottom = map.vp.fromMapPoint(minXY, currentExtent
-					.getMinX(), currentExtent.getMaxY());
+			int[] leftBottom = map.vp.fromMapPoint(minXY,
+					currentExtent.getMinX(), currentExtent.getMaxY());
 			int[] rightTop = map.vp.fromMapPoint(maxXY,
 					currentExtent.getMinX(), currentExtent.getMaxY());
 			Rect r = new Rect();
@@ -2063,7 +2073,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		}
 	}
 
-	//--------------------------------------------------------------------------
+	// --------------------------------------------------------------------------
 	// -----------------
 
 	@Override
@@ -2253,7 +2263,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		if ((oldl == 0 && oldt == 0) || !isScrolling)
 			return;
 		resetTouchOffset();
-//		System.out.println(l + ", " + t + ", " + oldl + ", " + oldt);
+		// System.out.println(l + ", " + t + ", " + oldl + ", " + oldt);
 		int px = l - oldl;
 		int py = t - oldt;
 
@@ -2264,8 +2274,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		// System.out.println("npx, npy: " + newCenterPx + ", " + newCenterPy);
 
 		double[] newCenter = ViewPort.toMapPoint(new int[] { newCenterPx,
-				newCenterPy }, mapWidth, mapHeight, scrollingCenter, this
-				.getMRendererInfo().resolutions[this.getZoomLevel()]);
+				newCenterPy }, mapWidth, mapHeight, scrollingCenter,
+				this.getMRendererInfo().resolutions[this.getZoomLevel()]);
 
 		synchronized (holder) {
 			scrollingCenter.setCoordinates(newCenter);
@@ -2369,10 +2379,10 @@ class TileRasterThread extends Thread {
 			c = null;
 			try {
 				c = surfaceHolder.lockCanvas();
-				synchronized (surfaceHolder) {
-					this.view.onDraw(c);
-					this.view.scaleCanvasForZoom();
-				}
+				// synchronized (surfaceHolder) {
+				this.view.onDraw(c);
+				this.view.scaleCanvasForZoom();
+				// }
 			} finally {
 				if (c != null) {
 					surfaceHolder.unlockCanvasAndPost(c);
