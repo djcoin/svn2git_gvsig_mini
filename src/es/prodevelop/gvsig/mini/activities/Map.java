@@ -68,9 +68,9 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -100,14 +100,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
@@ -3278,25 +3278,31 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									.getText(R.string.download_tiles_09)
 									+ " "
 									+ downloadedMB + " MB");
+					
+					String elapsed = es.prodevelop.gvsig.mini.utiles.Utilities.getTimeHoursMinutesSecondsString(time);
 
 					((TextView) Map.this.downloadTilesLayout
 							.findViewById(R.id.download_time_text))
 							.setText(Map.this
 									.getText(R.string.download_tiles_10)
 									+ " "
-									+ time + " s");
+									+ elapsed);
+					
 
 					if (totalDownloaded == 0)
 						totalDownloaded = 1;
 
 					int estimated = (int) (total * time / totalDownloaded)
 							- time;
+					
+
+					String estimatedTime = es.prodevelop.gvsig.mini.utiles.Utilities.getTimeHoursMinutesSecondsString(estimated);
 					((TextView) Map.this.downloadTilesLayout
 							.findViewById(R.id.download_time_estimated_text))
 							.setText(Map.this
 									.getText(R.string.download_tiles_11)
 									+ " "
-									+ estimated + " s");
+									+ estimatedTime);
 				}
 			});
 		} catch (Exception e) {
