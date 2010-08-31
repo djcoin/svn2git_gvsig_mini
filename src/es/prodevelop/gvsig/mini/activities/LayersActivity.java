@@ -127,25 +127,27 @@ public class LayersActivity extends ExpandableListActivity {
 		try {
 			super.onCreate(savedInstanceState);
 			try {
-				CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+				CompatManager.getInstance().getRegisteredLogHandler()
+						.configureLogger(log);
 			} catch (BaseException e) {
-				
+
 			}
-			
+
 			setTitle(R.string.LayersActivity_0);
 			handler = new WMSHandler(this);
 			String layersData = this.getIntent().getDataString();
 			Intent i = getIntent();
 			if (layersData != null) {
 				i.putExtra(FROM_FILE_EXPLORER, true);
-				log.log(Level.FINE, "Layers activity from file explorer: " + layersData);
+				log.log(Level.FINE, "Layers activity from file explorer: "
+						+ layersData);
 			}
 			onNewIntent(i);
 
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"onCreate: ", e);
+			log.log(Level.SEVERE, "onCreate: ", e);
 			LogFeedbackActivity.showSendLogDialog(this);
-//			Utils.showSendLogDialog(this, R.string.fatal_error);
+			// Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
 
@@ -166,8 +168,8 @@ public class LayersActivity extends ExpandableListActivity {
 					bf = new BufferedReader(isr);
 					Layers.getInstance().clearProperties();
 					Layers.getInstance().parseLayersFile(bf);
-					String layerFile = layersData.substring(layersData
-							.lastIndexOf("/"), layersData.length());
+					String layerFile = layersData.substring(
+							layersData.lastIndexOf("/"), layersData.length());
 					log.log(Level.FINE, "layerFile: " + layerFile);
 					Layers.getInstance().persist(layerFile);
 					String SDDIR = Environment.getExternalStorageDirectory()
@@ -182,9 +184,8 @@ public class LayersActivity extends ExpandableListActivity {
 						text = this.getResources().getString(
 								R.string.download_tiles_03);
 					}
-					Toast
-							.makeText(LayersActivity.this, text,
-									Toast.LENGTH_LONG).show();
+					Toast.makeText(LayersActivity.this, text, Toast.LENGTH_LONG)
+							.show();
 				}
 			} else {
 				log.log(Level.FINE, "layersData is null");
@@ -194,7 +195,7 @@ public class LayersActivity extends ExpandableListActivity {
 					gvTiles = filePath;
 					log.log(Level.FINE, "loading filePath: " + filePath);
 				} catch (Exception e) {
-					log.log(Level.SEVERE,"",e);
+					log.log(Level.SEVERE, "", e);
 				}
 
 				Layers.getInstance().loadProperties(filePath);
@@ -206,7 +207,7 @@ public class LayersActivity extends ExpandableListActivity {
 			this.loadLayersList(layers);
 			// }
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"onNewIntent: ", e);
+			log.log(Level.SEVERE, "onNewIntent: ", e);
 			LogFeedbackActivity.showSendLogDialog(this);
 		} finally {
 			Utils.closeStream(is);
@@ -263,7 +264,8 @@ public class LayersActivity extends ExpandableListActivity {
 								this);
 						builder.setTitle(LayersActivity.this.getResources()
 								.getString(R.string.LayersActivity_3)
-								+ " (" + path + ")");
+								+ " ("
+								+ path + ")");
 						builder.setItems(files,
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
@@ -271,8 +273,9 @@ public class LayersActivity extends ExpandableListActivity {
 										try {
 											server = path + File.separator
 													+ files[item];
-											log.log(Level.FINE, "selected layer file: "
-													+ server);
+											log.log(Level.FINE,
+													"selected layer file: "
+															+ server);
 											gvTiles = server;
 											Layers.getInstance()
 													.loadProperties(server);
@@ -280,8 +283,9 @@ public class LayersActivity extends ExpandableListActivity {
 													.loadLayersList(Layers
 															.getInstance()
 															.getLayersForView());
-											log.log(Level.FINE, "layer file loaded: "
-													+ server);
+											log.log(Level.FINE,
+													"layer file loaded: "
+															+ server);
 											Toast t = Toast.makeText(
 													LayersActivity.this,
 													R.string.LayersActivity_4,
@@ -333,13 +337,13 @@ public class LayersActivity extends ExpandableListActivity {
 						// int whichButton) {
 						// }
 						// });
-						//					
+						//
 						alert.show();
 					}
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"onMenuItemSelected: ", e);
+			log.log(Level.SEVERE, "onMenuItemSelected: ", e);
 		}
 	}
 
@@ -385,12 +389,13 @@ public class LayersActivity extends ExpandableListActivity {
 							try {
 								Editable value = input.getText();
 								server = value.toString();
-								log.log(Level.FINE, "Get capabilities dialog ok: "
-										+ server);
+								log.log(Level.FINE,
+										"Get capabilities dialog ok: " + server);
 								LayersActivity.this.callGetCapabilities(value
 										.toString());
 							} catch (Exception e) {
-								log.log(Level.SEVERE,"onClick positiveButton: ", e);
+								log.log(Level.SEVERE,
+										"onClick positiveButton: ", e);
 							}
 						}
 					});
@@ -399,13 +404,14 @@ public class LayersActivity extends ExpandableListActivity {
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-							log.log(Level.FINE, "Get capabilities dialog canceled");
+							log.log(Level.FINE,
+									"Get capabilities dialog canceled");
 						}
 					});
 
 			alert.show();
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"onMenuItemSelected: ", e);
+			log.log(Level.SEVERE, "onMenuItemSelected: ", e);
 		}
 	}
 
@@ -415,24 +421,34 @@ public class LayersActivity extends ExpandableListActivity {
 			List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 			List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 			final int size = layers.size();
-			
-			for (int i = 0; i < 2; i++) {
+
+			for (int i = 0; i < 3; i++) {
 				Map<String, String> curGroupMap = new HashMap<String, String>();
 				groupData.add(curGroupMap);
 				Vector layersList = (Vector) layers.get(new Integer(i));
 				String text = null;
-				if (i == 0) {					
+				switch (i) {
+				case 0:
 					text = this.getResources().getString(
 							R.string.LayersActivity_8);
-					curGroupMap.put(LAYER, text);
-				} else {
+
+					break;
+				case 1:
 					text = this.getResources().getString(
 							R.string.LayersActivity_9);
-					curGroupMap.put(LAYER, text);
+
+					break;
+				case 2:
+					text = this.getResources().getString(
+							R.string.LayersActivity_15);
+
+					break;
 				}
+				curGroupMap.put(LAYER, text);
+
 				// switch (i) {
 				// case MapRenderer.OSM_RENDERER:
-				//					
+				//
 				// break;
 				// case MapRenderer.OSMPARMS_RENDERER:
 				// text = "Tile map service";
@@ -476,70 +492,47 @@ public class LayersActivity extends ExpandableListActivity {
 						;
 						children.add(curChildMap);
 
-						// curChildMap.put(LAYER, "Child " + j);
-						String layerName = layersList.elementAt(j)
-						.toString();
-						if (!layerName.contains("@"))
-							curChildMap.put(LAYER, layersList.elementAt(j)
-									.toString());
+						
+						curChildMap.put(LAYER, layersList.elementAt(j)
+								.toString());
 					}
 				}
 				childData.add(children);
 
-				if (i == 1) {
+				if (i == 2) {
 					Map<String, String> curGroupMap1 = new HashMap<String, String>();
 					groupData.add(curGroupMap1);
-					curGroupMap1.put(LAYER, this.getResources().getString(
-							R.string.LayersActivity_10));
+					curGroupMap1.put(
+							LAYER,
+							this.getResources().getString(
+									R.string.LayersActivity_10));
 
 					List<Map<String, String>> children1 = new ArrayList<Map<String, String>>();
 
 					Map<String, String> curChildMap = new HashMap<String, String>();
-					curChildMap.put(LAYER, this.getResources().getString(
-							R.string.LayersActivity_11));
-					curChildMap.put(CHILD, this.getResources().getString(
-							R.string.LayersActivity_12));
+					curChildMap.put(
+							LAYER,
+							this.getResources().getString(
+									R.string.LayersActivity_11));
+					curChildMap.put(
+							CHILD,
+							this.getResources().getString(
+									R.string.LayersActivity_12));
 					children1.add(curChildMap);
 
 					Map<String, String> curChildMap1 = new HashMap<String, String>();
-					curChildMap1.put(LAYER, this.getResources().getString(
-							R.string.LayersActivity_13));
-					curChildMap1.put(CHILD, this.getResources().getString(
-							R.string.LayersActivity_14));
+					curChildMap1.put(
+							LAYER,
+							this.getResources().getString(
+									R.string.LayersActivity_13));
+					curChildMap1.put(
+							CHILD,
+							this.getResources().getString(
+									R.string.LayersActivity_14));
 					children1.add(curChildMap1);
 					childData.add(children1);
 				}
 			}
-			
-			//load the offline layers
-			Map<String, String> curGroupMap = new HashMap<String, String>();
-			groupData.add(curGroupMap);
-			Vector layersList = (Vector) layers.get(new Integer(0));
-			
-			String text = this.getResources().getString(
-					R.string.LayersActivity_15);
-			curGroupMap.put(LAYER, text);
-			
-			List<Map<String, String>> children = new ArrayList<Map<String, String>>();
-			if (layersList == null) {
-				// if (text != null)
-				// groupData.remove(curGroupMap);
-			} else {
-				final int length = layersList.size();
-
-				for (int j = 0; j < length; j++) {
-					Map<String, String> curChildMap = new HashMap<String, String>();
-					;
-					children.add(curChildMap);
-
-					String layerName = layersList.elementAt(j)
-					.toString();
-					if (!layerName.contains("@"))
-						curChildMap.put(LAYER, layersList.elementAt(j)
-								.toString());
-				}
-			}
-			childData.add(children);
 
 			// Set up our adapter
 			mAdapter = new SimpleExpandableListAdapter(this, groupData,
@@ -551,7 +544,7 @@ public class LayersActivity extends ExpandableListActivity {
 							android.R.id.text1, android.R.id.text2 });
 			setListAdapter(mAdapter);
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"loadLayersList: ", e);
+			log.log(Level.SEVERE, "loadLayersList: ", e);
 		}
 	}
 
@@ -587,7 +580,7 @@ public class LayersActivity extends ExpandableListActivity {
 							android.R.id.text1, android.R.id.text2 });
 			setListAdapter(mAdapter);
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"loadSampleList: ", e);
+			log.log(Level.SEVERE, "loadSampleList: ", e);
 		}
 	}
 
@@ -600,7 +593,7 @@ public class LayersActivity extends ExpandableListActivity {
 			result = super.onChildClick(parent, v, groupPosition,
 					childPosition, id);
 			log.log(Level.FINE, "onChildClick");
-			if (groupPosition == 2) {
+			if (groupPosition == 3) {
 				if (childPosition == 0)
 					this.showGetCapabilitiesAlert();
 				else if (childPosition == 1)
@@ -616,21 +609,22 @@ public class LayersActivity extends ExpandableListActivity {
 								es.prodevelop.gvsig.mini.activities.Map.class);
 						i.putExtra("layer", s);
 						i.putExtra(GVTILES, gvTiles);
-						log.log(Level.FINE, "Start activity Map from LayersActivity, layer: "
+						log.log(Level.FINE,
+								"Start activity Map from LayersActivity, layer: "
 										+ s);
 						startActivity(i);
 					} else {
 						i.putExtra("layer", s);
 						i.putExtra(GVTILES, gvTiles);
-						log.log(Level.FINE, "Back to Map from LayersActivity, layer: "
-								+ s);
+						log.log(Level.FINE,
+								"Back to Map from LayersActivity, layer: " + s);
 						setResult(RESULT_OK, i);
 					}
 					this.finish();
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"onChildClick: ", e);
+			log.log(Level.SEVERE, "onChildClick: ", e);
 		}
 
 		return result;
@@ -657,12 +651,12 @@ public class LayersActivity extends ExpandableListActivity {
 						dialog2.dismiss();
 						log.log(Level.FINE, "Get capabilities task canceled");
 					} catch (Exception e) {
-						log.log(Level.SEVERE,"onCancel progressdialog: ", e);
+						log.log(Level.SEVERE, "onCancel progressdialog: ", e);
 					}
 				}
 			});
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"callGetCapabilities: ", e);
+			log.log(Level.SEVERE, "callGetCapabilities: ", e);
 		}
 	}
 
@@ -706,8 +700,8 @@ public class LayersActivity extends ExpandableListActivity {
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"LayersActivity onActivityResult: ", e);
-//			Utils.showSendLogDialog(this, R.string.fatal_error);
+			log.log(Level.SEVERE, "LayersActivity onActivityResult: ", e);
+			// Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
 	}
 
@@ -745,11 +739,11 @@ public class LayersActivity extends ExpandableListActivity {
 						w = FMapWMSDriverFactory.getFMapDriverForURL(
 								new URL(server)).getLayersTree();
 					} catch (ConnectException e) {
-						log.log(Level.SEVERE,"ConnectException: ", e);
+						log.log(Level.SEVERE, "ConnectException: ", e);
 					} catch (MalformedURLException e) {
-						log.log(Level.SEVERE,"MalformedURLException ", e);
+						log.log(Level.SEVERE, "MalformedURLException ", e);
 					} catch (IOException e) {
-						log.log(Level.SEVERE,"IOException ", e);
+						log.log(Level.SEVERE, "IOException ", e);
 					}
 
 					Intent intent = new Intent(context, WMSLayersActivity.class);
@@ -789,7 +783,7 @@ public class LayersActivity extends ExpandableListActivity {
 
 				dialog2.dismiss();
 			} catch (Exception e) {
-				log.log(Level.SEVERE,"LayersActivity handleMessage: ", e);
+				log.log(Level.SEVERE, "LayersActivity handleMessage: ", e);
 			} finally {
 			}
 		}

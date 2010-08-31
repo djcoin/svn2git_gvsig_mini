@@ -3123,7 +3123,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							.getMapRenderer(layerName,
 									urlString.split(","));
 					if(renderer.isOffline())
-						renderer.setNAME(renderer.getNAME()+"@"+renderer.getOfflineLayerName());
+						renderer.setNAME(renderer.getNAME()+">"+renderer.getOfflineLayerName());
 					Layers.getInstance().addLayer(renderer.toString());
 					Layers.getInstance().persist();
 					osmap.onLayerChanged(renderer.getNAME());

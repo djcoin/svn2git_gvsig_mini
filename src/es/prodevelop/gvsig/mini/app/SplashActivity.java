@@ -57,6 +57,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -102,6 +103,7 @@ public class SplashActivity extends Activity {
 					@Override
 					public void run() {
 						try {
+							
 							Intent mainIntent = new Intent(SplashActivity.this,
 									Map.class);
 							Initializer.getInstance().initialize(
@@ -118,6 +120,7 @@ public class SplashActivity extends Activity {
 			} else {
 				new Thread(new Runnable() {
 					public void run() {
+						Looper.prepare();
 						Initializer.getInstance()
 								.addInitializeListener(handler);
 						try {
