@@ -80,6 +80,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
+import android.widget.Toast;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
@@ -1342,10 +1343,19 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			Extent currentExtent = new Extent(minXY[0], minXY[1], maxXY[0],
 					maxXY[1]);
 			if (renderer.isOffline()) {
+
 				renderer.centerOnBBox();
 				this.setMapCenter(renderer.getCenter().getX(), renderer
 						.getCenter().getY());
 				this.zoomToExtent(renderer.getOfflineExtent(), true);
+				Settings.getInstance().updateBooleanSharedPreference(
+						map.getText(R.string.settings_key_offline_maps)
+								.toString(), new Boolean(true), map);
+				Toast.makeText(
+						map,
+						String.format(map.getText(R.string.load_offline)
+								.toString(), renderer.getOfflineLayerName()),
+						Toast.LENGTH_LONG).show();
 			} else {
 				if (contains) {
 					this.setMapCenter(newCenter[0], newCenter[1]);

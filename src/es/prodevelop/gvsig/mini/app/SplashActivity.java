@@ -68,6 +68,7 @@ import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
@@ -94,6 +95,8 @@ public class SplashActivity extends Activity {
 			setContentView(R.layout.main);
 			((ProgressBar) SplashActivity.this.findViewById(R.id.ProgressBar01))
 					.setVisibility(View.INVISIBLE);
+			Settings.getInstance().initializeFromSharedPreferences(
+					getApplicationContext());
 			if (Initializer.isInitialized) {
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -229,11 +232,9 @@ public class SplashActivity extends Activity {
 		Intent activityIntent = this.getIntent();
 		if (activityIntent == null) return;
 		
-		String name = activityIntent.getStringExtra(MapRenderer.NAME_STRING);
 		String URL = activityIntent.getStringExtra(MapRenderer.URL_STRING);		
 		
-		if (name != null && URL != null) {
-			mainIntent.putExtra(MapRenderer.NAME_STRING, name);
+		if (URL != null) {			
 			mainIntent.putExtra(MapRenderer.URL_STRING, URL);			
 			mainIntent.setAction(SplashActivity.OFFLINE_INTENT_ACTION);
 		}

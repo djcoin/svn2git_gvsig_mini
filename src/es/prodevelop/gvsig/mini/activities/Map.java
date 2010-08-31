@@ -798,14 +798,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// log.log(Level.SEVERE,"switchPanMode: ", e);
 				// }
 				break;
-			case 5:
+			case 6:
 				try {
 					showDownloadDialog();
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
 				break;
-			case 6:
+			case 5:
 				try {
 					recenterOnGPS = !recenterOnGPS;
 
@@ -3113,18 +3113,20 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				setIntent(i);
 				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
 					String completeURLString = i
-							.getStringExtra(MapRenderer.URL_STRING);
-					String layerName = i.getStringExtra(MapRenderer.NAME_STRING); 
+							.getStringExtra(MapRenderer.URL_STRING);					 
 					completeURLString = completeURLString.replaceAll("&gt;", ">");
 					String urlString = completeURLString.split(";")[1];
+					String layerName = completeURLString.split(";")[0];					 
 					MapRenderer renderer = MapRendererManager
 							.getInstance()
 							.getMapRendererFactory()
 							.getMapRenderer(layerName,
 									urlString.split(","));
+					if(renderer.isOffline())
+						renderer.setNAME(renderer.getNAME()+"@"+renderer.getOfflineLayerName());
 					Layers.getInstance().addLayer(renderer.toString());
 					Layers.getInstance().persist();
-					osmap.onLayerChanged(layerName);
+					osmap.onLayerChanged(renderer.getNAME());
 				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					String query = i.getStringExtra(SearchManager.QUERY);
 					// Execute the search (common with POI and address as of

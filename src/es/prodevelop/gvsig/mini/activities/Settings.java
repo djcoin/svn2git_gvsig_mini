@@ -6,7 +6,9 @@ import java.util.Iterator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import es.prodevelop.gvsig.mini.R;
 
 public class Settings {
@@ -16,7 +18,7 @@ public class Settings {
 	private HashMap<String, Object> properties = new HashMap<String, Object>();
 
 	private ArrayList<OnSettingsChangedListener> observers = new ArrayList<OnSettingsChangedListener>();
-	
+
 	ArrayList<String> keysChanged = new ArrayList<String>();
 
 	public static Settings getInstance() {
@@ -30,16 +32,16 @@ public class Settings {
 		if (!keysChanged.contains(key))
 			keysChanged.add(key);
 	}
-	
+
 	public void notifyObserversWithChanges() {
 		try {
-			for (String key: keysChanged) {
+			for (String key : keysChanged) {
 				for (OnSettingsChangedListener o : observers) {
 					o.onSettingChange(key, properties.get(key));
 				}
 			}
 		} catch (Exception e) {
-			
+
 		} finally {
 			keysChanged.clear();
 		}
@@ -75,9 +77,10 @@ public class Settings {
 	}
 
 	public void initializeFromSharedPreferences(Context context) {
-		PreferenceManager.setDefaultValues(context, R.xml.settings, false);		
-		
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(context);
 
 		HashMap<String, ?> map = (HashMap<String, ?>) preferences.getAll();
 		Iterator<String> keys = map.keySet().iterator();
@@ -94,4 +97,19 @@ public class Settings {
 			this.observers.add(listener);
 	}
 
+	public void updateBooleanSharedPreference(String key, Boolean value,
+			Context context) {
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+
+			if (preferences.contains(key)) {
+				Editor edit = preferences.edit();
+				edit.putBoolean(key, value);
+				edit.commit();
+			}
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
+	}
 }

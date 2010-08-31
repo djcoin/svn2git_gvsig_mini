@@ -40,6 +40,7 @@
 	<string name="LayersActivity_12">Pedir GetCapabilities...</string>
 	<string name="LayersActivity_13">Desde fichero de capas</string>
 	<string name="LayersActivity_14">Cargar fichero desde tarjeta SD...</string>
+	<string name="LayersActivity_15">Mis capas</string>
 
 	<string name="Map_0">Error al crear el mapa</string>
 	<string name="Map_1">No se han encontrado resultados</string>
@@ -186,4 +187,7 @@
 <string name="settings_downloaded_data">Datos descargados</string>
 
 <string name="relaunch">Toca la pantalla para mostrar el mapa o pulsa la tecla atrás para salir de gvSIG Mini</string>
+
+<string name="load_offline">Capa (%s) cargada en modo offline</string>
+
 </resources>

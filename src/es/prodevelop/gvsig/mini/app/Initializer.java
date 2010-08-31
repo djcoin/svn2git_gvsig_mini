@@ -102,8 +102,7 @@ public class Initializer {
 		CompatManager.getInstance().getRegisteredLogHandler().configureLog();
 //		handler.sendEmptyMessage(3);
 		
-		Settings.getInstance().initializeFromSharedPreferences(
-				applicationContext);
+		
 //		handler.sendEmptyMessage(4);
 
 		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(

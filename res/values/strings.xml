@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.0.0 beta BN 409</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.0.0 beta BN 410</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -53,6 +53,7 @@
 	<string name="LayersActivity_12">Requests GetCapabilities...</string>
 	<string name="LayersActivity_13">From layers file</string>
 	<string name="LayersActivity_14">Load a file from SD card...</string>
+	<string name="LayersActivity_15">My layers</string>
 
 	<string name="Map_0">Error while creating map</string>
 	<string name="Map_1">No results were found</string>
@@ -209,4 +210,7 @@
     
     <string name="relaunch">Tap the screen to show the map view or press the back key to exit gvSIG Mini</string>
     
+    <string name="load_offline">Loaded (%s) in offline mode</string>
+    
 </resources>
+

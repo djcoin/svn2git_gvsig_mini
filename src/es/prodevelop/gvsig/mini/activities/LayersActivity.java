@@ -415,6 +415,7 @@ public class LayersActivity extends ExpandableListActivity {
 			List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 			List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 			final int size = layers.size();
+			
 			for (int i = 0; i < 2; i++) {
 				Map<String, String> curGroupMap = new HashMap<String, String>();
 				groupData.add(curGroupMap);
@@ -476,8 +477,11 @@ public class LayersActivity extends ExpandableListActivity {
 						children.add(curChildMap);
 
 						// curChildMap.put(LAYER, "Child " + j);
-						curChildMap.put(LAYER, layersList.elementAt(j)
-								.toString());
+						String layerName = layersList.elementAt(j)
+						.toString();
+						if (!layerName.contains("@"))
+							curChildMap.put(LAYER, layersList.elementAt(j)
+									.toString());
 					}
 				}
 				childData.add(children);
@@ -506,6 +510,36 @@ public class LayersActivity extends ExpandableListActivity {
 					childData.add(children1);
 				}
 			}
+			
+			//load the offline layers
+			Map<String, String> curGroupMap = new HashMap<String, String>();
+			groupData.add(curGroupMap);
+			Vector layersList = (Vector) layers.get(new Integer(0));
+			
+			String text = this.getResources().getString(
+					R.string.LayersActivity_15);
+			curGroupMap.put(LAYER, text);
+			
+			List<Map<String, String>> children = new ArrayList<Map<String, String>>();
+			if (layersList == null) {
+				// if (text != null)
+				// groupData.remove(curGroupMap);
+			} else {
+				final int length = layersList.size();
+
+				for (int j = 0; j < length; j++) {
+					Map<String, String> curChildMap = new HashMap<String, String>();
+					;
+					children.add(curChildMap);
+
+					String layerName = layersList.elementAt(j)
+					.toString();
+					if (!layerName.contains("@"))
+						curChildMap.put(LAYER, layersList.elementAt(j)
+								.toString());
+				}
+			}
+			childData.add(children);
 
 			// Set up our adapter
 			mAdapter = new SimpleExpandableListAdapter(this, groupData,
