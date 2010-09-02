@@ -126,7 +126,7 @@ public class Settings {
 				edit.putString(key, value);
 				edit.commit();
 				
-				putValue(key, value);
+				
 //			}
 		} catch (Exception e) {
 			Log.e("", e.getMessage());

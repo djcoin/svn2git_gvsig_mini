@@ -702,8 +702,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);
 			myNavigator = pMenu.add(0, 5, 5, R.string.Map_Navigator)
 					.setIcon(R.drawable.menu_navigation).setEnabled(connection);
-			myDownloadLayers = pMenu.add(0, 6, 6, R.string.download_tiles_01)
-					.setIcon(R.drawable.menu_download);
+//			myDownloadLayers = pMenu.add(0, 6, 6, R.string.download_tiles_01)
+//					.setIcon(R.drawable.menu_download);
 			// myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
 			// R.drawable.menu_location).setCheckable(true).setChecked(
 			// true);
@@ -804,11 +804,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// }
 				break;
 			case 6:
-				try {
-					showDownloadDialog();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
+//				try {
+//					showDownloadDialog();
+//				} catch (Exception e) {
+//					log.log(Level.SEVERE, "OpenWebsite: ", e);
+//				}
 				break;
 			case 5:
 				try {
@@ -3144,7 +3144,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					String query = i.getStringExtra(SearchManager.QUERY);
 					// Execute the search (common with POI and address as of
 					// 0.3.0 version)
-					searchInNameFinder(query, false);
+					searchInNameFinder(query, true);
 				} else {
 					String mapLayer = i.getStringExtra("layer");
 					log.log(Level.FINE, "previous layer: " + mapLayer);

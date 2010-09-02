@@ -181,6 +181,7 @@
 <string name="settings_mode_offline_on">Obtener mapas sólo desde la tarjeta SD</string>
 <string name="settings_connected">No almacenar datos</string>
 <string name="settings_OS">Ajustes API OpenSpace</string>
+<string name="settings_OS_get_key">Conseguir OS API key</string>
 <string name="settings_gps">GPS</string>
 <string name="settings_switch_orientation">Activar/desactivar orientación</string>
 <string name="settings_orientation_enabled">Orientación activada</string>

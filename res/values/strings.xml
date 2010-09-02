@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.0.0 beta BN 410</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.0.0 beta BN 411</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -184,6 +184,7 @@
     <string name="settings_clear_suggestions">Clear suggestions</string>
     <string name="settings_clear_suggestions_summary">Erase search history</string>
     <string name="settings_OS">OpenSpace API settings</string>
+    <string name="settings_OS_get_key">Register for an OS API key</string>
     <string name="settings_OS_enable">Custom OS API settings</string>
     <string name="settings_OS_key">OS API custom key</string>
     <string name="settings_OS_url">OS API custom URL</string>

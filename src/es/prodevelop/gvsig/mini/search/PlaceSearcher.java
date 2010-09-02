@@ -77,7 +77,7 @@ public class PlaceSearcher {
 	 */
 	public PlaceSearcher(Map map, String query){
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+//			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			this.map = map;			 
 			//First save the query for the recent suggestion provider
 			saveQuery(query);

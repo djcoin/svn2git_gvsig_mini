@@ -681,11 +681,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				if (!multiTouchController.onTouchEvent(event)) {
 					// System.out.println("onTouchEvent acetate");
-					if (acetate.isFirstTouch()) {
+//					if (acetate.isFirstTouch()) {
 						// System.out.println("first touch");
-						acetate.onTouchEvent(event);
-					} else
-						// synchronized (holder) {
+//						acetate.onTouchEvent(event);
+//					} else
+//						 synchronized (holder) {
 						// System.out.println("not first touch");
 						acetate.onTouchEvent(event);
 					// }
