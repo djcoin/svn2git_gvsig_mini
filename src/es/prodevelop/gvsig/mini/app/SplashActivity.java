@@ -65,11 +65,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.Settings;
+import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
@@ -87,23 +87,42 @@ public class SplashActivity extends Activity {
 	private Handler handler = new InitializerHandler();
 	private boolean singleTaskActivityResulted = false;
 	public final static String OFFLINE_INTENT_ACTION = "es.prodevelop.action.OFFLINEMAP";
+	private boolean intentProcessed = false;
 
-	/** Splash Screen gvSIG. */ 
+	/** Splash Screen gvSIG. */
 	@Override
 	public void onCreate(Bundle icicle) {
 		try {
+			Log.d("Splash", "onCreate");
 			super.onCreate(icicle);
 			setContentView(R.layout.main);
 			((ProgressBar) SplashActivity.this.findViewById(R.id.ProgressBar01))
 					.setVisibility(View.INVISIBLE);
 			Settings.getInstance().initializeFromSharedPreferences(
 					getApplicationContext());
+			onNewIntent(getIntent());
+		} catch (Exception e) {
+			Log.d("Splash", e.getMessage());
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		try {
+			Log.d("Splash", "onNewIntent");
+			super.onNewIntent(intent);
+			if (intent != null
+					&& intent.getAction().compareTo(OFFLINE_INTENT_ACTION) == 0) {
+				Log.d("", "OFFLINE_INTENT_ACTION");
+				this.setIntent(intent);				
+			}
+
 			if (Initializer.isInitialized) {
 				new Handler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							
+
 							Intent mainIntent = new Intent(SplashActivity.this,
 									Map.class);
 							Initializer.getInstance().initialize(
@@ -135,21 +154,8 @@ public class SplashActivity extends Activity {
 				}).start();
 			}
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, "", e);
+			Log.d("Splash", e.getMessage());
 		}
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		super.onNewIntent(intent);
-		if (intent.getAction().compareTo(OFFLINE_INTENT_ACTION) == 0) {
-			this.setIntent(intent);
-			Bundle b = new Bundle();
-			b.putString(OFFLINE_INTENT_ACTION, "");
-			this.onCreate(b);
-		}
-		
 	}
 
 	public void onPause() {
@@ -230,15 +236,16 @@ public class SplashActivity extends Activity {
 			return true;
 		}
 	}
-	
+
 	private void fillIntent(Intent mainIntent) {
 		Intent activityIntent = this.getIntent();
-		if (activityIntent == null) return;
-		
-		String URL = activityIntent.getStringExtra(MapRenderer.URL_STRING);		
-		
-		if (URL != null) {			
-			mainIntent.putExtra(MapRenderer.URL_STRING, URL);			
+		if (activityIntent == null)
+			return;
+
+		String URL = activityIntent.getStringExtra(Constants.URL_STRING);
+
+		if (URL != null) {
+			mainIntent.putExtra(Constants.URL_STRING, URL);
 			mainIntent.setAction(SplashActivity.OFFLINE_INTENT_ACTION);
 		}
 	}

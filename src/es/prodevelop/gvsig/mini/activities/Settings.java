@@ -103,11 +103,31 @@ public class Settings {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
 
-			if (preferences.contains(key)) {
+//			if (preferences.contains(key)) {
 				Editor edit = preferences.edit();
 				edit.putBoolean(key, value);
 				edit.commit();
-			}
+				
+				putValue(key, value);
+//			}
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
+	}
+	
+	public void updateStringSharedPreference(String key, String value,
+			Context context) {
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+
+//			if (preferences.contains(key)) {
+				Editor edit = preferences.edit();
+				edit.putString(key, value);
+				edit.commit();
+				
+				putValue(key, value);
+//			}
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}

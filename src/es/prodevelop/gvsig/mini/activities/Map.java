@@ -83,6 +83,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.text.Editable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -152,6 +153,7 @@ import es.prodevelop.gvsig.mini.user.UserContext;
 import es.prodevelop.gvsig.mini.user.UserContextManager;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
+import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
@@ -323,7 +325,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// log.setLevel(Utils.LOG_LEVEL);
 				// log.log(Level.SEVERE,
 				// "Testing to log error message with Microlog.");
-				onNewIntent(getIntent());
+				if (getIntent() != null && getIntent().getAction().compareTo(SplashActivity.OFFLINE_INTENT_ACTION) != 0)
+					onNewIntent(getIntent());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onCreate", e);
 				// log.log(Level.SEVERE,e.getMessage());
@@ -401,6 +404,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				String query = i.getStringExtra(SearchManager.QUERY);
 				searchInNameFinder(query, false);
 			}
+			
+			this.processOfflineIntentActoin(i);
 
 			int hintId = 0;
 			hintId = userContext.getHintMessage();
@@ -694,11 +699,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
 			// R.drawable.mv_rectangle);
 			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
-			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);			
+			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);
 			myNavigator = pMenu.add(0, 5, 5, R.string.Map_Navigator)
 					.setIcon(R.drawable.menu_navigation).setEnabled(connection);
 			myDownloadLayers = pMenu.add(0, 6, 6, R.string.download_tiles_01)
-			.setIcon(R.drawable.menu_download);
+					.setIcon(R.drawable.menu_download);
 			// myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
 			// R.drawable.menu_location).setCheckable(true).setChecked(
 			// true);
@@ -936,7 +941,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						centerOnGPSLocation();
 						wl.acquire();
 						navigation = true;
-						osmap.onLayerChanged(osmap.getMRendererInfo().getNAME());
+						osmap.onLayerChanged(osmap.getMRendererInfo().getFullNAME());
 						// final MapRenderer r =
 						// Map.this.osmap.getMRendererInfo();
 						Map.this.osmap.setZoomLevel(17, true);
@@ -1550,7 +1555,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void saveMap(Bundle outState) {
 		try {
 			log.log(Level.FINE, "save map to bundle");
-			outState.putString("maplayer", osmap.getMRendererInfo().getNAME());
+			outState.putString("maplayer", osmap.getMRendererInfo().getFullNAME());
 			this.mMyLocationOverlay.saveState(outState);
 			ItemContext context = this.getItemContext();
 			if (context != null)
@@ -3101,32 +3106,40 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "onPause: ", e);
 		}
 	}
+	
+	private void processOfflineIntentActoin(Intent i) throws Exception {
+		Log.d("Map", "OFFLINE_INTENT_ACTION");
+		String completeURLString = i
+				.getStringExtra(Constants.URL_STRING);
+		completeURLString = completeURLString.replaceAll("&gt;",
+				MapRenderer.NAME_SEPARATOR);
+		String urlString = completeURLString.split(";")[1];
+		String layerName = completeURLString.split(";")[0];
+		MapRenderer renderer = MapRendererManager.getInstance()
+				.getMapRendererFactory()
+				.getMapRenderer(layerName, urlString.split(","));
+		if (renderer.isOffline())
+			renderer.setNAME(renderer.getNAME()
+					+ MapRenderer.NAME_SEPARATOR
+					+ renderer.getOfflineLayerName());
+		Layers.getInstance().addLayer(renderer.toString());
+		Layers.getInstance().persist();
+		Log.d("Map", renderer.getFullNAME());					
+		osmap.onLayerChanged(renderer.getFullNAME());
+	}
 
 	@Override
 	public void onNewIntent(Intent i) {
 		try {
 			if (i == null) {
+				Log.d("Map", "intent is null");
 				return;
 			}
 
 			try {
 				setIntent(i);
 				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
-					String completeURLString = i
-							.getStringExtra(MapRenderer.URL_STRING);					 
-					completeURLString = completeURLString.replaceAll("&gt;", ">");
-					String urlString = completeURLString.split(";")[1];
-					String layerName = completeURLString.split(";")[0];					 
-					MapRenderer renderer = MapRendererManager
-							.getInstance()
-							.getMapRendererFactory()
-							.getMapRenderer(layerName,
-									urlString.split(","));
-					if(renderer.isOffline())
-						renderer.setNAME(renderer.getNAME()+">"+renderer.getOfflineLayerName());
-					Layers.getInstance().addLayer(renderer.toString());
-					Layers.getInstance().persist();
-					osmap.onLayerChanged(renderer.getNAME());
+					onCreate(null);
 				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					String query = i.getStringExtra(SearchManager.QUERY);
 					// Execute the search (common with POI and address as of
@@ -3280,8 +3293,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									.getText(R.string.download_tiles_09)
 									+ " "
 									+ downloadedMB + " MB");
-					
-					String elapsed = es.prodevelop.gvsig.mini.utiles.Utilities.getTimeHoursMinutesSecondsString(time);
+
+					String elapsed = es.prodevelop.gvsig.mini.utiles.Utilities
+							.getTimeHoursMinutesSecondsString(time);
 
 					((TextView) Map.this.downloadTilesLayout
 							.findViewById(R.id.download_time_text))
@@ -3289,16 +3303,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									.getText(R.string.download_tiles_10)
 									+ " "
 									+ elapsed);
-					
 
 					if (totalDownloaded == 0)
 						totalDownloaded = 1;
 
 					int estimated = (int) (total * time / totalDownloaded)
 							- time;
-					
 
-					String estimatedTime = es.prodevelop.gvsig.mini.utiles.Utilities.getTimeHoursMinutesSecondsString(estimated);
+					String estimatedTime = es.prodevelop.gvsig.mini.utiles.Utilities
+							.getTimeHoursMinutesSecondsString(estimated);
 					((TextView) Map.this.downloadTilesLayout
 							.findViewById(R.id.download_time_estimated_text))
 							.setText(Map.this
@@ -3383,7 +3396,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private void reloadLayerAfterDownload() {
 		Map.this.osmap.resumeDraw();
 		Map.this.osmap.onLayerChanged(Map.this.osmap.getMRendererInfo()
-				.getNAME());
+				.getFullNAME());
 		try {
 			Map.this.osmap.initializeCanvas(TileRaster.mapWidth,
 					TileRaster.mapHeight);

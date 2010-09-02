@@ -119,7 +119,7 @@ public class MapState {
 
 				BufferedWriter out = new BufferedWriter(logwriter);
 				out.write(ZOOM + "=" + map.osmap.getZoomLevel()+"\n");
-				out.write(LAYER + "=" + map.osmap.getMRendererInfo().getNAME()+"\n");
+				out.write(LAYER + "=" + map.osmap.getMRendererInfo().getFullNAME()+"\n");
 				
 				
 				out.write(X + "=" + map.osmap.getMRendererInfo().getCenter().getX() +"\n");

@@ -126,7 +126,7 @@ public class LogFeedbackActivity extends Activity {
 	
 	public static void showSendLogDialog(final Context context) {
 		try {
-			showSendLogDialog(context, context.getResources().getString(R.string.fatal_error));
+//			showSendLogDialog(context, context.getResources().getString(R.string.fatal_error));
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
@@ -134,7 +134,7 @@ public class LogFeedbackActivity extends Activity {
 	
 	public static void showSendLogDialog(final Context context, int id) {
 		try {
-			showSendLogDialog(context, context.getResources().getString(id));
+//			showSendLogDialog(context, context.getResources().getString(id));
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}

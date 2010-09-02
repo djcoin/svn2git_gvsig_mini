@@ -66,14 +66,15 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.animation.AnimationUtils;
@@ -101,10 +102,10 @@ import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.LoadCallbackHandler;
 import es.prodevelop.gvsig.mini.map.MultiTouchController;
-import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.map.MultiTouchController.MultiTouchObjectCanvas;
 import es.prodevelop.gvsig.mini.map.MultiTouchController.PointInfo;
 import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
+import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
@@ -117,7 +118,6 @@ import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.Downloader;
 import es.prodevelop.tilecache.provider.TileProvider;
 import es.prodevelop.tilecache.provider.android.AndroidTileProvider;
-import es.prodevelop.tilecache.provider.event.TileEvent;
 import es.prodevelop.tilecache.provider.filesystem.impl.TileFilesystemProvider;
 import es.prodevelop.tilecache.provider.filesystem.strategy.ITileFileSystemStrategy;
 import es.prodevelop.tilecache.provider.filesystem.strategy.impl.FileSystemStrategyManager;
@@ -1348,9 +1348,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				this.setMapCenter(renderer.getCenter().getX(), renderer
 						.getCenter().getY());
 				this.zoomToExtent(renderer.getOfflineExtent(), true);
+				Settings.getInstance().updateStringSharedPreference(
+						map.getText(R.string.settings_key_list_strategy)
+								.toString(), ITileFileSystemStrategy.FLATX, map);
 				Settings.getInstance().updateBooleanSharedPreference(
 						map.getText(R.string.settings_key_offline_maps)
 								.toString(), new Boolean(true), map);
+				instantiateTileProviderfromSettings();				
 				Toast.makeText(
 						map,
 						String.format(map.getText(R.string.load_offline)
@@ -1397,6 +1401,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// this.setZoomLevel(zoom);
 			// }
 
+			Log.d("TileRaster", "onLayerChanged " + renderer.getFullNAME());
 			map.persist();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onlayerchanged:", e);
