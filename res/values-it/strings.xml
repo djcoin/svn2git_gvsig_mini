@@ -176,4 +176,11 @@
 <string name="settings_switch_orientation">Abilitare/disabilitare orientazione</string>
 <string name="settings_orientation_enabled">Orientazione attiva</string>
 <string name="settings_downloaded_data">Dati scaricati</string>
+<!-- Missing prefs -->
+
+<string name="load_offline">Layer (%s) caricato in modaditá offline</string>
+<string name="LayersActivity_15">Miei layer</string>
+<string name="settings_OS_get_key">Ottenere OS API key </string>
+<string name="relaunch">Tocca il display per mostrare la mappa o premi il tasto indietro per uscire da gvSIG Mini
+</string>
 </resources>

@@ -79,7 +79,7 @@
     <string name="Map_20">Tweet sent</string>
     <string name="Map_21">Search POI</string>
     <string name="Map_22">Can\'t connect to server. Check your Internet connection</string>
-    <string name="Map_23">Touch and hold on the screen to see more actions on a certain location</string>
+    <string name="Map_23">Touch and hold on the display to see more actions on a certain location</string>
     <string name="Map_24">No location provider available yet</string>
     <string name="Map_25">Warning: Low memory</string>
     <string name="Map_26">GPS location disabled</string>
@@ -88,8 +88,8 @@
     <string name="Map_29">License</string>
     <string name="Map_30">What is New</string>
     <string name="Map_31">Settings</string>
-    <string name="Map_32">Keep Screen On</string>
-    <string name="Map_33">Force the screen to be switched on</string>
+    <string name="Map_32">Keep display On</string>
+    <string name="Map_33">Force the display to be switched on</string>
     <string name="Map_34">Touch once to see/hide a zoom scale bar.</string>
     <string name="Map_Navigator">Navigator</string>
     
@@ -152,7 +152,7 @@
     <string name="download_tiles_12">Tile downloader cancelled</string>
     <string name="download_tiles_13">Press the cancel button to cancel the process</string>
     <string name="download_tiles_14">Download tiles</string>
-    <string name="download_tiles_15">Move the slide bar to select the max zoom level to download tiles. The process will download the tiles that fill the screen from the current zoom level of the view to the zoom level selected with the slide bar.</string>
+    <string name="download_tiles_15">Move the slide bar to select the max zoom level to download tiles. The process will download the tiles that fill the display from the current zoom level of the view to the zoom level selected with the slide bar.</string>
     
     <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
     
@@ -185,6 +185,7 @@
     <string name="settings_clear_suggestions_summary">Erase search history</string>
     <string name="settings_OS">OpenSpace API settings</string>
     <string name="settings_OS_get_key">Register for an OS API key</string>
+    <string name="settings_OS_get_key_URL">https://openspace.ordnancesurvey.co.uk/osmapapi/register.do</string>
     <string name="settings_OS_enable">Custom OS API settings</string>
     <string name="settings_OS_key">OS API custom key</string>
     <string name="settings_OS_url">OS API custom URL</string>
@@ -203,13 +204,14 @@
     <string name="settings_key_list_strategy">list strategy</string>
     <string name="settings_key_list_mode">list mode</string>
     <string name="settings_key_clear_suggestions">clear suggestions</string>
+    <string name="settings_key_os_register">os register</string>
     <string name="settings_key_os_key">os key</string>
     <string name="settings_key_os_url">os url</string>
     <string name="settings_key_os_custom">os custom</string>
     <string name="settings_key_twitter_user">twitter user</string>
     <string name="settings_key_twitter_pass">twitter pass</string>
     
-    <string name="relaunch">Tap the screen to show the map view or press the back key to exit gvSIG Mini</string>
+    <string name="relaunch">Tap the display to show the map view or press the back key to exit gvSIG Mini</string>
     
     <string name="load_offline">Loaded (%s) in offline mode</string>
     

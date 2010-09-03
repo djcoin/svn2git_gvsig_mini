@@ -8,13 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
@@ -47,14 +48,30 @@ public class SettingsActivity extends PreferenceActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-			CompatManager.getInstance().getRegisteredLogHandler()
-					.configureLogger(log);
+//			CompatManager.getInstance().getRegisteredLogHandler()
+//					.configureLogger(log);
 
 			// Load the preferences from an XML resource
 			addPreferencesFromResource(R.xml.settings);
 
 			getPreferenceScreen().getSharedPreferences()
 					.registerOnSharedPreferenceChangeListener(this);
+
+			Preference osRegPref = (Preference) this.findPreference(getText(
+					R.string.settings_key_os_register).toString());
+			osRegPref
+					.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+						public boolean onPreferenceClick(Preference preference) {
+							String URL = getText(
+									R.string.settings_OS_get_key_URL)
+									.toString();
+							Intent i = new Intent(Intent.ACTION_VIEW);
+							i.setData(Uri.parse(URL));
+							SettingsActivity.this.startActivityForResult(i, 0);
+							return true;
+						}
+					});
 
 			/*
 			 * Add Listener for Preference
@@ -69,9 +86,7 @@ public class SettingsActivity extends PreferenceActivity implements
 						public boolean onPreferenceClick(Preference preference) {
 							AlertDialog.Builder builder = new AlertDialog.Builder(
 									SettingsActivity.this);
-							builder
-									.setMessage(
-											R.string.search_clear_yesno)
+							builder.setMessage(R.string.search_clear_yesno)
 									.setCancelable(false)
 									.setPositiveButton(
 											R.string.yes,
@@ -83,8 +98,7 @@ public class SettingsActivity extends PreferenceActivity implements
 													// the search history
 													PlaceSearcher searcher = new PlaceSearcher(
 															SettingsActivity.this);
-													searcher
-															.clearSearchHistory();
+													searcher.clearSearchHistory();
 												}
 											})
 									.setNegativeButton(
@@ -213,7 +227,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void processEditTextPreference(EditTextPreference p,
 			boolean onlySummary) {
 		if (!onlySummary)
-			Settings.getInstance().putValue(p.getKey(), p.getText());		
+			Settings.getInstance().putValue(p.getKey(), p.getText());
 		if (p.getKey().contains("pass"))
 			p.setSummary("********");
 		else
@@ -240,14 +254,15 @@ public class SettingsActivity extends PreferenceActivity implements
 				getText(R.string.settings_key_data_transfer).toString()) == 0) {
 			if (s.compareTo("") == 0) {
 				s = "0";
-				p.setSummary(String.format(getText(
-						R.string.summary_settings_downloaded_data).toString(),
-						s));
+				p.setSummary(String.format(
+						getText(R.string.summary_settings_downloaded_data)
+								.toString(), s));
 			}
 		} else if (p.getKey().compareTo(
 				getText(R.string.settings_key_clear_suggestions).toString()) == 0) {
 			p.setSummary(R.string.settings_clear_suggestions_summary);
 		}
+
 	}
 
 	private Preference getPreference(String id) {
@@ -258,7 +273,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	@Override
 	public void onDestroy() {
 		try {
-			super.onDestroy();			
+			super.onDestroy();
 			Settings.getInstance().notifyObserversWithChanges();
 		} catch (Exception e) {
 

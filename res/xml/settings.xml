@@ -45,6 +45,9 @@
 			android:defaultValue=""/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/settings_OS">
+		<Preference android:key="@string/settings_key_os_register"
+			android:title="@string/settings_OS_get_key"  
+			android:defaultValue="https://openspace.ordnancesurvey.co.uk/osmapapi/register.do"/>
 		<CheckBoxPreference android:key="@string/settings_key_os_custom"
 			android:title="@string/settings_OS_enable" android:defaultValue="false" />
 		<EditTextPreference android:key="@string/settings_key_os_key"
