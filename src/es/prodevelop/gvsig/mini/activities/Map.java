@@ -2329,7 +2329,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			this.osmap.pauseDraw();
 			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);			
 
 			final LinearLayout l = (LinearLayout) this.getLayoutInflater()
 					.inflate(R.layout.download_tiles, null);
@@ -3573,6 +3573,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "show ok dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			
+			if (textBody.length() > 1000) {
+				Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
+				return;
+			}
 
 			if (textBody.contains("<html")) {
 				try {

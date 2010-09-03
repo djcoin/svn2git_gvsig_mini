@@ -56,14 +56,14 @@
 			android:title="@string/settings_OS_url"			
 			android:defaultValue="http://www.prodevelop.es" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/settings_twitter">		
-		<EditTextPreference android:key="@string/settings_key_twitter_user"			
-			android:title="@string/settings_twitter_user"			
-			android:defaultValue="" />
-		<EditTextPreference android:key="@string/settings_key_twitter_pass"			
-			android:title="@string/settings_twitter_pass"			
-			android:defaultValue="" android:password="true" />
-	</PreferenceCategory>
+<!--	<PreferenceCategory android:title="@string/settings_twitter">		-->
+<!--		<EditTextPreference android:key="@string/settings_key_twitter_user"			-->
+<!--			android:title="@string/settings_twitter_user"			-->
+<!--			android:defaultValue="" />-->
+<!--		<EditTextPreference android:key="@string/settings_key_twitter_pass"			-->
+<!--			android:title="@string/settings_twitter_pass"			-->
+<!--			android:defaultValue="" android:password="true" />-->
+<!--	</PreferenceCategory>-->
 
 
 	<!--    <string name="settings_maps_cache">Maps cache</string>-->

@@ -63,6 +63,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
@@ -681,13 +682,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				if (!multiTouchController.onTouchEvent(event)) {
 					// System.out.println("onTouchEvent acetate");
-//					if (acetate.isFirstTouch()) {
-						// System.out.println("first touch");
-//						acetate.onTouchEvent(event);
-//					} else
-//						 synchronized (holder) {
-						// System.out.println("not first touch");
-						acetate.onTouchEvent(event);
+					// if (acetate.isFirstTouch()) {
+					// System.out.println("first touch");
+					// acetate.onTouchEvent(event);
+					// } else
+					// synchronized (holder) {
+					// System.out.println("not first touch");
+					acetate.onTouchEvent(event);
 					// }
 				}
 			}
@@ -976,10 +977,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						} else {
 							// System.out.println("tile null");
 							someTileNull = true;
-							c.drawBitmap(bufferBitmap,
-									TileRaster.lastTouchMapOffsetX,
-									TileRaster.lastTouchMapOffsetY,
-									Paints.normalPaint);
+
+							c.drawText("Loading", TileRaster.mapWidth / 2,
+									TileRaster.mapHeight - 35, Paints.mPaint);
+							// c.drawBitmap(bufferBitmap,
+							// TileRaster.lastTouchMapOffsetX,
+							// TileRaster.lastTouchMapOffsetY,
+							// Paints.normalPaint);
 						}
 					}
 				}
@@ -1066,11 +1070,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					// TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
 					// }
 					break;
+				case Downloader.MAPTILEDOWNLOADER_FAIL_ID:
+					// bufferCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+					break;
 				// case Downloader.REMOVE_CACHE_URL:
 				// // if (!Utils.isSDMounted()) {
 				// TileRaster.this.getMTileProvider().getDownloader().
 				// // }
 				// break;
+				case TileFilesystemProvider.MAPTILEFSLOADER_FAIL_ID:
+					break;
 				case TileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
 					// TileRaster.this.invalidate();
 					// TileRaster.this.mTileProvider.getMFSTileProvider().getPendingQueue().remove(((TileEvent)msg.obj).getTile().getTileString());
@@ -1348,13 +1357,15 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				this.setMapCenter(renderer.getCenter().getX(), renderer
 						.getCenter().getY());
 				this.zoomToExtent(renderer.getOfflineExtent(), true);
-				Settings.getInstance().updateStringSharedPreference(
-						map.getText(R.string.settings_key_list_strategy)
-								.toString(), ITileFileSystemStrategy.FLATX, map);
+				Settings.getInstance()
+						.updateStringSharedPreference(
+								map.getText(R.string.settings_key_list_strategy)
+										.toString(),
+								ITileFileSystemStrategy.FLATX, map);
 				Settings.getInstance().updateBooleanSharedPreference(
 						map.getText(R.string.settings_key_offline_maps)
 								.toString(), new Boolean(true), map);
-				instantiateTileProviderfromSettings();				
+				instantiateTileProviderfromSettings();
 				Toast.makeText(
 						map,
 						String.format(map.getText(R.string.load_offline)
@@ -2212,7 +2223,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 							bufferCanvas.drawBitmap(scaledBitmap,
 									(mapWidth - (int) (scaledWidth)) / 2,
 									(mapHeight - (int) (scaledHeight)) / 2,
-									Paints.normalPaint);
+									Paints.mPaint);
 						}
 					} else {
 						final float inverseScale = 1 / mScaler.mFinalScale;
@@ -2226,7 +2237,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 								cropBitmap, (int) (mapWidth),
 								(int) (mapHeight), true);
 						bufferCanvas.drawBitmap(scaledBitmap, 0, 0,
-								Paints.normalPaint);
+								Paints.mPaint);
 					}
 				}
 				return true;
@@ -2394,10 +2405,15 @@ class TileRasterThread extends Thread {
 			c = null;
 			try {
 				c = surfaceHolder.lockCanvas();
-				// synchronized (surfaceHolder) {
-				this.view.onDraw(c);
-				this.view.scaleCanvasForZoom();
-				// }
+//				if (this.view.acetate.isFirstTouch())
+//					synchronized (surfaceHolder) {
+//						this.view.onDraw(c);
+//						this.view.scaleCanvasForZoom();
+//					}
+//				else {
+					this.view.onDraw(c);
+					this.view.scaleCanvasForZoom();
+//				}
 			} finally {
 				if (c != null) {
 					surfaceHolder.unlockCanvasAndPost(c);

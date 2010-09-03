@@ -24,11 +24,12 @@ public class LoadCallbackHandler extends Handler {
 
 	public LoadCallbackHandler(Handler handler) {
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
 			mDownloadFinishedListenerHander = handler;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
-		}		
+		}
 	}
 
 	@Override
@@ -41,6 +42,8 @@ public class LoadCallbackHandler extends Handler {
 						.sendEmptyMessage(Downloader.MAPTILEDOWNLOADER_SUCCESS_ID);
 				break;
 			case Downloader.MAPTILEDOWNLOADER_FAIL_ID:
+				mDownloadFinishedListenerHander
+						.sendEmptyMessage(Downloader.MAPTILEDOWNLOADER_FAIL_ID);
 				break;
 			case Downloader.MAPTILEDOWNLOADER_OOM_ID:
 				// Utils.showSendLogDialog(TileProvider.this.mCtx);
@@ -51,13 +54,15 @@ public class LoadCallbackHandler extends Handler {
 						.sendEmptyMessage(TileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID);
 				break;
 			case TileFilesystemProvider.MAPTILEFSLOADER_FAIL_ID:
+				mDownloadFinishedListenerHander
+						.sendEmptyMessage(TileFilesystemProvider.MAPTILEFSLOADER_FAIL_ID);
 				break;
 			case TileFilesystemProvider.MAPTILEFSLOADER_OOM_ID:
 				// Utils.showSendLogDialog(TileProvider.this.mCtx);
 				break;
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		}
 	}
 }
