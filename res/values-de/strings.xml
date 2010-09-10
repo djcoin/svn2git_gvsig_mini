@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="error">Fehler</string>
+	<string name="cancel">Abbrechen</string>
+	<string name="please_wait">Warten Sie bitte</string>
+	<string name="error_connecting_server">Fehler bei der Verbindung zum Server</string>
+	<string name="task_canceled">Abgebrochene Aufgabe</string>
+	<string name="ok">OK</string>
+	<string name="back">Zurück</string>
+	<string name="server_busy">Der Server ist besetzt</string>
+	<string name="search">Suche</string>
+	<string name="lat">Breite</string>
+	<string name="lon">Länge</string>
+	<string name="latitude">Breite</string>
+	<string name="longitude">Länge</string>
+
+
+	<string name="LayersActivity_0">Layers</string>
+	<string name="LayersActivity_1">Keine SD-Karte eingehängt</string>
+	<string name="LayersActivity_2">Es gibt keine Dateien in dem Pfad</string>
+	<string name="LayersActivity_3">Wählen Sie die Layers Datei aus</string>
+	<string name="LayersActivity_4">Layers Datei wurde erfolgreich geladen
+	</string>
+	<string name="LayersActivity_5">Die Datei kann nicht geladen werden. Dieser Pfad
+		existiert nicht</string>
+	<string name="LayersActivity_6">Geben Sie den WMS Server URL ein:</string>
+	<string name="LayersActivity_7">GetCapabilities</string>
+	<string name="LayersActivity_8">Tile map service</string>
+	<string name="LayersActivity_9">WMS layers</string>
+	<string name="LayersActivity_10">Layer  hinzufügen ...</string>
+	<string name="LayersActivity_11">Vom WMS Server</string>
+	<string name="LayersActivity_12">Anfragen GetCapabilities ...</string>
+	<string name="LayersActivity_13">Von Layers Dateien</string>
+	<string name="LayersActivity_14">Laden Sie eine Datei von der SD Karte ...
+	</string>
+
+	<string name="Map_0">Fehler beim Erstellen der Karte</string>
+	<string name="Map_1">Es wurden keine Ergebnisse gefunden</string>
+	<string name="Map_2">Fehler bei der  Berechnung der Route </string>
+	<string name="Map_3">Adresse suchen</string>
+	<string name="Map_4">Mein Standort</string>
+	<string name="Map_5">Karten/Layers</string>
+	<string name="Map_6">Rechteck-Zoom</string>
+	<string name="Map_7">Verschiebe Modus</string>
+	<string name="Map_8">Wetterbericht nicht möglich. Prüfen 
+		Sie einen anderen Standort oder vielleicht ist auch die Internet
+		Verbindung unterbrochen </string>
+	<string name="Map_9">Unbekannter Ort</string>
+	<string name="Map_10">Wetterbericht in (%s) is nicht verfügbar</string>    
+    <string name="Map_11">Wetterbericht</string>
+    <string name="Map_12">Heute</string>
+    <string name="Map_13">Die Route wurde nicht gefunden</string>
+    <string name="Map_14">Der Wetterbericht wird übermittelt...</string>
+    <string name="Map_15">Wetterbericht wurde abgebrochen</string>
+    <string name="Map_16">Der Server kann die Route nicht berechnen . Versuchen Sie den Anfangs- oder Endpunkt der Route zu ändern...</string>
+    <string name="Map_17">Warten Sie auf die Antwort des NameFinder Service ...</string>
+    <string name="Map_18">Berechnung der Route wurde abgebrochen</string>
+    <string name="Map_19">Warten Sie auf die Berechnung der Route...</string>
+    <string name="Map_20">Tweet wurde gesendet</string>
+    <string name="Map_21">POI suchen</string>
+    <string name="Map_22">Verbindung  zum Sever ist nicht möglich. Prüfen Sie  Ihre Internet Verbindung</string>
+    <string name="Map_23">Verharren Sie auf dem Bildschirm, um weitere  Aktionen an bestimmten Standorten zu sehen</string>
+    
+    
+    <string name="NameFinderActivity_0">POI Möglichkeiten</string>
+    <string name="NameFinderActivity_1">Von hier</string>
+    <string name="NameFinderActivity_2">Bis hier</string>
+    <string name="NameFinderActivity_3">Auf der Karte zentrieren</string>
+    
+    <string name="WMSLayersActivity_0">Ausgewählten Layers hinzufügen</string>
+    <string name="WMSLayersActivity_1">Der Layer wird nicht unterstützt</string>
+    <string name="WMSLayersActivity_2">Ungültiges Format</string>
+    <string name="WMSLayersActivity_3">Ungültiges SRS</string>
+    
+    <string name="MapLocation_0">GPS ist nicht aktiviert</string>
+    <string name="MapLocation_1">GPS ist nicht aktiviert. gvSIG Mini muss Daten vom GPS empfangen, um IhrenStandort auf der Karte zu zeigen. Möchten Sie den GPS Empfänger jetzt aktivieren?</string>
+    
+    <string name="TweetMyLocationFunc_0">Mein Standort</string>
+    
+    
+    
+    <string name="unknown">Unbekannte</string>
+    <string name="alert_dialog_text_entry">Twitter Konto</string>
+    <string name="alert_dialog_username">Name:</string>
+    <string name="alert_dialog_password">Password:</string>
+    <string name="alert_dialog_cancel">Abbrechen</string>
+    <string name="alert_dialog_cache">Anzahl von Levels:</string>
+    <string name="alert_dialog_cache_title">Tiles cache</string>
+    <string name="alert_dialog_tweet">Tweet</string>
+    <string name="alert_dialog_start_cache">Caching wird begonnen</string>
+    <string name="alert_dialog_text_search">Suchen </string>
+    <string name="alert_dialog_text_cancel">Abbrechen </string>
+    <string name="alert_dialog_text_ok">OK</string>
+    <string name="minitwitter">gvSIG Mini Twitter</string>
+    <string name="share">gvSIG Mini geo share</string>
+    
+
+<string name="select_web_browser">Wählen Sie den Web-Browser aus </string>
+<string name="typeof">Geolocated mit</string>
+<string name="select_mail_client">Wählen Sie den Mail-Client aus</string>
+<string name="download_tiles_01">Layers heruterladen</string>
+<string name="download_tiles_02">Ein Internet-Browser wird öffnen,um die Datei "gvsigminilayers.gvtiles" herunterladen. Tippen Sie auf den Link in dem Browser,um neue Layers in gvSIGMini hinzuzufügen. Sie können auch Layers Dateien auf Ihren SDCard hinzufügen und führen sie mit Ihrem Datei-Browser, um neue Layers hinzuzufügen.</string>
+<string name="download_tiles_03">Layers-Datei heruntergeladen</string>
+<string name="Map_Navigator">Navigator</string>
+<string name="Map_24">Kein Anbieter von Standorten verfügbar</string>
+<string name="Map_25">Warnung: Geringer Speicherbereich </string>
+<string name="Map_26">GPS nicht aktivieren </string>
+<string name="Map_27">GPS aktivieren </string>
+<string name="Map_28">Über</string>
+<string name="Map_29">Lizenz</string>
+<string name="Map_30">Was ist neu</string>
+<string name="MapLocation_2">gvSIG Mini hat festgestellt, dass ein Fehler der letzten Zeit die Anwendung ausgeführt wurde aufgetret hat. Möchten Sie den Entwicklern die Log-Datei senden ?</string>
+<string name="Utils_0">Wählen Sie den Klient von die elektronische Post aus </string>
+<string name="warning">Warnung</string>
+<string name="not_ask">Nicht fragen weiter</string>
+<string name="portrait">vertical</string>
+<string name="landscape">horizontal</string>
+<string name="send_log">Fehler Datei senden </string>
+<string name="fatal_error">gvSIG Mini hat einen Fehler endeckt. Möchten Sie den Entwicklern die Fehler Datei senden, damit sie es beheben?</string>
+    
+
+
+
+</resources>
