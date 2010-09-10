@@ -1239,7 +1239,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		int mode = TileProvider.MODE_ONLINE;
 		String tileName = "tile.gvSIG";
 		String dot = ".";
-		String strategy = ITileFileSystemStrategy.QUADKEY;
+		String strategy = ITileFileSystemStrategy.FLATX;
 		ITileFileSystemStrategy t = FileSystemStrategyManager.getInstance()
 				.getStrategyByName(strategy);
 

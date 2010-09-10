@@ -37,3 +37,11 @@ gvSIG Mini for Android uses these icons with license restrictions or attribution
 - menu00 http://www.everaldo.com/
 
 - menu_download http://earam.deviantart.com/art/the-moonlight-31208162 
+
+-------------------------------------------------------------------------------
+
+Polish translation by Grzegorz Myrda
+
+Italian translation by Juan Lucas Domínguez Rubio & Paolo Cellini
+
+German translation by Amelia del Rey

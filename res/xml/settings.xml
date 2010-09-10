@@ -23,10 +23,10 @@
 			android:title="@string/settings_tile_name" android:summary=""
 			android:defaultValue="tile.gvsig" />
 		<ListPreference android:key="@string/settings_key_list_strategy"
-			android:title="@string/settings_tilling_strategy" android:summary="@string/settings_quadkey"
+			android:title="@string/settings_tilling_strategy" android:summary="@string/settings_tilex"
 			android:entries="@array/cache_strategies" android:entryValues="@array/cache_strategies_values"
 			android:dialogTitle="@string/title_settings_tilling_strategy"
-			android:defaultValue="quadkey" />
+			android:defaultValue="flatx" />
 		<CheckBoxPreference android:key="@string/settings_key_offline_maps"
 			android:title="@string/settings_mode_offline" android:summaryOn="@string/settings_mode_offline_on"
 			android:summaryOff="@string/settings_mode_offline_off"
