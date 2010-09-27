@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="warning">警告</string>
+	<string name="error">エラー</string>
+	<string name="cancel">中止</string>
+	<string name="please_wait">お待ちください</string>
+	<string name="error_connecting_server">サーバー接続エラー</string>
+	<string name="task_canceled">タスクがキャンセルされました</string>
+	<string name="ok">了解</string>
+	<string name="back">戻る</string>
+	<string name="yes">はい</string>
+	<string name="no">いいえ</string>
+	<string name="server_busy">サーバービジー</string>
+	<string name="search">検索</string>
+	<string name="lat">緯度</string>
+	<string name="lon">経度</string>
+	<string name="latitude">緯度</string>
+	<string name="longitude">経度</string>
+	<string name="typeof">Geo using</string> 
+	<string name="share">gvSIG Mini Geo Share</string> 
+	<string name="select_mail_client">メールクライアント選択</string>
+	<string name="select_web_browser">ブラウザ選択</string>  
+	<string name="minitwitter">gvSIG Mini Twitter</string> 
+	<string name="not_ask">次回より問合せしない</string>
+	<string name="portrait">縦長</string>
+	<string name="landscape">横長</string>
+	<string name="send_log">例外ログの送信</string>
+	<string name="fatal_error">gvSIG Mini はエラーを検出しました。開発者にエラー修正を示すため、例外ログを送信しますか？</string>
+	<string name="search_hint">検索 場所/住所</string>
+	<string name="search_clear_yesno">これまでの検索テキストをすべて削除しますか？</string>
+	<string name="getFeatureInfo">GetFeatureInfo</string>
+	<string name="stop">停止</string>
+
+	<string name="LayersActivity_0">レイヤー</string>
+	<string name="LayersActivity_1">SDカードがありません</string>
+	<string name="LayersActivity_2">ファイルがありません</string>
+	<string name="LayersActivity_3">レイヤーファイル選択</string>
+	<string name="LayersActivity_4">レイヤーファイルが正しくロードされました</string>
+	<string name="LayersActivity_5">ファイルがロードできません。入力されたファイルがありません。</string>
+	<string name="LayersActivity_6">WMS server URLの入力:</string>
+	<string name="LayersActivity_7">Get capabilities</string>
+	<string name="LayersActivity_8">Tile map service</string>
+	<string name="LayersActivity_9">WMS レイヤー</string>
+	<string name="LayersActivity_10">レイヤー追加...</string>
+	<string name="LayersActivity_11">WMS server から</string>
+	<string name="LayersActivity_12">GetCapabilitiesを要求中...</string>
+	<string name="LayersActivity_13">レイヤーファイルから</string>
+	<string name="LayersActivity_14">SDカードからレイヤーをロード...</string>		
+	<string name="LayersActivity_15">マイレイヤー</string>
+
+	<string name="Map_0">マップ生成エラー</string>
+	<string name="Map_1">結果が見つかりませんでした</string>
+	<string name="Map_2">計算エラー</string>
+	<string name="Map_3">住所検索</string>
+	<string name="Map_4">現在位置</string>
+	<string name="Map_5">マップ/レイヤー</string>
+	<string name="Map_6">矩形ズームモード</string>
+	<string name="Map_7">パンモード</string>
+	<string name="Map_8">気象情報を取得できません。他の位置で確認するかインターネット接続がありません</string>
+	<string name="Map_9">不明な場所</string>
+	<string name="Map_10">(%s) の気象情報は利用できません</string>
+	<string name="Map_11">気象</string>
+	<string name="Map_12">本日</string>
+	<string name="Map_13">経路が見つかりませんでした</string>
+	<string name="Map_14">気象情報を取得中...</string>
+	<string name="Map_15">気象情報取得が中止されました</string>
+	<string name="Map_16">サーバーは経路を計算できません。起点か終点を変更して試してください...</string>
+	<string name="Map_17">名称検索サービスからの応答を待っています...</string>
+	<string name="Map_18">経路計算が中止されました</string>
+	<string name="Map_19">ルート計算中...</string>
+	<string name="Map_20">Tweet 送信</string>
+	<string name="Map_21">位置情報検索</string>
+	<string name="Map_22">サーバーに接続できません。インターネット接続を確認してください</string>
+	<string name="Map_23">指定した位置での追加機能を見るにはスクリーンをタッチしてしばらく押してください。</string>
+	<string name="Map_24">位置取得の準備ができていません</string>
+	<string name="Map_25">警告: メモリ不足</string>
+	<string name="Map_26">GPS位置使用不可</string>
+	<string name="Map_27">GPS位置使用可</string>
+	<string name="Map_28">このソフトウェアについて</string>
+	<string name="Map_29">ライセンス</string>
+	<string name="Map_30">新着情報</string>
+	<string name="Map_31">設定</string>
+	<string name="Map_32">スクリーンをオンに保つ</string>
+	<string name="Map_33">強制的にスクリーンをオンにする</string>
+	<string name="Map_34">もう一度タッチでズームスケールバーの 表示/非表示</string>
+	<string name="Map_Navigator">ナビゲーター</string>
+
+	<string name="NameFinderActivity_0">位置情報オプション</string>
+	<string name="NameFinderActivity_1">ここから</string>
+	<string name="NameFinderActivity_2">ここへ</string>
+	<string name="NameFinderActivity_3">中心へ</string>
+
+	<string name="WMSLayersActivity_0">選択したレイヤーを追加</string>
+	<string name="WMSLayersActivity_1">レイヤーはサポートされていません</string>
+	<string name="WMSLayersActivity_2">フォーマットが無効です</string>
+	<string name="WMSLayersActivity_3">SRSが無効です</string>
+
+	<string name="MapLocation_0">GPS機能がオフです</string>
+	<string name="MapLocation_1">GPS機能がオフです。 地図上にあなたの現在位置を表示するためにGPSからのデータを取得する必要があります。今すぐGPS機能をオンにしますか？</string>
+	<string name="MapLocation_2">前回アプリケーションを実行した際エラーが発生したことを見つけました。開発者にログファイルを送りますか？</string>
+	<string name="MapLocation_3">表示されるデータが大きすぎます</string>
+
+	<string name="TweetMyLocationFunc_0">現在位置</string>
+
+	<string name="Utils_0">メールクライアントの選択</string>
+
+
+
+
+
+
+
+
+
+
+
+
+	<string name="unknown">不明</string>
+	<string name="alert_dialog_text_entry">Twitter アカウント</string>
+	<string name="alert_dialog_username">名前:</string>
+	<string name="alert_dialog_password">パスワード:</string>
+	<string name="alert_dialog_cancel">中止</string>
+	<string name="alert_dialog_cache">レベル数:</string>
+	<string name="alert_dialog_cache_title">タイルキャッシュ</string>
+	<string name="alert_dialog_tweet">Tweet</string>
+	<string name="alert_dialog_start_cache">キャッシュの開始</string>
+	<string name="alert_dialog_text_search">検索</string>
+	<string name="alert_dialog_text_cancel">中止</string>
+	<string name="alert_dialog_text_ok">了解</string>
+
+	<string name="download_tiles_01">レイヤーダウンロード</string>
+	<string name="download_tiles_02">インターネットブラウザは gvsigminilayers.gvtiles のダウンロード要求を開始しました。 ブラウザのリンクをタップして、新しいレイヤーを gvSIG Mini に追加してください。新しいレイヤーを追加するためファイルブラウザを使用してSDカードカードからレイヤーファイルの追加を実行することもできます。</string>
+	<string name="download_tiles_03">レイヤーファイルがダウンロードされました</string>
+	<string name="download_tiles_04">ダウンロードするズームレベルの選択</string>
+	<string name="download_tiles_05">最小/最大 ズームレベル: </string>
+	<string name="download_tiles_06">タイルダウンロード総数: </string>
+	<string name="download_tiles_07">ダウンロードサイズ MB: </string>
+	<string name="download_tiles_08">既存のキャッシュを上書きする？</string>
+	<string name="download_tiles_09">ダウンロード総サイズ MB: </string>
+	<string name="download_tiles_10">経過時間: </string>
+	<string name="download_tiles_11">残り予定時間: </string>
+	<string name="download_tiles_12">タイルダウンローダーが中止されました</string>
+	<string name="download_tiles_13">処理を中止するには中止ボタンを押してください</string>
+	<string name="download_tiles_14">ダウンロード</string>
+	<string name="download_tiles_15">ダウンロードするタイルのズームレベルを選択するにはスライダーを動かします。現在表示されているズームレベルからスライドバーで選択したズームレベルまでのタイルがダウンロードされます。</string>
+
+	<string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
+
+	<string name="settings_gps">GPS</string>
+	<string name="settings_switch_gps">GPS オン/オフ</string>
+	<string name="settings_orientation">方位</string>
+	<string name="settings_switch_orientation">方位センサー オン/オフ</string>
+	<string name="settings_orientation_enabled">方位使用可</string>
+	<string name="settings_orientation_disabled">方位使用不可</string>
+	<string name="settings_maps_cache">マップキャッシュ</string>
+	<string name="settings_mode">モード</string>
+	<string name="settings_downloaded_data">ダウンロードされたデータ</string>
+	<string name="summary_settings_downloaded_data">(%s) MB がこのセッションでダウンロードされました</string>
+	<string name="settings_tilling_strategy">タイリング方法</string>
+	<string name="title_settings_tilling_strategy">タイリング方法の選択</string>
+	<string name="settings_tile_name">タイル名の添字</string>
+	<string name="settings_tilex">Z/X/Y</string>
+	<string name="settings_quadkey">Quadkey</string>
+	<string name="settings_online">オンライン</string>
+	<string name="settings_offline">オフライン</string>
+	<string name="settings_connected">保存しない</string>
+	<string name="settings_update">上書き</string>
+	<string name="settings_tilling_mode">キャッシュモード</string>
+	<string name="settings_mode_offline">オフラインマップ</string>
+	<string name="settings_mode_offline_on">SDカードからのマップだけを使用する</string>
+	<string name="settings_mode_offline_off">キャッシュモードにする</string>
+	<string name="title_settings_tilling_mode">キャッシュモードの選択</string>
+	<string name="settings_generic">一般設定</string>
+	<string name="settings_clear_suggestions">設定を消去する</string>
+	<string name="settings_clear_suggestions_summary">検索履歴を消去する</string>
+	<string name="settings_OS">OpenSpace API 設定</string>
+	<string name="settings_OS_get_key">OS API key登録</string>
+	<string name="settings_OS_get_key_URL">https://openspace.ordnancesurvey.co.uk/osmapapi/register.do</string>
+	<string name="settings_OS_enable">Custom OS API 設定</string>
+	<string name="settings_OS_key">OS API custom key</string>
+	<string name="settings_OS_url">OS API custom URL</string>
+	<string name="settings_twitter_not_configured">Twitter アカウントが設定されていません...</string>
+	<string name="settings_twitter">Twitter アカウント</string>
+	<string name="settings_twitter_user">Twitter ユーザー名</string>
+	<string name="settings_twitter_pass">Twitter パスワード</string>
+	<string name="twitter_go_settings">Twitterアカウントを設定してください。 Twitter ユーザー名とパスワードを設定るするために設定画面を開きますか？</string>
+
+
+	<string name="settings_key_gps">gps state</string>
+	<string name="settings_key_offline_maps">offline maps</string>
+	<string name="settings_key_orientation">orientation state</string>
+	<string name="settings_key_data_transfer">data transfer</string>
+	<string name="settings_key_tile_name">tile name</string>
+	<string name="settings_key_list_strategy">list strategy</string>
+	<string name="settings_key_list_mode">list mode</string>
+	<string name="settings_key_clear_suggestions">clear suggestions</string>
+	<string name="settings_key_os_register">os register</string>
+	<string name="settings_key_os_key">os key</string>
+	<string name="settings_key_os_url">os url</string>
+	<string name="settings_key_os_custom">os custom</string>
+	<string name="settings_key_twitter_user">twitter user</string>
+	<string name="settings_key_twitter_pass">twitter pass</string>
+
+	<string name="relaunch">地図を表示するにはスクリーンをタップします。アプリケーションを終了するにはバックキーを押します。</string>
+	<string name="load_offline">オフラインモードロード (%s)</string>
+
+</resources>
