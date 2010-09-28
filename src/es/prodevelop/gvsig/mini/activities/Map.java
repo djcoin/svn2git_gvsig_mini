@@ -146,7 +146,6 @@ import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadCallbackHandler;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadWaiter;
-import es.prodevelop.gvsig.mini.tasks.twitter.TweetMyLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
 import es.prodevelop.gvsig.mini.tasks.yours.YOURSFunctionality;
 import es.prodevelop.gvsig.mini.user.UserContext;
@@ -617,22 +616,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					}
 					break;
 				}
-				break;
-			case CODE_SETTINGS:
-				String user = Settings.getInstance().getStringValue(
-						getText(R.string.settings_key_twitter_user).toString());
-				String pass = Settings.getInstance().getStringValue(
-						getText(R.string.settings_key_twitter_pass).toString());
-				if (pass != null && pass.trim().compareTo("") != 0
-						&& user != null && user.trim().compareTo("") != 0) {
-					TweetMyLocationFunc t = new TweetMyLocationFunc(this, 0);
-					t.launch();
-				} else {
-					Toast.makeText(this,
-							getText(R.string.settings_twitter_not_configured),
-							Toast.LENGTH_LONG).show();
-				}
-				break;
+				break;			
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Map onActivityResult: ", e);
@@ -3156,13 +3140,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onNewIntent", e);
 
-			}
-
-			String actionName = i.getAction();
-			if (actionName != null
-					&& actionName.equals("android.intent.action.SEND")) {
-				TweetMyLocationFunc t = new TweetMyLocationFunc(this, 0);
-				t.launch();
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onNewIntent", e);

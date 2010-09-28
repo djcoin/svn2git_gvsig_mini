@@ -47,9 +47,10 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 
-public class ShareMyLocationFunc extends TweetMyLocationFunc {
+public class ShareMyLocationFunc extends Functionality {
 
 	private final static Logger log = Logger
 			.getLogger(ShareMyLocationFunc.class.getName());
@@ -58,13 +59,14 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 	public ShareMyLocationFunc(Map map, int id) {
 		super(map, id);
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
 		} catch (BaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Launches an Intent chooser to any application to receive the
 	 * Intent.ACTION_SEND with a given text
@@ -78,29 +80,30 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 			final Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TEXT, text);
-			Intent i = Intent.createChooser(intent, getMap().getString(R.string.share));
+			Intent i = Intent.createChooser(intent,
+					getMap().getString(R.string.share));
 			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);//
 			getMap().startActivityForResult(i, 2385);
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"share", e);
+			log.log(Level.SEVERE, "share", e);
 		}
 	}
 
 	@Override
 	public boolean execute() {
 		try {
-		share(buildTweet());
-//			String user = getMap().twituser;
-//			String pass = getMap().twitpass;
-//
-//			if (user != null && pass != null) {
-//				this.sendMyLocationTweet(user, pass);
-//			} else {
-//				getMap().getMapHandler()
-//						.sendEmptyMessage(Map.SHOW_TWEET_DIALOG);
-//			}
+			share(buildTweet());
+			// String user = getMap().twituser;
+			// String pass = getMap().twitpass;
+			//
+			// if (user != null && pass != null) {
+			// this.sendMyLocationTweet(user, pass);
+			// } else {
+			// getMap().getMapHandler()
+			// .sendEmptyMessage(Map.SHOW_TWEET_DIALOG);
+			// }
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		} finally {
 			return true;
 		}
@@ -109,6 +112,62 @@ public class ShareMyLocationFunc extends TweetMyLocationFunc {
 	@Override
 	public int getMessage() {
 		return res;
+	}
+
+	/**
+	 * Trims the current map center to 6 decimals
+	 * 
+	 * @return The lon/lat map center with 6 decimals
+	 */
+	public double[] getLatLonTrimed() {
+		try {
+			double[] coords = getMap().osmap.getCenterLonLat();
+
+			int lat = (int) (coords[1] * 1E6);
+			int lon = (int) (coords[0] * 1E6);
+
+			double latDouble = lat / 1E6;
+			double lonDouble = lon / 1E6;
+
+			return new double[] { lonDouble, latDouble };
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+			return null;
+		}
+	}
+
+	/**
+	 * Builds the tweet message: Mi Ubicaci�n :
+	 * http://www.opentouchmap.org/?lat=39.472393&lon=-0.382493&zoom=14
+	 * lat:39.472393 lon:-0.382493
+	 * 
+	 * @return A string to tweet
+	 */
+	public String buildTweet() {
+		try {
+
+			final double[] res = this.getLatLonTrimed();
+
+			double latDouble = res[1];
+			double lonDouble = res[0];
+
+			int zoomin = getMap().osmap.getZoomLevel();
+
+			return new StringBuffer()
+					.append(getMap().getResources().getString(
+							R.string.TweetMyLocationFunc_0))
+					.append(" : http://www.opentouchmap.org/?lat=")
+					.append(latDouble).append("&lon=").append(lonDouble)
+					.append("&zoom=").append(zoomin).append(" ")
+					.append(getMap().getResources().getString(R.string.lat))
+					.append(":").append(latDouble).append(" ")
+					.append(getMap().getResources().getString(R.string.lon))
+					.append(":").append(lonDouble).toString();
+
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+			return null;
+		}
 	}
 
 }
