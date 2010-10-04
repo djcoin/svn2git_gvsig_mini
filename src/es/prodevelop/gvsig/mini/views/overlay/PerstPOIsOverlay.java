@@ -3,13 +3,14 @@ package es.prodevelop.gvsig.mini.views.overlay;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
+import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.TestConstants;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
@@ -17,16 +18,14 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
-import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.ViewPort;
-import es.prodevelop.gvsig.mini.namefinder.Named;
-import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
@@ -34,6 +33,7 @@ import es.prodevelop.tilecache.renderer.MapRenderer;
 public class PerstPOIsOverlay extends MapOverlay implements
 		LayerChangedListener {
 
+	PerstPOIsRunnable poiTask;
 	ArrayList pois;
 	PerstOsmPOIProvider poiProvider;
 	Extent extent = new Extent();
@@ -44,11 +44,16 @@ public class PerstPOIsOverlay extends MapOverlay implements
 	Pixel oldLastPOIPixel = null;
 
 	protected ArrayList<Pixel> pixelsPOI = new ArrayList<Pixel>();
+	
+	Handler handler = new PerstPOIsHandler();
+	
+	private final static int ZOOM_THRESHOLD = 14;
 
 	private int indexPOI = -1;
 
 	public PerstPOIsOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
+		poiTask = new PerstPOIsRunnable((Map) context, handler);
 		poiProvider = new PerstOsmPOIProvider("sdcard/gvSIG/pois/london"
 				+ File.separator + TestConstants.PERST_SIMPLE_R_DATABASE);
 		// try {
@@ -68,14 +73,26 @@ public class PerstPOIsOverlay extends MapOverlay implements
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
+//		final ViewPort vp = maps.map.vp;
+//		final Extent extent = vp.calculateExtent(maps.mapWidth,
+//				maps.mapHeight, maps.getMRendererInfo().getCenter());
+//		if (pois != null) {
+//			final int size = pois.size();
+//
+//			Point p;
+//			for (int i = 0; i < size; i++) {
+//				p = (Point) pois.get(i);
+//				maps.geomDrawer.drawpoi(p, c, extent, vp);
+//			}
+//		}
 		try {
-			if (maps.getZoomLevel() < 16)
-				return;			
+			if (maps.getZoomLevel() < ZOOM_THRESHOLD)
+				return;
 			if (pois == null || pois.size() <= 0)
-				return;			
-			final ViewPort vp = maps.map.vp;
-			final Extent extent = vp.calculateExtent(maps.mapWidth,
-					maps.mapHeight, maps.getMRendererInfo().getCenter());
+				return;
+//			final ViewPort vp = maps.map.vp;
+//			final Extent extent = vp.calculateExtent(maps.mapWidth,
+//					maps.mapHeight, maps.getMRendererInfo().getCenter());
 
 			final MapRenderer renderer = maps.getMRendererInfo();
 
@@ -151,6 +168,8 @@ public class PerstPOIsOverlay extends MapOverlay implements
 		} catch (Exception e) {
 			Log.e("PerstPOIsOverlay", "onDraw: " + e.getMessage());
 		}
+			
+			
 
 	}
 
@@ -279,33 +298,15 @@ public class PerstPOIsOverlay extends MapOverlay implements
 		}
 	}
 
-//	@Override
-	public boolean onTouchEventQ(final MotionEvent event,
+	@Override
+	public boolean onTouchEvent(final MotionEvent event,
 			final TileRaster mapView) {
-		if (mapView.getZoomLevel() < 16)
-			return false;
-		final ViewPort vp = mapView.map.vp;
-		final Extent extent = vp.calculateExtent(mapView.mapWidth,
-				mapView.mapHeight, mapView.getMRendererInfo().getCenter());
-		if (extent.equals(this.extent))
-			return false;
 		try {
-			double[] minXY = ConversionCoords.reproject(extent.getMinX(),
-					extent.getMinY(),
-					CRSFactory.getCRS(mapView.getMRendererInfo().getSRS()),
-					CRSFactory.getCRS("EPSG:4326"));
-			double[] maxXY = ConversionCoords.reproject(extent.getMaxX(),
-					extent.getMaxY(),
-					CRSFactory.getCRS(mapView.getMRendererInfo().getSRS()),
-					CRSFactory.getCRS("EPSG:4326"));
-			pois = (ArrayList) this.poiProvider.getPOIs(new Extent(minXY[0],
-					minXY[1], maxXY[0], maxXY[1]));
-			convertCoordinates("EPSG:4326", mapView.getMRendererInfo().getSRS());
-			this.extent = extent;
-			TileRaster.CLEAR_OFF_POIS = true;
-		} catch (BaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			poiTask.cancel();
+			poiTask = new PerstPOIsRunnable((Map) getContext(), handler);	
+			poiTask.execute();
+		} catch (Exception e) {
+			Log.d("", e.getMessage());
 		}
 		return true;
 	}
@@ -315,5 +316,90 @@ public class PerstPOIsOverlay extends MapOverlay implements
 			final TileRaster mapView) {
 		return this.onTouchEvent(event, mapView);
 	}
+	
+	private class PerstPOIsRunnable implements Runnable {
+		
+		Map context;
+		private boolean isCanceled = false;
+		ArrayList pois;
+		Handler handler;
+		
+		public PerstPOIsRunnable(Map context, Handler handler) {
+			this.context = context;
+			this.handler = handler;
+		}
+		
+		public void cancel() {
+			isCanceled = true;
+		}
 
+		@Override
+		public void run() {
+			if (context.osmap.getZoomLevel() < ZOOM_THRESHOLD)
+				return;
+			final ViewPort vp = context.vp;
+			final Extent extent = vp.calculateExtent(context.osmap.mapWidth,
+					context.osmap.mapHeight, context.osmap.getMRendererInfo()
+							.getCenter());
+			if (extent.equals(PerstPOIsOverlay.this.extent))
+				return;
+			try {
+				double[] minXY = ConversionCoords.reproject(extent.getMinX(),
+						extent.getMinY(), CRSFactory.getCRS(context.osmap
+								.getMRendererInfo().getSRS()), CRSFactory
+								.getCRS("EPSG:4326"));
+				double[] maxXY = ConversionCoords.reproject(extent.getMaxX(),
+						extent.getMaxY(), CRSFactory.getCRS(context.osmap
+								.getMRendererInfo().getSRS()), CRSFactory
+								.getCRS("EPSG:4326"));
+				pois = (ArrayList) PerstPOIsOverlay.this.poiProvider
+						.getPOIs(new Extent(minXY[0], minXY[1], maxXY[0],
+								maxXY[1]));				
+				convertCoordinates("EPSG:4326", context.osmap
+						.getMRendererInfo().getSRS());				
+				
+				if (!isCanceled) {
+					PerstPOIsOverlay.this.pois = pois;
+					PerstPOIsOverlay.this.extent = extent;
+					TileRaster.CLEAR_OFF_POIS = true;
+				}
+			} catch (Exception e) {
+				Log.e("", e.getMessage());
+			} 
+		}
+		
+		protected void convertCoordinates(String srsFrom, String srsTo) {
+			final int size = pois.size();
+			OsmPOI p;
+			OsmPOI temp;
+			for (int i = 0; i < size; i++) {
+				if (isCanceled) return;
+				p = (OsmPOI) pois.get(i);
+				final double[] xy = ConversionCoords.reproject(p.getX(),
+						p.getY(), CRSFactory.getCRS(srsFrom),
+						CRSFactory.getCRS(srsTo));
+				temp = (OsmPOI)p.clone();
+				temp.setX(xy[0]);
+				temp.setY(xy[1]);
+				pois.set(i, temp);
+			}
+		}
+		
+		public void execute() {
+			WorkQueue.getExclusiveInstance().execute(this);
+		}
+		
+	}
+	
+	private class PerstPOIsHandler extends Handler {
+
+		/* (non-Javadoc)
+		 * @see android.os.Handler#handleMessage(android.os.Message)
+		 */
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+		}
+		
+	}
 }
