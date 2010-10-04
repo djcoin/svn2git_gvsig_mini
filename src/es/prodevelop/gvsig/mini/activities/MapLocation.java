@@ -52,15 +52,10 @@
 
 package es.prodevelop.gvsig.mini.activities;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -72,8 +67,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.ListView;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
@@ -83,7 +76,6 @@ import es.prodevelop.gvsig.mini.location.LocationHandler;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.util.Utils;
-import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 
 /**
  * A Base Activity which Handles LocationProvider events and Sensor events

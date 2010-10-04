@@ -40,6 +40,8 @@
 
 package es.prodevelop.gvsig.mini.test;
 
+import junit.framework.TestCase;
+
 import org.json.JSONException;
 import org.json.JSONStringer;
 
@@ -47,7 +49,6 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.json.GeoJSONParser;
-import junit.framework.TestCase;
 
 public class TestGeoJSONParser extends TestCase {
 

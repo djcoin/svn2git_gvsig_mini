@@ -9,7 +9,6 @@ import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.map.RoutePOIContext;
 import es.prodevelop.gvsig.mini.tasks.wms.GetFeatureInfoFunc;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 public class WMSRoutePOIContext extends RoutePOIContext {
 

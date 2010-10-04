@@ -45,13 +45,12 @@ package es.prodevelop.gvsig.mini.location;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import es.prodevelop.gvsig.mini.common.CompatManager;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import es.prodevelop.gvsig.mini.common.CompatManager;
 
 public class LocationHandler {
 

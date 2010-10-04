@@ -2,7 +2,6 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Paint.Style;
 
 /**

@@ -158,6 +158,7 @@ import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.PerstPOIsOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
@@ -287,7 +288,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * Whether we currently automatically update the animation.
 	 */
 	boolean mUpdatingAnimation;
-	PowerManager.WakeLock wl;
+//	PowerManager.WakeLock wl;
 	private MapHandler handler = new MapHandler();
 	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
@@ -311,8 +312,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				log.log(Level.FINE, "on create");
 
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-				wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
-						"Prueba de ScreenPower");
+//				wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+//						"Prueba de ScreenPower");
 				// Utils.sendExceptionEmail(this, "Esto es una prueba");
 				// SDCardAppender appender = new SDCardAppender();
 				// long milis = System.currentTimeMillis();
@@ -857,7 +858,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						log.log(Level.FINE, "navigation mode off");
 						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						navigation = false;
-						wl.release();
+//						wl.release();
 					}
 
 					//
@@ -923,7 +924,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				public void onCheckedChanged(RadioGroup arg0, int arg1) {
 					try {
 						centerOnGPSLocation();
-						wl.acquire();
+//						wl.acquire();
 						navigation = true;
 						osmap.onLayerChanged(osmap.getMRendererInfo().getFullNAME());
 						// final MapRenderer r =
@@ -1179,7 +1180,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			try {
 				log.log(Level.FINE, "release wake lock");
-				wl.release();
+//				wl.release();
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "release wake lock", e);
 
@@ -1522,8 +1523,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			this.datatransfer2 = outState.getFloat("dataTransfer");
 			this.navigation = outState.getBoolean("dataNavigation");
 			this.recenterOnGPS = outState.getBoolean("dataRecent");
-			if (navigation && recenterOnGPS)
-				wl.acquire();
+//			if (navigation && recenterOnGPS)
+//				wl.acquire();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadSettings: ", e);
 		}
@@ -1593,6 +1594,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap);
+				this.osmap.getOverlays()
+				.add(new PerstPOIsOverlay(this, osmap));
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));
@@ -2495,8 +2498,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "onResume");
 			super.onResume();
-			if (navigation && recenterOnGPS)
-				wl.acquire();
+//			if (navigation && recenterOnGPS)
+//				wl.acquire();
 			// mSensorManager.registerListener(mSensorListener, mSensorManager
 			// .getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 			// SensorManager.SENSOR_DELAY_FASTEST);
@@ -3081,8 +3084,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "onPause");
 			super.onPause();
-			if (wl != null && wl.isHeld())
-				wl.release();
+//			if (wl != null && wl.isHeld())
+//				wl.release();
 
 		} catch (Exception e)
 

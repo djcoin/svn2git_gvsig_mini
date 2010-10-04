@@ -48,7 +48,6 @@ import java.util.logging.Logger;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.view.View;
@@ -64,7 +63,6 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * A ViewGroup to layout Views in a Cirle with animation. The length of the

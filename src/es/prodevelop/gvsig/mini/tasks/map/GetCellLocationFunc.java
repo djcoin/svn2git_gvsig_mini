@@ -55,7 +55,6 @@ import android.telephony.CellLocation;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 

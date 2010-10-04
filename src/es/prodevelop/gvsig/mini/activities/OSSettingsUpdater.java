@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import android.content.Context;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 

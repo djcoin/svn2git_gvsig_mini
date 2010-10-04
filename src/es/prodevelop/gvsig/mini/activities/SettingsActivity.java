@@ -17,7 +17,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
 
 /**

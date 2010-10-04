@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.app.Initializer;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.Utils;

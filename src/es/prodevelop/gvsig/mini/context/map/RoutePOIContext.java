@@ -48,7 +48,6 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.tasks.yours.DeleteRouteFunctionality;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * ItemContext to show when RouteOverlay and NameFinderOverlay are visible. 

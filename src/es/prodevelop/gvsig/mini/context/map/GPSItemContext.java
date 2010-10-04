@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 /**
  * ItemContext with the Functionalities that can be applied to the GPS Icon, this

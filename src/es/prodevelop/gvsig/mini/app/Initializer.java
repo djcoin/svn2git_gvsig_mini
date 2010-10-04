@@ -42,7 +42,6 @@ package es.prodevelop.gvsig.mini.app;
 import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
-import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;

@@ -41,7 +41,6 @@
 package es.prodevelop.gvsig.mini.tasks;
 
 import android.os.Handler;
-import android.os.Message;
 
 /**
  * Handles messages of Functionalities

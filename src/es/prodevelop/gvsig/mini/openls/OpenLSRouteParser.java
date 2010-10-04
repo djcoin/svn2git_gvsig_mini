@@ -47,9 +47,9 @@ import java.util.Vector;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.ors.ORSInstruction;
 import es.prodevelop.gvsig.mini.ors.ORSRoute;
-import es.prodevelop.gvsig.mini.geom.LineString;
 
 public class OpenLSRouteParser {
 

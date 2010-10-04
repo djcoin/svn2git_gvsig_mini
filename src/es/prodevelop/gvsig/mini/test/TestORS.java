@@ -40,10 +40,10 @@
 
 package es.prodevelop.gvsig.mini.test;
 
+import junit.framework.TestCase;
 import es.prodevelop.gvsig.mini.openls.OpenLSRouteParser;
 import es.prodevelop.gvsig.mini.ors.ORSInstruction;
 import es.prodevelop.gvsig.mini.ors.ORSRoute;
-import junit.framework.TestCase;
 
 public class TestORS extends TestCase {
 

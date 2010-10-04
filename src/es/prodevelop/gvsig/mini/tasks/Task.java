@@ -42,13 +42,10 @@ package es.prodevelop.gvsig.mini.tasks;
 
 import java.util.Vector;
 
-import es.prodevelop.gvsig.mini.utiles.WorkQueue;
-
-
-
 import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
+import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
 /**
  * It does the work of adding and removing observers and broadcasting it's

@@ -40,10 +40,8 @@
  */
 package es.prodevelop.gvsig.mini.user;
 
-import java.io.IOException;
 import java.util.HashMap;
 
-import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 
 /**

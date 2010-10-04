@@ -9,7 +9,6 @@ import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
 import es.prodevelop.gvsig.mini.tasks.wms.GetFeatureInfoFunc;
-import es.prodevelop.gvsig.mini.util.Utils;
 
 public class WMSGPSItemContext extends GPSItemContext {
 	

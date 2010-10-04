@@ -70,7 +70,6 @@ import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.utiles.Constants;
-import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
  * gvSIG Mini splash. Waits SPLASH_DISPLAY_LENGHT to start the Map Activity

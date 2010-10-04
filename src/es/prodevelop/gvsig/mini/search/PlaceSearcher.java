@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 import android.content.Context;
 import android.provider.SearchRecentSuggestions;
 import es.prodevelop.gvsig.mini.activities.Map;
-import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.namefinder.NameFinder;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 

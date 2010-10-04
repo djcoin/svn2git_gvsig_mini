@@ -53,7 +53,6 @@
 package es.prodevelop.gvsig.mini.util;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,14 +60,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;

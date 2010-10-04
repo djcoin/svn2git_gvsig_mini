@@ -1,6 +1,6 @@
 package lgpl.haustein;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Routines to encode and decode using base 64 encoding.

@@ -40,12 +40,10 @@
 package es.prodevelop.gvsig.mini.common.android;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.common.ILogHandler;

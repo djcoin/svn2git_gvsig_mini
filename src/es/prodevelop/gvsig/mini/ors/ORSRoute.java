@@ -41,8 +41,8 @@
 package es.prodevelop.gvsig.mini.ors;
 
 import java.util.Vector;
+
 import es.prodevelop.gvsig.mini.geom.Extent;
-import es.prodevelop.gvsig.mini.geom.MultiLineString;
 
 public class ORSRoute {
 

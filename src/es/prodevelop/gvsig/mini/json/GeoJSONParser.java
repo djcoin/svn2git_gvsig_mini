@@ -41,16 +41,21 @@
 package es.prodevelop.gvsig.mini.json;
 
 import java.util.Enumeration;
-import org.json.*;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
+
+import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.FeatureCollection;
-import es.prodevelop.gvsig.mini.geom.Extent;
-import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.geom.MultiPoint;
-import es.prodevelop.gvsig.mini.geom.MultiLineString;
-import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.IGeometry;
+import es.prodevelop.gvsig.mini.geom.LineString;
+import es.prodevelop.gvsig.mini.geom.MultiLineString;
+import es.prodevelop.gvsig.mini.geom.MultiPoint;
+import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.Polygon;
 
 ;

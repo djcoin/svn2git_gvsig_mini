@@ -63,7 +63,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
@@ -199,6 +198,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public static int mapWidth = 0;
 	public static int mapHeight = 0;
 	public static boolean CLEAR_ROUTE = false;
+	public static boolean CLEAR_OFF_POIS = false;
 	private IContext androidContext;
 	private MotionEvent lastTouchEvent;
 	private Feature selectedFeature = null;
@@ -655,8 +655,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 									(int) centerPixelY + y });
 			System.out.println("x, y: " + coords[0] + ", " + coords[1]);
 			this.setMapCenter(coords[0], coords[1]);
-			// for (MapOverlay osmvo : this.mOverlays)
-			// if (osmvo.onTrackballEvent(event, this))
+			 for (MapOverlay osmvo : this.mOverlays)
+				 osmvo.onTrackballEvent(event, this);
 			// return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onTrackBallEvent", e);
@@ -674,8 +674,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				lastTouchEventProcessed = false;
 			}
 			if (!map.navigation) {
-				// for (MapOverlay osmvo : this.mOverlays)
-				// if (osmvo.onTouchEvent(event, this))
+				 for (MapOverlay osmvo : this.mOverlays)
+					 osmvo.onTouchEvent(event, this);
 				// return true;
 
 				this.mGestureDetector.onTouchEvent(event);
@@ -2405,15 +2405,15 @@ class TileRasterThread extends Thread {
 			c = null;
 			try {
 				c = surfaceHolder.lockCanvas();
-//				if (this.view.acetate.isFirstTouch())
-//					synchronized (surfaceHolder) {
-//						this.view.onDraw(c);
-//						this.view.scaleCanvasForZoom();
-//					}
-//				else {
-					this.view.onDraw(c);
-					this.view.scaleCanvasForZoom();
-//				}
+				// if (this.view.acetate.isFirstTouch())
+				// synchronized (surfaceHolder) {
+				// this.view.onDraw(c);
+				// this.view.scaleCanvasForZoom();
+				// }
+				// else {
+				this.view.onDraw(c);
+				this.view.scaleCanvasForZoom();
+				// }
 			} finally {
 				if (c != null) {
 					surfaceHolder.unlockCanvasAndPost(c);
