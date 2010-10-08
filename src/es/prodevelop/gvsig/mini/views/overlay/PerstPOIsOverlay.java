@@ -16,6 +16,8 @@ import es.prodevelop.android.spatialindex.quadtree.TestConstants;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
+import es.prodevelop.gvsig.mini.common.impl.Tile;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
@@ -44,16 +46,14 @@ public class PerstPOIsOverlay extends MapOverlay implements
 	Pixel oldLastPOIPixel = null;
 
 	protected ArrayList<Pixel> pixelsPOI = new ArrayList<Pixel>();
-	
-	Handler handler = new PerstPOIsHandler();
-	
+
 	private final static int ZOOM_THRESHOLD = 14;
 
 	private int indexPOI = -1;
 
 	public PerstPOIsOverlay(Context context, TileRaster tileRaster) {
 		super(context, tileRaster);
-		poiTask = new PerstPOIsRunnable((Map) context, handler);
+		poiTask = new PerstPOIsRunnable((Map) context);
 		poiProvider = new PerstOsmPOIProvider("sdcard/gvSIG/pois/london"
 				+ File.separator + TestConstants.PERST_SIMPLE_R_DATABASE);
 		// try {
@@ -73,26 +73,26 @@ public class PerstPOIsOverlay extends MapOverlay implements
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
-//		final ViewPort vp = maps.map.vp;
-//		final Extent extent = vp.calculateExtent(maps.mapWidth,
-//				maps.mapHeight, maps.getMRendererInfo().getCenter());
-//		if (pois != null) {
-//			final int size = pois.size();
-//
-//			Point p;
-//			for (int i = 0; i < size; i++) {
-//				p = (Point) pois.get(i);
-//				maps.geomDrawer.drawpoi(p, c, extent, vp);
-//			}
-//		}
+		// final ViewPort vp = maps.map.vp;
+		// final Extent extent = vp.calculateExtent(maps.mapWidth,
+		// maps.mapHeight, maps.getMRendererInfo().getCenter());
+		// if (pois != null) {
+		// final int size = pois.size();
+		//
+		// Point p;
+		// for (int i = 0; i < size; i++) {
+		// p = (Point) pois.get(i);
+		// maps.geomDrawer.drawpoi(p, c, extent, vp);
+		// }
+		// }
 		try {
 			if (maps.getZoomLevel() < ZOOM_THRESHOLD)
 				return;
 			if (pois == null || pois.size() <= 0)
 				return;
-//			final ViewPort vp = maps.map.vp;
-//			final Extent extent = vp.calculateExtent(maps.mapWidth,
-//					maps.mapHeight, maps.getMRendererInfo().getCenter());
+			// final ViewPort vp = maps.map.vp;
+			// final Extent extent = vp.calculateExtent(maps.mapWidth,
+			// maps.mapHeight, maps.getMRendererInfo().getCenter());
 
 			final MapRenderer renderer = maps.getMRendererInfo();
 
@@ -168,8 +168,6 @@ public class PerstPOIsOverlay extends MapOverlay implements
 		} catch (Exception e) {
 			Log.e("PerstPOIsOverlay", "onDraw: " + e.getMessage());
 		}
-			
-			
 
 	}
 
@@ -229,7 +227,9 @@ public class PerstPOIsOverlay extends MapOverlay implements
 			else {
 				Message m = Message.obtain();
 				m.what = Map.SHOW_TOAST;
-				m.obj = ((POI) pois.get(indexPOI)).getDescription();
+				m.obj = ((OsmPOI) pois.get(indexPOI)).getCategory() + " - "
+						+ ((OsmPOI) pois.get(indexPOI)).getSubcategory() + "\n"
+						+ ((POI) pois.get(indexPOI)).getDescription();
 				getTileRaster().map.getMapHandler().sendMessage(m);
 			}
 			return true;
@@ -303,7 +303,7 @@ public class PerstPOIsOverlay extends MapOverlay implements
 			final TileRaster mapView) {
 		try {
 			poiTask.cancel();
-			poiTask = new PerstPOIsRunnable((Map) getContext(), handler);	
+			poiTask = new PerstPOIsRunnable((Map) getContext());
 			poiTask.execute();
 		} catch (Exception e) {
 			Log.d("", e.getMessage());
@@ -316,19 +316,17 @@ public class PerstPOIsOverlay extends MapOverlay implements
 			final TileRaster mapView) {
 		return this.onTouchEvent(event, mapView);
 	}
-	
+
 	private class PerstPOIsRunnable implements Runnable {
-		
+
 		Map context;
 		private boolean isCanceled = false;
 		ArrayList pois;
-		Handler handler;
-		
-		public PerstPOIsRunnable(Map context, Handler handler) {
+
+		public PerstPOIsRunnable(Map context) {
 			this.context = context;
-			this.handler = handler;
 		}
-		
+
 		public void cancel() {
 			isCanceled = true;
 		}
@@ -354,10 +352,20 @@ public class PerstPOIsOverlay extends MapOverlay implements
 								.getCRS("EPSG:4326"));
 				pois = (ArrayList) PerstPOIsOverlay.this.poiProvider
 						.getPOIs(new Extent(minXY[0], minXY[1], maxXY[0],
-								maxXY[1]));				
+								maxXY[1]));
+				// DistanceToPointPOI sorter = new DistanceToPointPOI(new
+				// Point(minXY[0], minXY[1]));
+				// Object[] orderedPOIS = sorter.sort(pois);
+				//
+				// final int length = orderedPOIS.length;
+				//
+				// for (int i = 0; i<length; i++) {
+				// pois.set(i, orderedPOIS[i]);
+				// }
+
 				convertCoordinates("EPSG:4326", context.osmap
-						.getMRendererInfo().getSRS());				
-				
+						.getMRendererInfo().getSRS());
+
 				if (!isCanceled) {
 					PerstPOIsOverlay.this.pois = pois;
 					PerstPOIsOverlay.this.extent = extent;
@@ -365,41 +373,49 @@ public class PerstPOIsOverlay extends MapOverlay implements
 				}
 			} catch (Exception e) {
 				Log.e("", e.getMessage());
-			} 
+			}
 		}
-		
+
 		protected void convertCoordinates(String srsFrom, String srsTo) {
 			final int size = pois.size();
 			OsmPOI p;
 			OsmPOI temp;
 			for (int i = 0; i < size; i++) {
-				if (isCanceled) return;
+				if (isCanceled)
+					return;
 				p = (OsmPOI) pois.get(i);
 				final double[] xy = ConversionCoords.reproject(p.getX(),
 						p.getY(), CRSFactory.getCRS(srsFrom),
 						CRSFactory.getCRS(srsTo));
-				temp = (OsmPOI)p.clone();
+				temp = (OsmPOI) p.clone();
 				temp.setX(xy[0]);
 				temp.setY(xy[1]);
 				pois.set(i, temp);
 			}
 		}
-		
+
 		public void execute() {
+			WorkQueue.getExclusiveInstance().clearPendingTasks();
 			WorkQueue.getExclusiveInstance().execute(this);
 		}
-		
-	}
-	
-	private class PerstPOIsHandler extends Handler {
 
-		/* (non-Javadoc)
-		 * @see android.os.Handler#handleMessage(android.os.Message)
-		 */
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
+	}
+
+	private class DistanceToPointPOI extends CollectionQuickSort {
+
+		private Point point;
+
+		public DistanceToPointPOI(Point point) {
+			this.point = point;
 		}
-		
+
+		@Override
+		public boolean less(Object x, Object y) {
+			double e1 = ((Point) x).distance(point);
+			double e2 = ((Point) y).distance(point);
+
+			return e1 < e2;
+		}
+
 	}
 }
