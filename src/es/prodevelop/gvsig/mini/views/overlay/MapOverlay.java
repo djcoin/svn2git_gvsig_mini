@@ -59,6 +59,7 @@ import android.view.MotionEvent;
 import es.prodevelop.gvsig.mini.context.Contextable;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
+import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 
 /**

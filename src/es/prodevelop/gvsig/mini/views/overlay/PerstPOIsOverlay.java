@@ -352,7 +352,7 @@ public class PerstPOIsOverlay extends MapOverlay implements
 								.getCRS("EPSG:4326"));
 				pois = (ArrayList) PerstPOIsOverlay.this.poiProvider
 						.getPOIs(new Extent(minXY[0], minXY[1], maxXY[0],
-								maxXY[1]));
+								maxXY[1]), PerstPOIsOverlay.this.getTileRaster().getZoomLevel(), null);
 				// DistanceToPointPOI sorter = new DistanceToPointPOI(new
 				// Point(minXY[0], minXY[1]));
 				// Object[] orderedPOIS = sorter.sort(pois);

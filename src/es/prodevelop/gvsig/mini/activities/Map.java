@@ -158,6 +158,7 @@ import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstPOIsOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
@@ -212,7 +213,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public static String twituser = null;
 	public static String twitpass = null;
 	private ViewSimpleLocationOverlay mMyLocationOverlay;
-	public TileRaster osmap;
+	public TileRaster osmap;	
 	public final Route route = new Route();
 	public NamedMultiPoint nameds;
 	private Point nearestPOI;
@@ -1594,8 +1595,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap);
+				PerstClusterPOIOverlay p =new PerstClusterPOIOverlay(this, osmap);
+				this.osmap.poiOverlay = p;
 				this.osmap.getOverlays()
-				.add(new PerstPOIsOverlay(this, osmap));
+				.add(p);
+				this.osmap.addExtentChangedListener(p);
+//				this.osmap.getOverlays()
+//				.add(new PerstPOIsOverlay(this, osmap));
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));

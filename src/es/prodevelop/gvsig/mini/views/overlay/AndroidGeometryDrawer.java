@@ -48,6 +48,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
+import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
@@ -133,7 +134,7 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 		}
 	}
 
-	private boolean mustDraw(final Extent e, final Point p) {
+	boolean mustDraw(final Extent e, final Point p) {
 		try {
 			if (e != null) {
 				if (e.contains(p)) {
@@ -190,6 +191,26 @@ public class AndroidGeometryDrawer implements IGeometryDrawer {
 						new double[] { p.getX(), p.getY() });
 				c.drawBitmap(POIS, coords[0] - POIS_SPOT.x, coords[1]
 						- POIS_SPOT.y, Paints.mPaintR);
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "drawpoi: ", e);
+		}
+	}
+	
+	
+
+	public void drawpoiLeaf(Point p, Object graphics, Extent extent,
+			Object viewPort) {
+		try {
+			if (mustDraw(extent, p)) {
+				Canvas c = (Canvas) graphics;
+				// final double[] xy = ConversionCoords.reproject(p.getX(), p
+				// .getY(), CRSFactory.getCRS("EPSG:4326"), CRSFactory
+				// .getCRS(tileRaster.getMRendererInfo().getSRS()));
+				int[] coords = tileRaster.getMRendererInfo().toPixels(
+						new double[] { p.getX(), p.getY() });
+				c.drawBitmap(START, coords[0] - START_SPOT.x, coords[1]
+						- START_SPOT.y, Paints.mPaintR);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "drawpoi: ", e);

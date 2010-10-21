@@ -3,6 +3,7 @@ package es.prodevelop.gvsig.mini.views.overlay;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Typeface;
 
 /**
  * Static Paints to use anywhere
@@ -28,9 +29,28 @@ public class Paints {
 	public static Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 	public static Paint circlePaintV = new Paint();
 	
+	public static Paint poiTextPaint = new Paint();
+	public static Paint poiFillTextPaint = new Paint();
+	public static Paint poiBorderTextPaint = new Paint();
+	
 	
 	
 	static {
+		/** PAINT TO DRAW THE NUMBER OF ITEMS OF A CLUSTERED POI **/
+		poiTextPaint.setStrokeWidth(5);
+		poiTextPaint.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+		poiTextPaint.setStrokeCap(Paint.Cap.ROUND);
+		poiTextPaint.setTextSize(16);
+							
+		poiFillTextPaint.setStyle(Style.FILL);
+		poiFillTextPaint.setAntiAlias(true);					
+		poiFillTextPaint.setColor(Color.RED);
+							
+		poiBorderTextPaint.setStyle(Style.STROKE);
+		poiBorderTextPaint.setAntiAlias(true);
+		poiBorderTextPaint.setStrokeWidth(3);			
+		poiBorderTextPaint.setColor(Color.WHITE);		
+		
 		/** ACETATE OVERLAY **/
 		filledPaint = new Paint();			
 		filledPaint.setStyle(Style.FILL_AND_STROKE);

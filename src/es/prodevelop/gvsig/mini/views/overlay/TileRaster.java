@@ -98,6 +98,7 @@ import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
+import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.LoadCallbackHandler;
@@ -145,6 +146,10 @@ import es.prodevelop.tilecache.util.Utilities;
 public class TileRaster extends SurfaceView implements GeoUtils,
 		OnClickListener, OnLongClickListener, LayerChangedListener,
 		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
+
+	public PerstClusterPOIOverlay poiOverlay;
+
+	private ArrayList extentChangedListeners = new ArrayList();
 
 	Point scrollingCenter;
 	private boolean isScrolling = false;
@@ -306,12 +311,25 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 */
 	public void setMapCenter(final double x, final double y) {
 		try {
-			if (this.getMRendererInfo().getExtent().contains(x, y)) {
-				this.getMRendererInfo().setCenter(x, y);
+			final MapRenderer renderer = this.getMRendererInfo();
+			if (renderer.getExtent().contains(x, y)) {
+				renderer.setCenter(x, y);
+				this.notifyExtentChangedListeners(renderer.getCurrentExtent(),
+						this.getZoomLevel(), renderer.getCurrentRes());
 				postInvalidate();
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setMapCenter:", e);
+		}
+	}
+
+	public void notifyExtentChangedListeners(Extent extent, int zoomLevel,
+			double resolution) {
+		final ArrayList list = this.extentChangedListeners;
+		final int length = list.size();
+		for (int i = 0; i < length; i++) {
+			((ExtentChangedListener) list.get(i)).onExtentChanged(extent,
+					zoomLevel, resolution);
 		}
 	}
 
@@ -384,11 +402,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 *            The zoom level
 	 */
 	public void setZoomLevel(final int aZoomLevel) {
+		final MapRenderer renderer = this.mRendererInfo;
 		int zoomLevel = aZoomLevel;
-		if (aZoomLevel < this.mRendererInfo.getZoomMinLevel()) {
-			zoomLevel = this.mRendererInfo.getZoomMinLevel();
-		} else if (aZoomLevel > this.mRendererInfo.getZOOM_MAXLEVEL()) {
-			zoomLevel = this.mRendererInfo.getZOOM_MAXLEVEL();
+		if (aZoomLevel < renderer.getZoomMinLevel()) {
+			zoomLevel = renderer.getZoomMinLevel();
+		} else if (aZoomLevel > renderer.getZOOM_MAXLEVEL()) {
+			zoomLevel = renderer.getZOOM_MAXLEVEL();
 		}
 
 		tempZoomLevel = zoomLevel;
@@ -420,7 +439,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		// } else {
 
 		try {
-			this.mRendererInfo.setZoomLevel(zoomLevel);
+			renderer.setZoomLevel(zoomLevel);
+			this.notifyExtentChangedListeners(renderer.getCurrentExtent(),
+					zoomLevel, renderer.getCurrentRes());
 			map.vp.setDist1Pixel(map.vp.resolutions[zoomLevel]);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setZoomLevel:", e);
@@ -447,7 +468,6 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		//
 		// }
 		// }
-
 	}
 
 	/**
@@ -655,8 +675,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 									(int) centerPixelY + y });
 			System.out.println("x, y: " + coords[0] + ", " + coords[1]);
 			this.setMapCenter(coords[0], coords[1]);
-			 for (MapOverlay osmvo : this.mOverlays)
-				 osmvo.onTrackballEvent(event, this);
+			for (MapOverlay osmvo : this.mOverlays)
+				osmvo.onTrackballEvent(event, this);
 			// return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onTrackBallEvent", e);
@@ -674,8 +694,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				lastTouchEventProcessed = false;
 			}
 			if (!map.navigation) {
-				 for (MapOverlay osmvo : this.mOverlays)
-					 osmvo.onTouchEvent(event, this);
+				for (MapOverlay osmvo : this.mOverlays)
+					osmvo.onTouchEvent(event, this);
 				// return true;
 
 				this.mGestureDetector.onTouchEvent(event);
@@ -2064,6 +2084,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 */
 	public TileProvider getMTileProvider() {
 		return mTileProvider;
+	}
+
+	public void addExtentChangedListener(ExtentChangedListener listener) {
+		if (listener != null)
+			this.extentChangedListeners.add(listener);
+	}
+
+	public void removeExtentChangedListener(ExtentChangedListener listener) {
+		if (listener != null)
+			this.extentChangedListeners.remove(listener);
 	}
 
 	/**
