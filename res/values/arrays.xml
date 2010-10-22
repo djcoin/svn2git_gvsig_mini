@@ -39,5 +39,35 @@
         <item>@string/settings_key_twitter_pass</item>        
     </string-array>
     
+     <string-array name="poi_categories">
+        <item>@string/poi_transportation</item>
+        <item>@string/poi_tourism</item>
+        <item>@string/poi_recreation</item>
+        <item>@string/poi_food</item>
+        <item>@string/poi_public_buildings</item>          
+        <item>@string/poi_arts_culture</item>
+        <item>@string/poi_shops</item>
+        <item>@string/poi_health_emergency</item>
+        <item>@string/poi_accomodation</item>
+        <item>@string/poi_route</item>
+        <item>@string/poi_places</item>
+    </string-array>
+    
+    <!--
+    <integer-array name="poi_icons">    
+    	<item>@drawable/p_transportation_transport_bus_stop</item>
+    	<item>@drawable/p_tourism_tourist_attraction</item>
+    	<item>@drawable/p_recreation_sport_playground</item>
+    	<item>@drawable/p_food_restaurant</item>
+    	<item>@drawable/p_public_buildings_tourist_monument</item>
+    	<item>@drawable/p_arts_culture_tourist_theatre</item>
+    	<item>@drawable/p_shops_shopping_supermarket</item>	
+		<item>@drawable/p_shops_shopping_supermarket</item>
+		<item>@drawable/p_health_hospital</item>
+		<item>@drawable/p_accommodation_hotel</item>
+		<item>@drawable/p_route_tourist_castle2</item>
+		<item>@drawable/p_places_poi_place_city</item>		
+    </integer-array>
+    -->
 </resources>
 

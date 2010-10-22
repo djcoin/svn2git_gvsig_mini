@@ -215,5 +215,24 @@
     
     <string name="load_offline">Loaded (%s) in offline mode</string>
     
+    <string name="poi_all">All</string>
+    <string name="streets">Streets</string>
+    <string name="poi_transportation">Transportation</string>
+    <string name="poi_tourism">Tourism</string>
+    <string name="poi_recreation">Recreation</string>
+    <string name="poi_food">Food</string>
+    <string name="poi_public_buildings">Public buildings</string>
+    <string name="poi_arts_culture">Arts culture</string>
+	<string name="poi_shops">Shops</string>
+	<string name="poi_health_emergency">Health emergency</string>
+	<string name="poi_accomodation">Accomodation</string>
+	<string name="poi_route">Route</string>
+	<string name="poi_places">Places</string>
+	
+	<string name="loading_poi_categories">Loading POI categories...</string>
+	<string name="loading_poi_category">Loading category: </string>
+	<string name="removing_poi_category">Removing category: </string>
+	
+    
 </resources>
 

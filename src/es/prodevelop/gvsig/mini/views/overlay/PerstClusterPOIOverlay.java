@@ -32,10 +32,11 @@ import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
+import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
-import es.prodevelop.tilecache.util.Utilities;
+
 
 public class PerstClusterPOIOverlay extends MapOverlay implements
 		LayerChangedListener, QuadtreeProviderListener, ExtentChangedListener {
@@ -69,6 +70,18 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 	private Bitmap ROUTE;
 	private Bitmap PLACES;
 
+	private Bitmap TRANSPORTATION_POI;
+	private Bitmap TOURISM_POI;
+	private Bitmap RECREATION_POI;
+	private Bitmap FOOD_POI;
+	private Bitmap PUBLIC_BUILDINGS_POI;
+	private Bitmap ARTS_CULTURE_POI;
+	private Bitmap SHOPS_POI;
+	private Bitmap HEALTH_EMERGENCY_POI;
+	private Bitmap ACCOMODATION_POI;
+	private Bitmap ROUTE_POI;
+	private Bitmap PLACES_POI;
+
 	// Bitmap bufferBitmap;
 	// Canvas bufferCanvas.setBitmap(bufferBitmap);
 
@@ -87,26 +100,61 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		} finally {
 			STREET = null;
 			TRANSPORTATION = ResourceLoader
-					.getBitmap(R.drawable.p_transportation_transport_bus_stop);
+					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
 			TOURISM = ResourceLoader
-					.getBitmap(R.drawable.p_tourism_tourist_attraction);
+					.getBitmap(R.drawable.p_tourism_tourist_attraction_16);
 			RECREATION = ResourceLoader
-					.getBitmap(R.drawable.p_recreation_sport_playground);
-			FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant);
+					.getBitmap(R.drawable.p_recreation_sport_playground_16);
+			FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16);
 			PUBLIC_BUILDINGS = ResourceLoader
-					.getBitmap(R.drawable.p_public_buildings_tourist_monument);
+					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16);
 			ARTS_CULTURE = ResourceLoader
-					.getBitmap(R.drawable.p_arts_culture_tourist_theatre);
+					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16);
 			SHOPS = ResourceLoader
-					.getBitmap(R.drawable.p_shops_shopping_supermarket);
+					.getBitmap(R.drawable.p_shops_shopping_supermarket_16);
 			HEALTH_EMERGENCY = ResourceLoader
-					.getBitmap(R.drawable.p_health_hospital);
+					.getBitmap(R.drawable.p_health_hospital_16);
 			ACCOMODATION = ResourceLoader
-					.getBitmap(R.drawable.p_accommodation_hotel);
+					.getBitmap(R.drawable.p_accommodation_hotel_16);
 			ROUTE = ResourceLoader
-					.getBitmap(R.drawable.p_route_tourist_castle2);
+					.getBitmap(R.drawable.p_route_tourist_castle2_16);
 			PLACES = ResourceLoader
-					.getBitmap(R.drawable.p_places_poi_place_city);
+					.getBitmap(R.drawable.p_places_poi_place_city_16);
+			
+			TRANSPORTATION_POI = TRANSPORTATION;
+			TOURISM_POI = TOURISM;
+			RECREATION_POI = RECREATION;
+			FOOD_POI = FOOD;
+			PUBLIC_BUILDINGS_POI = PUBLIC_BUILDINGS;
+			ARTS_CULTURE_POI = ARTS_CULTURE;
+			SHOPS_POI = SHOPS;
+			HEALTH_EMERGENCY_POI = HEALTH_EMERGENCY;
+			ACCOMODATION_POI = ACCOMODATION;
+			ROUTE_POI = ROUTE;
+			PLACES_POI = PLACES;
+
+//			TRANSPORTATION_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16_poi);
+//			TOURISM_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_tourism_tourist_attraction_16_poi);
+//			RECREATION_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_recreation_sport_playground_16_poi);
+//			FOOD_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_food_restaurant_16_poi);
+//			PUBLIC_BUILDINGS_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16_poi);
+//			ARTS_CULTURE_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16_poi);
+//			SHOPS_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_shops_shopping_supermarket_16_poi);
+//			HEALTH_EMERGENCY_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_health_hospital_16_poi);
+//			ACCOMODATION_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_accommodation_hotel_16_poi);
+//			ROUTE_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_route_tourist_castle2_16_poi);
+//			PLACES_POI = ResourceLoader
+//					.getBitmap(R.drawable.p_places_poi_place_city_16_poi);
 		}
 	}
 
@@ -170,8 +218,6 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 					getTileRaster().geomDrawer.drawpoi(p, graphics, extent,
 							null);
 
-//				String num = String.valueOf(p.getNumItems());
-
 				// float w = Paints.poiTextPaint.measureText(num, 0,
 				// num.length());
 				// Rect bounds = new Rect();
@@ -194,8 +240,16 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 				//
 				// c.drawRoundRect(rect, 2, 2, Paints.poiBorderTextPaint);
 
-//				c.drawText(num, coords[0] + midIcon[0], coords[1],
-//						Paints.poiTextPaint);
+				String num;
+				if (indexCluster != -1) {
+					num = String.valueOf(p.getNumItems());
+					c.drawText(num, coords[0] + midIcon[0] + 1, coords[1] + 1,
+							Paints.poiTextWhitePaint);
+					c.drawText(num, coords[0] + midIcon[0], coords[1],
+							Paints.poiTextPaint);
+					
+				}
+				
 			}
 		} catch (Exception e) {
 
@@ -215,27 +269,27 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 				Bitmap icon = null;
 				final String cat = p.getCategory();
 				if (cat.compareTo(POICategories.TRANSPORTATION) == 0)
-					icon = this.TRANSPORTATION;
+					icon = this.TRANSPORTATION_POI;
 				else if (cat.compareTo(POICategories.TOURISM) == 0)
-					icon = this.TOURISM;
+					icon = this.TOURISM_POI;
 				else if (cat.compareTo(POICategories.RECREATION) == 0)
-					icon = this.RECREATION;
+					icon = this.RECREATION_POI;
 				else if (cat.compareTo(POICategories.FOOD) == 0)
-					icon = this.FOOD;
+					icon = this.FOOD_POI;
 				else if (cat.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-					icon = this.PUBLIC_BUILDINGS;
+					icon = this.PUBLIC_BUILDINGS_POI;
 				else if (cat.compareTo(POICategories.ARTS_CULTURE) == 0)
-					icon = this.ARTS_CULTURE;
+					icon = this.ARTS_CULTURE_POI;
 				else if (cat.compareTo(POICategories.SHOPS) == 0)
-					icon = this.SHOPS;
+					icon = this.SHOPS_POI;
 				else if (cat.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
-					icon = this.HEALTH_EMERGENCY;
+					icon = this.HEALTH_EMERGENCY_POI;
 				else if (cat.compareTo(POICategories.ACCOMODATION) == 0)
-					icon = this.ACCOMODATION;
+					icon = this.ACCOMODATION_POI;
 				else if (cat.compareTo(POICategories.ROUTE) == 0)
-					icon = this.ROUTE;
+					icon = this.ROUTE_POI;
 				else if (cat.compareTo(POICategories.PLACES) == 0)
-					icon = this.PLACES;
+					icon = this.PLACES_POI;
 
 				if (icon != null)
 					c.drawBitmap(icon, coords[0] - midIcon[0], coords[1]
@@ -518,8 +572,8 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		Point p;
 		Point temp;
 		for (int i = 0; i < size; i++) {
-//			if (cancellable != null && cancellable.getCanceled())
-//				return;
+			// if (cancellable != null && cancellable.getCanceled())
+			// return;
 			p = (Point) pois.get(i);
 			final double[] xy = ConversionCoords.reproject(p.getX(), p.getY(),
 					CRSFactory.getCRS(srsFrom), CRSFactory.getCRS(srsTo));
@@ -566,16 +620,15 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			boolean clearPrevious, final Cancellable cancellable) {
 		this.cancelDraw();
 		if (clearPrevious)
-//			if (cancellable == null)
-//				this.clusters = (ArrayList) pois;
-//			else if (!cancellable.getCanceled())
-				this.clusters = (ArrayList) pois;
-			else {
-				convertCoordinates("EPSG:4326", getTileRaster()
-						.getMRendererInfo().getSRS(), (ArrayList) pois,
-						cancellable);
-				this.clusters.addAll(pois);
-			}
+			// if (cancellable == null)
+			// this.clusters = (ArrayList) pois;
+			// else if (!cancellable.getCanceled())
+			this.clusters = (ArrayList) pois;
+		else {
+			convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
+					.getSRS(), (ArrayList) pois, cancellable);
+			this.clusters.addAll(pois);
+		}
 
 		this.restoreDraw();
 	}
@@ -585,18 +638,24 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			final Cancellable cancellable) {
 		this.cancelDraw();
 		if (clearPrevious)
-//			if (cancellable == null)
-//				this.pois = (ArrayList) pois;
-//			else if (!cancellable.getCanceled())
-				this.pois = (ArrayList) pois;
-			else {
-				convertCoordinates("EPSG:4326", getTileRaster()
-						.getMRendererInfo().getSRS(), (ArrayList) pois,
-						cancellable);
-				this.pois.addAll(pois);
-			}
+			// if (cancellable == null)
+			// this.pois = (ArrayList) pois;
+			// else if (!cancellable.getCanceled())
+			this.pois = (ArrayList) pois;
+		else {
+			convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
+					.getSRS(), (ArrayList) pois, cancellable);
+			this.pois.addAll(pois);
+		}
 
 		this.restoreDraw();
+	}
+
+	/**
+	 * @return the poiProvider
+	 */
+	public PerstOsmPOIClusterProvider getPoiProvider() {
+		return poiProvider;
 	}
 
 	@Override
@@ -616,7 +675,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		final Extent extentGetPOIS = new Extent(minXY[0], minXY[1], maxXY[0],
 				maxXY[1]);
 
-		try {
+		try {			
 			poiProvider.getPOIsAsynch(extentGetPOIS,
 					ViewPort.LAT_LON_RES[zoomLevel] * 64, zoomLevel,
 					Utilities.getNewCancellable());
@@ -624,5 +683,11 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void setCategories(ArrayList categories) throws BaseException {
+		if (categories == null) return;
+		
+		poiProvider.setSelectedCategories(categories);
 	}
 }

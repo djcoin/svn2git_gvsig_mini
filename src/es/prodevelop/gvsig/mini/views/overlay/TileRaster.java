@@ -82,6 +82,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.Toast;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
@@ -109,6 +110,7 @@ import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
+import es.prodevelop.gvsig.mini.tasks.async.LoadClusterIndexAsyncTask;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -687,6 +689,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		try {
+			if(map.isPOISlideShown) return true;
 			// System.out.println("onTouchEvent");
 			// Log.d("", event.getX() + ", " + event.getY());
 			this.lastTouchEvent = MotionEvent.obtain(event);
@@ -1126,6 +1129,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public boolean onDown(MotionEvent e) {
+			if (TileRaster.this.map.isPOISlideShown) return true;
 			if (!TileRaster.this.getScroller().isFinished()) {
 				TileRaster.this.getScroller().forceFinished(true);
 				invalidateLongPress = true;
@@ -1140,6 +1144,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
+			if (TileRaster.this.map.isPOISlideShown) return true;
 			// System.out.println("onFling");
 			startScrolling();
 			final int worldSize = getWorldSizePx();
@@ -1152,6 +1157,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public void onLongPress(MotionEvent e) {
 			try {
+				if (TileRaster.this.map.isPOISlideShown) return ;
 				TileRaster.this.onLongPress(e);
 			} catch (Exception est) {
 				log.log(Level.SEVERE, "", est);
@@ -1161,7 +1167,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
-			// System.out.println("onScroll");
+			// System.out.println("onScroll");			
 			scrollBy((int) distanceX, (int) distanceY);
 			return true;
 		}
@@ -1173,6 +1179,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			try {
+				if (TileRaster.this.map.isPOISlideShown) return true;
 				log.log(Level.FINE, "double tap");
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
@@ -1193,6 +1200,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
+			if (TileRaster.this.map.isPOISlideShown) return true;
 			if (invalidateLongPress)
 				return false;
 
@@ -1434,6 +1442,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			Log.d("TileRaster", "onLayerChanged " + renderer.getFullNAME());
 			map.persist();
+			if (!this.poiOverlay.getPoiProvider().isLoaded())
+				this.map.osmap.poiOverlay.getPoiProvider().loadCategories(
+						POICategories.CATEGORIES, null);
+//				new LoadClusterIndexAsyncTask(this.map,
+//						this.poiOverlay.getPoiProvider())
+//						.execute(POICategories.CATEGORIES);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onlayerchanged:", e);
 		} finally {

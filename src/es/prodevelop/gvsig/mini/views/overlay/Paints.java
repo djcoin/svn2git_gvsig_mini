@@ -30,6 +30,7 @@ public class Paints {
 	public static Paint circlePaintV = new Paint();
 	
 	public static Paint poiTextPaint = new Paint();
+	public static Paint poiTextWhitePaint = new Paint();
 	public static Paint poiFillTextPaint = new Paint();
 	public static Paint poiBorderTextPaint = new Paint();
 	
@@ -38,9 +39,16 @@ public class Paints {
 	static {
 		/** PAINT TO DRAW THE NUMBER OF ITEMS OF A CLUSTERED POI **/
 		poiTextPaint.setStrokeWidth(5);
-		poiTextPaint.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+		poiTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		poiTextPaint.setStrokeCap(Paint.Cap.ROUND);
 		poiTextPaint.setTextSize(16);
+		
+		/** PAINT TO DRAW THE NUMBER OF ITEMS OF A CLUSTERED POI **/
+		poiTextWhitePaint.setStrokeWidth(5);
+		poiTextWhitePaint.setTypeface(Typeface.DEFAULT_BOLD);
+		poiTextWhitePaint.setStrokeCap(Paint.Cap.ROUND);
+		poiTextWhitePaint.setColor(Color.WHITE);
+		poiTextWhitePaint.setTextSize(16);
 							
 		poiFillTextPaint.setStyle(Style.FILL);
 		poiFillTextPaint.setAntiAlias(true);					
