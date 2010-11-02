@@ -8,6 +8,7 @@ import java.util.Collection;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,7 +37,6 @@ import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
-
 
 public class PerstClusterPOIOverlay extends MapOverlay implements
 		LayerChangedListener, QuadtreeProviderListener, ExtentChangedListener {
@@ -89,7 +89,8 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		super(context, tileRaster);
 		try {
 			poiProvider = new PerstOsmPOIClusterProvider(
-					"sdcard/gvSIG/pois/london" + File.separator
+					Environment.getExternalStorageDirectory() + File.separator
+							+ "gvSIG/pois/london" + File.separator
 							+ "perst_cluster_cat.db", tileRaster
 							.getMRendererInfo().getZOOM_MAXLEVEL()
 							- tileRaster.getMRendererInfo().getZoomMinLevel(),
@@ -120,7 +121,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 					.getBitmap(R.drawable.p_route_tourist_castle2_16);
 			PLACES = ResourceLoader
 					.getBitmap(R.drawable.p_places_poi_place_city_16);
-			
+
 			TRANSPORTATION_POI = TRANSPORTATION;
 			TOURISM_POI = TOURISM;
 			RECREATION_POI = RECREATION;
@@ -133,28 +134,28 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			ROUTE_POI = ROUTE;
 			PLACES_POI = PLACES;
 
-//			TRANSPORTATION_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16_poi);
-//			TOURISM_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_tourism_tourist_attraction_16_poi);
-//			RECREATION_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_recreation_sport_playground_16_poi);
-//			FOOD_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_food_restaurant_16_poi);
-//			PUBLIC_BUILDINGS_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16_poi);
-//			ARTS_CULTURE_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16_poi);
-//			SHOPS_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_shops_shopping_supermarket_16_poi);
-//			HEALTH_EMERGENCY_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_health_hospital_16_poi);
-//			ACCOMODATION_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_accommodation_hotel_16_poi);
-//			ROUTE_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_route_tourist_castle2_16_poi);
-//			PLACES_POI = ResourceLoader
-//					.getBitmap(R.drawable.p_places_poi_place_city_16_poi);
+			// TRANSPORTATION_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_transportation_transport_bus_stop_16_poi);
+			// TOURISM_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_tourism_tourist_attraction_16_poi);
+			// RECREATION_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_recreation_sport_playground_16_poi);
+			// FOOD_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_food_restaurant_16_poi);
+			// PUBLIC_BUILDINGS_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_public_buildings_tourist_monument_16_poi);
+			// ARTS_CULTURE_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_arts_culture_tourist_theatre_16_poi);
+			// SHOPS_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_shops_shopping_supermarket_16_poi);
+			// HEALTH_EMERGENCY_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_health_hospital_16_poi);
+			// ACCOMODATION_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_accommodation_hotel_16_poi);
+			// ROUTE_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_route_tourist_castle2_16_poi);
+			// PLACES_POI = ResourceLoader
+			// .getBitmap(R.drawable.p_places_poi_place_city_16_poi);
 		}
 	}
 
@@ -247,9 +248,9 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 							Paints.poiTextWhitePaint);
 					c.drawText(num, coords[0] + midIcon[0], coords[1],
 							Paints.poiTextPaint);
-					
+
 				}
-				
+
 			}
 		} catch (Exception e) {
 
@@ -675,7 +676,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		final Extent extentGetPOIS = new Extent(minXY[0], minXY[1], maxXY[0],
 				maxXY[1]);
 
-		try {			
+		try {
 			poiProvider.getPOIsAsynch(extentGetPOIS,
 					ViewPort.LAT_LON_RES[zoomLevel] * 64, zoomLevel,
 					Utilities.getNewCancellable());
@@ -684,10 +685,11 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setCategories(ArrayList categories) throws BaseException {
-		if (categories == null) return;
-		
+		if (categories == null)
+			return;
+
 		poiProvider.setSelectedCategories(categories);
 	}
 }

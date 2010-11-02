@@ -94,6 +94,8 @@ public class Utils implements GeoUtils {
 			final int aLon, final int zoom, final int[] reuse) {
 		return getMapTileFromCoordinates(aLat / 1E6, aLon / 1E6, zoom, reuse);
 	}
+	
+	public final static String SUPPORT_MAIL = "minijira[at]prodevelop[dot]es";
 
 	public static int[] getMapTileFromCoordinates(final double aLat,
 			final double aLon, final int zoom, final int[] aUseAsReturnValue) {
@@ -248,12 +250,16 @@ public class Utils implements GeoUtils {
 	
 	public static void downloadLayerFile(final Context ctx) {
 		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
-				new String[] { "minijira@prodevelop.es" });		
+				new String[] { getSupportMail() });		
 	}
 	
 	public static void askLayers(final Context ctx) {
 		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Layers",
-				new String[] { "minijira@prodevelop.es" });		
+				new String[] { getSupportMail() });		
+	}
+	
+	public static String getSupportMail() {
+		return SUPPORT_MAIL.replace("[at]", "@").replace("[dot]", ".");
 	}
 	
 	

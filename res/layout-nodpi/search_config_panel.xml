@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:id="@+id/search_layout" android:orientation="vertical">
+	<ScrollView android:fillViewport="true"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="vertical">
+
+			<MultiAutoCompleteTextView
+				android:layout_width="fill_parent" android:layout_weight="1"
+				android:layout_height="wrap_content" android:id="@+id/EditText01"
+				android:hint="@string/filter" android:completionHint="@string/clear_filter"
+				android:paddingLeft="10dip" android:paddingRight="10dip"
+				android:paddingTop="10dip" android:paddingBottom="10dip"
+				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+				android:layout_marginTop="5dip" android:layout_marginBottom="5dip" />
+
+			<TextView android:text="@string/search_by" android:id="@+id/TextViewSearchBy"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:paddingLeft="5dip" android:paddingRight="5dip"
+				android:paddingTop="5dip" android:paddingBottom="5dip"
+				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+				android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></TextView>
+
+			<Spinner android:id="@+id/SpinnerSearch"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:paddingLeft="5dip" android:paddingRight="5dip"
+				android:paddingTop="5dip" android:paddingBottom="5dip"
+				android:prompt="@string/search_filter" android:entries="@array/search_options"
+				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+				android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></Spinner>
+
+			<TextView android:text="@string/sort_results" android:id="@+id/TextViewSortBy"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:paddingLeft="5dip" android:paddingRight="5dip"
+				android:paddingTop="5dip" android:paddingBottom="5dip"
+				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+				android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></TextView>
+
+			<Spinner android:id="@+id/SpinnerSort" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:paddingLeft="5dip"
+				android:paddingRight="5dip" android:paddingTop="5dip"
+				android:paddingBottom="5dip" android:prompt="@string/sort_results"
+				android:entries="@array/sort_options" android:layout_marginLeft="5dip"
+				android:layout_marginRight="5dip" android:layout_marginTop="5dip"
+				android:layout_marginBottom="5dip"></Spinner>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

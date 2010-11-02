@@ -201,6 +201,6 @@ public class LogFeedbackActivity extends Activity {
 		String lastLog = exitedCorrectly();
 		if (lastLog == null) return;
 		Utils.openEmail(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
-				new String[] { "minijira@prodevelop.es" }, lastLog);		
+				new String[] { Utils.getSupportMail() }, lastLog);		
 	}
 }
