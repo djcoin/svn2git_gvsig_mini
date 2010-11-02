@@ -116,6 +116,8 @@ public class MapPreview extends View {
 
 		if (z != -1)
 			mRendererInfo.setZoomLevel(z);
+//		else if (z > mRendererInfo.getZOOM_MAXLEVEL())
+//			mRendererInfo.setZoomLevel(mRendererInfo.getZOOM_MAXLEVEL());
 		else
 			mRendererInfo.setZoomLevel(16);
 	}
@@ -313,7 +315,7 @@ public class MapPreview extends View {
 
 			c.drawBitmap(START, result[0] - START_SPOT.x, result[1]
 					- START_SPOT.y, Paints.mPaintR);
-//			c.drawCircle(result[0], result[1], 5, markerPaint);
+			// c.drawCircle(result[0], result[1], 5, markerPaint);
 		} catch (Exception e) {
 
 		}

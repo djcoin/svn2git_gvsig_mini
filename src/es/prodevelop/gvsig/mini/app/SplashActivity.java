@@ -68,7 +68,7 @@ import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.Settings;
-import es.prodevelop.gvsig.mini.search.HelloListView;
+import es.prodevelop.gvsig.mini.search.StreetSearchActivity;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 
 /**
@@ -123,7 +123,7 @@ public class SplashActivity extends Activity {
 						try {
 
 							Intent mainIntent = new Intent(SplashActivity.this,
-									HelloListView.class);
+									StreetSearchActivity.class);
 							Initializer.getInstance().initialize(
 									getApplicationContext());
 							fillIntent(mainIntent);
@@ -262,7 +262,7 @@ public class SplashActivity extends Activity {
 					break;
 				case Initializer.INITIALIZE_FINISHED:
 					Intent mainIntent = new Intent(SplashActivity.this,
-							HelloListView.class);
+							StreetSearchActivity.class);
 					fillIntent(mainIntent);
 					SplashActivity.this.startActivityForResult(mainIntent, 0);
 					((ProgressBar) SplashActivity.this
