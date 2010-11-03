@@ -238,13 +238,16 @@
     <string name="no_results">No results found</string>
     <string name="distance">Distance: </string>
     <string name="sort_distance">Distance</string>
-    <string name="sort_name">Name</string>
+    <string name="sort_name">Name</string>    
     <string name="search_prefix">Prefix</string>
     <string name="search_text">Full text</string>
     <string name="search_by">Search by</string>    
     <string name="sort_results">Sort results by</string>
     <string name="search_filter">Search filter</string>
     <string name="type">Type at least 3 letters...</string>	
-    
+    <string name="advanced_search">Advanced search</string>
+    <string name="clear">Clear</string>
+    <string name="searching">Searching ...</string>
+    <string name="search_results">Search results</string>
 </resources>
 

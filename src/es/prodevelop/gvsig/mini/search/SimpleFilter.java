@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import es.prodevelop.android.spatialindex.poi.POI;
+import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
@@ -28,10 +29,7 @@ public class SimpleFilter extends Filter {
 	protected FilterResults performFiltering(CharSequence prefix) {
 		FilterResults results = new FilterResults();
 
-		String filter = searchOptions.filter;
-
-		boolean byPrefix = searchOptions.isPrefixSearch();
-
+		boolean byPrefix = true;
 		final LazyAdapter adapter;
 		adapter = (LazyAdapter) activity.getListView().getAdapter();
 
@@ -51,7 +49,14 @@ public class SimpleFilter extends Filter {
 			SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
 					.getProvider()).getHelper().getRoot());
 
-			String desc = prefix.toString().trim().replaceAll(" ", " AND ");
+			String desc = prefix.toString().trim();
+			if (!desc.contains(" 'or' ") && !desc.contains(" 'and' ")) {
+				desc = prefix.toString().trim().replaceAll(" ", " AND ");
+			} else {
+				desc = desc.replaceAll(" 'or' ", " OR ");
+				desc = desc.replaceAll(" 'and' ", " AND ");
+			}
+
 			FullTextSearchResult result = root.getFullTextStreetIndex().search(
 					desc, "en", 1000, 1000);
 
@@ -60,16 +65,39 @@ public class SimpleFilter extends Filter {
 				list.add(result.hits[i].getDocument());
 			}
 
+			if (searchOptions.sortResults()) {
+				if (searchOptions.isSortByDistance()) {
+					final PointDistanceQuickSort dq = new PointDistanceQuickSort(
+							searchOptions.center);
+					Object[] ordered = dq.sort(list);
+					final int length = ordered.length;
+
+					list = new ArrayList();
+					for (int i = 0; i < length; i++) {
+						list.add(ordered[i]);
+					}
+				} else {
+					final POIAlphabeticalQuickSort dq = new POIAlphabeticalQuickSort();
+					Object[] ordered = dq.sort(list);
+					final int length = ordered.length;
+
+					list = new ArrayList();
+					for (int i = 0; i < length; i++) {
+						list.add(ordered[i]);
+					}
+				}
+			}
+
 			/*
 			 * Sort POIs alphabetically
 			 */
-			// POIAlphabeticalQuickSort quickSort = new
-			// POIAlphabeticalQuickSort();
+			// PointDistanceQuickSort quickSort = new
+			// PointDistanceQuickSort(searchOptions.center);
 			// Object[] pois = quickSort.sort(list);
 			//
 			// list = new ArrayList();
 			// final int l = pois.length;
-			// for (int i = 0; i<l; i++) {
+			// for (int i = 0; i < l; i++) {
 			// list.add(pois[i]);
 			// }
 		} else {
@@ -119,15 +147,15 @@ public class SimpleFilter extends Filter {
 
 	@Override
 	protected void publishResults(CharSequence constraint, FilterResults results) {
-		// noinspection unchecked
-		// mData = (List<Map<String, ?>>) results.values;
 		if (results.count <= 0) {
 			activity.setResultsList(null);
+			// activity.attachSectionedAdapter();
 			activity.getListView().setFastScrollEnabled(true);
 			((BaseAdapter) activity.getListView().getAdapter())
 					.notifyDataSetChanged();
 		} else {
 			activity.setResultsList((ArrayList) results.values);
+			// activity.attachFilteredAdapter();
 			activity.getListView().setFastScrollEnabled(false);
 			((BaseAdapter) activity.getListView().getAdapter())
 					.notifyDataSetInvalidated();

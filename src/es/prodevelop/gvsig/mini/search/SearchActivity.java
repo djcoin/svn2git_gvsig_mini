@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.MultiAutoCompleteTextView;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
 import es.prodevelop.gvsig.mini.R;
@@ -32,6 +33,8 @@ public class SearchActivity extends ListActivity implements TextWatcher {
 	private MultiAutoCompleteTextView autoCompleteTextView;
 
 	DisplayMetrics metrics = new DisplayMetrics();
+	ListAdapter listAdapter;
+	ListAdapter filteredListAdapter;
 
 	public final static int SEARCH_DIALOG = 1;
 
@@ -65,6 +68,11 @@ public class SearchActivity extends ListActivity implements TextWatcher {
 				});
 
 		autoCompleteTextView.addTextChangedListener(this);
+	}
+
+	public void initializeAdapters() {
+		listAdapter = new LazyAdapter(this);
+		filteredListAdapter = new FilteredLazyAdapter(this);
 	}
 
 	public QuadtreeProvider getProvider() {
@@ -124,6 +132,17 @@ public class SearchActivity extends ListActivity implements TextWatcher {
 				arg0.toString().toLowerCase());
 		getAutoCompleteAdapter().getFilter().filter(
 				arg0.toString().toLowerCase());
+		this.setTitle(R.string.searching);
 		setProgressBarIndeterminateVisibility(true);
+	}
+
+	public void attachFilteredAdapter() {
+		this.getListView().setAdapter(this.filteredListAdapter);
+		this.setListAdapter(this.filteredListAdapter);
+	}
+
+	public void attachSectionedAdapter() {
+		this.getListView().setAdapter(listAdapter);
+		this.setListAdapter(listAdapter);
 	}
 }

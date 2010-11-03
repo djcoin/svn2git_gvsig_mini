@@ -11,26 +11,48 @@
 			<MultiAutoCompleteTextView
 				android:layout_width="fill_parent" android:layout_weight="1"
 				android:layout_height="wrap_content" android:id="@+id/EditText01"
-				android:hint="@string/filter" android:completionHint="@string/clear_filter"
-				android:paddingLeft="10dip" android:paddingRight="10dip"
-				android:paddingTop="10dip" android:paddingBottom="10dip"
-				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
-				android:layout_marginTop="5dip" android:layout_marginBottom="5dip" />
+				android:hint="@string/filter" android:paddingLeft="10dip"
+				android:paddingRight="10dip" android:paddingTop="10dip"
+				android:paddingBottom="10dip" android:layout_marginLeft="5dip"
+				android:layout_marginRight="5dip" android:layout_marginTop="5dip"
+				android:layout_marginBottom="5dip" />
 
-			<TextView android:text="@string/search_by" android:id="@+id/TextViewSearchBy"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:paddingLeft="5dip" android:paddingRight="5dip"
-				android:paddingTop="5dip" android:paddingBottom="5dip"
-				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
-				android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></TextView>
-
-			<Spinner android:id="@+id/SpinnerSearch"
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:paddingLeft="5dip" android:paddingRight="5dip"
-				android:paddingTop="5dip" android:paddingBottom="5dip"
-				android:prompt="@string/search_filter" android:entries="@array/search_options"
-				android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
-				android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></Spinner>
+				android:orientation="horizontal">
+
+				<Button android:text="    (    " android:id="@+id/bt_open_par"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:paddingLeft="5dip" android:paddingRight="5dip"
+					android:paddingTop="5dip" android:paddingBottom="5dip"
+					android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+					android:layout_marginTop="5dip" android:layout_marginBottom="5dip">
+				</Button>
+
+				<Button android:text="    'AND'    " android:id="@+id/bt_op_and"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:paddingLeft="5dip" android:paddingRight="5dip"
+					android:paddingTop="5dip" android:paddingBottom="5dip"
+					android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+					android:layout_marginTop="5dip" android:layout_marginBottom="5dip">
+				</Button>
+
+				<Button android:text="    'OR'    " android:id="@+id/bt_op_or"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:paddingLeft="5dip" android:paddingRight="5dip"
+					android:paddingTop="5dip" android:paddingBottom="5dip"
+					android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+					android:layout_marginTop="5dip" android:layout_marginBottom="5dip">
+				</Button>
+
+				<Button android:text="    )    " android:id="@+id/bt_close_par"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:paddingLeft="5dip" android:paddingRight="5dip"
+					android:paddingTop="5dip" android:paddingBottom="5dip"
+					android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+					android:layout_marginTop="5dip" android:layout_marginBottom="5dip">
+				</Button>
+			</LinearLayout>
 
 			<TextView android:text="@string/sort_results" android:id="@+id/TextViewSortBy"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"

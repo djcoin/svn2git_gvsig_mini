@@ -5,63 +5,52 @@ import java.io.File;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 
 public class StreetSearchActivity extends SearchActivity {
 
 	ListView lView;
 	LinearLayout searchLayout;
-	Spinner spinnerSearch;
 	Spinner spinnerSort;
+	Button closePar;
+	Button openPar;
+	Button andOp;
+	Button orOp;
+	CopyTextOnClickListener buttonListener = new CopyTextOnClickListener();
+	MultiAutoCompleteTextView advancedTextView;
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case SEARCH_DIALOG:
 			return new AlertDialog.Builder(StreetSearchActivity.this)
-					.setIcon(R.drawable.icon)
-					.setTitle("Search options")
+					.setIcon(android.R.drawable.ic_search_category_default)
+					.setTitle(R.string.advanced_search)
 					.setView(searchLayout)
-					.setPositiveButton("OK",
+					.setPositiveButton(R.string.ok,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 
-									final String type = spinnerSearch
-											.getSelectedItem().toString();
-
-									final String filter = spinnerSort
-											.getSelectedItem().toString();
-
-									if (type.compareTo(getSearchOptions().filter) != 0
-											|| filter
-													.compareTo(getSearchOptions().filter) != 0) {
-										getSearchOptions().filter = spinnerSearch
-												.getSelectedItem().toString();
-										getSearchOptions().sort = spinnerSort
-												.getSelectedItem().toString();
-										onTextChanged(getAutoCompleteTextView()
-												.getText().toString(), 0, 0, 0);
-									}
-
-									getSearchOptions().filter = spinnerSearch
-											.getSelectedItem().toString();
 									getSearchOptions().sort = spinnerSort
 											.getSelectedItem().toString();
-
+									// getAutoCompleteTextView().setText(
+									// advancedTextView.getText());
+									onTextChanged(advancedTextView
+											.getText().toString(), 0, 0, 0);
 								}
 							}).create();
 		}
@@ -87,108 +76,61 @@ public class StreetSearchActivity extends SearchActivity {
 
 		});
 
-		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// ((LazyAdapter) getListAdapter()).pos = arg2;
-				// ((LazyAdapter) getListAdapter()).notifyDataSetChanged();
-
-				AlertDialog.Builder alertPOI = new AlertDialog.Builder(
-						StreetSearchActivity.this);
-
-				alertPOI.setCancelable(true);
-				alertPOI.setIcon(R.drawable.pois);
-				alertPOI.setTitle(R.string.NameFinderActivity_0);
-
-				final ListView lv = new ListView(StreetSearchActivity.this);
-
-				lv.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1,
-							final int position, long arg3) {
-						try {
-							Intent mIntent;
-							mIntent = new Intent();
-							Bundle bundle = new Bundle();
-							bundle.putInt("selected", position);
-							mIntent.putExtras(bundle);
-							switch (position) {
-							case 0:
-								// log.log(Level.FINE, "setResult = 0");
-								setResult(0, mIntent);
-								finish();
-
-								break;
-							case 1:
-								// log.log(Level.FINE, "setResult = 1");
-								setResult(1, mIntent);
-								finish();
-								break;
-							case 2:
-								// log.log(Level.FINE, "setResult = 2");
-								setResult(2, mIntent);
-								finish();
-								break;
-							case 3:
-								// TODO LANZAR OTRA ACTIVITY CON LOS DETALLES
-
-								break;
-							}
-						} catch (Exception e) {
-							// log.log(Level.SEVERE,"",e);
-						}
-					}
-
-				});
-
-				BulletedTextListAdapter adapter = new BulletedTextListAdapter(
-						StreetSearchActivity.this);
-
-				adapter.addItem(new BulletedText(getResources().getString(
-						R.string.NameFinderActivity_1), getResources()
-						.getDrawable(R.drawable.pinpoi)));
-
-				adapter.addItem(new BulletedText(getResources().getString(
-						R.string.NameFinderActivity_2), getResources()
-						.getDrawable(R.drawable.pinoutpoi)));
-
-				adapter.addItem(new BulletedText(getResources().getString(
-						R.string.NameFinderActivity_3), getResources()
-						.getDrawable(R.drawable.pois)));
-
-				lv.setAdapter(adapter);
-
-				alertPOI.setView(lv);
-
-				alertPOI.setNegativeButton(R.string.back,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-							}
-						});
-
-				alertPOI.show();
-
-				return true;
-			}
-
-		});
+		getListView().setOnItemLongClickListener(
+				new POIItemLongClickListener(this));
 
 		searchLayout = (LinearLayout) this.getLayoutInflater().inflate(
 				R.layout.search_config_panel, null);
 
-		spinnerSearch = ((Spinner) searchLayout
-				.findViewById(R.id.SpinnerSearch));
+		advancedTextView = ((MultiAutoCompleteTextView) searchLayout
+				.findViewById(R.id.EditText01));
+
+		advancedTextView.setTokenizer(new SpaceTokenizer());
+		advancedTextView.setAdapter(getAutoCompleteAdapter());
+		advancedTextView.setThreshold(1);
+		advancedTextView.requestFocus();
+
+		closePar = ((Button) searchLayout.findViewById(R.id.bt_close_par));
+		openPar = ((Button) searchLayout.findViewById(R.id.bt_open_par));
+		andOp = ((Button) searchLayout.findViewById(R.id.bt_op_and));
+		orOp = ((Button) searchLayout.findViewById(R.id.bt_op_or));
+
+		closePar.setOnClickListener(buttonListener);
+		openPar.setOnClickListener(buttonListener);
+		andOp.setOnClickListener(buttonListener);
+		orOp.setOnClickListener(buttonListener);
 
 		spinnerSort = ((Spinner) searchLayout.findViewById(R.id.SpinnerSort));
 
-		getSearchOptions().filter = spinnerSearch.getSelectedItem().toString();
 		getSearchOptions().sort = spinnerSort.getSelectedItem().toString();
+		getAutoCompleteTextView().addTextChangedListener(this);
 
-		setListAdapter(new LazyAdapter(this));
+		initializeAdapters();
+		this.attachSectionedAdapter();
 	}
 
+	@Override
+	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
+			int arg3) {
+		if (arg1 != 0 && arg2 != 0 && arg2 != 0)
+			getSearchOptions().sort = getResources().getString(R.string.no);
+		super.onTextChanged(arg0, arg1, arg2, arg3);
+		// advancedTextView.setText(arg0);
+	}
+
+	private class CopyTextOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			try {
+				String append = ((Button) v).getText().toString();
+
+				advancedTextView.getText().insert(
+						advancedTextView.getSelectionStart(),
+						" " + append.trim() + " ");
+			} catch (Exception e) {
+				Log.e("", e.getMessage());
+			}
+		}
+	}
 }
