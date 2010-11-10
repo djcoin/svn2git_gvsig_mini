@@ -141,9 +141,10 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
+import es.prodevelop.gvsig.mini.search.SearchExpandableActivity;
+import es.prodevelop.gvsig.mini.search.StreetSearchActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
-import es.prodevelop.gvsig.mini.tasks.async.LoadClusterIndexAsyncTask;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadCallbackHandler;
@@ -161,6 +162,7 @@ import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.PerstPOIsOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
@@ -709,6 +711,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					R.drawable.menu_location);
 			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
 					R.drawable.menu_location);
+			pMenu.add(0, 11, 11, "Search");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
@@ -903,6 +906,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			case 10:
 				try {
 					showAboutDialog();
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 11:
+				try {
+					Intent mainIntent = new Intent(this,
+							SearchExpandableActivity.class);
+					this.startActivityForResult(mainIntent, 4456);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
@@ -1606,7 +1618,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			sliding.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 				@Override
-				public void onDrawerOpened() {					
+				public void onDrawerOpened() {
 					Map.this.isPOISlideShown = true;
 					osmap.pauseDraw();
 					z.setVisibility(View.INVISIBLE);
@@ -1618,14 +1630,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				@Override
 				public void onDrawerClosed() {
 					try {
-						
+
 						Map.this.isPOISlideShown = false;
-						z.setVisibility(View.VISIBLE);	
+						z.setVisibility(View.VISIBLE);
 						osmap.poiOverlay.setCategories(POICategories.selected);
 						osmap.resumeDraw();
 
-						
-//						Map.this.osmap.poiOverlay.onTouchEvent(null, null);
+						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
 					} catch (Exception e) {
 						Log.e("", e.getMessage());
 					}
@@ -1647,8 +1658,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				this.osmap.poiOverlay = p;
 				this.osmap.getOverlays().add(p);
 				this.osmap.addExtentChangedListener(p);
-				// this.osmap.getOverlays()
-				// .add(new PerstPOIsOverlay(this, osmap));
+				this.osmap.getOverlays().add(new PerstPOIsOverlay(this, osmap));
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));
@@ -1739,28 +1749,29 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			/* Controls */
 			{
 
-//				View ivLayers = (View) factory.inflate(
-//						R.layout.layers_image_button, null);
-//				ivLayers.setId(117);
-//				final RelativeLayout.LayoutParams layersParams = new RelativeLayout.LayoutParams(
-//						RelativeLayout.LayoutParams.WRAP_CONTENT,
-//						RelativeLayout.LayoutParams.WRAP_CONTENT);
-//				layersParams.addRule(RelativeLayout.ALIGN_TOP);
-//				layersParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//
-//				rl.addView(ivLayers, layersParams);
-//
-//				ivLayers.setOnClickListener(new OnClickListener() {
-//					@Override
-//					public void onClick(View v) {
-//						try {
-//							viewLayers();
-//						} catch (Exception e) {
-//							log.log(Level.SEVERE, "onLayersClick: ", e);
-//							osmap.postInvalidate();
-//						}
-//					}
-//				});
+				// View ivLayers = (View) factory.inflate(
+				// R.layout.layers_image_button, null);
+				// ivLayers.setId(117);
+				// final RelativeLayout.LayoutParams layersParams = new
+				// RelativeLayout.LayoutParams(
+				// RelativeLayout.LayoutParams.WRAP_CONTENT,
+				// RelativeLayout.LayoutParams.WRAP_CONTENT);
+				// layersParams.addRule(RelativeLayout.ALIGN_TOP);
+				// layersParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+				//
+				// rl.addView(ivLayers, layersParams);
+				//
+				// ivLayers.setOnClickListener(new OnClickListener() {
+				// @Override
+				// public void onClick(View v) {
+				// try {
+				// viewLayers();
+				// } catch (Exception e) {
+				// log.log(Level.SEVERE, "onLayersClick: ", e);
+				// osmap.postInvalidate();
+				// }
+				// }
+				// });
 				this.updateSlider();
 			}
 			log.log(Level.FINE, "ui loaded");

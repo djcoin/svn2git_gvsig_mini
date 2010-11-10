@@ -16,9 +16,13 @@ import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAd
 public class POIItemLongClickListener implements OnItemLongClickListener {
 
 	SearchActivity activity;
+	int iconId;
+	int titleId;
 
-	public POIItemLongClickListener(SearchActivity activity) {
+	public POIItemLongClickListener(SearchActivity activity, int iconId, int titleId) {
 		this.activity = activity;
+		this.iconId = iconId;
+		this.titleId = titleId;
 	}
 
 	@Override
@@ -30,8 +34,8 @@ public class POIItemLongClickListener implements OnItemLongClickListener {
 		AlertDialog.Builder alertPOI = new AlertDialog.Builder(activity);
 
 		alertPOI.setCancelable(true);
-		alertPOI.setIcon(R.drawable.pois);
-		alertPOI.setTitle(R.string.NameFinderActivity_0);
+		alertPOI.setIcon(iconId);
+		alertPOI.setTitle(titleId);
 
 		final ListView lv = new ListView(activity);
 
@@ -87,6 +91,22 @@ public class POIItemLongClickListener implements OnItemLongClickListener {
 
 		adapter.addItem(new BulletedText(activity.getResources().getString(
 				R.string.NameFinderActivity_3), activity.getResources()
+				.getDrawable(R.drawable.pois)));
+		
+		adapter.addItem(new BulletedText(activity.getResources().getString(
+				R.string.bookmark), activity.getResources()
+				.getDrawable(R.drawable.pois)));
+		
+		adapter.addItem(new BulletedText(activity.getResources().getString(
+				R.string.add_contact), activity.getResources()
+				.getDrawable(R.drawable.pois)));
+		
+		adapter.addItem(new BulletedText(activity.getResources().getString(
+				R.string.call_number), activity.getResources()
+				.getDrawable(R.drawable.pois)));
+		
+		adapter.addItem(new BulletedText(activity.getResources().getString(
+				R.string.find_pois_near), activity.getResources()
 				.getDrawable(R.drawable.pois)));
 
 		lv.setAdapter(adapter);

@@ -1,13 +1,13 @@
 package es.prodevelop.gvsig.mini.search;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.garret.perst.fulltext.FullTextSearchResult;
 
 import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
+import android.widget.ListAdapter;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
@@ -25,13 +25,29 @@ public class SimpleFilter extends Filter {
 		this.activity = searchActivity;
 	}
 
+	private StringBuffer buildQuery(String prefix, ArrayList cat) {
+		StringBuffer temp = new StringBuffer();
+
+		final int size = cat.size();
+		for (int i = 0; i < size; i++) {
+			temp.append(prefix.trim().toString().replaceAll(" ", " AND "));
+			temp.append(" AND 0"
+					+ cat.get(i).toString().toLowerCase().replaceAll("_", "")
+					+ "0");
+
+			if (i != size - 1)
+				temp.append(" OR ");
+		}
+		return temp;
+	}
+
 	@Override
 	protected FilterResults performFiltering(CharSequence prefix) {
 		FilterResults results = new FilterResults();
 
 		boolean byPrefix = true;
-		final LazyAdapter adapter;
-		adapter = (LazyAdapter) activity.getListView().getAdapter();
+		final ListAdapter adapter;
+		adapter = (ListAdapter) activity.getListView().getAdapter();
 
 		if (prefix == null) {
 			results.count = 0;
@@ -49,16 +65,22 @@ public class SimpleFilter extends Filter {
 			SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
 					.getProvider()).getHelper().getRoot());
 
-			String desc = prefix.toString().trim();
+			// FIXME filter by category || subcategory -> SearchOptions
+			String desc = prefix.toString();
 			if (!desc.contains(" 'or' ") && !desc.contains(" 'and' ")) {
-				desc = prefix.toString().trim().replaceAll(" ", " AND ");
+				StringBuffer temp = buildQuery(desc,
+						this.searchOptions.getCategories());
+				temp.append(buildQuery(desc,
+						this.searchOptions.getSubcategories()));
+				desc = temp.toString();
+				Log.d("SIMPLE FILTER", desc);
 			} else {
 				desc = desc.replaceAll(" 'or' ", " OR ");
 				desc = desc.replaceAll(" 'and' ", " AND ");
 			}
 
-			FullTextSearchResult result = root.getFullTextStreetIndex().search(
-					desc, "en", 1000, 1000);
+			FullTextSearchResult result = root.getFullTextIndex().search(desc,
+					"en", 1000, 1000);
 
 			final int size = result.hits.length;
 			for (int i = 0; i < size; i++) {
@@ -100,47 +122,47 @@ public class SimpleFilter extends Filter {
 			// for (int i = 0; i < l; i++) {
 			// list.add(pois[i]);
 			// }
+
+			if (list.size() == 0) {
+				POI p = new POI();
+				p.setDescription(activity.getResources().getString(
+						R.string.no_results));
+				list.add(p);
+			}
+
+			results.values = list;
+			results.count = list.size();
 		} else {
-			if (byPrefix) {
-				list = (ArrayList) ((PerstOsmPOIProvider) activity
-						.getProvider()).getStreetsByPrefixName(prefix
-						.toString());
-			} else {
-				long t1 = System.currentTimeMillis();
-
-				Iterator it = (Iterator) ((PerstOsmPOIProvider) activity
-						.getProvider()).getStreetsByName(prefix.toString(),
-						false);
-
-				Log.d("TIME", (System.currentTimeMillis() - t1) + "");
-				t1 = System.currentTimeMillis();
-				while (it.hasNext())
-					list.add(it.next());
-				Log.d("TIME", (System.currentTimeMillis() - t1) + "");
-			}
-
-			if (searchOptions.sortResults()) {
-				final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-						searchOptions.center);
-				Object[] ordered = dq.sort(list);
-				final int length = ordered.length;
-
-				list = new ArrayList();
-				for (int i = 0; i < length; i++) {
-					list.add(ordered[i]);
-				}
-			}
+			// if (byPrefix) {
+			// list = (ArrayList) ((PerstOsmPOIProvider) activity
+			// .getProvider()).getStreetsByPrefixName(prefix
+			// .toString());
+			// } else {
+			// long t1 = System.currentTimeMillis();
+			//
+			// Iterator it = (Iterator) ((PerstOsmPOIProvider) activity
+			// .getProvider()).getStreetsByName(prefix.toString(),
+			// false);
+			//
+			// Log.d("TIME", (System.currentTimeMillis() - t1) + "");
+			// t1 = System.currentTimeMillis();
+			// while (it.hasNext())
+			// list.add(it.next());
+			// Log.d("TIME", (System.currentTimeMillis() - t1) + "");
+			// }
+			//
+			// if (searchOptions.sortResults()) {
+			// final PointDistanceQuickSort dq = new PointDistanceQuickSort(
+			// searchOptions.center);
+			// Object[] ordered = dq.sort(list);
+			// final int length = ordered.length;
+			//
+			// list = new ArrayList();
+			// for (int i = 0; i < length; i++) {
+			// list.add(ordered[i]);
+			// }
+			// }
 		}
-
-		if (list.size() == 0) {
-			POI p = new POI();
-			p.setDescription(activity.getResources().getString(
-					R.string.no_results));
-			list.add(p);
-		}
-
-		results.values = list;
-		results.count = list.size();
 
 		return results;
 	}

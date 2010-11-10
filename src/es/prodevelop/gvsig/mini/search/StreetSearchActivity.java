@@ -6,19 +6,23 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
+import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 
 public class StreetSearchActivity extends SearchActivity {
 
@@ -49,8 +53,8 @@ public class StreetSearchActivity extends SearchActivity {
 											.getSelectedItem().toString();
 									// getAutoCompleteTextView().setText(
 									// advancedTextView.getText());
-									onTextChanged(advancedTextView
-											.getText().toString(), 0, 0, 0);
+									onTextChanged(advancedTextView.getText()
+											.toString(), 0, 0, 0);
 								}
 							}).create();
 		}
@@ -61,8 +65,7 @@ public class StreetSearchActivity extends SearchActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setProvider(new PerstOsmPOIProvider("/" + "sdcard" + File.separator
-				+ "perst_streets.db"));
+		setProvider(POIProviderManager.getInstance().getPOIProvider());
 
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
@@ -77,10 +80,15 @@ public class StreetSearchActivity extends SearchActivity {
 		});
 
 		getListView().setOnItemLongClickListener(
-				new POIItemLongClickListener(this));
+				new POIItemLongClickListener(this,
+						R.drawable.p_places_poi_place_city_32,
+						R.string.street_options));
 
 		searchLayout = (LinearLayout) this.getLayoutInflater().inflate(
 				R.layout.search_config_panel, null);
+		// EditText text = (EditText)
+		// findViewById(com.android.internal.R.id.search_src_text);
+		// searchLayout.addView(text);
 
 		advancedTextView = ((MultiAutoCompleteTextView) searchLayout
 				.findViewById(R.id.EditText01));
@@ -105,8 +113,20 @@ public class StreetSearchActivity extends SearchActivity {
 		getSearchOptions().sort = spinnerSort.getSelectedItem().toString();
 		getAutoCompleteTextView().addTextChangedListener(this);
 
+		this.getSearchOptions().clearCategories();
+		this.getSearchOptions().clearSubcategories();
+		this.getSearchOptions().addCategory(POICategories.STREETS);
+		this.getSearchOptions().setFilteredIndexed(
+				getProvider().getStreetMetadata().getCategory(
+						POICategories.STREETS));
+		
 		initializeAdapters();
-		this.attachSectionedAdapter();
+		this.attachSectionedAdapter();		
+	}
+
+	public void initializeAdapters() {
+		listAdapter = new LazyAdapter(this);
+		filteredListAdapter = new FilteredLazyAdapter(this);
 	}
 
 	@Override

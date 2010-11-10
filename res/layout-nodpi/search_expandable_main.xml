@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<MultiAutoCompleteTextView
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content" android:id="@+id/EditText01"
+			android:hint="@string/filter" android:completionHint="@string/clear_filter"
+			android:paddingLeft="10dip" android:paddingRight="10dip"
+			android:paddingTop="10dip" android:paddingBottom="10dip"
+			android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+			android:layout_marginTop="5dip" android:layout_marginBottom="5dip" />
+		<ImageButton android:layout_width="wrap_content"
+			android:layout_height="fill_parent" android:id="@+id/search_opts"
+			android:paddingLeft="10dip" android:paddingRight="10dip"
+			android:paddingTop="10dip" android:src="@android:drawable/ic_search_category_default"
+			android:paddingBottom="10dip" android:layout_marginLeft="5dip"
+			android:layout_marginRight="5dip" android:layout_marginTop="5dip"
+			android:layout_marginBottom="5dip" />
+	</LinearLayout>
+	<LinearLayout android:id="@+id/LinearLayout02"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:gravity="bottom">
+		<ExpandableListView android:id="@+id/android:list"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:clickable="true" />
+	</LinearLayout>
+</LinearLayout>

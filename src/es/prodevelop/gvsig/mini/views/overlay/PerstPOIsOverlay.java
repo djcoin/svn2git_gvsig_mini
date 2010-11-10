@@ -32,6 +32,11 @@ import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
+/**
+ * @deprecated
+ * @author aromeu
+ *
+ */
 public class PerstPOIsOverlay extends MapOverlay implements
 		LayerChangedListener {
 

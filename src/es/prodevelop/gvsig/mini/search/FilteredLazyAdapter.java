@@ -2,6 +2,7 @@ package es.prodevelop.gvsig.mini.search;
 
 import java.text.DecimalFormat;
 
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,29 +13,46 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
+import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POI;
-import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
-import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
-		
-	Metadata metadata;
+public class FilteredLazyAdapter extends BaseAdapter implements
+		Filterable {
+
 	SimpleFilter mFilter;
 	SearchActivity activity;
-	DecimalFormat formatter = new DecimalFormat("####.00");	
+	DecimalFormat formatter = new DecimalFormat("####.00");
+	Indexed category;
+	Metadata metadata;
+	Bitmap bitmap;
 
 	public FilteredLazyAdapter(SearchActivity activity) {
-		this.activity = activity;	
-		metadata = ((PerstOsmPOIProvider) activity.getProvider()).getMetadata();
-	}	
+		this.activity = activity;
+		category = activity.getSearchOptions().getFilteredIndexed();
+		if (category.name.compareTo(POICategories.STREETS) == 0) {
+			metadata = activity.getProvider().getStreetMetadata();
+			bitmap = POICategoryIcon.getBitmap32ForCategory(category.name);
+		} else {
+			metadata = activity.getProvider().getPOIMetadata();
+			Metadata.Category cat = metadata.getCategory(category.name);
+			if (cat != null) {
+				bitmap = POICategoryIcon.getBitmap32ForCategory(cat.name);
+			} else {
+				bitmap = POICategoryIcon.getBitmap32ForCategory(metadata
+						.getCategoryForSubcategory(category.name).name);
+			}
+		}
+
+	}
 
 	int pos = -1;
 
@@ -43,7 +61,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		// TODO Auto-generated method stub
 		if (activity.getResultsList() != null)
 			return activity.getResultsList().size();
-		return metadata.getTotalStreets();
+		return category.total;
 	}
 
 	@Override
@@ -52,18 +70,15 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 			return activity.getResultsList().get(arg0);
 		}
 
-		return ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
-				.getProvider()).getHelper().getRoot()).getStreetIndex().getAt(
-				arg0);
+		return ((PerstOsmPOIProvider) activity.getProvider()).getAt(
+				category.name, arg0);
 	}
 
 	@Override
 	public long getItemId(int arg0) {
 		if (activity.getResultsList() != null)
 			return ((POI) activity.getResultsList().get(arg0)).getId();
-		return ((POI) ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
-				.getProvider()).getHelper().getRoot()).getStreetIndex().getAt(
-				arg0)).getId();
+		return ((POI) getItem(arg0)).getId();
 	}
 
 	@Override
@@ -96,7 +111,8 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 				// zzParams.setMargins(20, 20, 20, 20);
 				MapPreview preview = new MapPreview(activity, CompatManager
 						.getInstance().getRegisteredContext(),
-						activity.metrics.widthPixels, activity.metrics.heightPixels / 2);
+						activity.metrics.widthPixels,
+						activity.metrics.heightPixels / 2);
 				l.addView(preview);
 				((LinearLayout) convertView).addView(l, zzParams);
 				holder.previewLayout = l;
@@ -116,13 +132,15 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		// ((TextView) arg1).setTextSize(26);
 		// ((TextView) arg1).setTextColor(Color.WHITE);
 		POI p = (POI) getItem(arg0);
-		String desc = Utilities.capitalizeFirstLetters(p.getDescription());
+		String desc = Utilities
+				.capitalizeFirstLetters((p.getDescription() != null) ? p
+						.getDescription() : "?");
 
 		if (holder.preview != null) {
 			if (arg0 == pos) {
+				holder.previewLayout.setVisibility(View.VISIBLE);
+				holder.preview.setMapCenterFromLonLat(p);
 				if ((getItem(arg0) instanceof OsmPOIStreet)) {
-					holder.previewLayout.setVisibility(View.VISIBLE);
-					holder.preview.setMapCenterFromLonLat(p);
 					holder.preview.setExtent(((OsmPOIStreet) p)
 							.getBoundingBox());
 				}
@@ -140,8 +158,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 						.distance(ConversionCoords.reproject(p.getX(),
 								p.getY(), CRSFactory.getCRS("EPSG:4326"),
 								CRSFactory.getCRS("EPSG:900913")))));
-		holder.poiImg.setImageBitmap(ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_32));
+		holder.poiImg.setImageBitmap(bitmap);
 		// holder.icon.setImageBitmap((position & 1) == 1 ? mIcon1 :
 		// mIcon2);
 
@@ -177,6 +194,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public void notifyDataSetChanged() {
 		// TODO Auto-generated method stub
+		// pos = -1;
 		super.notifyDataSetChanged();
 		activity.setTitle(R.string.search_results);
 		activity.setProgressBarIndeterminateVisibility(false);
@@ -190,6 +208,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public void notifyDataSetInvalidated() {
 		// TODO Auto-generated method stub
+		// pos = -1;
 		super.notifyDataSetInvalidated();
 		activity.setTitle(R.string.search_results);
 		activity.setProgressBarIndeterminateVisibility(false);

@@ -234,7 +234,7 @@
 	<string name="removing_poi_category">Removing category: </string>
 
     <string name="filter">Type to filter</string>
-    <string name="clear_filter">Clear to show all the streets</string>
+    <string name="clear_filter">Tap a keyword to search</string>
     <string name="no_results">No results found</string>
     <string name="distance">Distance: </string>
     <string name="sort_distance">Distance</string>
@@ -249,5 +249,12 @@
     <string name="clear">Clear</string>
     <string name="searching">Searching ...</string>
     <string name="search_results">Search results</string>
+    
+    <string name="street_options">Street options</string>
+    <string name="bookmark">Add bookmark</string>
+    <string name="street_view">Show street view</string>
+    <string name="call_number">Call this number</string>
+    <string name="add_contact">Add contact</string>
+    <string name="find_pois_near">Find POIs near</string>
 </resources>
 

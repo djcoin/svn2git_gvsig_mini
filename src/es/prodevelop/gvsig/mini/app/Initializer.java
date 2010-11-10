@@ -39,14 +39,18 @@
 
 package es.prodevelop.gvsig.mini.app;
 
+import java.io.File;
+
 import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
+import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.android.AndroidContext;
 import es.prodevelop.gvsig.mini.common.android.LogHandler;
 import es.prodevelop.gvsig.mini.location.Config;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.tilecache.layers.Layers;
@@ -68,10 +72,10 @@ public class Initializer {
 	private Context applicationContext;
 
 	private IContext aContext;
-	
+
 	public static boolean isInitialized = false;
 	private Handler handler;
-	
+
 	public final static int INITIALIZE_STARTED = 0;
 	public final static int INITIALIZE_FINISHED = 1;
 
@@ -87,53 +91,56 @@ public class Initializer {
 	}
 
 	public void initialize(Context applicationContext) throws Exception {
-		if (this.handler != null) 
+		if (this.handler != null)
 			handler.sendEmptyMessage(INITIALIZE_STARTED);
-		
+
 		this.applicationContext = applicationContext;
-//		handler.sendEmptyMessage(0);
+		// handler.sendEmptyMessage(0);
 
 		CompatManager.getInstance().registerContext(
 				new AndroidContext(this.applicationContext));
-//		handler.sendEmptyMessage(1);
+		// handler.sendEmptyMessage(1);
 		CompatManager.getInstance().registerLogHandler(new LogHandler());
-//		handler.sendEmptyMessage(2);
+		// handler.sendEmptyMessage(2);
 		CompatManager.getInstance().getRegisteredLogHandler().configureLog();
-//		handler.sendEmptyMessage(3);
-		
-		
-//		handler.sendEmptyMessage(4);
+		// handler.sendEmptyMessage(3);
+
+		// handler.sendEmptyMessage(4);
 
 		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
 				new FlatXFileSystemStrategy());
-//		handler.sendEmptyMessage(5);
+		// handler.sendEmptyMessage(5);
 		FileSystemStrategyManager.getInstance().registerFileSystemStrategy(
 				new QuadKeyFileSystemStrategy());
-//		handler.sendEmptyMessage(6);
+		// handler.sendEmptyMessage(6);
 
 		MapRendererManager.getInstance().registerMapRendererFactory(
 				new WMSMapRendererFactory());
-//		handler.sendEmptyMessage(7);
+		// handler.sendEmptyMessage(7);
 
 		Config.setContext(this.getApplicationContext());
-//		handler.sendEmptyMessage(8);
+		// handler.sendEmptyMessage(8);
 		ResourceLoader.initialize(this.getApplicationContext());
-//		handler.sendEmptyMessage(9);
+		// handler.sendEmptyMessage(9);
 
 		aContext = new AndroidContext(this.getApplicationContext());
-//		handler.sendEmptyMessage(10);
+		// handler.sendEmptyMessage(10);
 		CompatManager.getInstance().registerContext(aContext);
-//		handler.sendEmptyMessage(11);
+		// handler.sendEmptyMessage(11);
 		Layers.getInstance().initialize(true);
-//		handler.sendEmptyMessage(12);
+		// handler.sendEmptyMessage(12);
 
 		Constants.ROOT_DIR = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
-//		handler.sendEmptyMessage(13);
-		
-		if (this.handler != null) 
+		// handler.sendEmptyMessage(13);
+
+//		POIProviderManager.getInstance().registerPOIProvider(
+//				new PerstOsmPOIProvider("/" + "sdcard" + File.separator
+//						+ "perst_streets.db"));
+
+		if (this.handler != null)
 			handler.sendEmptyMessage(INITIALIZE_FINISHED);
-		
+
 		isInitialized = true;
 	}
 
@@ -145,9 +152,9 @@ public class Initializer {
 	public Context getApplicationContext() {
 		return applicationContext;
 	}
-	
+
 	public void addInitializeListener(Handler handler) {
-		this.handler =  handler;
+		this.handler = handler;
 	}
 
 }

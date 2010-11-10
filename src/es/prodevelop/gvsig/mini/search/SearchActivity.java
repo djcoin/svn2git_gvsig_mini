@@ -24,7 +24,7 @@ import es.prodevelop.gvsig.mini.R;
  * @author aromeu
  * 
  */
-public class SearchActivity extends ListActivity implements TextWatcher {
+public abstract class SearchActivity extends ListActivity implements TextWatcher {
 
 	private QuadtreeProvider provider;
 	private AutoCompleteAdapter autoCompleteAdapter;
@@ -35,6 +35,9 @@ public class SearchActivity extends ListActivity implements TextWatcher {
 	DisplayMetrics metrics = new DisplayMetrics();
 	ListAdapter listAdapter;
 	ListAdapter filteredListAdapter;
+	
+	public final static String CATEGORY = "category";
+	public final static String SUBCATEGORY = "subcategory";
 
 	public final static int SEARCH_DIALOG = 1;
 
@@ -70,10 +73,7 @@ public class SearchActivity extends ListActivity implements TextWatcher {
 		autoCompleteTextView.addTextChangedListener(this);
 	}
 
-	public void initializeAdapters() {
-		listAdapter = new LazyAdapter(this);
-		filteredListAdapter = new FilteredLazyAdapter(this);
-	}
+	public abstract void initializeAdapters();
 
 	public QuadtreeProvider getProvider() {
 		return provider;

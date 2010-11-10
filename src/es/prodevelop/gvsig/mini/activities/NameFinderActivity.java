@@ -59,6 +59,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -223,8 +224,10 @@ public class NameFinderActivity extends ListActivity {
 
 				mText = new TextView(context);
 				mText.setText(text);
-				addView(mText, new LinearLayout.LayoutParams(
-						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+				LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(
+						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+				lParams.gravity = Gravity.CENTER_VERTICAL;
+				addView(mText, lParams);
 			} catch (Exception e) {
 				log.log(Level.SEVERE,"",e);
 			}

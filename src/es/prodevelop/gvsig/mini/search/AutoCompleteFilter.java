@@ -41,7 +41,7 @@ public class AutoCompleteFilter extends Filter {
 			return results;
 		}
 
-		Iterator<FullTextIndex.Keyword> it = root.getFullTextStreetIndex()
+		Iterator<FullTextIndex.Keyword> it = root.getFullTextIndex()
 				.getKeywords(prefix.toString());
 
 		ArrayList list = new ArrayList();
