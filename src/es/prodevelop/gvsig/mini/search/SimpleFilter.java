@@ -12,20 +12,23 @@ import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
+import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class SimpleFilter extends Filter {
 
-	private SearchOptions searchOptions;
-	private SearchActivity activity;
+	protected SearchOptions searchOptions;
+	protected SearchActivity activity;
 
 	public SimpleFilter(SearchActivity searchActivity) {
 		this.searchOptions = searchActivity.getSearchOptions();
 		this.activity = searchActivity;
 	}
 
-	private StringBuffer buildQuery(String prefix, ArrayList cat) {
+	protected StringBuffer buildQuery(String prefix, ArrayList cat) {
 		StringBuffer temp = new StringBuffer();
 
 		final int size = cat.size();
@@ -80,7 +83,9 @@ public class SimpleFilter extends Filter {
 			}
 
 			FullTextSearchResult result = root.getFullTextIndex().search(desc,
-					"en", 1000, 1000);
+					SpatialIndexRoot.DEFAULT_LANGUAGE,
+					SpatialIndexRoot.DEFAULT_MAX_RESULTS,
+					SpatialIndexRoot.DEFAULT_MAX_TIME);
 
 			final int size = result.hits.length;
 			for (int i = 0; i < size; i++) {
@@ -89,8 +94,13 @@ public class SimpleFilter extends Filter {
 
 			if (searchOptions.sortResults()) {
 				if (searchOptions.isSortByDistance()) {
+//					double[] lonlat = ConversionCoords.reproject(
+//							searchOptions.center.getX(),
+//							searchOptions.center.getY(),
+//							CRSFactory.getCRS("EPSG:900913"),
+//							CRSFactory.getCRS("EPSG:4326"));
 					final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-							searchOptions.center);
+							/*new Point(lonlat[0], lonlat[1])*/searchOptions.center);
 					Object[] ordered = dq.sort(list);
 					final int length = ordered.length;
 
@@ -169,18 +179,28 @@ public class SimpleFilter extends Filter {
 
 	@Override
 	protected void publishResults(CharSequence constraint, FilterResults results) {
-		if (results.count <= 0) {
-			activity.setResultsList(null);
-			// activity.attachSectionedAdapter();
-			activity.getListView().setFastScrollEnabled(true);
-			((BaseAdapter) activity.getListView().getAdapter())
-					.notifyDataSetChanged();
-		} else {
-			activity.setResultsList((ArrayList) results.values);
-			// activity.attachFilteredAdapter();
-			activity.getListView().setFastScrollEnabled(false);
-			((BaseAdapter) activity.getListView().getAdapter())
-					.notifyDataSetInvalidated();
+		try {
+			if (results.count <= 0) {
+				activity.setResultsList(null);
+				// activity.attachSectionedAdapter();
+				activity.getListView().setFastScrollEnabled(true);
+				((BaseAdapter) activity.getListView().getAdapter())
+						.notifyDataSetChanged();
+			} else {
+				activity.setResultsList((ArrayList) results.values);
+				// activity.attachFilteredAdapter();
+				activity.getListView().setFastScrollEnabled(false);
+				((BaseAdapter) activity.getListView().getAdapter())
+						.notifyDataSetInvalidated();
+				if (results.count > 1)
+					activity.enableSpinner();
+			}
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		} catch (OutOfMemoryError ex) {
+			//FIXME why?
+			System.gc();
+			Log.e("", ex.getMessage());
 		}
 	}
 }

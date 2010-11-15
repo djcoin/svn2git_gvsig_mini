@@ -2,10 +2,13 @@ package es.prodevelop.gvsig.mini.search;
 
 import java.text.DecimalFormat;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -14,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
+import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
@@ -25,8 +29,7 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class FilteredLazyAdapter extends BaseAdapter implements
-		Filterable {
+public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 
 	SimpleFilter mFilter;
 	SearchActivity activity;
@@ -38,20 +41,23 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 	public FilteredLazyAdapter(SearchActivity activity) {
 		this.activity = activity;
 		category = activity.getSearchOptions().getFilteredIndexed();
-		if (category.name.compareTo(POICategories.STREETS) == 0) {
-			metadata = activity.getProvider().getStreetMetadata();
-			bitmap = POICategoryIcon.getBitmap32ForCategory(category.name);
+		if (category != null) {
+			if (category.name.compareTo(POICategories.STREETS) == 0) {
+				metadata = activity.getProvider().getStreetMetadata();
+				bitmap = POICategoryIcon.getBitmap32ForCategory(category.name);
+			} else {
+				metadata = activity.getProvider().getPOIMetadata();
+				Metadata.Category cat = metadata.getCategory(category.name);
+				if (cat != null) {
+					bitmap = POICategoryIcon.getBitmap32ForCategory(cat.name);
+				} else {
+					bitmap = POICategoryIcon.getBitmap32ForCategory(metadata
+							.getCategoryForSubcategory(category.name).name);
+				}
+			}
 		} else {
 			metadata = activity.getProvider().getPOIMetadata();
-			Metadata.Category cat = metadata.getCategory(category.name);
-			if (cat != null) {
-				bitmap = POICategoryIcon.getBitmap32ForCategory(cat.name);
-			} else {
-				bitmap = POICategoryIcon.getBitmap32ForCategory(metadata
-						.getCategoryForSubcategory(category.name).name);
-			}
 		}
-
 	}
 
 	int pos = -1;
@@ -101,6 +107,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 			holder.text = (TextView) convertView.findViewById(R.id.desc);
 			holder.dist = (TextView) convertView.findViewById(R.id.dist);
 			holder.poiImg = (ImageView) convertView.findViewById(R.id.img);
+
 			try {
 				LinearLayout l = new LinearLayout(activity);
 				final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
@@ -114,9 +121,33 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 						activity.metrics.widthPixels,
 						activity.metrics.heightPixels / 2);
 				l.addView(preview);
-				((LinearLayout) convertView).addView(l, zzParams);
+				((LinearLayout) ((LinearLayout) convertView)
+						.findViewById(R.id.map_preview)).addView(l, zzParams);
 				holder.previewLayout = l;
 				holder.preview = preview;
+				holder.optionsButton = (Button) convertView
+						.findViewById(R.id.show_options);
+				holder.detailsButton = (Button) convertView
+						.findViewById(R.id.show_details);
+				holder.detailsButton.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Intent i = new Intent(activity,
+								POIDetailsActivity.class);
+						activity.startActivity(i);
+					}
+				});
+				holder.optionsButton.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						activity.getPOItemClickListener().onItemClick(null, v,
+								0, 0);
+					}
+				});
+				holder.optionsButton.setFocusable(false);
+				holder.detailsButton.setFocusable(false);
 			} catch (BaseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -132,13 +163,20 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 		// ((TextView) arg1).setTextSize(26);
 		// ((TextView) arg1).setTextColor(Color.WHITE);
 		POI p = (POI) getItem(arg0);
+		if (p == null)
+			return convertView;
 		String desc = Utilities
 				.capitalizeFirstLetters((p.getDescription() != null) ? p
 						.getDescription() : "?");
 
 		if (holder.preview != null) {
 			if (arg0 == pos) {
+
 				holder.previewLayout.setVisibility(View.VISIBLE);
+				holder.optionsButton.setVisibility(View.VISIBLE);
+				if (!(p instanceof OsmPOIStreet))
+					holder.detailsButton.setVisibility(View.VISIBLE);
+
 				holder.preview.setMapCenterFromLonLat(p);
 				if ((getItem(arg0) instanceof OsmPOIStreet)) {
 					holder.preview.setExtent(((OsmPOIStreet) p)
@@ -146,19 +184,35 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 				}
 			} else {
 				holder.previewLayout.setVisibility(View.GONE);
+				holder.optionsButton.setVisibility(View.GONE);
+				holder.detailsButton.setVisibility(View.GONE);
+
 			}
 		}
 
 		// Bind the data efficiently with the holder.
 		holder.text.setText(desc);
+		final double distance = activity.getSearchOptions().center
+				.distance(ConversionCoords.reproject(p.getX(), p.getY(),
+						CRSFactory.getCRS("EPSG:4326"),
+						CRSFactory.getCRS("EPSG:900913")));
 		holder.dist.setText(activity.getResources()
 				.getString(R.string.distance)
 				+ " "
-				+ formatter.format(activity.getSearchOptions().center
-						.distance(ConversionCoords.reproject(p.getX(),
-								p.getY(), CRSFactory.getCRS("EPSG:4326"),
-								CRSFactory.getCRS("EPSG:900913")))));
-		holder.poiImg.setImageBitmap(bitmap);
+				+ formatter.format(formatKM(distance)) + " " + unit(distance));
+		Bitmap b = bitmap;
+		if (b == null) {
+			if (p instanceof OsmPOI) {
+				b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) p)
+						.getCategory());
+			} else {
+				b = POICategoryIcon
+						.getBitmap32ForCategory(POICategories.STREETS);
+			}
+		}
+
+		holder.poiImg.setImageBitmap(b);
+
 		// holder.icon.setImageBitmap((position & 1) == 1 ? mIcon1 :
 		// mIcon2);
 
@@ -176,6 +230,21 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 		// v.addView(ob);
 		// return v;
 		// }
+	}
+
+	private double formatKM(double meterDistance) {
+		if (meterDistance > 1000) {
+			return meterDistance / 1000;
+		}
+		return meterDistance;
+	}
+
+	private String unit(double meterDistance) {
+		if (meterDistance > 1000) {
+			return "Km.";
+		}
+		return "m.";
+		// return"";
 	}
 
 	@Override
@@ -220,5 +289,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements
 		MapPreview preview;
 		LinearLayout previewLayout;
 		ImageView poiImg;
+		Button optionsButton;
+		Button detailsButton;
 	}
 }

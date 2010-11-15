@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import org.garret.perst.fulltext.FullTextIndex;
 
+import android.app.Activity;
+import android.util.Log;
 import android.widget.Filter;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstQuadtreeProvider;
@@ -18,9 +20,9 @@ import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstQuadtreePr
  */
 public class AutoCompleteFilter extends Filter {
 
-	private SearchActivity activity;
+	private SearchActivityWrapper activity;
 
-	public AutoCompleteFilter(SearchActivity activity) {
+	public AutoCompleteFilter(SearchActivityWrapper activity) {
 		this.activity = activity;
 	}
 
@@ -63,14 +65,16 @@ public class AutoCompleteFilter extends Filter {
 	protected void publishResults(CharSequence constraint, FilterResults results) {
 		// noinspection unchecked
 		// mData = (List<Map<String, ?>>) results.values;
+		Log.d("", "AutoComplete publish results");
 		if (results.count <= 0) {
-			activity.getAutoCompleteAdapter().setList(null);			
+			activity.getAutoCompleteAdapter().setList(null);
 			// getListView().setFastScrollEnabled(true);
 			activity.getAutoCompleteAdapter().notifyDataSetChanged();
 		} else {
-			activity.getAutoCompleteAdapter().setList((ArrayList) results.values);
+			activity.getAutoCompleteAdapter().setList(
+					(ArrayList) results.values);
 			// getListView().setFastScrollEnabled(false);
 			activity.getAutoCompleteAdapter().notifyDataSetInvalidated();
-		}
+		}	
 	}
 }

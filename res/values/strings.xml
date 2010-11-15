@@ -238,7 +238,8 @@
     <string name="no_results">No results found</string>
     <string name="distance">Distance: </string>
     <string name="sort_distance">Distance</string>
-    <string name="sort_name">Name</string>    
+    <string name="sort_name">Name</string>
+    <string name="no_sort">No sort results</string>        
     <string name="search_prefix">Prefix</string>
     <string name="search_text">Full text</string>
     <string name="search_by">Search by</string>    
@@ -256,5 +257,23 @@
     <string name="call_number">Call this number</string>
     <string name="add_contact">Add contact</string>
     <string name="find_pois_near">Find POIs near</string>
+    
+    <string name="type_keyword">Type a keyword</string>
+    <string name="fill_text">Please, type a text to filter...</string>
+    <string name="fill_category">Please, select at least one category to filter</string>
+    <string name="perform_search">Performing search...</string>
+    <string name="show_options">Show options</string>
+    <string name="show_details">Show details</string>
+    
+    <string name="category">Category:</string>
+    <string name="subcategory">Subcategory:</string>
+    <string name="info">Info:</string>
+    <string name="phone">Phone:</string>
+    <string name="email">email:</string>
+    <string name="url">URL:</string>
+    <string name="web">Website:</string>
+    <string name="wiki">Wikipedia:</string>
+    <string name="img">Image:</string>
+    <string name="address">Address:</string>
 </resources>
 

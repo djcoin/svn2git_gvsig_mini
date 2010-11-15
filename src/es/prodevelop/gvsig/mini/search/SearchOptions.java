@@ -16,7 +16,7 @@ public class SearchOptions {
 
 	private ArrayList categories = new ArrayList();
 	private ArrayList subcategories = new ArrayList();
-	
+
 	private Indexed filteredIndexed;
 
 	public SearchOptions(Context context) {
@@ -27,7 +27,8 @@ public class SearchOptions {
 		if (sort == null)
 			return false;
 		return (sort.compareTo(context.getResources().getString(
-				R.string.sort_distance)) == 0);
+				R.string.sort_distance)) == 0 || sort.compareTo(context
+				.getResources().getString(R.string.sort_name)) == 0);
 	}
 
 	public boolean isSortByDistance() {

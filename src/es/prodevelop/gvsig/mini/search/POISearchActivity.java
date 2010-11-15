@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.geom.Point;
 
 public class POISearchActivity extends SearchActivity {
+
+	private POIItemClickContextListener listener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -23,19 +27,26 @@ public class POISearchActivity extends SearchActivity {
 				((LazyAdapter) getListAdapter()).pos = arg2;
 				((LazyAdapter) getListAdapter()).notifyDataSetChanged();
 			}
-
 		});
-
-		getListView().setOnItemLongClickListener(
-				new POIItemLongClickListener(this,
-						R.drawable.p_places_poi_place_city_32,
-						R.string.street_options));
 
 		String category = this.getIntent().getStringExtra(
 				SearchActivity.CATEGORY);
 		if (category == null)
 			category = this.getIntent().getStringExtra(
 					SearchActivity.SUBCATEGORY);
+
+		listener = new POIItemClickContextListener(this,
+				POICategoryIcon.getDrawable32ForCategory(category, this),
+				R.string.NameFinderActivity_0);
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				return getPOItemClickListener().onItemClick(arg0, arg1, arg2,
+						arg3);
+			}
+		});
 
 		// searchLayout = (LinearLayout) this.getLayoutInflater().inflate(
 		// R.layout.search_config_panel, null);
@@ -82,4 +93,8 @@ public class POISearchActivity extends SearchActivity {
 		filteredListAdapter = new FilteredLazyAdapter(this);
 	}
 
+	@Override
+	public POIItemClickContextListener getPOItemClickListener() {
+		return listener;
+	}
 }

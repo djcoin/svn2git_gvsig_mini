@@ -359,7 +359,11 @@ public class LayersActivity extends ExpandableListActivity {
 			alert.setIcon(R.drawable.menu02);
 			alert.setTitle(R.string.LayersActivity_6);
 			final EditText input = new EditText(this);
-			 input.setText("http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx");
+			input.setText("http://osm.omniscale.net/proxy/service");
+//			 http://osm.omniscale.net/proxy/service
+//			input.setText("http://imsref.cr.usgs.gov/WMS_Capabilities/USGS_EDC_LandCover_NLCD2001/capabilities_1_3_0.xml");
+			// input.setText("http://ipt-geo.gbif.org/wms");
+			// input.setText("http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx");
 			// input.setText(
 			// "http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
 			// input.setText("http://wms.larioja.org/request.asp?");
@@ -492,7 +496,6 @@ public class LayersActivity extends ExpandableListActivity {
 						;
 						children.add(curChildMap);
 
-						
 						curChildMap.put(LAYER, layersList.elementAt(j)
 								.toString());
 					}

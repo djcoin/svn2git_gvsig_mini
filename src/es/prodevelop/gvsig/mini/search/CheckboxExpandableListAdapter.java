@@ -161,6 +161,7 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(context, POISearchActivity.class);
+				fillCenter(i);
 				// i.putExtra(SearchActivity.CATEGORY, cat);
 				i.putExtra(SearchActivity.SUBCATEGORY, sub);
 				context.startActivity(i);
@@ -170,6 +171,11 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 		check.setChecked(childChecked[groupPosition][childPosition]);
 
 		return v;
+	}
+	
+	private void fillCenter(Intent i) {
+		i.putExtra("lon", ((SearchActivityWrapper)context).getCenter().getX());
+		i.putExtra("lat", ((SearchActivityWrapper)context).getCenter().getY());
 	}
 
 	@Override
@@ -219,6 +225,7 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 				@Override
 				public void onClick(View v) {
 					Intent i = new Intent(context, StreetSearchActivity.class);
+					fillCenter(i);
 					i.putExtra(SearchActivity.CATEGORY, POICategories.STREETS);
 					context.startActivity(i);
 				}
@@ -229,6 +236,7 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 				@Override
 				public void onClick(View v) {
 					Intent i = new Intent(context, POISearchActivity.class);
+					fillCenter(i);
 					i.putExtra(SearchActivity.CATEGORY, cat);
 					context.startActivity(i);
 				}

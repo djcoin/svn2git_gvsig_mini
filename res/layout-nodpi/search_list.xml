@@ -3,23 +3,36 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal" android:layout_width="fill_parent"
+		android:orientation="vertical" android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
-		<MultiAutoCompleteTextView android:layout_width="wrap_content"
-			android:layout_weight="1" android:layout_height="wrap_content"
-			android:id="@+id/EditText01" android:hint="@string/filter"
-			android:completionHint="@string/clear_filter" android:paddingLeft="10dip"
+		<MultiAutoCompleteTextView
+			android:layout_width="fill_parent" android:layout_weight="1"
+			android:layout_height="wrap_content" android:id="@+id/EditText01"
+			android:hint="@string/filter" android:completionHint="@string/clear_filter"
+			android:paddingLeft="10dip" android:paddingRight="10dip"
+			android:paddingTop="10dip" android:paddingBottom="10dip"
+			android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+			android:layout_marginTop="5dip" android:layout_marginBottom="5dip" />
+		<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" -->
+		<!-- android:orientation="vertical" android:layout_width="wrap_content" -->
+		<!-- android:layout_height="wrap_content"> -->
+		<!-- <TextView android:layout_height="wrap_content" -->
+		<!-- android:layout_width="fill_parent" android:textSize="14sp" -->
+		<!-- android:text="@string/sort_results" android:textColor="#FFFFFF"></TextView> -->
+		<Spinner android:id="@+id/SpinnerSort" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:paddingLeft="10dip"
 			android:paddingRight="10dip" android:paddingTop="10dip"
-			android:paddingBottom="10dip" android:layout_marginLeft="5dip"
-			android:layout_marginRight="5dip" android:layout_marginTop="5dip" 
-			android:layout_marginBottom="5dip"/>
-		<ImageButton android:layout_width="wrap_content" android:layout_height="fill_parent"
-			android:id="@+id/search_opts" android:paddingLeft="10dip"
-			android:paddingRight="10dip" android:paddingTop="10dip"
-			android:src="@android:drawable/ic_search_category_default"
-			android:paddingBottom="10dip" android:layout_marginLeft="5dip"
-			android:layout_marginRight="5dip" android:layout_marginTop="5dip" 
-			android:layout_marginBottom="5dip"/>
+			android:prompt="@string/sort_results" android:entries="@array/sort_options"
+			android:layout_marginLeft="5dip" android:layout_marginRight="5dip"
+			android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></Spinner>
+		<!-- <ImageButton android:layout_width="wrap_content" android:layout_height="fill_parent" -->
+		<!-- android:id="@+id/search_opts" android:paddingLeft="10dip" -->
+		<!-- android:paddingRight="10dip" android:paddingTop="10dip" -->
+		<!-- android:src="@android:drawable/ic_search_category_default" -->
+		<!-- android:paddingBottom="10dip" android:layout_marginLeft="5dip" -->
+		<!-- android:layout_marginRight="5dip" android:layout_marginTop="5dip" -->
+		<!-- android:layout_marginBottom="5dip"/> -->
+		<!-- </LinearLayout> -->
 	</LinearLayout>
 	<LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"

@@ -4,19 +4,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SectionIndexer;
+import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
 import es.prodevelop.android.spatialindex.poi.MetadataInitialCharQuickSort;
+import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
+import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.search.FilteredLazyAdapter.ViewHolder;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class LazyAdapter extends FilteredLazyAdapter implements
-		SectionIndexer {
+public class LazyAdapter extends FilteredLazyAdapter implements SectionIndexer {
 
 	HashMap<String, Integer> alphaIndexer = new HashMap();
 
 	String[] sections;
+//	int[] sectionsPos;
 
 	public LazyAdapter(SearchActivity activity) {
 		super(activity);
@@ -36,10 +50,16 @@ public class LazyAdapter extends FilteredLazyAdapter implements
 
 		final int size = ordered.length;
 		sections = new String[size];
+//		int c = 0;
+//		sectionsPos = new int[size];
 		for (int i = 0; i < size; i++) {
+//			c++;
 			Metadata.InitialNumber initial = (Metadata.InitialNumber) ordered[i];
-			alphaIndexer.put(String.valueOf(initial.initial).toUpperCase(), length);
+			alphaIndexer.put(String.valueOf(initial.initial).toUpperCase(),
+					length);
 			length += initial.number;
+//			length += c;
+//			sectionsPos[i] = length;
 			sections[i] = String.valueOf(initial.initial).toUpperCase();
 		}
 	}
@@ -83,8 +103,26 @@ public class LazyAdapter extends FilteredLazyAdapter implements
 
 	@Override
 	public Object[] getSections() {
-
 		return sections; // to string will be called each object, to display
 		// the letter
 	}
+
+//	@Override
+//	public View getView(int arg0, View convertView, ViewGroup arg2) {
+//		Log.d("LazyAdapter", "getView");
+//		int pos = arg0;
+//		final int size = sectionsPos.length;
+//		for (int i = 0; i < size; i++) {
+//			if (sectionsPos[i] == pos) {
+//				Log.d("LazyAdapter", "Found position");
+//				LinearLayout v = (LinearLayout) this.activity
+//						.getLayoutInflater()
+//						.inflate(R.layout.list_header, null);
+//				TextView t = (TextView) v.findViewById(R.id.list_header_title);
+//				t.setText(String.valueOf(this.getSectionForPosition(pos)));
+//				return v;
+//			}
+//		}
+//		return super.getView(arg0, convertView, arg2);
+//	}
 }

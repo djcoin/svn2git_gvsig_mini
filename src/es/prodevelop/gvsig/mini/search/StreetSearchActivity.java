@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,39 +28,7 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 public class StreetSearchActivity extends SearchActivity {
 
 	ListView lView;
-	LinearLayout searchLayout;
-	Spinner spinnerSort;
-	Button closePar;
-	Button openPar;
-	Button andOp;
-	Button orOp;
-	CopyTextOnClickListener buttonListener = new CopyTextOnClickListener();
-	MultiAutoCompleteTextView advancedTextView;
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case SEARCH_DIALOG:
-			return new AlertDialog.Builder(StreetSearchActivity.this)
-					.setIcon(android.R.drawable.ic_search_category_default)
-					.setTitle(R.string.advanced_search)
-					.setView(searchLayout)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-
-									getSearchOptions().sort = spinnerSort
-											.getSelectedItem().toString();
-									// getAutoCompleteTextView().setText(
-									// advancedTextView.getText());
-									onTextChanged(advancedTextView.getText()
-											.toString(), 0, 0, 0);
-								}
-							}).create();
-		}
-		return null;
-	}
+	private POIItemClickContextListener listener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -79,38 +48,29 @@ public class StreetSearchActivity extends SearchActivity {
 
 		});
 
-		getListView().setOnItemLongClickListener(
-				new POIItemLongClickListener(this,
-						R.drawable.p_places_poi_place_city_32,
-						R.string.street_options));
+		listener = new POIItemClickContextListener(this,
+				R.drawable.p_places_poi_place_city_32, R.string.street_options);
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
-		searchLayout = (LinearLayout) this.getLayoutInflater().inflate(
-				R.layout.search_config_panel, null);
-		// EditText text = (EditText)
-		// findViewById(com.android.internal.R.id.search_src_text);
-		// searchLayout.addView(text);
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				return getPOItemClickListener().onItemClick(arg0, arg1, arg2,
+						arg3);
+			}
+		});
 
-		advancedTextView = ((MultiAutoCompleteTextView) searchLayout
-				.findViewById(R.id.EditText01));
+		getAutoCompleteTextView().setOnItemClickListener(
+				new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View arg1,
+							int arg2, long arg3) {
+						Log.d("", "Item click");
+						setTitle(R.string.please_wait);
+						setProgressBarIndeterminateVisibility(true);
+					}
+				});
 
-		advancedTextView.setTokenizer(new SpaceTokenizer());
-		advancedTextView.setAdapter(getAutoCompleteAdapter());
-		advancedTextView.setThreshold(1);
-		advancedTextView.requestFocus();
-
-		closePar = ((Button) searchLayout.findViewById(R.id.bt_close_par));
-		openPar = ((Button) searchLayout.findViewById(R.id.bt_open_par));
-		andOp = ((Button) searchLayout.findViewById(R.id.bt_op_and));
-		orOp = ((Button) searchLayout.findViewById(R.id.bt_op_or));
-
-		closePar.setOnClickListener(buttonListener);
-		openPar.setOnClickListener(buttonListener);
-		andOp.setOnClickListener(buttonListener);
-		orOp.setOnClickListener(buttonListener);
-
-		spinnerSort = ((Spinner) searchLayout.findViewById(R.id.SpinnerSort));
-
-		getSearchOptions().sort = spinnerSort.getSelectedItem().toString();
 		getAutoCompleteTextView().addTextChangedListener(this);
 
 		this.getSearchOptions().clearCategories();
@@ -119,9 +79,9 @@ public class StreetSearchActivity extends SearchActivity {
 		this.getSearchOptions().setFilteredIndexed(
 				getProvider().getStreetMetadata().getCategory(
 						POICategories.STREETS));
-		
+
 		initializeAdapters();
-		this.attachSectionedAdapter();		
+		this.attachSectionedAdapter();
 	}
 
 	public void initializeAdapters() {
@@ -138,19 +98,49 @@ public class StreetSearchActivity extends SearchActivity {
 		// advancedTextView.setText(arg0);
 	}
 
-	private class CopyTextOnClickListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			try {
-				String append = ((Button) v).getText().toString();
-
-				advancedTextView.getText().insert(
-						advancedTextView.getSelectionStart(),
-						" " + append.trim() + " ");
-			} catch (Exception e) {
-				Log.e("", e.getMessage());
-			}
-		}
+	@Override
+	public POIItemClickContextListener getPOItemClickListener() {
+		return listener;
 	}
+
+	// private class CopyTextOnClickListener implements OnClickListener {
+	//
+	// @Override
+	// public void onClick(View v) {
+	// try {
+	// String append = ((Button) v).getText().toString();
+	//
+	// advancedTextView.getText().insert(
+	// advancedTextView.getSelectionStart(),
+	// " " + append.trim() + " ");
+	// } catch (Exception e) {
+	// Log.e("", e.getMessage());
+	// }
+	// }
+	// }
+
+	// @Override
+	// protected Dialog onCreateDialog(int id) {
+	// switch (id) {
+	// case SEARCH_DIALOG:
+	// return new AlertDialog.Builder(StreetSearchActivity.this)
+	// .setIcon(android.R.drawable.ic_search_category_default)
+	// .setTitle(R.string.advanced_search)
+	// .setView(searchLayout)
+	// .setPositiveButton(R.string.ok,
+	// new DialogInterface.OnClickListener() {
+	// public void onClick(DialogInterface dialog,
+	// int whichButton) {
+	//
+	// getSearchOptions().sort = spinnerSort
+	// .getSelectedItem().toString();
+	// // getAutoCompleteTextView().setText(
+	// // advancedTextView.getText());
+	// onTextChanged(advancedTextView.getText()
+	// .toString(), 0, 0, 0);
+	// }
+	// }).create();
+	// }
+	// return null;
+	// }
 }

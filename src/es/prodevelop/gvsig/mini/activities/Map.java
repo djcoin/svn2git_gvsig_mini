@@ -306,6 +306,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	LinearLayout downloadTilesLayout;
 	ProgressBar downloadTilesPB;
 
+	public final static int SEARCH_EXP_CODE = 444;
+	
+
 	/**
 	 * Called when the activity is first created.
 	 * */
@@ -914,7 +917,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				try {
 					Intent mainIntent = new Intent(this,
 							SearchExpandableActivity.class);
-					this.startActivityForResult(mainIntent, 4456);
+					Point center = this.osmap.getMRendererInfo().getCenter();
+					double[] lonlat = ConversionCoords.reproject(center.getX(),
+							center.getY(), CRSFactory.getCRS(this.osmap
+									.getMRendererInfo().getSRS()), CRSFactory
+									.getCRS("EPSG:900913"));
+					mainIntent.putExtra("lon", lonlat[0]);
+					mainIntent.putExtra("lat", lonlat[1]);
+					this.startActivityForResult(mainIntent, SEARCH_EXP_CODE);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
@@ -1653,12 +1663,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap);
-				if (p == null)
-					p = new PerstClusterPOIOverlay(this, osmap);
-				this.osmap.poiOverlay = p;
-				this.osmap.getOverlays().add(p);
-				this.osmap.addExtentChangedListener(p);
-				this.osmap.getOverlays().add(new PerstPOIsOverlay(this, osmap));
+				// if (p == null)
+				// p = new PerstClusterPOIOverlay(this, osmap);
+				// this.osmap.poiOverlay = p;
+				// this.osmap.getOverlays().add(p);
+				// this.osmap.addExtentChangedListener(p);
+				// this.osmap.getOverlays().add(new PerstPOIsOverlay(this,
+				// osmap));
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));

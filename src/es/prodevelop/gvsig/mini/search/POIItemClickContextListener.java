@@ -7,36 +7,34 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 
-public class POIItemLongClickListener implements OnItemLongClickListener {
+public class POIItemClickContextListener {
 
 	SearchActivity activity;
 	int iconId;
 	int titleId;
 	Drawable icon;
 
-	public POIItemLongClickListener(SearchActivity activity, int iconId,
+	public POIItemClickContextListener(SearchActivity activity, int iconId,
 			int titleId) {
 		this.activity = activity;
 		this.iconId = iconId;
 		this.titleId = titleId;
 	}
 
-	public POIItemLongClickListener(SearchActivity activity, Drawable icon,
+	public POIItemClickContextListener(SearchActivity activity, Drawable icon,
 			int titleId) {
 		this.activity = activity;
 		this.icon = icon;
 		this.titleId = titleId;
 	}
 
-	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+	public boolean onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
 		// ((LazyAdapter) getListAdapter()).pos = arg2;
 		// ((LazyAdapter) getListAdapter()).notifyDataSetChanged();
@@ -136,4 +134,5 @@ public class POIItemLongClickListener implements OnItemLongClickListener {
 
 		return true;
 	}
+
 }

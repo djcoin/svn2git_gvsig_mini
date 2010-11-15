@@ -17,10 +17,10 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 
 	private AutoCompleteFilter mFilter;
 	ArrayList list = null;
-	
-	SearchActivity activity;
-	
-	public AutoCompleteAdapter(SearchActivity activity) {
+
+	SearchActivityWrapper activity;
+
+	public AutoCompleteAdapter(SearchActivityWrapper activity) {
 		this.activity = activity;
 	}
 
@@ -47,6 +47,10 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public View getView(int arg0, View convertView, ViewGroup arg2) {
+		if (list != null) {
+			((Activity) activity).setProgressBarIndeterminateVisibility(false);
+			((Activity) activity).setTitle("");
+		}
 		ViewHolder holder;
 
 		// When convertView is not null, we can reuse it directly, there is
@@ -55,7 +59,8 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 		// supplied
 		// by ListView is null.
 		if (convertView == null) {
-			convertView = activity.getLayoutInflater().inflate(R.layout.street_row, null);
+			convertView = ((Activity) activity).getLayoutInflater().inflate(
+					R.layout.street_row, null);
 
 			// Creates a ViewHolder and store references to the two children
 			// views
@@ -69,8 +74,8 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		String desc = Utilities.capitalizeFirstLetters(getItem(arg0)
-				.toString());
+		String desc = Utilities
+				.capitalizeFirstLetters(getItem(arg0).toString());
 
 		// Bind the data efficiently with the holder.
 		holder.text.setTextColor(Color.BLACK);
@@ -97,7 +102,6 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 	public void notifyDataSetChanged() {
 		// TODO Auto-generated method stub
 		super.notifyDataSetChanged();
-		// setProgressBarIndeterminateVisibility(false);
 	}
 
 	/*
@@ -109,7 +113,6 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 	public void notifyDataSetInvalidated() {
 		// TODO Auto-generated method stub
 		super.notifyDataSetInvalidated();
-		// setProgressBarIndeterminateVisibility(false);
 	}
 
 	class ViewHolder {
@@ -122,6 +125,6 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 
 	public void setList(ArrayList list) {
 		this.list = list;
-	}		
+	}
 
 }
