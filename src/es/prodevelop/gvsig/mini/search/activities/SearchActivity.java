@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,10 @@ import android.widget.Spinner;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
+import es.prodevelop.gvsig.mini.search.SearchOptions;
+import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
+import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 
 /**
  * Base activity for local pois / streets searches
@@ -37,9 +41,9 @@ public abstract class SearchActivity extends ListActivity implements
 	private SearchOptions searchOptions = new SearchOptions(this);
 	private MultiAutoCompleteTextView autoCompleteTextView;
 
-	DisplayMetrics metrics = new DisplayMetrics();
-	ListAdapter listAdapter;
-	ListAdapter filteredListAdapter;
+	public DisplayMetrics metrics = new DisplayMetrics();
+	public ListAdapter listAdapter;
+	protected ListAdapter filteredListAdapter;
 
 	Spinner spinnerSort;
 
@@ -117,7 +121,7 @@ public abstract class SearchActivity extends ListActivity implements
 		// }
 		// });
 
-		searchOptions.center = getCenter();
+		searchOptions.setCenterMercator(getCenter());
 		autoCompleteTextView.addTextChangedListener(this);
 
 		final boolean hide = getIntent().getBooleanExtra(
@@ -202,7 +206,7 @@ public abstract class SearchActivity extends ListActivity implements
 		this.setListAdapter(listAdapter);
 	}
 
-	protected void enableSpinner() {
+	public void enableSpinner() {
 		this.enableSpinner(autoCompleteTextView.getText().toString());
 	}
 
@@ -245,6 +249,8 @@ public abstract class SearchActivity extends ListActivity implements
 			return new Point(0, 0);
 		}
 	}
+	
+	public abstract String getQuery();
 	
 	public abstract POIItemClickContextListener getPOItemClickListener();
 }

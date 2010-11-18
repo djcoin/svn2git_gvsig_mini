@@ -8,30 +8,42 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="true">
-		<activity android:name=".search.StreetSearchActivity"
+		<activity android:name=".search.activities.StreetSearchActivity"
 			android:label="@string/app_name">
+			<!-- <intent-filter> -->
+			<!-- <action android:name="android.intent.action.MAIN" /> -->
+			<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+			<!-- </intent-filter> -->
+
+		</activity>
+
+		<activity android:name=".search.activities.POISearchActivity"
+			android:label="">
 			<!-- <intent-filter> -->
 			<!-- <action android:name="android.intent.action.MAIN" /> -->
 			<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
 			<!-- </intent-filter> -->
 		</activity>
 
-		<activity android:name=".search.POISearchActivity"
-			android:label="@string/app_name">
-			<!-- <intent-filter> -->
-			<!-- <action android:name="android.intent.action.MAIN" /> -->
-			<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-			<!-- </intent-filter> -->
+		<activity android:name=".search.activities.ResultSearchActivity"
+			android:screenOrientation="portrait">
 		</activity>
 
-		<activity android:name=".search.ResultSearchActivity">
-		</activity>
-		
-		<activity android:name=".search.POIDetailsActivity">
+		<activity android:name=".search.activities.FindPOISNearActivity"
+			android:screenOrientation="portrait">
 		</activity>
 
-		<activity android:name=".search.SearchExpandableActivity"
-			android:label="@string/app_name">
+		<activity android:name=".search.activities.FindStreetsNearActivity"
+			android:screenOrientation="portrait">
+		</activity>
+
+		<activity android:name=".search.activities.POIDetailsActivity"
+			android:theme="@android:style/Theme.NoTitleBar"
+			android:screenOrientation="portrait">
+		</activity>
+
+		<activity android:name=".search.activities.SearchExpandableActivity"
+			android:label="">
 			<!-- <intent-filter> -->
 			<!-- <action android:name="android.intent.action.MAIN" /> -->
 			<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
@@ -44,6 +56,12 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 				<!-- <action android:name="es.prodevelop.action.OFFLINEMAP" /> -->
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="geo" />
 			</intent-filter>
 
 			<intent-filter>
@@ -129,5 +147,7 @@
 	<uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
+
+	<uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
 </manifest> 
 

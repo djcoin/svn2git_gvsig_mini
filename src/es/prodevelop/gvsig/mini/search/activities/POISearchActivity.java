@@ -1,16 +1,23 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import es.prodevelop.android.spatialindex.poi.POI;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.POICategoryIcon;
+import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
+import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.LazyAdapter;
 
 public class POISearchActivity extends SearchActivity {
 
 	private POIItemClickContextListener listener;
+	String category;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -29,8 +36,7 @@ public class POISearchActivity extends SearchActivity {
 			}
 		});
 
-		String category = this.getIntent().getStringExtra(
-				SearchActivity.CATEGORY);
+		category = this.getIntent().getStringExtra(SearchActivity.CATEGORY);
 		if (category == null)
 			category = this.getIntent().getStringExtra(
 					SearchActivity.SUBCATEGORY);
@@ -43,8 +49,8 @@ public class POISearchActivity extends SearchActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-				return getPOItemClickListener().onItemClick(arg0, arg1, arg2,
-						arg3);
+				return getPOItemClickListener().onPOIClick(arg2,
+						(POI) getListAdapter().getItem(arg2));
 			}
 		});
 
@@ -96,5 +102,10 @@ public class POISearchActivity extends SearchActivity {
 	@Override
 	public POIItemClickContextListener getPOItemClickListener() {
 		return listener;
+	}
+
+	@Override
+	public String getQuery() {
+		return category != null ? category : "";
 	}
 }

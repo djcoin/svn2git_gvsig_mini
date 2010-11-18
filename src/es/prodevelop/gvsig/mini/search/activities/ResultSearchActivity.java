@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,17 +8,25 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Filterable;
+import es.prodevelop.android.spatialindex.poi.POI;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
+import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.MultiKeywordFilteredAdapter;
 
 public class ResultSearchActivity extends SearchActivity {
 
 	public final static String QUERY = "query";
-	private String query;
+	String query;
 	private POIItemClickContextListener listener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		query = getIntent().getStringExtra(QUERY);
 
 		setProvider(POIProviderManager.getInstance().getPOIProvider());
 
@@ -41,8 +49,8 @@ public class ResultSearchActivity extends SearchActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-				return getPOItemClickListener().onItemClick(arg0, arg1, arg2,
-						arg3);
+				return getPOItemClickListener().onPOIClick(arg2,
+						(POI) getListAdapter().getItem(arg2));
 			}
 		});
 
@@ -81,7 +89,6 @@ public class ResultSearchActivity extends SearchActivity {
 		});
 
 		enableSpinner("");
-		query = getIntent().getStringExtra(QUERY);
 		onTextChanged(query, 0, 0, 0);
 	}
 
@@ -115,5 +122,10 @@ public class ResultSearchActivity extends SearchActivity {
 	@Override
 	public POIItemClickContextListener getPOItemClickListener() {
 		return listener;
+	}
+	
+	@Override
+	public String getQuery() {
+		return query;
 	}
 }

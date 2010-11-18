@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import java.io.File;
 
@@ -19,11 +19,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
+import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.LazyAdapter;
 
 public class StreetSearchActivity extends SearchActivity {
 
@@ -55,8 +60,8 @@ public class StreetSearchActivity extends SearchActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-				return getPOItemClickListener().onItemClick(arg0, arg1, arg2,
-						arg3);
+				return getPOItemClickListener().onPOIClick(arg2,
+						(POI)getListAdapter().getItem(arg2));
 			}
 		});
 
@@ -101,6 +106,11 @@ public class StreetSearchActivity extends SearchActivity {
 	@Override
 	public POIItemClickContextListener getPOItemClickListener() {
 		return listener;
+	}
+
+	@Override
+	public String getQuery() {
+		return POICategories.STREETS;
 	}
 
 	// private class CopyTextOnClickListener implements OnClickListener {

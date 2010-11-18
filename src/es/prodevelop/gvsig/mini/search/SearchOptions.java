@@ -4,15 +4,18 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class SearchOptions {
 
-	String sort;
+	public String sort;
 
 	Context context;
-	Point center = new Point(0, 0);
+	private Point centerMercator = new Point(0, 0);
+	private Point centerLatLon = new Point(0, 0);
 
 	private ArrayList categories = new ArrayList();
 	private ArrayList subcategories = new ArrayList();
@@ -93,6 +96,31 @@ public class SearchOptions {
 
 	public void setFilteredIndexed(Indexed filteredIndexed) {
 		this.filteredIndexed = filteredIndexed;
+	}
+
+	public Point getCenterMercator() {
+		return centerMercator;
+	}
+
+	public void setCenterMercator(Point centerMercator) {
+		this.centerMercator = centerMercator;
+		double[] center = ConversionCoords.reproject(centerMercator.getX(),
+				centerMercator.getY(), CRSFactory.getCRS("EPSG:900913"),
+				CRSFactory.getCRS("EPSG:4326"));
+		this.centerLatLon = new Point(center[0], center[1]);
+	}
+
+	public Point getCenterLatLon() {
+		return centerLatLon;
+	}
+
+	public void setCenterLatLon(Point centerLatLon) {
+		this.centerLatLon = centerLatLon;
+		double[] centerMercator = ConversionCoords.reproject(
+				centerLatLon.getX(), centerLatLon.getY(),
+				CRSFactory.getCRS("EPSG:4326"),
+				CRSFactory.getCRS("EPSG:900913"));
+		this.centerMercator = new Point(centerMercator[0], centerMercator[1]);
 	}
 
 }

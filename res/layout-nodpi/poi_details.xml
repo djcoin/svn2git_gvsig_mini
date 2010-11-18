@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical">
+	<ScrollView android:fillViewport="true"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:id="@+id/data" android:orientation="vertical">
+			<include layout="@layout/street_row" android:layout_width="fill_parent"
+				android:layout_height="wrap_content"></include>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="wrap_content" android:layout_height="fill_parent"
+				android:id="@+id/extra_data" android:orientation="vertical">
+				<TextView android:id="@+id/t_cat" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:textColor="#FFFFFF" android:text="@string/category"
+					android:paddingLeft="32dip"></TextView>
+				<TextView android:id="@+id/t_cat_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_scat" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/subcategory"></TextView>
+				<TextView android:id="@+id/t_scat_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_addr" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/address"></TextView>
+				<TextView android:id="@+id/t_addr_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_phone" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/phone"></TextView>
+				<TextView android:id="@+id/t_phone_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_mail" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/email"></TextView>
+				<TextView android:id="@+id/t_mail_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_url" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/url"></TextView>
+				<TextView android:id="@+id/t_url_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_web" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/web"></TextView>
+				<TextView android:id="@+id/t_web_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_info" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/info"></TextView>
+				<TextView android:id="@+id/t_info_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_wiki" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/wiki"></TextView>
+				<TextView android:id="@+id/t_wiki_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_img" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="@string/img"></TextView>
+				<TextView android:id="@+id/t_img_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+				<TextView android:id="@+id/t_xy" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:textSize="12sp"
+					android:paddingLeft="32dip" android:textColor="#FFFFFF"
+					android:text="X, Y: "></TextView>
+				<TextView android:id="@+id/t_xy_value" android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:textSize="16sp"
+					android:paddingLeft="40dip"></TextView>				
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

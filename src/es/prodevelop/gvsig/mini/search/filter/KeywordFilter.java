@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.filter;
 
 import java.util.ArrayList;
 
@@ -13,29 +13,14 @@ import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoo
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 
 public class KeywordFilter extends SimpleFilter {
 
 	public KeywordFilter(SearchActivity searchActivity) {
 		super(searchActivity);
 		// TODO Auto-generated constructor stub
-	}
-
-	// protected StringBuffer buildQuery(String prefix, ArrayList cat) {
-	// StringBuffer temp = new StringBuffer();
-	//
-	// final int size = cat.size();
-	// for (int i = 0; i < size; i++) {
-	// temp.append(prefix.trim().toString().replaceAll(" ", " AND "));
-	// temp.append(" AND 0"
-	// + cat.get(i).toString().toLowerCase().replaceAll("_", "")
-	// + "0");
-	//
-	// if (i != size - 1)
-	// temp.append(" OR ");
-	// }
-	// return temp;
-	// }
+	}	
 
 	@Override
 	protected FilterResults performFiltering(CharSequence prefix) {
@@ -80,7 +65,7 @@ public class KeywordFilter extends SimpleFilter {
 				// CRSFactory.getCRS("EPSG:900913"),
 				// CRSFactory.getCRS("EPSG:4326"));
 				final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-				/* new Point(lonlat[0], lonlat[1]) */searchOptions.center);
+				/* new Point(lonlat[0], lonlat[1]) */searchOptions.getCenterMercator());
 				Object[] ordered = dq.sort(list);
 				final int length = ordered.length;
 

@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.filter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Filter;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstQuadtreeProvider;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivityWrapper;
 
 /**
  * <p>

@@ -1,9 +1,10 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import android.text.TextWatcher;
 import android.widget.MultiAutoCompleteTextView;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 
 public interface SearchActivityWrapper extends TextWatcher {
 

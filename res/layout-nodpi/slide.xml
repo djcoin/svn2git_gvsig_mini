@@ -5,7 +5,7 @@
 	android:padding="10dip" android:layout_height="250dip">
 	<Button android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/slideHandleButton"
-		android:background="@drawable/bt_start_on"></Button>
+		android:background="@drawable/slide_up_icon"></Button>
 	<LinearLayout android:id="@+id/contentLayout" android:orientation="vertical"
 		android:gravity="center|top" android:padding="10dip"
 		android:background="#000000"

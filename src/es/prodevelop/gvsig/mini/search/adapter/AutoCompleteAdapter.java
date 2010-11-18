@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.adapter;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivityWrapper;
+import es.prodevelop.gvsig.mini.search.filter.AutoCompleteFilter;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class AutoCompleteAdapter extends BaseAdapter implements Filterable {

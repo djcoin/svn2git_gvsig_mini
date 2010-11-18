@@ -33,10 +33,10 @@
 		android:gravity="center_horizontal">
 		<Button android:id="@+id/show_options" android:text="@string/show_options"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:gravity="center_horizontal" />
+			android:gravity="center_horizontal" android:visibility="gone"/>
 		<Button android:id="@+id/show_details" android:text="@string/show_details"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:gravity="center_horizontal" />
+			android:gravity="center_horizontal" android:visibility="gone" />
 	</LinearLayout>
 	<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
 		android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/extra_data" 

@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +26,10 @@ import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClus
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
+import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
+import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.CheckboxExpandableListAdapter;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class SearchExpandableActivity extends ExpandableListActivity implements

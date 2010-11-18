@@ -55,6 +55,7 @@ import java.util.logging.Logger;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -87,6 +88,9 @@ public class SplashActivity extends Activity {
 	private boolean singleTaskActivityResulted = false;
 	public final static String OFFLINE_INTENT_ACTION = "es.prodevelop.action.OFFLINEMAP";
 	private boolean intentProcessed = false;
+	private double lat = 0;
+	private double lon = 0;
+	private int z = -1;
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -113,7 +117,10 @@ public class SplashActivity extends Activity {
 			if (intent != null
 					&& intent.getAction().compareTo(OFFLINE_INTENT_ACTION) == 0) {
 				Log.d("", "OFFLINE_INTENT_ACTION");
-				this.setIntent(intent);				
+				this.setIntent(intent);
+			} else if (intent.getAction().equals(
+					android.content.Intent.ACTION_VIEW)) {
+				setIntent(intent);
 			}
 
 			if (Initializer.isInitialized) {
@@ -124,8 +131,8 @@ public class SplashActivity extends Activity {
 
 							Intent mainIntent = new Intent(SplashActivity.this,
 									Map.class);
-							Initializer.getInstance().initialize(
-									getApplicationContext());
+//							Initializer.getInstance().initialize(
+//									getApplicationContext());
 							fillIntent(mainIntent);
 							SplashActivity.this.startActivityForResult(
 									mainIntent, 0);
@@ -238,6 +245,36 @@ public class SplashActivity extends Activity {
 
 	private void fillIntent(Intent mainIntent) {
 		Intent activityIntent = this.getIntent();
+		if (activityIntent == null)
+			return;
+		final Uri data = activityIntent.getData();
+		if (data != null && data.getScheme().equals("geo")) {
+
+			final String coordsString = activityIntent.getData()
+					.getSchemeSpecificPart();
+			if (coordsString.length() > 0) {
+				final String[] coordinates = coordsString.split(",");
+				try {
+					lat = Double.parseDouble(coordinates[0]);
+					int indexZ = coordinates[1].toLowerCase().indexOf("z");
+					if (indexZ == -1)
+						lon = Double.parseDouble(coordinates[1]);
+					else {
+						String c = coordinates[1].substring(0, indexZ - 1);
+						lon = Double.parseDouble(c);
+					}
+
+					z = 15;
+				} catch (final NumberFormatException nfe) {
+					Log.d("", activityIntent.getData().toString());
+				} catch (Exception e) {
+					Log.d("", e.getMessage());
+				}
+			}
+		}
+		mainIntent.putExtra("lat", lat);
+		mainIntent.putExtra("lon", lon);
+		mainIntent.putExtra("zoom", z);
 		if (activityIntent == null)
 			return;
 

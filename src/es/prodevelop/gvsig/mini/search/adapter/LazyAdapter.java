@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.adapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,8 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
-import es.prodevelop.gvsig.mini.search.FilteredLazyAdapter.ViewHolder;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter.ViewHolder;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 

@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.adapter;
 
 import java.text.DecimalFormat;
 
@@ -26,6 +26,12 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.MapPreview;
+import es.prodevelop.gvsig.mini.search.POICategoryIcon;
+import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.filter.SimpleFilter;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
@@ -37,6 +43,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 	Indexed category;
 	Metadata metadata;
 	Bitmap bitmap;
+	public int pos = -1;
 
 	public FilteredLazyAdapter(SearchActivity activity) {
 		this.activity = activity;
@@ -59,8 +66,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 			metadata = activity.getProvider().getPOIMetadata();
 		}
 	}
-
-	int pos = -1;
+	
 
 	@Override
 	public int getCount() {
@@ -88,7 +94,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 	}
 
 	@Override
-	public View getView(int arg0, View convertView, ViewGroup arg2) {
+	public View getView(final int arg0, View convertView, ViewGroup arg2) {
 		ViewHolder holder;
 
 		// When convertView is not null, we can reuse it directly, there is
@@ -96,6 +102,8 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		// to reinflate it. We only inflate a new View when the convertView
 		// supplied
 		// by ListView is null.
+		final POI p = (POI) getItem(arg0);
+
 		if (convertView == null) {
 			convertView = activity.getLayoutInflater().inflate(
 					R.layout.street_row, null);
@@ -129,23 +137,6 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 						.findViewById(R.id.show_options);
 				holder.detailsButton = (Button) convertView
 						.findViewById(R.id.show_details);
-				holder.detailsButton.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						Intent i = new Intent(activity,
-								POIDetailsActivity.class);
-						activity.startActivity(i);
-					}
-				});
-				holder.optionsButton.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						activity.getPOItemClickListener().onItemClick(null, v,
-								0, 0);
-					}
-				});
 				holder.optionsButton.setFocusable(false);
 				holder.detailsButton.setFocusable(false);
 			} catch (BaseException e) {
@@ -162,9 +153,50 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 
 		// ((TextView) arg1).setTextSize(26);
 		// ((TextView) arg1).setTextColor(Color.WHITE);
-		POI p = (POI) getItem(arg0);
+
 		if (p == null)
 			return convertView;
+		holder.optionsButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				activity.getPOItemClickListener().onPOIClick(arg0, p);
+			}
+		});
+		holder.detailsButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(activity, POIDetailsActivity.class);
+				if (p != null && p instanceof OsmPOI) {
+					OsmPOI poi = (OsmPOI) p;
+					final Point centerM = getCenterMercator();
+					final double distance = centerM.distance(ConversionCoords
+							.reproject(p.getX(), p.getY(),
+									CRSFactory.getCRS("EPSG:4326"),
+									CRSFactory.getCRS("EPSG:900913")));
+					String dist = formatter.format(formatKM(distance)) + " "
+							+ unit(distance);
+					i.putExtra(POIDetailsActivity.X, poi.getX());
+					i.putExtra(POIDetailsActivity.Y, poi.getY());
+					i.putExtra(POIDetailsActivity.DIST, dist);
+					i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
+					i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
+					i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
+					i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
+					i.putExtra(POIDetailsActivity.IMG, poi.getImage());
+					i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
+					i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
+					i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
+					i.putExtra(POIDetailsActivity.URL, poi.getUrl());
+					i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
+					i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+					activity.startActivity(i);
+				} else {
+					// throw exception
+				}
+			}
+		});
 		String desc = Utilities
 				.capitalizeFirstLetters((p.getDescription() != null) ? p
 						.getDescription() : "?");
@@ -192,10 +224,11 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 
 		// Bind the data efficiently with the holder.
 		holder.text.setText(desc);
-		final double distance = activity.getSearchOptions().center
-				.distance(ConversionCoords.reproject(p.getX(), p.getY(),
-						CRSFactory.getCRS("EPSG:4326"),
-						CRSFactory.getCRS("EPSG:900913")));
+		final Point centerM = getCenterMercator();
+
+		final double distance = centerM.distance(ConversionCoords.reproject(
+				p.getX(), p.getY(), CRSFactory.getCRS("EPSG:4326"),
+				CRSFactory.getCRS("EPSG:900913")));
 		holder.dist.setText(activity.getResources()
 				.getString(R.string.distance)
 				+ " "
@@ -230,6 +263,14 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		// v.addView(ob);
 		// return v;
 		// }
+	}
+
+	protected Point getCenterMercator() {
+		return activity.getSearchOptions().getCenterMercator();
+	}
+
+	protected Point getCenterToCompare() {
+		return activity.getSearchOptions().getCenterLatLon();
 	}
 
 	private double formatKM(double meterDistance) {

@@ -141,8 +141,7 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
-import es.prodevelop.gvsig.mini.search.SearchExpandableActivity;
-import es.prodevelop.gvsig.mini.search.StreetSearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
@@ -162,7 +161,6 @@ import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.PerstPOIsOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
@@ -171,6 +169,7 @@ import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerOpenListene
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.IDownloadWaiter;
 import es.prodevelop.tilecache.TileDownloaderTask;
@@ -216,6 +215,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private TextView totalTiles;
 	private TextView totalMB;
 	private TextView totalZoom;
+	private SlidingDrawer2 sliding;
 
 	private TileDownloadWaiterDelegate tileWaiter;
 	public static String twituser = null;
@@ -307,7 +307,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	ProgressBar downloadTilesPB;
 
 	public final static int SEARCH_EXP_CODE = 444;
-	
 
 	/**
 	 * Called when the activity is first created.
@@ -322,7 +321,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				Settings.getInstance().addOnSettingsChangedListener(this);
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
-
+				RouteManager.getInstance().registerRoute(route);
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 				// "Prueba de ScreenPower");
@@ -419,6 +418,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				searchInNameFinder(query, false);
 			}
 
+			this.processGeoAction(i);
 			this.processOfflineIntentActoin(i);
 
 			int hintId = 0;
@@ -573,6 +573,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		try {
 			super.onActivityResult(requestCode, resultCode, intent);
+			processGeoAction(intent);
 			log.log(Level.FINE, "onActivityResult (code, resultCode): "
 					+ requestCode + ", " + resultCode);
 			if (requestCode != CODE_SETTINGS && intent == null) {
@@ -924,7 +925,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									.getCRS("EPSG:900913"));
 					mainIntent.putExtra("lon", lonlat[0]);
 					mainIntent.putExtra("lat", lonlat[1]);
-					this.startActivityForResult(mainIntent, SEARCH_EXP_CODE);
+					this.startActivity(mainIntent);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
@@ -1623,12 +1624,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 			z = new ZoomControls(this);
-			SlidingDrawer2 sliding = (SlidingDrawer2) factory.inflate(
+			sliding = (SlidingDrawer2) factory.inflate(
 					R.layout.slide, null);
 			sliding.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 				@Override
 				public void onDrawerOpened() {
+					((Button) sliding.getHandle())
+							.setBackgroundResource(R.drawable.slide_down_icon);
 					Map.this.isPOISlideShown = true;
 					osmap.pauseDraw();
 					z.setVisibility(View.INVISIBLE);
@@ -1640,10 +1643,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				@Override
 				public void onDrawerClosed() {
 					try {
-
+						((Button) sliding.getHandle())
+								.setBackgroundResource(R.drawable.slide_up_icon);
 						Map.this.isPOISlideShown = false;
 						z.setVisibility(View.VISIBLE);
-						osmap.poiOverlay.setCategories(POICategories.selected);
+						if (osmap.poiOverlay != null)
+							osmap.poiOverlay.setCategories(POICategories.selected);
 						osmap.resumeDraw();
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
@@ -2572,6 +2577,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "onResume");
 			super.onResume();
+			processGeoAction(getIntent());
+			processRouteAction(getIntent());
+			processOfflineIntentActoin(getIntent());
 			// if (navigation && recenterOnGPS)
 			// wl.acquire();
 			// mSensorManager.registerListener(mSensorListener, mSensorManager
@@ -2579,6 +2587,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// SensorManager.SENSOR_DELAY_FASTEST);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onResume: ", e);
+		}
+	}
+
+	private void processRouteAction(Intent i) {
+		if (i == null)
+			return;
+		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
+			this.calculateRoute();
 		}
 	}
 
@@ -3187,6 +3203,21 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		osmap.onLayerChanged(renderer.getFullNAME());
 	}
 
+	private void processGeoAction(Intent i) {
+		if (i == null)
+			return;
+		final int zoom = i.getIntExtra("zoom", -1);
+		if (zoom == -1)
+			return;
+
+		final double lat = i.getDoubleExtra("lat", 0);
+		final double lon = i.getDoubleExtra("lon", 0);
+
+		osmap.setMapCenterFromLonLat(lon, lat);
+		osmap.setZoomLevel(zoom);
+
+	}
+
 	@Override
 	public void onNewIntent(Intent i) {
 		try {
@@ -3196,7 +3227,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			}
 
 			try {
+
 				setIntent(i);
+				processGeoAction(i);
 				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
 					onCreate(null);
 				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {

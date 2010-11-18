@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.filter;
 
 import java.util.ArrayList;
 
@@ -16,6 +16,8 @@ import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.SearchOptions;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class SimpleFilter extends Filter {
@@ -100,7 +102,7 @@ public class SimpleFilter extends Filter {
 //							CRSFactory.getCRS("EPSG:900913"),
 //							CRSFactory.getCRS("EPSG:4326"));
 					final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-							/*new Point(lonlat[0], lonlat[1])*/searchOptions.center);
+							/*new Point(lonlat[0], lonlat[1])*/searchOptions.getCenterMercator());
 					Object[] ordered = dq.sort(list);
 					final int length = ordered.length;
 

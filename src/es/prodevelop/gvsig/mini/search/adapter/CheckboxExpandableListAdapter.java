@@ -1,4 +1,4 @@
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.search.adapter;
 
 import java.util.List;
 import java.util.Map;
@@ -19,11 +19,17 @@ import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.POICategoryIcon;
+import es.prodevelop.gvsig.mini.search.activities.POISearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivityWrapper;
+import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
+import es.prodevelop.gvsig.mini.search.activities.StreetSearchActivity;
 
 public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 
-	boolean[] parentChecked;
-	boolean[][] childChecked;
+	public boolean[] parentChecked;
+	public boolean[][] childChecked;
 	private Context context;
 
 	public CheckboxExpandableListAdapter(Context context,
@@ -138,7 +144,7 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 		final String sub = ((TextView) v.findViewById(R.id.sub)).getText()
 				.toString().replaceAll(" ", "_").toLowerCase();
 
-		Metadata.Category cat = ((SearchExpandableActivity) context).provider
+		Metadata.Category cat = ((SearchExpandableActivity) context).getProvider()
 				.getPOIMetadata().getCategoryForSubcategory(sub);
 
 		if (cat != null)

@@ -254,9 +254,13 @@
     <string name="street_options">Street options</string>
     <string name="bookmark">Add bookmark</string>
     <string name="street_view">Show street view</string>
+    <string name="show_wiki">Show Wikipedia</string>
+    <string name="show_web">Show web</string>
     <string name="call_number">Call this number</string>
     <string name="add_contact">Add contact</string>
     <string name="find_pois_near">Find POIs near</string>
+    <string name="find_streets_near">Find streets near</string>
+    
     
     <string name="type_keyword">Type a keyword</string>
     <string name="fill_text">Please, type a text to filter...</string>
@@ -275,5 +279,12 @@
     <string name="wiki">Wikipedia:</string>
     <string name="img">Image:</string>
     <string name="address">Address:</string>
+    <string name="copy">Copy text</string>
+    <string name="share_text">Share text</string>
+    <string name="show_map">Show in map</string>
+    
+    <string name="start_point">Added start point</string>
+    <string name="end_point">Added end point</string>
+    <string name="calculate_route">Calculate route?</string>    
 </resources>
 
