@@ -12,15 +12,17 @@ import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.adapter.MemoryAdapter;
 
 public class KeywordFilter extends SimpleFilter {
 
 	public KeywordFilter(SearchActivity searchActivity) {
 		super(searchActivity);
 		// TODO Auto-generated constructor stub
-	}	
+	}
 
 	@Override
 	protected FilterResults performFiltering(CharSequence prefix) {
@@ -58,31 +60,18 @@ public class KeywordFilter extends SimpleFilter {
 		}
 
 		if (searchOptions.sortResults()) {
-			if (searchOptions.isSortByDistance()) {
-				// double[] lonlat = ConversionCoords.reproject(
-				// searchOptions.center.getX(),
-				// searchOptions.center.getY(),
-				// CRSFactory.getCRS("EPSG:900913"),
-				// CRSFactory.getCRS("EPSG:4326"));
-				final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-				/* new Point(lonlat[0], lonlat[1]) */searchOptions.getCenterMercator());
-				Object[] ordered = dq.sort(list);
+			final CollectionQuickSort qs = searchOptions
+					.getQuickSorter(searchOptions.getCenterMercator());
+			
+			if (qs != null) {
+				Object[] ordered = qs.sort(list);
 				final int length = ordered.length;
 
 				list = new ArrayList();
 				for (int i = 0; i < length; i++) {
 					list.add(ordered[i]);
 				}
-			} else {
-				final POIAlphabeticalQuickSort dq = new POIAlphabeticalQuickSort();
-				Object[] ordered = dq.sort(list);
-				final int length = ordered.length;
-
-				list = new ArrayList();
-				for (int i = 0; i < length; i++) {
-					list.add(ordered[i]);
-				}
-			}
+			}			
 		}
 
 		if (list.size() == 0) {

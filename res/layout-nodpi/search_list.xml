@@ -38,8 +38,8 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:gravity="bottom">
-		<ListView android:id="@android:id/list" android:layout_width="fill_parent"
+		<es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListView android:id="@android:id/list" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:clickable="true"
-			android:fastScrollEnabled="true"></ListView>
+			android:fastScrollEnabled="true"></es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListView>
 	</LinearLayout>
 </LinearLayout>

@@ -1,13 +1,10 @@
 package es.prodevelop.gvsig.mini.search;
 
-import java.util.logging.Level;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,11 +15,10 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
-import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.tasks.poi.BookmarkManagerTask;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.poi.ShareAnyPOITask;
 import es.prodevelop.gvsig.mini.tasks.poi.ShowGMapsFromPoint;
@@ -39,6 +35,7 @@ public class POIItemClickContextListener {
 	int titleId;
 	Drawable icon;
 	AlertDialog dialog;
+	BulletedTextListAdapter adapter;
 
 	public POIItemClickContextListener(Activity activity, int iconId,
 			int titleId) {
@@ -115,6 +112,7 @@ public class POIItemClickContextListener {
 						break;
 					case 3:
 						// BOOKMARK
+						processBookmark(p);
 						break;
 					case 4:
 						// GEO SHARE
@@ -192,7 +190,7 @@ public class POIItemClickContextListener {
 			}
 		});
 
-		BulletedTextListAdapter adapter = new BulletedTextListAdapter(activity);
+		adapter = new BulletedTextListAdapter(activity);
 
 		adapter.addItem(new BulletedText(activity.getResources().getString(
 				R.string.show_map), activity.getResources().getDrawable(
@@ -206,9 +204,7 @@ public class POIItemClickContextListener {
 				R.string.NameFinderActivity_2), activity.getResources()
 				.getDrawable(R.drawable.bt_finish)));
 
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.bookmark), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
+		addBookmark();
 
 		adapter.addItem(new BulletedText(activity.getResources().getString(
 				R.string.share), activity.getResources().getDrawable(
@@ -324,6 +320,32 @@ public class POIItemClickContextListener {
 			dialog = alert.show();
 		} catch (Exception e) {
 
+		}
+	}
+
+	public void addBookmark() {
+		adapter.addItem(new BulletedText(activity.getResources().getString(
+				R.string.bookmark), activity.getResources().getDrawable(
+				R.drawable.bt_poi)));
+	}
+
+	public void processBookmark(POI p) {
+		try {
+			BookmarkManagerTask b = new BookmarkManagerTask(p);
+			if (b.addBookmark())
+				Toast.makeText(
+						activity,
+						activity.getResources().getString(
+								R.string.bookmark_added), Toast.LENGTH_LONG)
+						.show();
+			else
+				Toast.makeText(
+						activity,
+						activity.getResources().getString(
+								R.string.bookmark_exists), Toast.LENGTH_LONG)
+						.show();
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
 		}
 	}
 }

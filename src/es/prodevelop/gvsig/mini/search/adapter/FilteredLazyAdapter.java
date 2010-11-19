@@ -273,14 +273,14 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		return activity.getSearchOptions().getCenterLatLon();
 	}
 
-	private double formatKM(double meterDistance) {
+	protected double formatKM(double meterDistance) {
 		if (meterDistance > 1000) {
 			return meterDistance / 1000;
 		}
 		return meterDistance;
 	}
 
-	private String unit(double meterDistance) {
+	protected String unit(double meterDistance) {
 		if (meterDistance > 1000) {
 			return "Km.";
 		}

@@ -250,9 +250,11 @@
     <string name="clear">Clear</string>
     <string name="searching">Searching ...</string>
     <string name="search_results">Search results</string>
+    <string name="cat_dist">Category - Distance</string>
     
     <string name="street_options">Street options</string>
     <string name="bookmark">Add bookmark</string>
+    <string name="remove_bookmark">Remove bookmark</string>
     <string name="street_view">Show street view</string>
     <string name="show_wiki">Show Wikipedia</string>
     <string name="show_web">Show web</string>
@@ -285,6 +287,13 @@
     
     <string name="start_point">Added start point</string>
     <string name="end_point">Added end point</string>
-    <string name="calculate_route">Calculate route?</string>    
+    <string name="calculate_route">Calculate route?</string>
+    <string name="no_bookmark">There are no bookmarks stored</string>
+    <string name="bookmarks">List Bookmarks</string>    
+    <string name="search_local">Search local database</string>
+    <string name="bookmark_added">Bookmark added</string>
+    <string name="bookmark_removed">Bookmark removed</string>
+    <string name="bookmark_exists">Bookmark already exists</string>
+    <string name="bookmark_failed">Failed to remove bookmark</string>    
 </resources>
 

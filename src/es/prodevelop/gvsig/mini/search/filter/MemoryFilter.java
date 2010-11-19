@@ -12,6 +12,7 @@ import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoo
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.POICategoryDistanceQuickSort;
@@ -100,32 +101,20 @@ public class MemoryFilter extends SimpleFilter {
 				list.add(ordered[i]);
 			}
 		} else {
-			if (searchOptions.sortResults()) {
-				if (searchOptions.isSortByDistance()) {
-					// double[] lonlat = ConversionCoords.reproject(
-					// searchOptions.center.getX(),
-					// searchOptions.center.getY(),
-					// CRSFactory.getCRS("EPSG:900913"),
-					// CRSFactory.getCRS("EPSG:4326"));
-					final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-							/* new Point(lonlat[0], lonlat[1]) */((MemoryAdapter) this.activity.listAdapter)
-									.getCenterMercator());
-					Object[] ordered = dq.sort(activity.getResultsList());
-					final int length = ordered.length;
+			list = activity.getResultsList();
+		}
+		if (searchOptions.sortResults()) {
+			final CollectionQuickSort qs = searchOptions
+					.getQuickSorter(((MemoryAdapter) this.activity.listAdapter)
+							.getCenterMercator());
 
-					list = new ArrayList();
-					for (int i = 0; i < length; i++) {
-						list.add(ordered[i]);
-					}
-				} else {
-					final POIAlphabeticalQuickSort dq = new POIAlphabeticalQuickSort();
-					Object[] ordered = dq.sort(activity.getResultsList());
-					final int length = ordered.length;
+			if (qs != null) {
+				Object[] ordered = qs.sort(list);
+				final int length = ordered.length;
 
-					list = new ArrayList();
-					for (int i = 0; i < length; i++) {
-						list.add(ordered[i]);
-					}
+				list = new ArrayList();
+				for (int i = 0; i < length; i++) {
+					list.add(ordered[i]);
 				}
 			}
 		}

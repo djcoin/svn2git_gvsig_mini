@@ -33,9 +33,9 @@ public class POICategoryDistanceQuickSort extends CollectionQuickSort {
 			} else {
 				OsmPOI pxx = (OsmPOI) xx;
 				OsmPOI pyy = (OsmPOI) yy;
-				short oxx = (Short) POICategories.CATEGORIES_NUMBER.get(pxx
+				short oxx = (Short) POICategories.CATEGORIES_ORDER.get(pxx
 						.getCategory());
-				short oyy = (Short) POICategories.CATEGORIES_NUMBER.get(pyy
+				short oyy = (Short) POICategories.CATEGORIES_ORDER.get(pyy
 						.getCategory());
 				if (oxx == oyy) {
 					return calcDistance(pxx, pyy);

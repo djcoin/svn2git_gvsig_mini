@@ -14,13 +14,14 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.LazyAdapter;
 import es.prodevelop.gvsig.mini.search.adapter.MultiKeywordFilteredAdapter;
 
 public class ResultSearchActivity extends SearchActivity {
 
 	public final static String QUERY = "query";
 	String query;
-	private POIItemClickContextListener listener;
+	protected POIItemClickContextListener listener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,10 @@ public class ResultSearchActivity extends SearchActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				((FilteredLazyAdapter) getListAdapter()).pos = arg2;
+				if (((LazyAdapter) getListAdapter()).pos == arg2)
+					((LazyAdapter) getListAdapter()).pos = -1;
+				else
+					((LazyAdapter) getListAdapter()).pos = arg2;
 				((FilteredLazyAdapter) getListAdapter()).notifyDataSetChanged();
 			}
 
@@ -73,8 +77,8 @@ public class ResultSearchActivity extends SearchActivity {
 							.getSelectedItemPosition();
 					getSearchOptions().sort = spinnerSort.getSelectedItem()
 							.toString();
-					if (selectedSpinnerPosition != 0)
-						onTextChanged(query, 0, 0, 0);
+					// if (selectedSpinnerPosition != 0)
+					onTextChanged(query, 0, 0, 0);
 				} catch (Exception e) {
 					Log.e("", e.getMessage());
 				}
@@ -123,7 +127,7 @@ public class ResultSearchActivity extends SearchActivity {
 	public POIItemClickContextListener getPOItemClickListener() {
 		return listener;
 	}
-	
+
 	@Override
 	public String getQuery() {
 		return query;

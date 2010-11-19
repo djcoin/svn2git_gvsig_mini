@@ -115,13 +115,12 @@ public class POIDetailsActivity extends Activity {
 		LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(
 				R.layout.poi_details, null);
 
-		TextView descTV = (TextView) layout.findViewById(R.id.desc);		
+		TextView descTV = (TextView) layout.findViewById(R.id.desc);
 		TextView distTV = (TextView) layout.findViewById(R.id.dist);
 		ImageView poiImg = (ImageView) layout.findViewById(R.id.img);
-		Button bt = (Button) layout
-		.findViewById(R.id.show_options);
+		Button bt = (Button) layout.findViewById(R.id.show_options);
 		bt.setVisibility(View.VISIBLE);
-		
+
 		bt.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -158,8 +157,8 @@ public class POIDetailsActivity extends Activity {
 
 		descTV.setText(descPOI);
 		applyOptions(descTV);
-		
-		distTV.setText(dist);
+
+		distTV.setText(getResources().getString(R.string.distance) + " " + dist);
 
 		Bitmap b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) poi)
 				.getCategory());
@@ -362,7 +361,7 @@ public class POIDetailsActivity extends Activity {
 		}
 		return true;
 	}
-	
+
 	private POIItemClickContextListener getPOItemClickListener() {
 		if (listener == null) {
 			listener = new POIItemClickContextListener(this, 0, 0);

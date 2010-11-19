@@ -3,21 +3,34 @@ package es.prodevelop.gvsig.mini.search.activities;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
@@ -25,6 +38,7 @@ import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.SearchOptions;
 import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 
 /**
  * Base activity for local pois / streets searches
@@ -33,7 +47,7 @@ import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
  * 
  */
 public abstract class SearchActivity extends ListActivity implements
-		SearchActivityWrapper {
+		SearchActivityWrapper/*, ListView.OnScrollListener */{
 
 	private QuadtreeProvider provider;
 	private AutoCompleteAdapter autoCompleteAdapter;
@@ -89,8 +103,8 @@ public abstract class SearchActivity extends ListActivity implements
 							.getSelectedItemPosition();
 					getSearchOptions().sort = spinnerSort.getSelectedItem()
 							.toString();
-					if (selectedSpinnerPosition != 0)
-						onTextChanged(autoCompleteTextView.getText(), 0, 0, 0);
+					// if (selectedSpinnerPosition != 0)
+					onTextChanged(autoCompleteTextView.getText(), 0, 0, 0);
 				} catch (Exception e) {
 					Log.e("", e.getMessage());
 				}
@@ -128,6 +142,31 @@ public abstract class SearchActivity extends ListActivity implements
 				SearchActivity.HIDE_AUTOTEXTVIEW, false);
 		if (hide)
 			autoCompleteTextView.setVisibility(View.GONE);
+
+		// ****************************//
+//		mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+//
+//		getListView().setOnScrollListener(this);
+//
+////		LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//		mDialogText = new TextView(this);
+//		mDialogText.setVisibility(View.INVISIBLE);
+//
+//		mHandler.post(new Runnable() {
+//
+//			public void run() {
+//				mReady = true;
+//				WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+//						LayoutParams.WRAP_CONTENT,
+//						LayoutParams.WRAP_CONTENT,
+//						WindowManager.LayoutParams.TYPE_APPLICATION,
+//						WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//								| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//						PixelFormat.TRANSLUCENT);				
+//				mWindowManager.addView(mDialogText, lp);
+//			}
+//		});
 	}
 
 	public abstract void initializeAdapters();
@@ -249,8 +288,90 @@ public abstract class SearchActivity extends ListActivity implements
 			return new Point(0, 0);
 		}
 	}
-	
+
 	public abstract String getQuery();
-	
+
 	public abstract POIItemClickContextListener getPOItemClickListener();
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 0, 0, R.string.bookmarks);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			InvokeIntents.launchListBookmarks(this, new double[] {
+					this.getCenter().getX(), this.getCenter().getY() });
+
+			break;
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+//	private final class RemoveWindow implements Runnable {
+//		public void run() {
+//			removeWindow();
+//		}
+//	}
+//
+//	private RemoveWindow mRemoveWindow = new RemoveWindow();
+//	Handler mHandler = new Handler();
+//	private WindowManager mWindowManager;
+//	private TextView mDialogText;
+//	private boolean mShowing;
+//	private boolean mReady;
+//	private char mPrevLetter = Character.MIN_VALUE;
+//
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		mReady = true;
+//	}
+//
+//	@Override
+//	protected void onPause() {
+//		super.onPause();
+//		removeWindow();
+//		mReady = false;
+//	}
+//
+//	@Override
+//	protected void onDestroy() {
+//		super.onDestroy();
+//		mWindowManager.removeView(mDialogText);
+//		mReady = false;
+//	}
+//
+//	public void onScroll(AbsListView view, int firstVisibleItem,
+//			int visibleItemCount, int totalItemCount) {
+//		int lastItem = firstVisibleItem + visibleItemCount - 1;
+//		if (mReady) {
+//			char firstLetter = ((POI) getListAdapter()
+//					.getItem(firstVisibleItem)).getDescription().charAt(0);
+//
+//			if (!mShowing && firstLetter != mPrevLetter) {
+//
+//				mShowing = true;
+//				mDialogText.setVisibility(View.VISIBLE);
+//
+//			}
+//			mDialogText.setText(((Character) firstLetter).toString());
+//			mHandler.removeCallbacks(mRemoveWindow);
+//			mHandler.postDelayed(mRemoveWindow, 3000);
+//			mPrevLetter = firstLetter;
+//		}
+//	}
+//
+//	public void onScrollStateChanged(AbsListView view, int scrollState) {
+//	}
+//
+//	private void removeWindow() {
+//		if (mShowing) {
+//			mShowing = false;
+//			mDialogText.setVisibility(View.INVISIBLE);
+//		}
+//	}
 }

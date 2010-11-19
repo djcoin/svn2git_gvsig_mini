@@ -1,11 +1,15 @@
 package es.prodevelop.gvsig.mini.tasks.poi;
 
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.activities.BookmarkPOIActivity;
 import es.prodevelop.gvsig.mini.search.activities.FindPOISNearActivity;
 import es.prodevelop.gvsig.mini.search.activities.FindStreetsNearActivity;
 import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -59,6 +63,16 @@ public class InvokeIntents {
 		i.putExtra(ResultSearchActivity.QUERY, point);
 		i.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
 		context.startActivity(i);
+	}
+	
+	public static void launchListBookmarks(Context context, double[] centerMercator) {
+		Intent mainIntent = new Intent(context,
+				BookmarkPOIActivity.class);		
+		mainIntent.putExtra("lon", centerMercator[0]);
+		mainIntent.putExtra("lat", centerMercator[1]);
+		mainIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
+		mainIntent.putExtra(ResultSearchActivity.QUERY, "");
+		context.startActivity(mainIntent);
 	}
 
 }

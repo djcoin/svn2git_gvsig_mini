@@ -3,15 +3,19 @@ package es.prodevelop.gvsig.mini.search;
 import java.util.ArrayList;
 
 import android.content.Context;
+import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
+import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class SearchOptions {
 
-	public String sort;
+	public String sort = "";
 
 	Context context;
 	private Point centerMercator = new Point(0, 0);
@@ -27,25 +31,21 @@ public class SearchOptions {
 	}
 
 	public boolean sortResults() {
+		return (sort != null);
+	}
+
+	public CollectionQuickSort getQuickSorter(final Point centerMercator) {
 		if (sort == null)
-			return false;
-		return (sort.compareTo(context.getResources().getString(
-				R.string.sort_distance)) == 0 || sort.compareTo(context
-				.getResources().getString(R.string.sort_name)) == 0);
-	}
+			return null;
+		if (sort.compareTo(context.getResources().getString(
+				R.string.sort_distance)) == 0) {
+			return new PointDistanceQuickSort(centerMercator);
+		}
 
-	public boolean isSortByDistance() {
-		return (sort.compareTo(context.getResources().getString(
-				R.string.sort_distance)) == 0);
-	}
-
-	public boolean isSortByName() {
-		return (sort.compareTo(context.getResources().getString(
-				R.string.sort_name)) == 0);
-	}
-
-	public boolean isNoSort() {
-		return (sort.compareTo(context.getResources().getString(R.string.no)) == 0);
+		if (sort.compareTo(context.getResources().getString(R.string.sort_name)) == 0) {
+			return new POIAlphabeticalQuickSort();
+		}
+		return new POICategoryDistanceQuickSort(centerMercator);
 	}
 
 	public ArrayList getCategories() {

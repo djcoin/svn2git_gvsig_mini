@@ -14,10 +14,12 @@ import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoo
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
 import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.SearchOptions;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.adapter.MemoryAdapter;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class SimpleFilter extends Filter {
@@ -95,24 +97,11 @@ public class SimpleFilter extends Filter {
 			}
 
 			if (searchOptions.sortResults()) {
-				if (searchOptions.isSortByDistance()) {
-//					double[] lonlat = ConversionCoords.reproject(
-//							searchOptions.center.getX(),
-//							searchOptions.center.getY(),
-//							CRSFactory.getCRS("EPSG:900913"),
-//							CRSFactory.getCRS("EPSG:4326"));
-					final PointDistanceQuickSort dq = new PointDistanceQuickSort(
-							/*new Point(lonlat[0], lonlat[1])*/searchOptions.getCenterMercator());
-					Object[] ordered = dq.sort(list);
-					final int length = ordered.length;
+				final CollectionQuickSort qs = searchOptions
+						.getQuickSorter(searchOptions.getCenterMercator());
 
-					list = new ArrayList();
-					for (int i = 0; i < length; i++) {
-						list.add(ordered[i]);
-					}
-				} else {
-					final POIAlphabeticalQuickSort dq = new POIAlphabeticalQuickSort();
-					Object[] ordered = dq.sort(list);
+				if (qs != null) {
+					Object[] ordered = qs.sort(list);
 					final int length = ordered.length;
 
 					list = new ArrayList();
@@ -121,19 +110,6 @@ public class SimpleFilter extends Filter {
 					}
 				}
 			}
-
-			/*
-			 * Sort POIs alphabetically
-			 */
-			// PointDistanceQuickSort quickSort = new
-			// PointDistanceQuickSort(searchOptions.center);
-			// Object[] pois = quickSort.sort(list);
-			//
-			// list = new ArrayList();
-			// final int l = pois.length;
-			// for (int i = 0; i < l; i++) {
-			// list.add(pois[i]);
-			// }
 
 			if (list.size() == 0) {
 				POI p = new POI();
@@ -200,7 +176,7 @@ public class SimpleFilter extends Filter {
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		} catch (OutOfMemoryError ex) {
-			//FIXME why?
+			// FIXME why?
 			System.gc();
 			Log.e("", ex.getMessage());
 		}

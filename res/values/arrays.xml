@@ -6,7 +6,7 @@
     </string-array>
     
     <string-array name="sort_options">
-    	<item>@string/no_sort</item>
+    	<item>@string/cat_dist</item>
         <item>@string/sort_name</item>
         <item>@string/sort_distance</item>          
     </string-array>

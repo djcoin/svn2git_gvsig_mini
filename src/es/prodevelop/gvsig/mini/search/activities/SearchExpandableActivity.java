@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ExpandableListView;
@@ -30,6 +32,7 @@ import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 import es.prodevelop.gvsig.mini.search.adapter.CheckboxExpandableListAdapter;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class SearchExpandableActivity extends ExpandableListActivity implements
@@ -366,7 +369,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			int arg3) {
 		getAutoCompleteAdapter().getFilter().filter(
 				arg0.toString().toLowerCase());
-//		this.setTitle(R.string.please_wait);
+		// this.setTitle(R.string.please_wait);
 		setProgressBarIndeterminateVisibility(true);
 	}
 
@@ -427,5 +430,23 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			break;
 		}
 		return b.create();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 0, 0, R.string.bookmarks);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			InvokeIntents.launchListBookmarks(this, new double[] {
+					this.getCenter().getX(), this.getCenter().getY() });
+
+			break;
+		}
+		return super.onMenuItemSelected(featureId, item);
 	}
 }

@@ -36,6 +36,10 @@
 		<activity android:name=".search.activities.FindStreetsNearActivity"
 			android:screenOrientation="portrait">
 		</activity>
+		
+		<activity android:name=".search.activities.BookmarkPOIActivity"
+			android:screenOrientation="portrait">
+		</activity>
 
 		<activity android:name=".search.activities.POIDetailsActivity"
 			android:theme="@android:style/Theme.NoTitleBar"

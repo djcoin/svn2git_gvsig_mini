@@ -7,8 +7,27 @@
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:id="@+id/data" android:orientation="vertical">
-			<include layout="@layout/street_row" android:layout_width="fill_parent"
-				android:layout_height="wrap_content"></include>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:id="@+id/poi_row" android:orientation="horizontal">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="wrap_content" android:layout_height="fill_parent"
+					android:id="@+id/poi_img" android:orientation="vertical"
+					android:gravity="center_vertical">
+					<ImageView android:id="@+id/img" android:layout_height="wrap_content"
+						android:layout_width="wrap_content" android:textSize="26sp"
+						android:textColor="#FFFFFF"></ImageView>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:id="@+id/poi_desc" android:orientation="vertical">
+					<TextView android:id="@+id/desc" android:layout_height="wrap_content"
+						android:layout_width="fill_parent" android:textSize="26sp"
+						android:textColor="#FFFFFF"></TextView>
+					<TextView android:id="@+id/dist" android:layout_width="fill_parent"
+						android:layout_height="wrap_content"></TextView>
+				</LinearLayout>
+			</LinearLayout>
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="wrap_content" android:layout_height="fill_parent"
 				android:id="@+id/extra_data" android:orientation="vertical">
@@ -86,9 +105,24 @@
 					android:layout_width="fill_parent" android:textSize="12sp"
 					android:paddingLeft="32dip" android:textColor="#FFFFFF"
 					android:text="X, Y: "></TextView>
-				<TextView android:id="@+id/t_xy_value" android:layout_width="fill_parent"
-					android:layout_height="wrap_content" android:textSize="16sp"
-					android:paddingLeft="40dip"></TextView>				
+				<TextView android:id="@+id/t_xy_value"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:textSize="16sp" android:paddingLeft="40dip"></TextView>
+			</LinearLayout>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="wrap_content" android:layout_height="fill_parent"
+				android:id="@+id/map_options" android:orientation="horizontal"
+				android:gravity="center_horizontal">
+				<Button android:id="@+id/show_options" android:text="@string/show_options"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:gravity="center_horizontal" android:visibility="gone" />
+				<Button android:id="@+id/show_details" android:text="@string/show_details"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:gravity="center_horizontal" android:visibility="gone" />
+			</LinearLayout>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:id="@+id/map_preview" android:orientation="vertical">
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>

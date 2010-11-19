@@ -47,7 +47,10 @@ public class StreetSearchActivity extends SearchActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				((LazyAdapter) getListAdapter()).pos = arg2;
+				if (((LazyAdapter) getListAdapter()).pos == arg2)
+					((LazyAdapter) getListAdapter()).pos = -1;
+				else
+					((LazyAdapter) getListAdapter()).pos = arg2;
 				((LazyAdapter) getListAdapter()).notifyDataSetChanged();
 			}
 
@@ -61,7 +64,7 @@ public class StreetSearchActivity extends SearchActivity {
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				return getPOItemClickListener().onPOIClick(arg2,
-						(POI)getListAdapter().getItem(arg2));
+						(POI) getListAdapter().getItem(arg2));
 			}
 		});
 

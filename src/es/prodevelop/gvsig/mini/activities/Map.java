@@ -141,11 +141,15 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
+import es.prodevelop.gvsig.mini.search.activities.BookmarkPOIActivity;
+import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
 import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadCallbackHandler;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadWaiter;
 import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
@@ -715,7 +719,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					R.drawable.menu_location);
 			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
 					R.drawable.menu_location);
-			pMenu.add(0, 11, 11, "Search");
+			pMenu.add(0, 11, 11, R.string.search_local);
+			pMenu.add(0, 12, 12, R.string.bookmarks);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
@@ -926,6 +931,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					mainIntent.putExtra("lon", lonlat[0]);
 					mainIntent.putExtra("lat", lonlat[1]);
 					this.startActivity(mainIntent);
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 12:
+				try {
+					Point center = this.osmap.getMRendererInfo().getCenter();
+					double[] lonlat = ConversionCoords.reproject(center.getX(),
+							center.getY(), CRSFactory.getCRS(this.osmap
+									.getMRendererInfo().getSRS()), CRSFactory
+									.getCRS("EPSG:900913"));
+					InvokeIntents.launchListBookmarks(this, lonlat);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
@@ -1624,8 +1641,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 			z = new ZoomControls(this);
-			sliding = (SlidingDrawer2) factory.inflate(
-					R.layout.slide, null);
+			sliding = (SlidingDrawer2) factory.inflate(R.layout.slide, null);
 			sliding.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 				@Override
@@ -1648,7 +1664,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						Map.this.isPOISlideShown = false;
 						z.setVisibility(View.VISIBLE);
 						if (osmap.poiOverlay != null)
-							osmap.poiOverlay.setCategories(POICategories.selected);
+							osmap.poiOverlay
+									.setCategories(POICategories.selected);
 						osmap.resumeDraw();
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
@@ -3129,10 +3146,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "onLowMemory");
 			osmap.getMTileProvider().onLowMemory();
 			super.onLowMemory();
-			Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
+			// Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
 			mapState.persist();
+			System.gc();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onLowMemory: ", e);
+			System.gc();
 		}
 	}
 

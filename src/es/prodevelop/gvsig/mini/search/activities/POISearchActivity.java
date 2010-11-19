@@ -13,6 +13,8 @@ import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
 import es.prodevelop.gvsig.mini.search.adapter.LazyAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListView;
 
 public class POISearchActivity extends SearchActivity {
 
@@ -30,8 +32,11 @@ public class POISearchActivity extends SearchActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-				((LazyAdapter) getListAdapter()).pos = arg2;
+				if (((LazyAdapter) getListAdapter()).pos == arg2)
+					((LazyAdapter) getListAdapter()).pos = -1;
+				else
+					((LazyAdapter) getListAdapter()).pos = arg2;
+
 				((LazyAdapter) getListAdapter()).notifyDataSetChanged();
 			}
 		});
@@ -95,8 +100,20 @@ public class POISearchActivity extends SearchActivity {
 	}
 
 	public void initializeAdapters() {
-		listAdapter = new LazyAdapter(this);
+		View pinnedHeader = getLayoutInflater().inflate(R.layout.list_header,
+				getListView(), false);
+		((PinnedHeaderListView) getListView())
+				.setPinnedHeaderView(pinnedHeader);
+		listAdapter = new PinnedHeaderListAdapter(this);
 		filteredListAdapter = new FilteredLazyAdapter(this);
+	}
+
+	public void attachSectionedAdapter() {
+		this.getListView().setAdapter(listAdapter);
+		((PinnedHeaderListAdapter) listAdapter).updateIndexer();
+		getListView().setOnScrollListener(
+				((PinnedHeaderListAdapter) listAdapter));
+		this.setListAdapter(listAdapter);
 	}
 
 	@Override
