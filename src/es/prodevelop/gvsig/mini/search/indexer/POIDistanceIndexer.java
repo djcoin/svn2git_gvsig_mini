@@ -36,48 +36,39 @@
  *   author Alberto Romeu aromeu@prodevelop.es
  */
 
-package es.prodevelop.gvsig.mini.activities;
+package es.prodevelop.gvsig.mini.search.indexer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import android.content.Context;
-import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.tilecache.renderer.MapRenderer;
-import es.prodevelop.tilecache.renderer.wms.OSRenderer;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
+import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
+import es.prodevelop.gvsig.mini.geom.Point;
 
-public class OSSettingsUpdater {
+public class POIDistanceIndexer extends BaseIndexer {
 
-	private final static Logger log = Logger.getLogger(OSSettingsUpdater.class
-			.getName());
+	PointDistanceQuickSort qs;
 
-	public static void synchronizeRendererWithSettings(OSRenderer osr,
-			Context context) {
-		try {
-			if (osr.getType() != MapRenderer.OS_RENDERER)
-				return;
-			boolean isCustomEnabled = false;
-			try {
-				isCustomEnabled = Settings.getInstance().getBooleanValue(
-						context.getText(R.string.settings_key_os_custom)
-								.toString());
-			} catch (NoSuchFieldError ignore) {
-
-			}
-
-			if (isCustomEnabled) {
-				osr.setKey(Settings.getInstance().getStringValue(
-						context.getText(R.string.settings_key_os_key)
-								.toString()));
-				osr.setKeyURL(Settings.getInstance().getStringValue(
-						context.getText(R.string.settings_key_os_url)
-								.toString()));
-			} else {
-				osr.setDefaultKeysAndURLs();
-			}
-			// Layers.getInstance().persist();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
+	public POIDistanceIndexer(Point centerMercator) {		
+		qs = new PointDistanceQuickSort(centerMercator);
 	}
+
+	@Override
+	public CollectionQuickSort getQuickSorter() {
+		return qs;
+	}
+
+	@Override
+	public ArrayList sortAndIndex(Collection list) {
+		Object[] sorted = qs.sort(list);
+		final int size = sorted.length;
+
+		ArrayList ordered = new ArrayList();
+		for (int i = 0; i < size; i++) {
+			ordered.add(sorted[i]);
+		}
+
+		return ordered;
+	}
+
 }

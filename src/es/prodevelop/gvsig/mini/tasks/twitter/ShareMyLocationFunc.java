@@ -1,6 +1,6 @@
 /* gvSIG Mini. A free mobile phone viewer of free maps.
  *
- * Copyright (C) 2009 Prodevelop.
+ * Copyright (C) 2010 Prodevelop.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,8 @@
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
- *   2009.
- *   author Ruben Blanco rblanco @prodevelop.es 
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es
  *   
  */
 

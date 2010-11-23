@@ -1,3 +1,41 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2010 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Peque�a y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es
+ */
+
 package es.prodevelop.gvsig.mini.search.filter;
 
 import java.util.ArrayList;
@@ -8,24 +46,23 @@ import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.ListAdapter;
+import android.widget.SectionIndexer;
 import es.prodevelop.android.spatialindex.poi.POI;
-import es.prodevelop.android.spatialindex.poi.POIAlphabeticalQuickSort;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
-import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
-import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.SearchOptions;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
-import es.prodevelop.gvsig.mini.search.adapter.MemoryAdapter;
-import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListAdapter;
+import es.prodevelop.gvsig.mini.search.indexer.SortSectionIndexer;
 
 public class SimpleFilter extends Filter {
 
 	protected SearchOptions searchOptions;
 	protected SearchActivity activity;
+	private SectionIndexer indexer;
+	public final static String WILDCARD = "*";
 
 	public SimpleFilter(SearchActivity searchActivity) {
 		this.searchOptions = searchActivity.getSearchOptions();
@@ -72,7 +109,6 @@ public class SimpleFilter extends Filter {
 			SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
 					.getProvider()).getHelper().getRoot());
 
-			// FIXME filter by category || subcategory -> SearchOptions
 			String desc = prefix.toString();
 			if (!desc.contains(" 'or' ") && !desc.contains(" 'and' ")) {
 				StringBuffer temp = buildQuery(desc,
@@ -96,27 +132,7 @@ public class SimpleFilter extends Filter {
 				list.add(result.hits[i].getDocument());
 			}
 
-			if (searchOptions.sortResults()) {
-				final CollectionQuickSort qs = searchOptions
-						.getQuickSorter(searchOptions.getCenterMercator());
-
-				if (qs != null) {
-					Object[] ordered = qs.sort(list);
-					final int length = ordered.length;
-
-					list = new ArrayList();
-					for (int i = 0; i < length; i++) {
-						list.add(ordered[i]);
-					}
-				}
-			}
-
-			if (list.size() == 0) {
-				POI p = new POI();
-				p.setDescription(activity.getResources().getString(
-						R.string.no_results));
-				list.add(p);
-			}
+			list = sortResults(list);
 
 			results.values = list;
 			results.count = list.size();
@@ -158,20 +174,32 @@ public class SimpleFilter extends Filter {
 	@Override
 	protected void publishResults(CharSequence constraint, FilterResults results) {
 		try {
+			// First disable fast scroll... or it won't change the
+			// SectionIndexer
+			activity.getListView().setFastScrollEnabled(false);
+			((PinnedHeaderListAdapter) activity.getListAdapter())
+					.setIndexer(indexer);
 			if (results.count <= 0) {
 				activity.setResultsList(null);
+				((PinnedHeaderListAdapter) activity.getListAdapter())
+						.setDefaultIndexer();
 				// activity.attachSectionedAdapter();
-				activity.getListView().setFastScrollEnabled(true);
+				// activity.getListView().setFastScrollEnabled(true);
 				((BaseAdapter) activity.getListView().getAdapter())
 						.notifyDataSetChanged();
 			} else {
 				activity.setResultsList((ArrayList) results.values);
 				// activity.attachFilteredAdapter();
-				activity.getListView().setFastScrollEnabled(false);
+				// activity.getListView().setFastScrollEnabled(false);
 				((BaseAdapter) activity.getListView().getAdapter())
-						.notifyDataSetInvalidated();
+						.notifyDataSetChanged();
 				if (results.count > 1)
 					activity.enableSpinner();
+			}
+			if (indexer == null) {
+				activity.getListView().setFastScrollEnabled(false);
+			} else {
+				activity.getListView().setFastScrollEnabled(true);
 			}
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
@@ -180,5 +208,31 @@ public class SimpleFilter extends Filter {
 			System.gc();
 			Log.e("", ex.getMessage());
 		}
+	}
+
+	public ArrayList sortResults(ArrayList list) {
+		this.indexer = null;
+		if (list.size() == 0) {
+			POI p = new POI();
+			p.setDescription(getNoResultsText());
+			list.add(p);
+		} else {
+			if (searchOptions.sortResults()) {
+				final SortSectionIndexer indexer = searchOptions
+						.getSortIndexer(getCenterMercator());
+				list = indexer.sortAndIndex(list);
+				this.indexer = indexer;
+			}
+		}
+
+		return list;
+	}
+
+	public Point getCenterMercator() {
+		return searchOptions.getCenterMercator();
+	}
+
+	public String getNoResultsText() {
+		return activity.getResources().getString(R.string.no_results);
 	}
 }

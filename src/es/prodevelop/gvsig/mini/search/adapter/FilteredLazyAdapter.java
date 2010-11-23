@@ -1,3 +1,41 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2010 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Peque�a y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es
+ */
+
 package es.prodevelop.gvsig.mini.search.adapter;
 
 import java.text.DecimalFormat;
@@ -14,6 +52,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
@@ -32,10 +71,12 @@ import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.filter.SimpleFilter;
+import es.prodevelop.gvsig.mini.search.indexer.CategoryIndexer;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
+public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
+		SectionIndexer {
 
 	SimpleFilter mFilter;
 	SearchActivity activity;
@@ -44,6 +85,8 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 	Metadata metadata;
 	Bitmap bitmap;
 	public int pos = -1;
+	SectionIndexer mIndexer;
+	public SectionIndexer defaultIndexer;
 
 	public FilteredLazyAdapter(SearchActivity activity) {
 		this.activity = activity;
@@ -62,11 +105,12 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 							.getCategoryForSubcategory(category.name).name);
 				}
 			}
+			defaultIndexer = new CategoryIndexer(activity);
+			setIndexer(defaultIndexer);
 		} else {
 			metadata = activity.getProvider().getPOIMetadata();
 		}
 	}
-	
 
 	@Override
 	public int getCount() {
@@ -332,5 +376,42 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable {
 		ImageView poiImg;
 		Button optionsButton;
 		Button detailsButton;
+	}
+
+	public SectionIndexer getIndexer() {
+		return mIndexer;
+	}
+
+	public Object[] getSections() {
+		if (mIndexer == null) {
+			return new String[] { "" };
+		} else {
+			return mIndexer.getSections();
+		}
+	}
+
+	public int getPositionForSection(int sectionIndex) {
+		if (mIndexer == null) {
+			return -1;
+		}
+
+		return mIndexer.getPositionForSection(sectionIndex);
+	}
+
+	public int getSectionForPosition(int position) {
+		if (mIndexer == null) {
+			return -1;
+		}
+
+		return mIndexer.getSectionForPosition(position);
+	}
+
+	public void setIndexer(SectionIndexer indexer) {
+		this.mIndexer = indexer;
+	}
+
+	public void setDefaultIndexer() {
+		this.mIndexer = defaultIndexer;
+
 	}
 }

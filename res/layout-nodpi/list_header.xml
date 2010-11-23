@@ -6,6 +6,6 @@
 		android:id="@+id/section_text" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:paddingTop="2dip"
 		android:paddingBottom="2dip" android:paddingLeft="5dip"
-		style="?android:attr/listSeparatorTextViewStyle" />
+		style="?android:attr/listSeparatorTextViewStyle" android:visibility="gone"/>
 </LinearLayout>
 

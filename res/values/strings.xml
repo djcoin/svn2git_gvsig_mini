@@ -251,6 +251,7 @@
     <string name="searching">Searching ...</string>
     <string name="search_results">Search results</string>
     <string name="cat_dist">Category - Distance</string>
+    <string name="rest_dist">Restaurant - Distance</string>
     
     <string name="street_options">Street options</string>
     <string name="bookmark">Add bookmark</string>

@@ -10,6 +10,14 @@
         <item>@string/sort_name</item>
         <item>@string/sort_distance</item>          
     </string-array>
+    <string-array name="poi_sort_options">
+    	<item>@string/sort_distance</item>          	
+        <item>@string/sort_name</item>            
+    </string-array>
+    <string-array name="rest_sort_options">
+    	<item>@string/rest_dist</item>          	
+        <item>@string/sort_name</item>            
+    </string-array>
     <string-array name="cache_strategies">
         <item>@string/settings_tilex</item>
         <item>@string/settings_quadkey</item>          

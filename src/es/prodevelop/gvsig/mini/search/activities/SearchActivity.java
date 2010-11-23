@@ -1,3 +1,41 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2010 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Peque�a y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es
+ */
+
 package es.prodevelop.gvsig.mini.search.activities;
 
 import java.util.ArrayList;
@@ -56,8 +94,7 @@ public abstract class SearchActivity extends ListActivity implements
 	private MultiAutoCompleteTextView autoCompleteTextView;
 
 	public DisplayMetrics metrics = new DisplayMetrics();
-	public ListAdapter listAdapter;
-	protected ListAdapter filteredListAdapter;
+	public ListAdapter listAdapter;	
 
 	Spinner spinnerSort;
 
@@ -233,17 +270,7 @@ public abstract class SearchActivity extends ListActivity implements
 		setProgressBarIndeterminateVisibility(true);
 		if (arg0.length() == 0)
 			enableSpinner(arg0.toString());
-	}
-
-	public void attachFilteredAdapter() {
-		this.getListView().setAdapter(this.filteredListAdapter);
-		this.setListAdapter(this.filteredListAdapter);
-	}
-
-	public void attachSectionedAdapter() {
-		this.getListView().setAdapter(listAdapter);
-		this.setListAdapter(listAdapter);
-	}
+	}	
 
 	public void enableSpinner() {
 		this.enableSpinner(autoCompleteTextView.getText().toString());

@@ -1,3 +1,41 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2010 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Peque�a y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2010.
+ *   author Alberto Romeu aromeu@prodevelop.es
+ */
+
 package es.prodevelop.gvsig.mini.search.adapter;
 
 import android.content.Intent;
@@ -14,7 +52,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
@@ -30,13 +67,12 @@ import es.prodevelop.gvsig.mini.search.MapPreview;
 import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class PinnedHeaderListAdapter extends LazyAdapter implements
-		SectionIndexer, PinnedHeaderListView.PinnedHeaderAdapter,
-		OnScrollListener {
-	private SectionIndexer mIndexer;
+public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
+		PinnedHeaderListView.PinnedHeaderAdapter, OnScrollListener {
 	private boolean mDisplaySectionHeaders = true;
 
 	/**
@@ -196,7 +232,7 @@ public class PinnedHeaderListAdapter extends LazyAdapter implements
 						.getDescription() : "?");
 
 		if (holder.preview != null) {
-			if (arg0 == pos) {
+			if (arg0 == pos && p.getX() != 0 && p.getY() != 0) {
 
 				holder.previewLayout.setVisibility(View.VISIBLE);
 				holder.optionsButton.setVisibility(View.VISIBLE);
@@ -218,27 +254,35 @@ public class PinnedHeaderListAdapter extends LazyAdapter implements
 
 		// Bind the data efficiently with the holder.
 		holder.text.setText(desc);
-		final Point centerM = getCenterMercator();
+		if (p.getX() != 0 && p.getY() != 0) {
+			final Point centerM = getCenterMercator();
 
-		final double distance = centerM.distance(ConversionCoords.reproject(
-				p.getX(), p.getY(), CRSFactory.getCRS("EPSG:4326"),
-				CRSFactory.getCRS("EPSG:900913")));
-		holder.dist.setText(activity.getResources()
-				.getString(R.string.distance)
-				+ " "
-				+ formatter.format(formatKM(distance)) + " " + unit(distance));
-		Bitmap b = bitmap;
-		if (b == null) {
-			if (p instanceof OsmPOI) {
-				b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) p)
-						.getCategory());
-			} else {
-				b = POICategoryIcon
-						.getBitmap32ForCategory(POICategories.STREETS);
+			final double distance = centerM.distance(ConversionCoords
+					.reproject(p.getX(), p.getY(),
+							CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913")));
+			holder.dist.setText(activity.getResources().getString(
+					R.string.distance)
+					+ " "
+					+ formatter.format(formatKM(distance))
+					+ " "
+					+ unit(distance));
+			Bitmap b = bitmap;
+			if (b == null) {
+				if (p instanceof OsmPOI) {
+					b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) p)
+							.getCategory());
+				} else {
+					b = POICategoryIcon
+							.getBitmap32ForCategory(POICategories.STREETS);
+				}
 			}
-		}
 
-		holder.poiImg.setImageBitmap(b);
+			holder.poiImg.setImageBitmap(b);
+		} else {
+			holder.dist.setText("");
+			holder.poiImg.setImageBitmap(null);
+		}
 
 		/************************************/
 		// final POI p = (POI) getItem(arg0);
@@ -377,7 +421,7 @@ public class PinnedHeaderListAdapter extends LazyAdapter implements
 		} else {
 			final int section = getSectionForPosition(position);
 			if (getPositionForSection(section) == position) {
-				String title = (String) mIndexer.getSections()[section];
+				String title = (String) getSections()[section];
 				// view.setSectionHeader(title);
 				t.setText(title);
 				t.setVisibility(View.VISIBLE);
@@ -424,35 +468,11 @@ public class PinnedHeaderListAdapter extends LazyAdapter implements
 		// }
 	}
 
-	public void updateIndexer() {
-		mIndexer = new BaseIndexer(activity);
-		// FIXME update indexer after a search/sort
-
-	}
-
-	public Object[] getSections() {
-		if (mIndexer == null) {
-			return new String[] { " " };
-		} else {
-			return mIndexer.getSections();
-		}
-	}
-
-	public int getPositionForSection(int sectionIndex) {
-		if (mIndexer == null) {
-			return -1;
-		}
-
-		return mIndexer.getPositionForSection(sectionIndex);
-	}
-
-	public int getSectionForPosition(int position) {
-		if (mIndexer == null) {
-			return -1;
-		}
-
-		return mIndexer.getSectionForPosition(position);
-	}
+	// public void updateIndexer() {
+	// mIndexer = new CategoryIndexer(activity);
+	// // FIXME update indexer after a search/sort
+	//
+	// }
 
 	@Override
 	public boolean isEnabled(int position) {
@@ -516,7 +536,14 @@ public class PinnedHeaderListAdapter extends LazyAdapter implements
 		int realPosition = getRealPosition(position);
 		int section = getSectionForPosition(realPosition);
 
-		String title = (String) mIndexer.getSections()[section];
+		if (section < 0) {
+			section = 0;
+			mDisplaySectionHeaders = false;
+		} else {
+			mDisplaySectionHeaders = true;
+		}
+
+		String title = (String) getSections()[section];
 		cache.titleView.setText(title);
 
 		if (alpha == 255) {

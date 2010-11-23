@@ -36,48 +36,17 @@
  *   author Alberto Romeu aromeu@prodevelop.es
  */
 
-package es.prodevelop.gvsig.mini.activities;
+package es.prodevelop.gvsig.mini.search.indexer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import android.content.Context;
-import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.tilecache.renderer.MapRenderer;
-import es.prodevelop.tilecache.renderer.wms.OSRenderer;
+import android.widget.SectionIndexer;
+import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
 
-public class OSSettingsUpdater {
+public interface SortSectionIndexer extends SectionIndexer {
 
-	private final static Logger log = Logger.getLogger(OSSettingsUpdater.class
-			.getName());
+	public CollectionQuickSort getQuickSorter();
 
-	public static void synchronizeRendererWithSettings(OSRenderer osr,
-			Context context) {
-		try {
-			if (osr.getType() != MapRenderer.OS_RENDERER)
-				return;
-			boolean isCustomEnabled = false;
-			try {
-				isCustomEnabled = Settings.getInstance().getBooleanValue(
-						context.getText(R.string.settings_key_os_custom)
-								.toString());
-			} catch (NoSuchFieldError ignore) {
-
-			}
-
-			if (isCustomEnabled) {
-				osr.setKey(Settings.getInstance().getStringValue(
-						context.getText(R.string.settings_key_os_key)
-								.toString()));
-				osr.setKeyURL(Settings.getInstance().getStringValue(
-						context.getText(R.string.settings_key_os_url)
-								.toString()));
-			} else {
-				osr.setDefaultKeysAndURLs();
-			}
-			// Layers.getInstance().persist();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
+	public ArrayList sortAndIndex(Collection list);
 }
