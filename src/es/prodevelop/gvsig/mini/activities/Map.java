@@ -141,9 +141,6 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
-import es.prodevelop.gvsig.mini.search.activities.BookmarkPOIActivity;
-import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
-import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -1651,6 +1648,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					Map.this.isPOISlideShown = true;
 					osmap.pauseDraw();
 					z.setVisibility(View.INVISIBLE);
+					s.setVisibility(View.INVISIBLE);
 				}
 			});
 
@@ -1663,6 +1661,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								.setBackgroundResource(R.drawable.slide_up_icon);
 						Map.this.isPOISlideShown = false;
 						z.setVisibility(View.VISIBLE);
+						s.setVisibility(View.VISIBLE);
 						if (osmap.poiOverlay != null)
 							osmap.poiOverlay
 									.setCategories(POICategories.selected);
@@ -1685,13 +1684,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap);
-				// if (p == null)
-				// p = new PerstClusterPOIOverlay(this, osmap);
-				// this.osmap.poiOverlay = p;
-				// this.osmap.getOverlays().add(p);
-				// this.osmap.addExtentChangedListener(p);
-				// this.osmap.getOverlays().add(new PerstPOIsOverlay(this,
-				// osmap));
+				if (p == null)
+					p = new PerstClusterPOIOverlay(this, osmap);
+				this.osmap.poiOverlay = p;
+				this.osmap.getOverlays().add(p);
+				this.osmap.addExtentChangedListener(p);
+
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));
@@ -2608,7 +2606,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	}
 
 	private void processRouteAction(Intent i) {
-		if (i == null)
+		if (i == null)			
 			return;
 		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
 			this.calculateRoute();

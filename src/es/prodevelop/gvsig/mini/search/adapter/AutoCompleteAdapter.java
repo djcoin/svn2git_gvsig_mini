@@ -166,5 +166,4 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 	public void setList(ArrayList list) {
 		this.list = list;
 	}
-
 }

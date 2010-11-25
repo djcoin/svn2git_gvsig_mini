@@ -64,60 +64,64 @@ public class ResultSearchActivity extends SearchActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		query = getIntent().getStringExtra(QUERY);
+		try {
+			query = getIntent().getStringExtra(QUERY);
 
-		setProvider(POIProviderManager.getInstance().getPOIProvider());
+			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-		getListView().setOnItemClickListener(new ToggleItemClickListener());
+			getListView().setOnItemClickListener(new ToggleItemClickListener());
 
-		listener = new POIItemClickContextListener(this, R.drawable.pois,
-				R.string.NameFinderActivity_0);
-		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+			listener = new POIItemClickContextListener(this, R.drawable.pois,
+					R.string.NameFinderActivity_0, true);
+			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				return getPOItemClickListener().onPOIClick(arg2,
-						(POI) getListAdapter().getItem(arg2));
-			}
-		});
-
-		this.getSearchOptions().clearCategories();
-		this.getSearchOptions().clearSubcategories();
-
-		initializeAdapters();
-		this.attachSectionedAdapter();
-
-		spinnerSort.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				try {
-					if (spinnerSort.getSelectedItemPosition() == selectedSpinnerPosition)
-						return;
-
-					selectedSpinnerPosition = spinnerSort
-							.getSelectedItemPosition();
-					getSearchOptions().sort = spinnerSort.getSelectedItem()
-							.toString();
-					// if (selectedSpinnerPosition != 0)
-					onTextChanged(query, 0, 0, 0);
-				} catch (Exception e) {
-					Log.e("", e.getMessage());
+				@Override
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					return getPOItemClickListener().onPOIClick(arg2,
+							(POI) getListAdapter().getItem(arg2));
 				}
-			}
+			});
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
+			this.getSearchOptions().clearCategories();
+			this.getSearchOptions().clearSubcategories();
 
-			}
+			initializeAdapters();
+			this.attachSectionedAdapter();
 
-		});
+			spinnerSort.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-		enableSpinner("");
-		onTextChanged(query, 0, 0, 0);
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					try {
+						if (spinnerSort.getSelectedItemPosition() == selectedSpinnerPosition)
+							return;
+
+						selectedSpinnerPosition = spinnerSort
+								.getSelectedItemPosition();
+						getSearchOptions().sort = spinnerSort.getSelectedItem()
+								.toString();
+						// if (selectedSpinnerPosition != 0)
+						onTextChanged(query, 0, 0, 0);
+					} catch (Exception e) {
+						Log.e("", e.getMessage());
+					}
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO Auto-generated method stub
+
+				}
+
+			});
+
+			enableSpinner("");
+			onTextChanged(query, 0, 0, 0);
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}		
 	}
 	
 	public void attachSectionedAdapter() {

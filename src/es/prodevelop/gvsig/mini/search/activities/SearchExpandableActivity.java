@@ -102,104 +102,114 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			provider = POIProviderManager.getInstance().getPOIProvider();
-		} catch (BaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		expListAdapter = new CheckboxExpandableListAdapter(this,
-				createGroupList(), // groupData describes the first-level
-									// entries
-				R.layout.search_expandable_group, // Layout for the first-level
-													// entries
-				new String[] { "cat", "cat_num" }, // Key in the groupData maps
-													// to
-													// display
-				new int[] { R.id.cat, R.id.cat_num }, // Data under "colorName"
-														// key goes
-				// into this TextView
-				createChildList(), // childData describes second-level entries
-				R.layout.search_expandable_child, // Layout for second-level
-													// entries
-				new String[] { "sub", "sub_num" }, // Keys in childData maps
-													// to display
-				new int[] { R.id.sub, R.id.sub_num } // Data under the keys
-														// above go into these
-														// TextViews
-		);
 
-		LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
-				R.layout.search_expandable_main, null));
-		this.setContentView(l);
+			expListAdapter = new CheckboxExpandableListAdapter(this,
+					createGroupList(), // groupData describes the first-level
+										// entries
+					R.layout.search_expandable_group, // Layout for the
+														// first-level
+														// entries
+					new String[] { "cat", "cat_num" }, // Key in the groupData
+														// maps
+														// to
+														// display
+					new int[] { R.id.cat, R.id.cat_num }, // Data under
+															// "colorName"
+															// key goes
+					// into this TextView
+					createChildList(), // childData describes second-level
+										// entries
+					R.layout.search_expandable_child, // Layout for second-level
+														// entries
+					new String[] { "sub", "sub_num" }, // Keys in childData maps
+														// to display
+					new int[] { R.id.sub, R.id.sub_num } // Data under the keys
+															// above go into
+															// these
+															// TextViews
+			);
 
-		autoCompleteTextView = (MultiAutoCompleteTextView) l
-				.findViewById(R.id.EditText01);
-		this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
+			LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
+					R.layout.search_expandable_main, null));
+			this.setContentView(l);
 
-		ImageButton searchButton = (ImageButton) l.findViewById(R.id.search);
-		searchButton.setOnClickListener(new OnClickListener() {
+			autoCompleteTextView = (MultiAutoCompleteTextView) l
+					.findViewById(R.id.EditText01);
+			this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
 
-			@Override
-			public void onClick(View v) {
-				// FIXME launch the search -> Check if a category is selected
-				// and any text has been input
-				if (autoCompleteTextView.getText().length() == 0) {
-					// SHOW dialog
-					showDialog(SHOW_DIALOG_FILL_TEXT);
-					return;
-				}
+			ImageButton searchButton = (ImageButton) l
+					.findViewById(R.id.search);
+			searchButton.setOnClickListener(new OnClickListener() {
 
-				final boolean[] groups = expListAdapter.parentChecked;
-				final int length = groups.length;
-
-				boolean anyChecked = false;
-				for (int i = 0; i < length; i++) {
-					if (groups[i]) {
-						anyChecked = true;
-						break;
+				@Override
+				public void onClick(View v) {
+					// FIXME launch the search -> Check if a category is
+					// selected
+					// and any text has been input
+					if (autoCompleteTextView.getText().length() == 0) {
+						// SHOW dialog
+						showDialog(SHOW_DIALOG_FILL_TEXT);
+						return;
 					}
-				}
 
-				if (anyChecked) {
-					launchSearch();
-					return;
-				} else {
-					final boolean[][] childs = expListAdapter.childChecked;
-					final int cLength = childs.length;
+					final boolean[] groups = expListAdapter.parentChecked;
+					final int length = groups.length;
 
-					for (int i = 0; i < cLength; i++) {
-						final int ccLength = childs[i].length;
-						for (int j = 0; j < ccLength; j++) {
-							if (childs[i][j]) {
-								anyChecked = true;
-								break;
+					boolean anyChecked = false;
+					for (int i = 0; i < length; i++) {
+						if (groups[i]) {
+							anyChecked = true;
+							break;
+						}
+					}
+
+					if (anyChecked) {
+						launchSearch();
+						return;
+					} else {
+						final boolean[][] childs = expListAdapter.childChecked;
+						final int cLength = childs.length;
+
+						for (int i = 0; i < cLength; i++) {
+							final int ccLength = childs[i].length;
+							for (int j = 0; j < ccLength; j++) {
+								if (childs[i][j]) {
+									anyChecked = true;
+									break;
+								}
 							}
 						}
 					}
+
+					if (anyChecked) {
+						launchSearch();
+						return;
+					} else {
+						// show dialog
+						showDialog(SHOW_DIALOG_FILL_CATEGORIES);
+					}
 				}
+			});
 
-				if (anyChecked) {
-					launchSearch();
-					return;
-				} else {
-					// show dialog
-					showDialog(SHOW_DIALOG_FILL_CATEGORIES);
-				}
-			}
-		});
+			this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
+			autoCompleteTextView.setTokenizer(new SpaceTokenizer());
+			autoCompleteTextView.setAdapter(getAutoCompleteAdapter());
+			autoCompleteTextView.setThreshold(1);
 
-		this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
-		autoCompleteTextView.setTokenizer(new SpaceTokenizer());
-		autoCompleteTextView.setAdapter(getAutoCompleteAdapter());
-		autoCompleteTextView.setThreshold(1);
+			setContentView(l);
 
-		setContentView(l);
-
-		// getSearchOptions().sort = spinnerSort.getSelectedItem().toString();
-		setListAdapter(expListAdapter);
-		double lon = getIntent().getDoubleExtra("lon", 0);
-		double lat = getIntent().getDoubleExtra("lat", 0);
-		this.setCenter(new Point(lon, lat));
-		autoCompleteTextView.addTextChangedListener(this);
+			// getSearchOptions().sort =
+			// spinnerSort.getSelectedItem().toString();
+			setListAdapter(expListAdapter);
+			double lon = getIntent().getDoubleExtra("lon", 0);
+			double lat = getIntent().getDoubleExtra("lat", 0);
+			this.setCenter(new Point(lon, lat));
+			autoCompleteTextView.addTextChangedListener(this);
+		} catch (BaseException e) {
+			Log.e("", e.getMessage());
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
 	}
 
 	private void launchSearch() {

@@ -41,34 +41,23 @@ package es.prodevelop.gvsig.mini.search.activities;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
@@ -76,6 +65,7 @@ import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.SearchOptions;
 import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.PinnedHeaderListAdapter;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 
 /**
@@ -85,7 +75,7 @@ import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
  * 
  */
 public abstract class SearchActivity extends ListActivity implements
-		SearchActivityWrapper/*, ListView.OnScrollListener */{
+		SearchActivityWrapper/* , ListView.OnScrollListener */{
 
 	private QuadtreeProvider provider;
 	private AutoCompleteAdapter autoCompleteAdapter;
@@ -94,7 +84,7 @@ public abstract class SearchActivity extends ListActivity implements
 	private MultiAutoCompleteTextView autoCompleteTextView;
 
 	public DisplayMetrics metrics = new DisplayMetrics();
-	public ListAdapter listAdapter;	
+	public ListAdapter listAdapter;
 
 	Spinner spinnerSort;
 
@@ -110,100 +100,107 @@ public abstract class SearchActivity extends ListActivity implements
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		try {
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		getListView().setTextFilterEnabled(true);
+			getListView().setTextFilterEnabled(true);
 
-		LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
-				R.layout.search_list, null));
-		this.setContentView(l);
+			LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
+					R.layout.search_list, null));
+			this.setContentView(l);
 
-		autoCompleteTextView = (MultiAutoCompleteTextView) l
-				.findViewById(R.id.EditText01);
-		this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
+			autoCompleteTextView = (MultiAutoCompleteTextView) l
+					.findViewById(R.id.EditText01);
+			this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
 
-		autoCompleteTextView.setTokenizer(new SpaceTokenizer());
-		autoCompleteTextView.setAdapter(getAutoCompleteAdapter());
-		autoCompleteTextView.setThreshold(1);
+			autoCompleteTextView.setTokenizer(new SpaceTokenizer());
+			autoCompleteTextView.setAdapter(getAutoCompleteAdapter());
+			autoCompleteTextView.setThreshold(1);
 
-		spinnerSort = ((Spinner) l.findViewById(R.id.SpinnerSort));
+			spinnerSort = ((Spinner) l.findViewById(R.id.SpinnerSort));
 
-		spinnerSort.setOnItemSelectedListener(new OnItemSelectedListener() {
+			spinnerSort.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				try {
-					selectedSpinnerPosition = spinnerSort
-							.getSelectedItemPosition();
-					getSearchOptions().sort = spinnerSort.getSelectedItem()
-							.toString();
-					// if (selectedSpinnerPosition != 0)
-					onTextChanged(autoCompleteTextView.getText(), 0, 0, 0);
-				} catch (Exception e) {
-					Log.e("", e.getMessage());
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					try {
+						selectedSpinnerPosition = spinnerSort
+								.getSelectedItemPosition();
+						getSearchOptions().sort = spinnerSort.getSelectedItem()
+								.toString();
+						// if (selectedSpinnerPosition != 0)
+						onTextChanged(autoCompleteTextView.getText(), 0, 0, 0);
+					} catch (Exception e) {
+						Log.e("", e.getMessage());
+					}
 				}
-			}
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO Auto-generated method stub
 
-			}
+				}
 
-		});
+			});
 
-		spinnerArrayAdapter = new ArrayAdapter(this,
-				android.R.layout.simple_spinner_item, getResources()
-						.getStringArray(R.array.sort_options));
-		spinnerArrayAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		enableSpinner("");
-		// getSearchOptions().sort = spinnerSort.getSelectedItem().toString();
+			spinnerArrayAdapter = new ArrayAdapter(this,
+					android.R.layout.simple_spinner_item, getResources()
+							.getStringArray(R.array.sort_options));
+			spinnerArrayAdapter
+					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			enableSpinner("");
+			// getSearchOptions().sort =
+			// spinnerSort.getSelectedItem().toString();
 
-		// ((ImageButton) l.findViewById(R.id.search_opts))
-		// .setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View arg0) {
-		// showDialog(SEARCH_DIALOG);
-		// }
-		// });
+			// ((ImageButton) l.findViewById(R.id.search_opts))
+			// .setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View arg0) {
+			// showDialog(SEARCH_DIALOG);
+			// }
+			// });
 
-		searchOptions.setCenterMercator(getCenter());
-		autoCompleteTextView.addTextChangedListener(this);
+			searchOptions.setCenterMercator(getCenter());
+			autoCompleteTextView.addTextChangedListener(this);
 
-		final boolean hide = getIntent().getBooleanExtra(
-				SearchActivity.HIDE_AUTOTEXTVIEW, false);
-		if (hide)
-			autoCompleteTextView.setVisibility(View.GONE);
+			final boolean hide = getIntent().getBooleanExtra(
+					SearchActivity.HIDE_AUTOTEXTVIEW, false);
+			if (hide)
+				autoCompleteTextView.setVisibility(View.GONE);
 
-		// ****************************//
-//		mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-//
-//		getListView().setOnScrollListener(this);
-//
-////		LayoutInflater inflate = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//		mDialogText = new TextView(this);
-//		mDialogText.setVisibility(View.INVISIBLE);
-//
-//		mHandler.post(new Runnable() {
-//
-//			public void run() {
-//				mReady = true;
-//				WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-//						LayoutParams.WRAP_CONTENT,
-//						LayoutParams.WRAP_CONTENT,
-//						WindowManager.LayoutParams.TYPE_APPLICATION,
-//						WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-//								| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-//						PixelFormat.TRANSLUCENT);				
-//				mWindowManager.addView(mDialogText, lp);
-//			}
-//		});
+			// ****************************//
+			// mWindowManager = (WindowManager)
+			// getSystemService(Context.WINDOW_SERVICE);
+			//
+			// getListView().setOnScrollListener(this);
+			//
+			// // LayoutInflater inflate = (LayoutInflater)
+			// getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			//
+			// mDialogText = new TextView(this);
+			// mDialogText.setVisibility(View.INVISIBLE);
+			//
+			// mHandler.post(new Runnable() {
+			//
+			// public void run() {
+			// mReady = true;
+			// WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+			// LayoutParams.WRAP_CONTENT,
+			// LayoutParams.WRAP_CONTENT,
+			// WindowManager.LayoutParams.TYPE_APPLICATION,
+			// WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+			// | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+			// PixelFormat.TRANSLUCENT);
+			// mWindowManager.addView(mDialogText, lp);
+			// }
+			// });
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
 	}
 
 	public abstract void initializeAdapters();
@@ -270,7 +267,7 @@ public abstract class SearchActivity extends ListActivity implements
 		setProgressBarIndeterminateVisibility(true);
 		if (arg0.length() == 0)
 			enableSpinner(arg0.toString());
-	}	
+	}
 
 	public void enableSpinner() {
 		this.enableSpinner(autoCompleteTextView.getText().toString());
@@ -328,77 +325,107 @@ public abstract class SearchActivity extends ListActivity implements
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		switch (item.getItemId()) {
-		case 0:
-			InvokeIntents.launchListBookmarks(this, new double[] {
-					this.getCenter().getX(), this.getCenter().getY() });
+		try {
+			switch (item.getItemId()) {
+			case 0:
+				InvokeIntents.launchListBookmarks(this, new double[] {
+						this.getCenter().getX(), this.getCenter().getY() });
 
-			break;
+				break;
+			}
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-//	private final class RemoveWindow implements Runnable {
-//		public void run() {
-//			removeWindow();
-//		}
-//	}
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		try {
+			// ((PerstOsmPOIClusterProvider)provider).getHelper().close();
+			((PinnedHeaderListAdapter)listAdapter).onDestroy();
+//			final ArrayList list = resultsList;
+//			final int size = list.size();
 //
-//	private RemoveWindow mRemoveWindow = new RemoveWindow();
-//	Handler mHandler = new Handler();
-//	private WindowManager mWindowManager;
-//	private TextView mDialogText;
-//	private boolean mShowing;
-//	private boolean mReady;
-//	private char mPrevLetter = Character.MIN_VALUE;
+//			POI p;
+//			for (int i = 0; i < size; i++) {
+//				try {
+//					p = ((POI) list.get(i));
+//					if (p != null)
+//						p.destroy();
+//				} catch (Exception ignore) {
 //
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		mReady = true;
-//	}
-//
-//	@Override
-//	protected void onPause() {
-//		super.onPause();
-//		removeWindow();
-//		mReady = false;
-//	}
-//
-//	@Override
-//	protected void onDestroy() {
-//		super.onDestroy();
-//		mWindowManager.removeView(mDialogText);
-//		mReady = false;
-//	}
-//
-//	public void onScroll(AbsListView view, int firstVisibleItem,
-//			int visibleItemCount, int totalItemCount) {
-//		int lastItem = firstVisibleItem + visibleItemCount - 1;
-//		if (mReady) {
-//			char firstLetter = ((POI) getListAdapter()
-//					.getItem(firstVisibleItem)).getDescription().charAt(0);
-//
-//			if (!mShowing && firstLetter != mPrevLetter) {
-//
-//				mShowing = true;
-//				mDialogText.setVisibility(View.VISIBLE);
-//
+//				}
 //			}
-//			mDialogText.setText(((Character) firstLetter).toString());
-//			mHandler.removeCallbacks(mRemoveWindow);
-//			mHandler.postDelayed(mRemoveWindow, 3000);
-//			mPrevLetter = firstLetter;
-//		}
-//	}
-//
-//	public void onScrollStateChanged(AbsListView view, int scrollState) {
-//	}
-//
-//	private void removeWindow() {
-//		if (mShowing) {
-//			mShowing = false;
-//			mDialogText.setVisibility(View.INVISIBLE);
-//		}
-//	}
+//			((PerstOsmPOIClusterProvider) provider).getHelper().rollback();
+		} catch (Exception e) {
+			Log.e("", e.getMessage() != null ? e.getMessage() : "Fail");
+		}
+	}
+
+	// private final class RemoveWindow implements Runnable {
+	// public void run() {
+	// removeWindow();
+	// }
+	// }
+	//
+	// private RemoveWindow mRemoveWindow = new RemoveWindow();
+	// Handler mHandler = new Handler();
+	// private WindowManager mWindowManager;
+	// private TextView mDialogText;
+	// private boolean mShowing;
+	// private boolean mReady;
+	// private char mPrevLetter = Character.MIN_VALUE;
+	//
+	// @Override
+	// protected void onResume() {
+	// super.onResume();
+	// mReady = true;
+	// }
+	//
+	// @Override
+	// protected void onPause() {
+	// super.onPause();
+	// removeWindow();
+	// mReady = false;
+	// }
+	//
+	// @Override
+	// protected void onDestroy() {
+	// super.onDestroy();
+	// mWindowManager.removeView(mDialogText);
+	// mReady = false;
+	// }
+	//
+	// public void onScroll(AbsListView view, int firstVisibleItem,
+	// int visibleItemCount, int totalItemCount) {
+	// int lastItem = firstVisibleItem + visibleItemCount - 1;
+	// if (mReady) {
+	// char firstLetter = ((POI) getListAdapter()
+	// .getItem(firstVisibleItem)).getDescription().charAt(0);
+	//
+	// if (!mShowing && firstLetter != mPrevLetter) {
+	//
+	// mShowing = true;
+	// mDialogText.setVisibility(View.VISIBLE);
+	//
+	// }
+	// mDialogText.setText(((Character) firstLetter).toString());
+	// mHandler.removeCallbacks(mRemoveWindow);
+	// mHandler.postDelayed(mRemoveWindow, 3000);
+	// mPrevLetter = firstLetter;
+	// }
+	// }
+	//
+	// public void onScrollStateChanged(AbsListView view, int scrollState) {
+	// }
+	//
+	// private void removeWindow() {
+	// if (mShowing) {
+	// mShowing = false;
+	// mDialogText.setVisibility(View.INVISIBLE);
+	// }
+	// }
 }

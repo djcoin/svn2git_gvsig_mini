@@ -42,6 +42,7 @@ import java.text.DecimalFormat;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -89,26 +90,33 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 	public SectionIndexer defaultIndexer;
 
 	public FilteredLazyAdapter(SearchActivity activity) {
-		this.activity = activity;
-		category = activity.getSearchOptions().getFilteredIndexed();
-		if (category != null) {
-			if (category.name.compareTo(POICategories.STREETS) == 0) {
-				metadata = activity.getProvider().getStreetMetadata();
-				bitmap = POICategoryIcon.getBitmap32ForCategory(category.name);
+		try {
+			this.activity = activity;
+			category = activity.getSearchOptions().getFilteredIndexed();
+			if (category != null) {
+				if (category.name.compareTo(POICategories.STREETS) == 0) {
+					metadata = activity.getProvider().getStreetMetadata();
+					bitmap = POICategoryIcon
+							.getBitmap32ForCategory(category.name);
+				} else {
+					metadata = activity.getProvider().getPOIMetadata();
+					Metadata.Category cat = metadata.getCategory(category.name);
+					if (cat != null) {
+						bitmap = POICategoryIcon
+								.getBitmap32ForCategory(cat.name);
+					} else {
+						bitmap = POICategoryIcon
+								.getBitmap32ForCategory(metadata
+										.getCategoryForSubcategory(category.name).name);
+					}
+				}
+				defaultIndexer = new CategoryIndexer(activity);
+				setIndexer(defaultIndexer);
 			} else {
 				metadata = activity.getProvider().getPOIMetadata();
-				Metadata.Category cat = metadata.getCategory(category.name);
-				if (cat != null) {
-					bitmap = POICategoryIcon.getBitmap32ForCategory(cat.name);
-				} else {
-					bitmap = POICategoryIcon.getBitmap32ForCategory(metadata
-							.getCategoryForSubcategory(category.name).name);
-				}
 			}
-			defaultIndexer = new CategoryIndexer(activity);
-			setIndexer(defaultIndexer);
-		} else {
-			metadata = activity.getProvider().getPOIMetadata();
+		} catch (Exception e) {
+			Log.e("Filtered", e.getMessage());
 		}
 	}
 

@@ -38,9 +38,12 @@
 
 package es.prodevelop.gvsig.mini.search.activities;
 
+import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.adapter.MemoryAdapter;
 import es.prodevelop.gvsig.mini.search.filter.MemoryFilter;
 import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
@@ -48,6 +51,17 @@ import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 public class FindPOISNearActivity extends ResultSearchActivity {
 
 	protected final static int DEFAULT_DISTANCE = 500;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		try {
+			listener = new POIItemClickContextListener(this, R.drawable.pois,
+					R.string.NameFinderActivity_0, false);
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}		
+	}
 
 	@Override
 	public void initializeAdapters() {

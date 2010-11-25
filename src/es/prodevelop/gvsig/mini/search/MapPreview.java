@@ -46,6 +46,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
@@ -90,33 +91,37 @@ public class MapPreview extends View {
 	public MapPreview(Context context, IContext androidContext, int width,
 			int height) {
 		super(context);
-		mapWidth = width;
-		mapHeight = height;
-		markerPaint.setColor(Color.RED);
-		markerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		markerPaint.setStrokeWidth(2);
-		Handler lh = new LoadCallbackHandler(new SimpleInvalidationHandler());
-		int mode = TileProvider.MODE_ONLINE;
-		String tileName = "tile.gvSIG";
-		String dot = ".";
-		String strategy = ITileFileSystemStrategy.FLATX;
-		ITileFileSystemStrategy t = FileSystemStrategyManager.getInstance()
-				.getStrategyByName(strategy);
+		try{
+			mapWidth = width;
+			mapHeight = height;
+			markerPaint.setColor(Color.RED);
+			markerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			markerPaint.setStrokeWidth(2);
+			Handler lh = new LoadCallbackHandler(new SimpleInvalidationHandler());
+			int mode = TileProvider.MODE_ONLINE;
+			String tileName = "tile.gvSIG";
+			String dot = ".";
+			String strategy = ITileFileSystemStrategy.FLATX;
+			ITileFileSystemStrategy t = FileSystemStrategyManager.getInstance()
+					.getStrategyByName(strategy);
 
-		String tileSuffix = dot + tileName;
-		t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
-		t.setTileNameSuffix(tileSuffix);
+			String tileSuffix = dot + tileName;
+			t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
+			t.setTileNameSuffix(tileSuffix);
 
-		this.mTileProvider = new TileProvider(androidContext,
-				new HandlerAndroid(lh), mapWidth, mapHeight, 256, mode, t);
+			this.mTileProvider = new TileProvider(androidContext,
+					new HandlerAndroid(lh), mapWidth, mapHeight, 256, mode, t);
 
-		mRendererInfo.setZoomLevel(16);
+			mRendererInfo.setZoomLevel(16);
 
-		PERSON_ICON = ResourceLoader.getBitmap(R.drawable.arrowdown);
-		this.START = ResourceLoader.getBitmap(R.drawable.startpoi);
-		START_SPOT = new android.graphics.Point(START.getWidth()
-				- PERSON_ICON.getHeight() / 2, START.getHeight()
-				- PERSON_ICON.getHeight() / 4);
+			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.arrowdown);
+			this.START = ResourceLoader.getBitmap(R.drawable.startpoi);
+			START_SPOT = new android.graphics.Point(START.getWidth()
+					- PERSON_ICON.getHeight() / 2, START.getHeight()
+					- PERSON_ICON.getHeight() / 4);
+		} catch (Exception e) {
+			Log.d("MapPreview", e.getMessage());
+		}		
 	}
 
 	@Override
@@ -355,8 +360,9 @@ public class MapPreview extends View {
 					- START_SPOT.y, Paints.mPaintR);
 			// c.drawCircle(result[0], result[1], 5, markerPaint);
 		} catch (Exception e) {
-
-		}
+			System.gc();
+			Log.e("Mappreview", e.getMessage());
+		} 
 	}
 
 	/**
@@ -492,5 +498,9 @@ public class MapPreview extends View {
 
 			}
 		}
+	}
+	
+	public void destroy() {
+		mTileProvider.destroy();
 	}
 }

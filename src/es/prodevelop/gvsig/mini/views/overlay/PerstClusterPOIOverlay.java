@@ -49,6 +49,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Environment;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
@@ -205,7 +206,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 
 	public void drawCluster(Cluster p, Object graphics, Extent extent) {
 		try {
-			if (getTileRaster().geomDrawer.mustDraw(extent, p)) {
+//			if (getTileRaster().geomDrawer.mustDraw(extent, p)) {
 				Canvas c = (Canvas) graphics;
 
 				final MapRenderer renderer = this.getTileRaster()
@@ -290,7 +291,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 
 				}
 
-			}
+//			}
 		} catch (Exception e) {
 
 		}
@@ -604,8 +605,8 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		}
 	}
 
-	protected void convertCoordinates(String srsFrom, String srsTo,
-			ArrayList pois, final Cancellable cancellable) {
+	protected void convertCoordinates(final String srsFrom, final String srsTo,
+			final ArrayList pois, final Cancellable cancellable) {
 		if (pois == null)
 			return;
 		final int size = pois.size();
@@ -658,37 +659,43 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 	@Override
 	public void onClustersRetrieved(Collection pois, String category,
 			boolean clearPrevious, final Cancellable cancellable) {
-		this.cancelDraw();
+		// this.cancelDraw();
 		if (clearPrevious)
 			// if (cancellable == null)
 			// this.clusters = (ArrayList) pois;
 			// else if (!cancellable.getCanceled())
 			this.clusters = (ArrayList) pois;
 		else {
+			long t1 = android.os.SystemClock.currentThreadTimeMillis();
 			convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 					.getSRS(), (ArrayList) pois, cancellable);
+			Log.d("",
+					"Time to convert coordinates: "
+							+ (android.os.SystemClock.currentThreadTimeMillis() - t1));
 			this.clusters.addAll(pois);
 		}
 
-		this.restoreDraw();
+		// this.restoreDraw();
 	}
 
 	@Override
 	public void onPOISRetrieved(Collection pois, boolean clearPrevious,
 			final Cancellable cancellable) {
-		this.cancelDraw();
+		// this.cancelDraw();
 		if (clearPrevious)
 			// if (cancellable == null)
 			// this.pois = (ArrayList) pois;
 			// else if (!cancellable.getCanceled())
 			this.pois = (ArrayList) pois;
 		else {
+
 			convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 					.getSRS(), (ArrayList) pois, cancellable);
+
 			this.pois.addAll(pois);
 		}
 
-		this.restoreDraw();
+		// this.restoreDraw();
 	}
 
 	/**

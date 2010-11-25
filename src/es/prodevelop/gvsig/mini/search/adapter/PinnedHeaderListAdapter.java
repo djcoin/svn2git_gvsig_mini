@@ -43,6 +43,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -75,6 +76,9 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 		PinnedHeaderListView.PinnedHeaderAdapter, OnScrollListener {
 	private boolean mDisplaySectionHeaders = true;
 
+	private MapPreview preview;
+	private LinearLayout lastPreviewLayout;
+
 	/**
 	 * An approximation of the background color of the pinned header. This color
 	 * is used when the pinned header is being pushed up. At that point the
@@ -86,6 +90,13 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 
 	public PinnedHeaderListAdapter(SearchActivity activity) {
 		super(activity);
+		try {
+			preview = new MapPreview(activity, CompatManager.getInstance()
+					.getRegisteredContext(), activity.metrics.widthPixels,
+					activity.metrics.heightPixels / 2);
+		} catch (Exception e) {
+			Log.e("Pinned", e.getMessage());
+		}
 	}
 
 	public boolean getDisplaySectionHeadersEnabled() {
@@ -146,33 +157,23 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 			holder.dist = (TextView) convertView.findViewById(R.id.dist);
 			holder.poiImg = (ImageView) convertView.findViewById(R.id.img);
 
-			try {
-				LinearLayout l = new LinearLayout(activity);
-				final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-				zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
-				// zzParams.setMargins(20, 20, 20, 20);
-				MapPreview preview = new MapPreview(activity, CompatManager
-						.getInstance().getRegisteredContext(),
-						activity.metrics.widthPixels,
-						activity.metrics.heightPixels / 2);
-				l.addView(preview);
-				((LinearLayout) ((LinearLayout) convertView)
-						.findViewById(R.id.map_preview)).addView(l, zzParams);
-				holder.previewLayout = l;
-				holder.preview = preview;
-				holder.optionsButton = (Button) convertView
-						.findViewById(R.id.show_options);
-				holder.detailsButton = (Button) convertView
-						.findViewById(R.id.show_details);
-				holder.optionsButton.setFocusable(false);
-				holder.detailsButton.setFocusable(false);
-			} catch (BaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			LinearLayout l = new LinearLayout(activity);
+			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.WRAP_CONTENT,
+					RelativeLayout.LayoutParams.WRAP_CONTENT);
+			zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+			zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
+			// zzParams.setMargins(20, 20, 20, 20);
+			((LinearLayout) ((LinearLayout) convertView)
+					.findViewById(R.id.map_preview)).addView(l, zzParams);
+			holder.previewLayout = l;
+			holder.preview = preview;
+			holder.optionsButton = (Button) convertView
+					.findViewById(R.id.show_options);
+			holder.detailsButton = (Button) convertView
+					.findViewById(R.id.show_details);
+			holder.optionsButton.setFocusable(false);
+			holder.detailsButton.setFocusable(false);
 
 			convertView.setTag(holder);
 		} else {
@@ -233,7 +234,10 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 
 		if (holder.preview != null) {
 			if (arg0 == pos && p.getX() != 0 && p.getY() != 0) {
-
+				if (lastPreviewLayout != null)
+					lastPreviewLayout.removeView(preview);
+				holder.previewLayout.addView(preview);
+				lastPreviewLayout = holder.previewLayout;
 				holder.previewLayout.setVisibility(View.VISIBLE);
 				holder.optionsButton.setVisibility(View.VISIBLE);
 				if (!(p instanceof OsmPOIStreet))
@@ -245,7 +249,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 							.getBoundingBox());
 				}
 			} else {
-				holder.previewLayout.setVisibility(View.GONE);
+				holder.previewLayout.setVisibility(View.GONE);				
 				holder.optionsButton.setVisibility(View.GONE);
 				holder.detailsButton.setVisibility(View.GONE);
 
@@ -575,5 +579,9 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 	public void onScrollStateChanged(AbsListView arg0, int arg1) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public void onDestroy() {
+		preview.destroy();
 	}
 }

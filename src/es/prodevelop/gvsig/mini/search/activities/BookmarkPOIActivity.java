@@ -39,6 +39,7 @@
 package es.prodevelop.gvsig.mini.search.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,9 +48,9 @@ import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClus
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.search.BookmarkClickListener;
-import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.adapter.BookmarkAdapter;
+import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
 import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 
@@ -59,8 +60,12 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		listener = new BookmarkClickListener(this, R.drawable.pois,
-				R.string.NameFinderActivity_0);
+		try {
+			listener = new BookmarkClickListener(this, R.drawable.pois,
+					R.string.NameFinderActivity_0);
+		} catch (Exception e) {
+			Log.e("BookmarkAct", e.getMessage());
+		}		
 	}
 
 	@Override
@@ -96,13 +101,17 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		switch (item.getItemId()) {
-		case 0:
-			InvokeIntents.launchListBookmarks(this, new double[] {
-					this.getCenter().getX(), this.getCenter().getY() });
+		try {
+			switch (item.getItemId()) {
+			case 0:
+				InvokeIntents.launchListBookmarks(this, new double[] {
+						this.getCenter().getX(), this.getCenter().getY() });
 
-			break;
-		}
+				break;
+			}
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}		
 		return super.onMenuItemSelected(featureId, item);
 	}
 }

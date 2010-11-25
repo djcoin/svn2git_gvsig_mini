@@ -74,232 +74,249 @@ public class POIItemClickContextListener {
 	Drawable icon;
 	AlertDialog dialog;
 	BulletedTextListAdapter adapter;
+	private boolean findNear = false;
 
 	public POIItemClickContextListener(Activity activity, int iconId,
-			int titleId) {
+			int titleId, boolean findNear) {
 		this.activity = activity;
 		this.iconId = iconId;
 		this.titleId = titleId;
+		this.findNear = findNear;
 	}
 
 	public POIItemClickContextListener(SearchActivity activity, Drawable icon,
-			int titleId) {
+			int titleId, boolean findNear) {
 		this.activity = activity;
 		this.icon = icon;
 		this.titleId = titleId;
+		this.findNear = findNear;
 	}
 
 	public boolean onPOIClick(int position, final POI p) {
-		// ((LazyAdapter) getListAdapter()).pos = arg2;
-		// ((LazyAdapter) getListAdapter()).notifyDataSetChanged();
-		if (p.getX() == 0 && p.getY() == 0) return true;
+		try {
+			// ((LazyAdapter) getListAdapter()).pos = arg2;
+			// ((LazyAdapter) getListAdapter()).notifyDataSetChanged();
+			if (p.getX() == 0 && p.getY() == 0)
+				return true;
 
-		final AlertDialog.Builder alertPOI = new AlertDialog.Builder(activity);
+			final AlertDialog.Builder alertPOI = new AlertDialog.Builder(
+					activity);
 
-		alertPOI.setCancelable(true);
-		if (p instanceof OsmPOI)
-			icon = POICategoryIcon.getDrawable32ForCategory(
-					((OsmPOI) p).getCategory(), activity);
-		else
-			icon = POICategoryIcon.getDrawable32ForCategory(
-					POICategories.STREETS, activity);
+			alertPOI.setCancelable(true);
+			if (p instanceof OsmPOI)
+				icon = POICategoryIcon.getDrawable32ForCategory(
+						((OsmPOI) p).getCategory(), activity);
+			else
+				icon = POICategoryIcon.getDrawable32ForCategory(
+						POICategories.STREETS, activity);
 
-		if (icon != null)
-			alertPOI.setIcon(icon);
-		else
-			alertPOI.setIcon(iconId);
-		alertPOI.setTitle(Utilities.capitalizeFirstLetters(p.getDescription()));
+			if (icon != null)
+				alertPOI.setIcon(icon);
+			else
+				alertPOI.setIcon(iconId);
+			alertPOI.setTitle(Utilities.capitalizeFirstLetters(p
+					.getDescription()));
 
-		final ListView lv = new ListView(activity);
+			final ListView lv = new ListView(activity);
 
-		lv.setOnItemClickListener(new OnItemClickListener() {
+			lv.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					final int position, long arg3) {
-				try {
-					if (dialog != null)
-						dialog.dismiss();					
-					switch (position) {
-					case 0:
-						// SHOW ON MAP
-						ShowGMapsFromPoint sg = new ShowGMapsFromPoint(
-								activity, p);
-						sg.execute();
-						break;
-					case 1:
-						// FROM HERE
-						RouteManager.getInstance().getRegisteredRoute()
-								.setStartPoint(p);
-						Toast.makeText(
-								activity,
-								activity.getResources().getString(
-										R.string.start_point),
-								Toast.LENGTH_LONG).show();
-						checkCalculateRoute();
-						break;
-					case 2:
-						// TO HERE
-						RouteManager.getInstance().getRegisteredRoute()
-								.setEndPoint(p);
-						Toast.makeText(
-								activity,
-								activity.getResources().getString(
-										R.string.end_point), Toast.LENGTH_LONG)
-								.show();
-						checkCalculateRoute();
-						break;
-					case 3:
-						// BOOKMARK
-						processBookmark(p);
-						break;
-					case 4:
-						// GEO SHARE
-						ShareAnyPOITask sh = new ShareAnyPOITask(activity, p);
-						sh.execute();
-						break;
-					case 5:
-						// FIND POIS NEAR
-						InvokeIntents.findPOISNear(activity, p.toShortString(2));
-						break;
-					case 6:
-						// FIND STREETS
-						InvokeIntents.findStreetsNear(activity,
-								p.toShortString(2));
-						break;
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						final int position, long arg3) {
+					try {
+						if (dialog != null)
+							dialog.dismiss();
+						switch (position) {
+						case 0:
+							// SHOW ON MAP
+							ShowGMapsFromPoint sg = new ShowGMapsFromPoint(
+									activity, p);
+							sg.execute();
+							activity.finish();
+							break;
+						case 1:
+							// FROM HERE
+							RouteManager.getInstance().getRegisteredRoute()
+									.setStartPoint(p);
+							Toast.makeText(
+									activity,
+									activity.getResources().getString(
+											R.string.start_point),
+									Toast.LENGTH_LONG).show();
+							checkCalculateRoute();
+							break;
+						case 2:
+							// TO HERE
+							RouteManager.getInstance().getRegisteredRoute()
+									.setEndPoint(p);
+							Toast.makeText(
+									activity,
+									activity.getResources().getString(
+											R.string.end_point),
+									Toast.LENGTH_LONG).show();
+							checkCalculateRoute();
+							break;
+						case 3:
+							// BOOKMARK
+							processBookmark(p);
+							break;
+						case 4:
+							// GEO SHARE
+							ShareAnyPOITask sh = new ShareAnyPOITask(activity,
+									p);
+							sh.execute();
+							break;
+						case 5:
+							// FIND POIS NEAR
+							InvokeIntents.findPOISNear(activity,
+									p.toShortString(2));
+							break;
+						case 6:
+							// FIND STREETS
+							InvokeIntents.findStreetsNear(activity,
+									p.toShortString(2));
+							break;
 
-					case 7:
-						// STREET VIEW
-						ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
-								activity, p);
-						s.execute();
-						break;
-					// OPTIONAL
-					case 8:
-						// CALL NUMBER
-						if (p instanceof OsmPOI) {
-							OsmPOI poi = (OsmPOI) p;
-							if (poi.getPhone() != null
-									&& poi.getPhone().length() > 0) {
-								InvokeIntents.invokeCallActivity(activity,
-										poi.getPhone());
-							} else if (poi.getWikipedia() != null
-									&& poi.getWikipedia().length() > 0) {
-								InvokeIntents.openBrowser(activity,
-										poi.getWikipedia());
-							} else {
-								InvokeIntents.openBrowser(activity,
-										poi.getWebsite());
-							}
-						}
-						break;
-					case 9:
-						// WIKI
-						if (p instanceof OsmPOI) {
-							OsmPOI poi = (OsmPOI) p;
-							if (poi.getWikipedia() != null
-									&& poi.getWikipedia().length() > 0) {
-								if (poi.getWebsite() != null
-										&& poi.getWebsite().length() > 0) {
-									InvokeIntents.openBrowser(activity,
-											poi.getWebsite());
-								} else {
+						case 7:
+							// STREET VIEW
+							ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
+									activity, p);
+							s.execute();
+							break;
+						// OPTIONAL
+						case 8:
+							// CALL NUMBER
+							if (p instanceof OsmPOI) {
+								OsmPOI poi = (OsmPOI) p;
+								if (poi.getPhone() != null
+										&& poi.getPhone().length() > 0) {
+									InvokeIntents.invokeCallActivity(activity,
+											poi.getPhone());
+								} else if (poi.getWikipedia() != null
+										&& poi.getWikipedia().length() > 0) {
 									InvokeIntents.openBrowser(activity,
 											poi.getWikipedia());
+								} else {
+									InvokeIntents.openBrowser(activity,
+											poi.getWebsite());
 								}
-							} else {
+							}
+							break;
+						case 9:
+							// WIKI
+							if (p instanceof OsmPOI) {
+								OsmPOI poi = (OsmPOI) p;
+								if (poi.getWikipedia() != null
+										&& poi.getWikipedia().length() > 0) {
+									if (poi.getWebsite() != null
+											&& poi.getWebsite().length() > 0) {
+										InvokeIntents.openBrowser(activity,
+												poi.getWebsite());
+									} else {
+										InvokeIntents.openBrowser(activity,
+												poi.getWikipedia());
+									}
+								} else {
+									InvokeIntents.openBrowser(activity,
+											poi.getWebsite());
+								}
+							}
+							break;
+						case 10:
+							// WEB
+							if (p instanceof OsmPOI) {
+								OsmPOI poi = (OsmPOI) p;
 								InvokeIntents.openBrowser(activity,
 										poi.getWebsite());
 							}
-						}
-						break;
-					case 10:
-						// WEB
-						if (p instanceof OsmPOI) {
-							OsmPOI poi = (OsmPOI) p;
-							InvokeIntents.openBrowser(activity,
-									poi.getWebsite());
-						}
-						break;
+							break;
 
+						}
+					} catch (Exception e) {
+						// log.log(Level.SEVERE,"",e);
 					}
-				} catch (Exception e) {
-					// log.log(Level.SEVERE,"",e);
 				}
+			});
+
+			adapter = new BulletedTextListAdapter(activity);
+
+			adapter.addItem(new BulletedText(activity.getResources().getString(
+					R.string.show_map), activity.getResources().getDrawable(
+					R.drawable.bt_poi)));
+
+			adapter.addItem(new BulletedText(activity.getResources().getString(
+					R.string.NameFinderActivity_1), activity.getResources()
+					.getDrawable(R.drawable.bt_start)));
+
+			adapter.addItem(new BulletedText(activity.getResources().getString(
+					R.string.NameFinderActivity_2), activity.getResources()
+					.getDrawable(R.drawable.bt_finish)));
+
+			addBookmark();
+
+			adapter.addItem(new BulletedText(activity.getResources().getString(
+					R.string.share), activity.getResources().getDrawable(
+					R.drawable.twitter_button)));
+
+			if (findNear) {
+				adapter.addItem(new BulletedText(activity.getResources().getString(
+						R.string.find_pois_near), activity.getResources()
+						.getDrawable(R.drawable.bt_poi)));
+
+				// FIND STREETS
+				adapter.addItem(new BulletedText(activity.getResources().getString(
+						R.string.find_streets_near), activity.getResources()
+						.getDrawable(R.drawable.bt_poi)));
+			}			
+
+			adapter.addItem(new BulletedText(activity.getResources().getString(
+					R.string.street_view), activity.getResources().getDrawable(
+					R.drawable.bt_poi)));
+
+			if (p instanceof OsmPOI) {
+				OsmPOI poi = (OsmPOI) p;
+				if (poi.getPhone() != null && poi.getPhone().length() > 0)
+					adapter.addItem(new BulletedText(activity.getResources()
+							.getString(R.string.call_number)
+							+ " ["
+							+ poi.getPhone() + "]", activity.getResources()
+							.getDrawable(R.drawable.bt_poi)));
+
+				// WIKI
+				if (poi.getWikipedia() != null
+						&& poi.getWikipedia().length() > 0)
+					adapter.addItem(new BulletedText(activity.getResources()
+							.getString(R.string.show_wiki)
+							+ " ["
+							+ poi.getWikipedia() + "]", activity.getResources()
+							.getDrawable(R.drawable.bt_poi)));
+
+				// WEB
+				if (poi.getWebsite() != null && poi.getWebsite().length() > 0)
+					adapter.addItem(new BulletedText(activity.getResources()
+							.getString(R.string.show_web)
+							+ " ["
+							+ poi.getWebsite() + "]", activity.getResources()
+							.getDrawable(R.drawable.bt_poi)));
 			}
-		});
 
-		adapter = new BulletedTextListAdapter(activity);
+			lv.setAdapter(adapter);
 
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.show_map), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
+			alertPOI.setView(lv);
 
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.NameFinderActivity_1), activity.getResources()
-				.getDrawable(R.drawable.bt_start)));
+			alertPOI.setNegativeButton(R.string.back,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
 
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.NameFinderActivity_2), activity.getResources()
-				.getDrawable(R.drawable.bt_finish)));
+			dialog = alertPOI.show();
 
-		addBookmark();
-
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.share), activity.getResources().getDrawable(
-				R.drawable.twitter_button)));
-
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.find_pois_near), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
-
-		// FIND STREETS
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.find_streets_near), activity.getResources()
-				.getDrawable(R.drawable.bt_poi)));
-
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.street_view), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
-
-		if (p instanceof OsmPOI) {
-			OsmPOI poi = (OsmPOI) p;
-			if (poi.getPhone() != null && poi.getPhone().length() > 0)
-				adapter.addItem(new BulletedText(activity.getResources()
-						.getString(R.string.call_number)
-						+ " ["
-						+ poi.getPhone() + "]", activity.getResources()
-						.getDrawable(R.drawable.bt_poi)));
-
-			// WIKI
-			if (poi.getWikipedia() != null && poi.getWikipedia().length() > 0)
-				adapter.addItem(new BulletedText(activity.getResources()
-						.getString(R.string.show_wiki)
-						+ " ["
-						+ poi.getWikipedia() + "]", activity.getResources()
-						.getDrawable(R.drawable.bt_poi)));
-
-			// WEB
-			if (poi.getWebsite() != null && poi.getWebsite().length() > 0)
-				adapter.addItem(new BulletedText(activity.getResources()
-						.getString(R.string.show_web)
-						+ " ["
-						+ poi.getWebsite()
-						+ "]", activity.getResources().getDrawable(
-						R.drawable.bt_poi)));
+		} catch (Exception ex) {
+			Log.e("POIItem", ex.getMessage());
 		}
-
-		lv.setAdapter(adapter);
-
-		alertPOI.setView(lv);
-
-		alertPOI.setNegativeButton(R.string.back,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-					}
-				});
-
-		dialog = alertPOI.show();
 
 		return true;
 	}
@@ -342,6 +359,7 @@ public class POIItemClickContextListener {
 								int whichButton) {
 							try {
 								InvokeIntents.routeModified(activity);
+								activity.finish();
 							} catch (Exception e) {
 
 							}

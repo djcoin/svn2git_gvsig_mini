@@ -53,12 +53,12 @@ public class BookmarkClickListener extends POIItemClickContextListener {
 
 	public BookmarkClickListener(SearchActivity activity, Drawable icon,
 			int titleId) {
-		super(activity, icon, titleId);
+		super(activity, icon, titleId, true);
 		// TODO Auto-generated constructor stub
 	}
 
 	public BookmarkClickListener(Activity activity, int iconId, int titleId) {
-		super(activity, iconId, titleId);
+		super(activity, iconId, titleId, true);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -70,7 +70,7 @@ public class BookmarkClickListener extends POIItemClickContextListener {
 
 	public void processBookmark(POI p) {
 		try {
-			BookmarkManagerTask b = new BookmarkManagerTask(p);
+			final BookmarkManagerTask b = new BookmarkManagerTask(p);
 			if (b.removeBookmark()) {
 				Toast.makeText(
 						activity,
