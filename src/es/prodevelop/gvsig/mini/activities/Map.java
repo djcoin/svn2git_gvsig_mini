@@ -1684,12 +1684,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap);
-				if (p == null)
-					p = new PerstClusterPOIOverlay(this, osmap);
-				this.osmap.poiOverlay = p;
-				this.osmap.getOverlays().add(p);
-				this.osmap.addExtentChangedListener(p);
-
+				try {
+					if (p == null)
+						p = new PerstClusterPOIOverlay(this, osmap);
+					this.osmap.poiOverlay = p;
+					this.osmap.getOverlays().add(p);
+					this.osmap.addExtentChangedListener(p);
+				} catch (Exception e) {
+					
+				}
+				
 				this.osmap.getOverlays()
 						.add(new NameFinderOverlay(this, osmap));
 				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));
@@ -2396,7 +2400,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					.getRegisteredContext(), renderer, fromZoomLevel,
 					toZoomLevel, downloadCancellable, renderer.getExtent(),
 					null, callBackHandler, null, mode, ts,
-					new FitScreenBufferStrategy());
+					new FitScreenBufferStrategy(), true);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
