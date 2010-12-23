@@ -153,18 +153,23 @@ public class WMSLayersActivity extends ListActivity {
 						}
 					}
 					String format = getBestFormat(wmsDriver.getFormats());
+					String infoFormat = getBestInfoFormat(wmsDriver
+							.getFormats());
 
 					data.putExtra("version", wmsDriver.getVersion());
 
 					data.putExtra("format", format);
+					data.putExtra("info_format", infoFormat);
 
 					final int size = selectedLayers.size();
 					String[] layers = new String[size];
 
+					String name = "";
 					for (int i = 0; i < size; i++) {
 						layers[i] = selectedLayers.get(i).toString();
+						name += layers[i]+"_";
 					}
-					data.putExtra("name", layers[0]);
+					data.putExtra("name", name);
 					data.putExtra("layers", layers);
 					data.putExtra("srs", srs);
 					data.putExtra("minX", bbox.getXmin());
@@ -211,6 +216,28 @@ public class WMSLayersActivity extends ListActivity {
 		for (int i = 0; i < length; i++) {
 			temp = aFormats.get(i).toString();
 			if (temp.toLowerCase().contains(this.preferredFormat)) {
+				return temp;
+			}
+		}
+		return aFormats.get(0).toString();
+	}
+
+	private String getBestInfoFormat(Vector aFormats) throws WMSException {
+		String format = "";
+
+		if (aFormats == null) {
+			log.log(Level.FINE, "formats == null");
+			throw new WMSException(this.getResources().getString(
+					R.string.WMSLayersActivity_2));
+		}
+
+		final int length = aFormats.size();
+		String temp = "";
+		for (int i = 0; i < length; i++) {
+			temp = aFormats.get(i).toString();
+			if (temp.toLowerCase().contains("text/html")
+					|| temp.toLowerCase().contains("text/plain")
+					|| temp.toLowerCase().contains("text/xml")) {
 				return temp;
 			}
 		}

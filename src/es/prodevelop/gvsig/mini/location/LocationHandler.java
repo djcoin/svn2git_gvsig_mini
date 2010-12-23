@@ -50,6 +50,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 
 public class LocationHandler {
@@ -90,6 +92,20 @@ public class LocationHandler {
 
 	public synchronized void start() {
 		// initialize state of location providers and launch location listeners
+		int time = 0;
+		int dist = 0;
+		try {
+			time = Settings.getInstance()
+					.getIntValue(
+							mContext.getText(R.string.settings_key_gps_time)
+									.toString());
+			dist = Settings.getInstance()
+					.getIntValue(
+							mContext.getText(R.string.settings_key_gps_dist)
+									.toString());
+		} catch (Exception ignore) {
+
+		}
 		try {
 			if (!networkLocationActivated
 					&& mLocationManager
@@ -98,7 +114,7 @@ public class LocationHandler {
 				networkLocationActivated = true;
 				mNetworkLocationListener = new LocationListenerAdaptor();
 				mLocationManager.requestLocationUpdates(
-						LocationManager.NETWORK_PROVIDER, 0, 0,
+						LocationManager.NETWORK_PROVIDER, time, dist,
 						this.mNetworkLocationListener);
 			}
 		} catch (Exception e) {
@@ -113,7 +129,7 @@ public class LocationHandler {
 				gpsLocationActivated = true;
 				mGpsLocationListener = new LocationListenerAdaptor();
 				mLocationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 0, 0,
+						LocationManager.GPS_PROVIDER, time, dist,
 						this.mGpsLocationListener);
 			}
 		} catch (Exception e) {
@@ -125,10 +141,6 @@ public class LocationHandler {
 					.getLastKnownLocation(bestProvider());
 		} catch (Exception e) {
 
-		}
-
-		if (timer != null) {			
-			timer.schedule(10000);
 		}
 
 		// test to see which location services are available
@@ -190,8 +202,11 @@ public class LocationHandler {
 			// Log.v(OpenSatNavConstants.LOG_TAG, "Ignoring: " + e);
 			// there's no network location listener to disable
 		} finally {
-			if (this.timer != null)
-				this.timer.cancel();
+			if (this.timer != null) {
+				this.timer.finalize();
+				this.timer = null;
+			}
+
 		}
 	}
 
@@ -304,6 +319,24 @@ public class LocationHandler {
 	}
 
 	public void setLocationTimer(LocationTimer timer) {
+		boolean enableCell = Settings.getInstance().getBooleanValue(
+				mContext.getText(R.string.settings_key_gps_cell).toString());
+		if (!enableCell)
+			return;
+		if (this.timer != null) {
+			this.timer.finalize();
+			this.timer = null;
+		}
 		this.timer = timer;
+		if (timer != null) {
+			timer.schedule(60000);
+		}
+	}
+
+	public void finalizeCellLocation() {
+		if (this.timer != null) {
+			this.timer.finalize();
+			this.timer = null;
+		}
 	}
 }

@@ -82,7 +82,10 @@ public class AndroidContext implements IContext {
 
 	@Override
 	public IBitmap getBitmapFromResource(int ID) {
-		return new BitmapAndroid(ResourceLoader.getBitmap(ID));
+		BitmapAndroid b = new BitmapAndroid(ResourceLoader.getBitmap(ID));
+		if (b != null)
+			b.isValid = false;
+		return b;
 	}
 
 	@Override

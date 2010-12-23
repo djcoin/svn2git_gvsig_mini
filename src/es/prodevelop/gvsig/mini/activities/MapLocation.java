@@ -334,6 +334,8 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 	public void enableGPS() {
 		try {
 			this.initLocation();
+			locationHandler
+					.setLocationTimer(new LocationTimer(locationHandler));
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}

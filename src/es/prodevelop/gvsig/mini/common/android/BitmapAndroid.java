@@ -44,6 +44,10 @@ import es.prodevelop.gvsig.mini.common.IBitmap;
 public class BitmapAndroid implements IBitmap {
 
 	private Bitmap bitmap;
+	/**
+	 * if is a loading tile, then isValid should be false
+	 */
+	public boolean isValid = true;
 
 	public BitmapAndroid(Bitmap bitmap) {
 		this.bitmap = bitmap;

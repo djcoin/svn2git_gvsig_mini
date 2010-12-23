@@ -91,6 +91,7 @@ import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IBitmap;
 import es.prodevelop.gvsig.mini.common.IContext;
+import es.prodevelop.gvsig.mini.common.android.BitmapAndroid;
 import es.prodevelop.gvsig.mini.common.android.HandlerAndroid;
 import es.prodevelop.gvsig.mini.common.impl.Tile;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
@@ -110,7 +111,6 @@ import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
-import es.prodevelop.gvsig.mini.tasks.async.LoadClusterIndexAsyncTask;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -318,7 +318,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				renderer.setCenter(x, y);
 				this.notifyExtentChangedListeners(renderer.getCurrentExtent(),
 						this.getZoomLevel(), renderer.getCurrentRes());
-				postInvalidate();
+				resumeDraw();
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setMapCenter:", e);
@@ -524,7 +524,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			if (mScaler.isFinished())
 				onScalingFinished();
 			else
-				postInvalidate();
+				resumeDraw();
 		}
 	}
 
@@ -689,6 +689,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		try {
+			resumeDraw();
 			if (map.isPOISlideShown)
 				return true;
 			// System.out.println("onTouchEvent");
@@ -761,6 +762,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			ViewPort.mapWidth = mapWidth;
 			final MapRenderer renderer = this.getMRendererInfo();
 			boolean someTileNull = false;
+			boolean areAllValid = true;
 
 			final double originX = renderer.getOriginX();
 			final double originY = renderer.getOriginY();
@@ -954,14 +956,19 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				this.sortTiles(tiles);
 				final int length = tiles.length;
 				Tile temp;
+				IBitmap currentMapTile;
 				c.drawRect(0, 0, mapWidth, mapHeight, Paints.whitePaint);
 				// bufferCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
 				for (int j = 0; j < length; j++) {
 					temp = tiles[j];
 					if (temp != null) {
-						final IBitmap currentMapTile = this.mTileProvider
-								.getMapTile(temp, cancellable, null);
+						currentMapTile = this.mTileProvider.getMapTile(temp,
+								cancellable, null);
 						if (currentMapTile != null) {
+							if (areAllValid
+									&& !((BitmapAndroid) currentMapTile).isValid) {
+								areAllValid = false;
+							}
 							TileRaster.lastTouchMapOffsetX = 0;
 							TileRaster.lastTouchMapOffsetY = 0;
 							if (j == 0)
@@ -1002,6 +1009,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 							temp = null;
 						} else {
 							// System.out.println("tile null");
+							areAllValid = false;
 							someTileNull = true;
 
 							c.drawText("Loading", TileRaster.mapWidth / 2,
@@ -1032,6 +1040,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// c.drawBitmap(bufferBitmap, 0, 0, Paints.mPaintR);
 			if (currTouchPoint == null)
 				computeScale();
+
+			if (areAllValid && !scale)
+				pauseDraw();
+			else
+				resumeDraw();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onDraw", e);
 		}
@@ -1123,6 +1136,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "SimpleInvalidationHandler", e);
+			} finally {
+				resumeDraw();
 			}
 		}
 	}
@@ -1899,6 +1914,46 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			log.log(Level.SEVERE, "cleanZoomRectangle", e);
 		}
 	}
+	
+	
+
+	@Override
+	public void invalidate() {
+		resumeDraw();
+		super.invalidate();
+	}
+
+	@Override
+	public void postInvalidate() {
+		resumeDraw();
+		super.postInvalidate();
+	}
+	
+	public void adjustViewToAccuracyIfNavigationMode(final float accuracy) {
+		try {			
+			final MapRenderer renderer = this.getMRendererInfo();
+			Point center = renderer.center;
+			double[] xy = ConversionCoords.reproject(center.getX(),
+					center.getY(), CRSFactory.getCRS(renderer.getSRS()),
+					CRSFactory.getCRS("EPSG:900913"));
+			double minX = xy[0] - accuracy*1;
+			double maxX = xy[0] + accuracy*1;
+			double minY = xy[1] - accuracy*1;
+			double maxY = xy[1] + accuracy*1;
+
+			double[] minXY = ConversionCoords.reproject(minX, minY,
+					CRSFactory.getCRS("EPSG:900913"),
+					CRSFactory.getCRS(renderer.getSRS()));
+			double[] maxXY = ConversionCoords.reproject(maxX, maxY,
+					CRSFactory.getCRS("EPSG:900913"),
+					CRSFactory.getCRS(renderer.getSRS()));
+
+			this.zoomToExtent(new Extent(minXY[0], minXY[1],
+					maxXY[0], maxXY[1]), true);
+		} catch (Exception ignore) {
+
+		}
+	}
 
 	/**
 	 * Sets the Feature selected by the user when onLongPress and animates the
@@ -2025,6 +2080,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		 * the animation is not yet finished.
 		 */
 		public boolean computeScale() {
+			resumeDraw();
 			if (mFinished) {
 				Paints.mPaintR = new Paint();
 				mCurrScale = 1.0f;
@@ -2327,6 +2383,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 */
 	public void destroyST() {
 		if (this.surfaceThread != null) {
+			resumeDraw();
 			surfaceThread.requestExitAndWait();
 			this.surfaceThread = null;
 		}
@@ -2446,9 +2503,9 @@ class TileRasterThread extends Thread {
 	public void run() {
 		Canvas c;
 		while (!done) {
-			while (pause) {
+			while (pause && view.mScaler.isFinished()) {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -2484,6 +2541,6 @@ class TileRasterThread extends Thread {
 	}
 
 	public void onWindowResize(int w, int h) {
-
+		view.resumeDraw();
 	}
 }

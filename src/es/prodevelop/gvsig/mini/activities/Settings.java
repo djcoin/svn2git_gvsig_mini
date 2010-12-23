@@ -58,6 +58,7 @@ public class Settings {
 	private ArrayList<OnSettingsChangedListener> observers = new ArrayList<OnSettingsChangedListener>();
 
 	ArrayList<String> keysChanged = new ArrayList<String>();
+	private Context context;
 
 	public static Settings getInstance() {
 		if (instance == null)
@@ -94,7 +95,13 @@ public class Settings {
 			return Boolean.valueOf(properties.get(key).toString())
 					.booleanValue();
 		} catch (Exception e) {
-			throw new NoSuchFieldError(key);
+			try {
+				initializeFromSharedPreferences(context, true);
+				return Boolean.valueOf(properties.get(key).toString())
+						.booleanValue();
+			} catch (Exception ex) {
+				throw new NoSuchFieldError(key);
+			}
 		}
 	}
 
@@ -102,7 +109,12 @@ public class Settings {
 		try {
 			return properties.get(key).toString();
 		} catch (Exception e) {
-			throw new NoSuchFieldError(key);
+			try {
+				initializeFromSharedPreferences(context, true);
+				return properties.get(key).toString();
+			} catch (Exception ex) {
+				throw new NoSuchFieldError(key);
+			}
 		}
 	}
 
@@ -110,12 +122,25 @@ public class Settings {
 		try {
 			return Integer.valueOf(properties.get(key).toString()).intValue();
 		} catch (Exception e) {
-			throw new NoSuchFieldError(key);
+			try {
+				initializeFromSharedPreferences(context, true);
+				return Integer.valueOf(properties.get(key).toString())
+						.intValue();
+			} catch (Exception ex) {
+				throw new NoSuchFieldError(key);
+			}
 		}
 	}
 
 	public void initializeFromSharedPreferences(Context context) {
-		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+		initializeFromSharedPreferences(context, false);
+	}
+
+	public void initializeFromSharedPreferences(Context context,
+			boolean resetDefaultValues) {
+		this.context = context;
+		PreferenceManager.setDefaultValues(context, R.xml.settings,
+				resetDefaultValues);
 
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -141,13 +166,13 @@ public class Settings {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
 
-//			if (preferences.contains(key)) {
-				Editor edit = preferences.edit();
-				edit.putBoolean(key, value);
-				edit.commit();
-				
-				putValue(key, value);
-//			}
+			// if (preferences.contains(key)) {
+			Editor edit = preferences.edit();
+			edit.putBoolean(key, value);
+			edit.commit();
+
+			putValue(key, value);
+			// }
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}
@@ -159,13 +184,12 @@ public class Settings {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
 
-//			if (preferences.contains(key)) {
-				Editor edit = preferences.edit();
-				edit.putString(key, value);
-				edit.commit();
-				
-				
-//			}
+			// if (preferences.contains(key)) {
+			Editor edit = preferences.edit();
+			edit.putString(key, value);
+			edit.commit();
+
+			// }
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}

@@ -191,4 +191,15 @@
 
 <string name="load_offline">Capa (%s) cargada en modo offline</string>
 
+<!-- Missing prefs -->
+<string name="not_download_tiles">Debido a posibles restricciones en la licencia de la capa, no está permitido usar esta funcionalidad para la capa. Puede cambiar a cualquiera capa de OPEN STREET MAP para descargar teselas automáticamente</string>
+<string name="Map_36">Localización por celda activada</string>
+<string name="Map_35">Localización por celda desactivada</string>
+<string name="LayersActivity_16">Desde servidor TMS</string>
+<string name="LayersActivity_17">Teclee la URL de la capa...</string>
+<string name="LayersActivity_18">Obtener capa</string>
+<string name="LayersActivity_19">Capa añadida => %s</string>
+<string name="settings_gps_dist">Distancia refresco GPS (metros)</string>
+<string name="settings_gps_time">Tiempo refresco GPS (milisegundos)</string>
+<string name="settings_gps_cell">Activar/desactivar localización por celda</string>
 </resources>

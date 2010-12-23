@@ -143,7 +143,7 @@
 	<string name="download_tiles_03">Plik z definicjami warstw pobrany</string>
 	<!-- Missing prefs -->
 	<string name="no">Nie</string>
-	<string name="settings_quadkey">Klawisz wielofunkcyjny</string>
+	<string name="settings_quadkey">Quadkey</string>
 	<string name="settings_maps_cache">Pami\u0119\u0107 podr\u0119czna map</string>
 	<string name="download_tiles_10">Czas kt\u00f3ry up\u0142yn\u0105\u0142: </string>
 	<string name="download_tiles_11">Przewidywany czas kt\u00f3ry pozosta\u0142:
@@ -217,4 +217,16 @@
 	<string name="settings_switch_orientation">W\u0142/wy\u0142. sensor orientacji</string>
 	<string name="settings_orientation_enabled">Orientacja w\u0142\u0105czona</string>
 	<string name="settings_downloaded_data">Pobrane dane</string>
+	<string name="not_download_tiles">W zwi\u0105zku z mo\u017cliwymi ograniczeniami licencyjnymi dla warstwy,
+		funkcjonalno\u015b\u0107 nie jest dost\u0119na dla tej warstwy. Mo\u017cesz si\u0119 prze\u0142\u0105czy\u0107
+		na dowoln\u0105 warstw\u0119 OPEN STREET MAPS aby automatycznie pobra\u0107 kafelki mapy.</string>
+<string name="Map_35">Lokalizacja GSM wy\u0142\u0105czona</string>
+<string name="Map_36">Lokalizacja GSM w\u0142\u0105czona</string>
+<string name="LayersActivity_16">Z serwera TMS</string>
+<string name="LayersActivity_17">Podaj adres URL dla warstwy...</string>
+<string name="LayersActivity_18">\u017b\u0105danie warstwy</string>
+<string name="LayersActivity_19">Dodana warstwa => %s </string>
+<string name="settings_gps_time">Czas aktualizacji GPS (milisekundy)</string>
+<string name="settings_gps_dist">Odleg\u0142o\u015b\u0107 aktualizacji GPS (metry)</string>
+<string name="settings_gps_cell">Lokalizacja GSM w\u0142./wy\u0142.</string>
 </resources>

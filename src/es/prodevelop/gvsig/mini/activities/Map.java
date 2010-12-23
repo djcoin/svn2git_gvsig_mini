@@ -66,7 +66,6 @@ import org.anddev.android.weatherforecast.weather.WeatherSet;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnKeyListener;
@@ -80,7 +79,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -135,6 +133,7 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
+import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
@@ -322,21 +321,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				Settings.getInstance().addOnSettingsChangedListener(this);
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
-				RouteManager.getInstance().registerRoute(route);
-				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
+				// PowerManager pm = (PowerManager)
+				// getSystemService(Context.POWER_SERVICE);
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 				// "Prueba de ScreenPower");
-				// Utils.sendExceptionEmail(this, "Esto es una prueba");
-				// SDCardAppender appender = new SDCardAppender();
-				// long milis = System.currentTimeMillis();
-				// appender.setDir(Utils.LOG_DIR);
-				// appender.setFileName("log" + String.valueOf(milis) + ".txt");
-				// appender.setContext(this);
-				// log.addAppender(appender);
-				// log.addAppender(new ConsoleAppender());
-				// log.setLevel(Utils.LOG_LEVEL);
-				// log.log(Level.SEVERE,
-				// "Testing to log error message with Microlog.");
+
 				if (getIntent() != null
 						&& getIntent().getAction().compareTo(
 								SplashActivity.OFFLINE_INTENT_ACTION) != 0)
@@ -677,8 +667,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		try {
-			this.isRendererAllowedToDownloadTiles(osmap.getMRendererInfo());
+		try {			
 			return super.onPrepareOptionsMenu(menu);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -771,7 +760,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								.show();
 						return true;
 					}
-					this.osmap.setZoomLevel(15, true);
+					this.osmap
+							.adjustViewToAccuracyIfNavigationMode(this.mMyLocationOverlay.mLocation.acc);
 					this.osmap
 							.setMapCenterFromLonLat(
 									this.mMyLocationOverlay.mLocation
@@ -787,8 +777,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				viewLayers();
 				break;
 			case 4:
-				if (Utils.isSDMounted())
-					Map.this.showDownloadTilesDialog();
+				if (Utils.isSDMounted()) {
+					if (osmap.getMRendererInfo().allowsMassiveDownload()) {
+						Map.this.showDownloadTilesDialog();
+					} else {
+
+						this.showOKDialog(getText(R.string.not_download_tiles)
+								.toString(), R.string.warning, false);
+					}
+				}
+
 				else
 					Toast.makeText(this, R.string.LayersActivity_1,
 							Toast.LENGTH_LONG).show();
@@ -876,7 +874,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						log.log(Level.FINE, "navigation mode off");
 						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 						navigation = false;
-						// wl.release();
+						osmap.setKeepScreenOn(false);
 					}
 
 					//
@@ -970,7 +968,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				public void onCheckedChanged(RadioGroup arg0, int arg1) {
 					try {
 						centerOnGPSLocation();
-						// wl.acquire();
+						osmap.setKeepScreenOn(true);
 						navigation = true;
 						osmap.onLayerChanged(osmap.getMRendererInfo()
 								.getFullNAME());
@@ -1227,7 +1225,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			try {
 				log.log(Level.FINE, "release wake lock");
-				// wl.release();
+				osmap.setKeepScreenOn(false);
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "release wake lock", e);
 
@@ -1570,8 +1568,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			this.datatransfer2 = outState.getFloat("dataTransfer");
 			this.navigation = outState.getBoolean("dataNavigation");
 			this.recenterOnGPS = outState.getBoolean("dataRecent");
-			// if (navigation && recenterOnGPS)
-			// wl.acquire();
+			if (navigation && recenterOnGPS)
+				osmap.setKeepScreenOn(true);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadSettings: ", e);
 		}
@@ -1928,7 +1926,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					if (dialog2 != null)
 						dialog2.dismiss();
 					Map.this.showOKDialog(msg.obj.toString(),
-							R.string.getFeatureInfo);
+							R.string.getFeatureInfo, true);
 					break;
 				case Map.POI_LIST:
 					log.log(Level.FINE, "POI_LIST");
@@ -2026,7 +2024,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							route.getRoute().getFeatureAt(0).getGeometry(),
 							"EPSG:4326");
 					Map.this.updateContext(Map.ROUTE_SUCCEEDED);
-					osmap.postInvalidate();
+					osmap.resumeDraw();
 					break;
 				case Map.ROUTE_NO_CALCULATED:
 					log.log(Level.FINE, "ROUTE_NO_CALCULATED");
@@ -2118,7 +2116,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							try {
 								route.deleteRoute(false);
 								// ivCleanRoute.setVisibility(View.INVISIBLE);
-								osmap.postInvalidate();
+								osmap.resumeDraw();
 								Map.this.getItemContext().cancelCurrentTask();
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "onCancelDialog: ", e);
@@ -2599,6 +2597,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			processGeoAction(getIntent());
 			processRouteAction(getIntent());
 			processOfflineIntentActoin(getIntent());
+			if (navigation && recenterOnGPS)
+				osmap.setKeepScreenOn(true);
 			// if (navigation && recenterOnGPS)
 			// wl.acquire();
 			// mSensorManager.registerListener(mSensorListener, mSensorManager
@@ -2648,13 +2648,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		try {
+			boolean repaint = osmap.getMRendererInfo().getCurrentExtent()
+					.contains(this.mMyLocationOverlay.reprojectedCoordinates);
+
 			this.osmap.mBearing = (int) event.values[0];
 			long current = System.currentTimeMillis();
-			if (!navigation) {
-				osmap.postInvalidate();
+			if (!navigation && repaint) {
+				osmap.resumeDraw();
 			} else {
-				if (current - last > Utils.REPAINT_TIME) {
-					osmap.postInvalidate();
+				if (current - last > Utils.REPAINT_TIME && repaint) {
+					osmap.resumeDraw();
 					last = current;
 				}
 			}
@@ -3196,7 +3199,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "onPause");
 			super.onPause();
 			// if (wl != null && wl.isHeld())
-			// wl.release();
+			osmap.setKeepScreenOn(false);
 
 		} catch (Exception e)
 
@@ -3317,7 +3320,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void enableGPS() {
 		try {
 			log.log(Level.FINE, "enableGPS");
-			super.initLocation();
+			super.enableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
 
 			if (myLocationButton != null && myNavigator != null) {
@@ -3627,43 +3630,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	}
 
-	public boolean isRendererAllowedToDownloadTiles(MapRenderer renderer) {
-		try {
-			// String name = renderer.getNAME();
-			// if (name.contains("OPEN STREET MAP") ||
-			// name.contains("OSMARENDER") /*
-			// * ||
-			// * name
-			// * .
-			// * contains
-			// * (
-			// * "Cloudmade"
-			// * )
-			// * ||
-			// * name
-			// * .
-			// * contains
-			// * (
-			// * "Cloudmade Fresh"
-			// * )
-			// */
-			// || name.contains("CYCLE MAP")) {
-			// myDownloadTiles.setEnabled(true);
-			// return true;
-			// }
-			// myDownloadTiles.setEnabled(false);
-			// return false;
-			// FIXME: only for debug
-			if (myDownloadTiles != null)
-				myDownloadTiles.setEnabled(this.osmap.getMRendererInfo()
-						.allowsMassiveDownload());
-			return true;
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-			return false;
-		}
-	}
-
 	public void showToast(int resId) {
 		try {
 			Message m = new Message();
@@ -3675,7 +3641,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
-	public void showOKDialog(String textBody, int title) {
+	public void showOKDialog(String textBody, int title, boolean editView) {
 		try {
 			log.log(Level.FINE, "show ok dialog");
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -3696,7 +3662,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "", e);
 					ListView l = new ListView(this);
-					l.setAdapter(new LongTextAdapter(this, textBody, true));
+					l.setAdapter(new LongTextAdapter(this, textBody, editView));
 					l.setClickable(false);
 					l.setLongClickable(false);
 					l.setFocusable(false);
@@ -3709,7 +3675,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			} else {
 				ListView l = new ListView(this);
-				l.setAdapter(new LongTextAdapter(this, textBody, true));
+				l.setAdapter(new LongTextAdapter(this, textBody, editView));
 				l.setClickable(false);
 				l.setLongClickable(false);
 				l.setFocusable(false);
@@ -3800,6 +3766,20 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					OSRenderer osr = (OSRenderer) osmap.getMRendererInfo();
 					OSSettingsUpdater
 							.synchronizeRendererWithSettings(osr, this);
+				}
+			} else if (key.compareTo(getText(R.string.settings_key_gps_dist)
+					.toString()) == 0
+					|| key.compareTo(getText(R.string.settings_key_gps_time)
+							.toString()) == 0) {
+				this.disableGPS();
+				this.enableGPS();
+			} else if (key.compareTo(getText(R.string.settings_key_gps_cell)
+					.toString()) == 0) {
+				if (Boolean.valueOf(value.toString()).booleanValue()) {
+					this.getLocationHandler().setLocationTimer(
+							new LocationTimer(this.getLocationHandler()));
+				} else {
+					this.getLocationHandler().finalizeCellLocation();
 				}
 			}
 		} catch (Exception e) {

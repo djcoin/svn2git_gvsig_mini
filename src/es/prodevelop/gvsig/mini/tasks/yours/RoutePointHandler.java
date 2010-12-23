@@ -73,7 +73,7 @@ public class RoutePointHandler extends TaskHandler {
 			switch (msg.what) {
 				case TaskHandler.FINISHED:
 					map.clearContext();
-					map.osmap.postInvalidate();
+					map.osmap.resumeDraw();
 					map.getMapHandler().sendEmptyMessage(Map.CALCULATE_ROUTE);
 					break;
 			}

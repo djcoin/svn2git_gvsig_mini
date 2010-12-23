@@ -54,6 +54,10 @@
 	<string name="LayersActivity_13">From layers file</string>
 	<string name="LayersActivity_14">Load a file from SD card...</string>
 	<string name="LayersActivity_15">My layers</string>
+	<string name="LayersActivity_16">From TMS server</string>
+	<string name="LayersActivity_17">Input layer URL...</string>
+	<string name="LayersActivity_18">Request layer</string>
+	<string name="LayersActivity_19">Layer added => %s </string>
 
 	<string name="Map_0">Error while creating map</string>
 	<string name="Map_1">No results were found</string>
@@ -92,6 +96,8 @@
     <string name="Map_33">Force the display to be switched on</string>
     <string name="Map_34">Touch once to see/hide a zoom scale bar.</string>
     <string name="Map_Navigator">Navigator</string>
+    <string name="Map_35">Cell location disabled</string>
+	<string name="Map_36">Cell location enabled</string>
     
     
     
@@ -194,7 +200,9 @@
     <string name="settings_twitter_user">Twitter user</string>
     <string name="settings_twitter_pass">Twitter password</string>
     <string name="twitter_go_settings">You must configure your Twitter account. Would you like to open the settings activity in order to fill your Twitter user and password?</string>
-    
+    <string name="settings_gps_time">GPS update time (milliseconds)</string>
+	<string name="settings_gps_dist">GPS update distance (meters)</string>
+	<string name="settings_gps_cell">Cell location on/off</string>
     
     <string name="settings_key_gps">gps state</string>
     <string name="settings_key_offline_maps">offline maps</string>
@@ -210,6 +218,9 @@
     <string name="settings_key_os_custom">os custom</string>
     <string name="settings_key_twitter_user">twitter user</string>
     <string name="settings_key_twitter_pass">twitter pass</string>
+    <string name="settings_key_gps_time">gps time</string>
+	<string name="settings_key_gps_dist">gps distance</string>
+	<string name="settings_key_gps_cell">gps cell</string>
     
     <string name="relaunch">Tap the display to show the map view or press the back key to exit gvSIG Mini</string>
     
@@ -296,5 +307,10 @@
     <string name="bookmark_removed">Bookmark removed</string>
     <string name="bookmark_exists">Bookmark already exists</string>
     <string name="bookmark_failed">Failed to remove bookmark</string>    
+    
+    <string name="not_download_tiles">Due to possible restrictions in the layer license,
+		it is not allowed to use this functionality for this layer. You can switch
+		to any OPEN STREET MAPS layer to automatically download tiles.</string>
 </resources>
+
 

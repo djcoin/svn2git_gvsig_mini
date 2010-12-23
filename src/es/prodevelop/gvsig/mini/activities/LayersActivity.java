@@ -80,6 +80,7 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.tasks.wms.GetCapabilitiesTask;
+import es.prodevelop.gvsig.mini.tasks.wms.RequestTMSLayerTask;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
@@ -115,8 +116,10 @@ public class LayersActivity extends ExpandableListActivity {
 	public static final int WMS_CONNECTED = 0;
 	public static final int WMS_ERROR = 1;
 	public static final int WMS_CANCELED = 2;
+	public static final int TMS_CONNECTED = 3;
 	private Handler handler;
 	GetCapabilitiesTask gt;
+	RequestTMSLayerTask tmsTask;
 	ProgressDialog dialog2;
 	private boolean hasChanges = false;
 	String path;
@@ -359,13 +362,11 @@ public class LayersActivity extends ExpandableListActivity {
 			alert.setIcon(R.drawable.menu02);
 			alert.setTitle(R.string.LayersActivity_6);
 			final EditText input = new EditText(this);
-			input.setText("http://osm.omniscale.net/proxy/service");
-//			 http://osm.omniscale.net/proxy/service
-//			input.setText("http://imsref.cr.usgs.gov/WMS_Capabilities/USGS_EDC_LandCover_NLCD2001/capabilities_1_3_0.xml");
-			// input.setText("http://ipt-geo.gbif.org/wms");
-			// input.setText("http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx");
+			//input.setText("http://maps.bgs.ac.uk/ArcGIS/services/BGS_Detailed_Geology/MapServer/WMSServer");
+
+			// input.setText("http://wms.globexplorer.com/gexservlets/wms");
 			// input.setText(
-			// "http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
+			// "http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx");
 			// input.setText("http://wms.larioja.org/request.asp?");
 
 			// input
@@ -377,9 +378,7 @@ public class LayersActivity extends ExpandableListActivity {
 
 			// input.setText("http://orto.wms.itacyl.es/WMS");
 
-			// input
-			// .setText(
-			// "http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
+//			input.setText("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
 			// input.setText(
 			// "http://gdr.ess.nrcan.gc.ca/wmsconnector/com.esri.wms.Esrimap/gdr_e"
 			// );
@@ -410,6 +409,67 @@ public class LayersActivity extends ExpandableListActivity {
 								int whichButton) {
 							log.log(Level.FINE,
 									"Get capabilities dialog canceled");
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "onMenuItemSelected: ", e);
+		}
+	}
+
+	/***
+	 * Shows a dialog to let the user type the address of a TMS layer to load it
+	 */
+	public void showGetTMSAlert() {
+		try {
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			alert.setIcon(R.drawable.menu02);
+			alert.setTitle(R.string.LayersActivity_16);
+			final EditText input = new EditText(this);
+			// input.setText("http://www.idee.es/wms-c/PNOA/PNOA/1.0.0/PNOA/");
+
+			// input.setText("http://wms.globexplorer.com/gexservlets/wms");
+			// input.setText(
+			// "http://sdi.geoportal.gov.pl/wms_orto/wmservice.aspx");
+			// input.setText("http://wms.larioja.org/request.asp?");
+
+			// input
+			// .setText(
+			// "http://osami.prodevelop.es/tilecache/tilecache.py/1.0.0/prode2/"
+			// );
+			// input.setText(
+			// "http://demo.gfosservices.it/cgi-bin/tc/tilecache.cgi");
+
+			// input.setText("http://orto.wms.itacyl.es/WMS");
+
+			// input.setText("http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx");
+			// input.setText(
+			// "http://gdr.ess.nrcan.gc.ca/wmsconnector/com.esri.wms.Esrimap/gdr_e"
+			// );
+
+			alert.setView(input);
+
+			alert.setPositiveButton(R.string.LayersActivity_18,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								Editable value = input.getText();
+								LayersActivity.this.callTMS(value.toString());
+							} catch (Exception e) {
+								log.log(Level.SEVERE,
+										"onClick positiveButton: ", e);
+							}
+						}
+					});
+
+			alert.setNegativeButton(R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+
 						}
 					});
 
@@ -523,6 +583,17 @@ public class LayersActivity extends ExpandableListActivity {
 									R.string.LayersActivity_12));
 					children1.add(curChildMap);
 
+					Map<String, String> curChildMap2 = new HashMap<String, String>();
+					curChildMap2.put(
+							LAYER,
+							this.getResources().getString(
+									R.string.LayersActivity_16));
+					curChildMap2.put(
+							CHILD,
+							this.getResources().getString(
+									R.string.LayersActivity_17));
+					children1.add(curChildMap2);
+
 					Map<String, String> curChildMap1 = new HashMap<String, String>();
 					curChildMap1.put(
 							LAYER,
@@ -600,6 +671,8 @@ public class LayersActivity extends ExpandableListActivity {
 				if (childPosition == 0)
 					this.showGetCapabilitiesAlert();
 				else if (childPosition == 1)
+					this.showGetTMSAlert();
+				else if (childPosition == 2)
 					this.showLoadFileAlert();
 			} else {
 				if (layers) {
@@ -663,6 +736,37 @@ public class LayersActivity extends ExpandableListActivity {
 		}
 	}
 
+	private void callTMS(String TMSLayer) {
+		try {
+			tmsTask = new RequestTMSLayerTask(TMSLayer, handler);
+			WorkQueue.getInstance().execute(tmsTask);
+			// ThreadPool.getInstance(3).assignFirst(gt);
+
+			dialog2 = ProgressDialog
+					.show(LayersActivity.this,
+							this.getResources().getString(R.string.please_wait),
+							this.getResources().getString(
+									R.string.LayersActivity_18), true);
+			dialog2.setCancelable(true);
+			dialog2.setCanceledOnTouchOutside(true);
+			dialog2.setIcon(R.drawable.menu02);
+			dialog2.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog2) {
+					try {
+						if (tmsTask != null)
+							tmsTask.cancel();
+						dialog2.dismiss();
+					} catch (Exception e) {
+						log.log(Level.SEVERE, "onCancel progressdialog: ", e);
+					}
+				}
+			});
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "callGetCapabilities: ", e);
+		}
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		try {
@@ -676,6 +780,7 @@ public class LayersActivity extends ExpandableListActivity {
 					String server = intent.getStringExtra("server");
 					String name = intent.getStringExtra("name");
 					String format = intent.getStringExtra("format");
+					String infoFormat = intent.getStringExtra("info_format");
 					String[] layersName = intent.getStringArrayExtra("layers");
 					String srs = intent.getStringExtra("srs");
 					double minX = intent.getDoubleExtra("minX", 0);
@@ -689,6 +794,7 @@ public class LayersActivity extends ExpandableListActivity {
 							WMSRenderer.DEFAULT_MAX_ZOOM_LEVEL, 0, 256,
 							layersName, new Extent(minX, minY, maxX, maxY),
 							srs, version, null);
+					w.setInfo_format(infoFormat);
 					Layers.getInstance().addLayer(w.toString());
 					Layers.getInstance().persist();
 
@@ -781,6 +887,15 @@ public class LayersActivity extends ExpandableListActivity {
 					log.log(Level.FINE, "WMS_CANCELED");
 					Toast.makeText(context, R.string.task_canceled, 2000)
 							.show();
+					break;
+				case LayersActivity.TMS_CONNECTED:
+					Toast.makeText(
+							context,
+							String.format(getText(R.string.LayersActivity_19)
+									.toString(), msg.obj.toString()), 2000)
+							.show();
+					Hashtable layers = Layers.getInstance().getLayersForView();
+					LayersActivity.this.loadLayersList(layers);
 					break;
 				}
 

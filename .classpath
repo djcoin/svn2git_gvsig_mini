@@ -10,8 +10,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.gvsig.mini.remoteservices"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.tilerastercache.wms"/>
+	<classpathentry kind="lib" path="lib/perst.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.android.spatialindex.provider"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.android.spatialindex.base"/>
-	<classpathentry kind="lib" path="lib/perst.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -131,8 +131,7 @@ public class LocationTimer extends TimerTask {
 	public void schedule(int period) {
 		try {
 			logger.log(Level.FINE, "Scheduling GPSTimerTask with a period of: " + period);
-			cancel();
-			timer = new Timer();
+			timer = new Timer();			
 			timer.scheduleAtFixedRate(this, 0, period);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,"schedule: " + e);
@@ -146,12 +145,23 @@ public class LocationTimer extends TimerTask {
 		try {
 			if (timer != null) {
 				timer.cancel();
-				return super.cancel();
+				boolean res = super.cancel();
+				return res;
 			}
+			return false;
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,"cancel: " + e);
 			return false;
+		}		
+	}
+	
+	public void finalize() {
+		try {			
+			cancel();	
+			timer.purge();
+			timer = null;
+		} catch (Exception e) {
+//			Log.e("", e.getMessage());
 		}
-		return false;
 	}
 }

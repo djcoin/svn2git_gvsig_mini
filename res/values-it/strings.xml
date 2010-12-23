@@ -176,11 +176,22 @@
 <string name="settings_switch_orientation">Abilitare/disabilitare orientazione</string>
 <string name="settings_orientation_enabled">Orientazione attiva</string>
 <string name="settings_downloaded_data">Dati scaricati</string>
-<!-- Missing prefs -->
-
 <string name="load_offline">Layer (%s) caricato in modaditá offline</string>
 <string name="LayersActivity_15">Miei layer</string>
 <string name="settings_OS_get_key">Ottenere OS API key </string>
 <string name="relaunch">Tocca il display per mostrare la mappa o premi il tasto indietro per uscire da gvSIG Mini
 </string>
+
+<string name="not_download_tiles">Dovuto alle possibili restrizioni legali associate ai dati,
+		non è permesso di sfruttare questa funzionalità con questo layer.
+		Lo scarico automatico è possibile invece con tutti i layer di OPEN STREET MAP.</string>
+<string name="Map_35">Localizzazione per cella telefonica inattiva</string>
+<string name="Map_36">Localizzazione per cella telefonica attiva</string>
+<string name="LayersActivity_16">Da server TMS</string>
+<string name="LayersActivity_17">Inserire URL del layer...</string>
+<string name="LayersActivity_18">Richiedere il layer</string>
+<string name="LayersActivity_19">Il layer è stato aggiunto => %s </string>
+<string name="settings_gps_time">Intervallo attualizzazione GPS (millisecondi)</string>
+<string name="settings_gps_dist">Soglia attualizzazione GPS (metri)</string>
+<string name="settings_gps_cell">Localizzazione per cella telefonica attiva/inattiva</string>
 </resources>

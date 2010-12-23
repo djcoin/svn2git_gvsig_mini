@@ -52,8 +52,6 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,12 +84,13 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 
 /**
  * A MapOverlay to draw the GPS location
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class ViewSimpleLocationOverlay extends MapOverlay {
-	
+
 	protected Bitmap ob = null;
 	protected Bitmap PERSON_ICON = null;
 	public int rotation;
@@ -108,31 +107,35 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			18, 18);
 
 	public GPSPoint mLocation;
-	private int offsetOrientation = PORTRAIT_OFFSET_ORIENTATION;	private int navigationOrientation = NAVIGATION_MODE;
+	private int offsetOrientation = PORTRAIT_OFFSET_ORIENTATION;
+	private int navigationOrientation = NAVIGATION_MODE;
 	public final static int PORTRAIT_OFFSET_ORIENTATION = 0;
 	public final static int LANDSCAPE_OFFSET_ORIENTATION = 90;
 	public final static int NAVIGATION_MODE = 0;
 	Path p;
-	
-	private Pixel lastGPSPosition; 
+	public double[] reprojectedCoordinates;
+
+	private Pixel lastGPSPosition;
 
 	public ViewSimpleLocationOverlay(final Context ctx,
 			final TileRaster tileRaster) {
 		super(ctx, tileRaster);
+		this.tileraster = tileRaster;
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
 		} catch (BaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-//			log.setClientID(this.toString());
-			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);			
+			// log.setClientID(this.toString());
+			PERSON_ICON = ResourceLoader.getBitmap(R.drawable.gps_arrow);
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		} catch (OutOfMemoryError e) {
 			System.gc();
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		}
 	}
 
@@ -146,24 +149,25 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	protected void onDrawFinished(Canvas c, TileRaster osmv) {
 		return;
 	}
-	
+
 	private int previousRotation = 999;
 
 	private void drawOrientation(Canvas c, TileRaster osmv, int[] coords) {
 		try {
 			try {
 				if (!Settings.getInstance().getBooleanValue(
-						osmv.map.getText(R.string.settings_key_orientation).toString())) {
+						osmv.map.getText(R.string.settings_key_orientation)
+								.toString())) {
 					log.log(Level.FINE, "orientation is disabled in settings");
 					return;
 				}
 			} catch (NoSuchFieldError e) {
 				log.log(Level.SEVERE, "", e);
 			}
-			
+
 			if (!osmv.map.navigation) {
 				rotation = -compass - offsetOrientation;
-//				log.log(Level.FINE, "orientation: " + offsetOrientation);
+				// log.log(Level.FINE, "orientation: " + offsetOrientation);
 			} else {
 				rotation = -osmv.mBearing - offsetOrientation;
 			}
@@ -173,10 +177,10 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			} else {
 				previousRotation = rotation;
 			}
-			
-			//				
+
+			//
 			// } else {
-			//				
+			//
 			// if (rotationBearingFlag > (osmv.mBearing +
 			// Utils.COMPASS_ACCURACY)
 			// || (rotationBearingFlag < osmv.mBearing
@@ -184,51 +188,43 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			// rotationFlag = osmv.mBearing;
 			// }
 			//
-			//				
-			//				
+			//
+			//
 			// if (rotationBearingFlag > (osmv.mBearing +
 			// Utils.COMPASS_ACCURACY)
 			// || rotationBearingFlag < (osmv.mBearing
 			// - Utils.COMPASS_ACCURACY)) {
 			//
 			// rotation = osmv.mBearing;
-			//					
+			//
 			// } else {
 			// rotation = rotationFlag;
 			// }
-			//				
+			//
 			// rotationBearingFlag = osmv.mBearing;
 
 			int childRotation = rotationToDraw - 20;
 			int parentRotation = rotationToDraw + 20;
 			int length = -PERSON_ICON.getWidth() * 2;
 			final int childLeft = (int) Math.round((Math.sin(Math
-					.toRadians(childRotation)) * length))
-					+ coords[0];
+					.toRadians(childRotation)) * length)) + coords[0];
 			final int childTop = (int) Math.round((Math.cos(Math
-					.toRadians(childRotation)) * length))
-					+ coords[1];
+					.toRadians(childRotation)) * length)) + coords[1];
 
 			final int childLeftIni = (int) Math.round((Math.sin(Math
-					.toRadians(childRotation)) * 1))
-					+ coords[0];
+					.toRadians(childRotation)) * 1)) + coords[0];
 			final int childTopIni = (int) Math.round((Math.cos(Math
-					.toRadians(childRotation)) * 1))
-					+ coords[1];
+					.toRadians(childRotation)) * 1)) + coords[1];
 
 			final int parentLeft = (int) Math.round((Math.sin(Math
-					.toRadians(parentRotation)) * length))
-					+ coords[0];
+					.toRadians(parentRotation)) * length)) + coords[0];
 			final int parentTop = (int) Math.round((Math.cos(Math
-					.toRadians(parentRotation)) * length))
-					+ coords[1];
+					.toRadians(parentRotation)) * length)) + coords[1];
 
 			final int parentLeftIni = (int) Math.round((Math.sin(Math
-					.toRadians(parentRotation)) * 1))
-					+ coords[0];
+					.toRadians(parentRotation)) * 1)) + coords[0];
 			final int parentTopIni = (int) Math.round((Math.cos(Math
-					.toRadians(parentRotation)) * 1))
-					+ coords[1];
+					.toRadians(parentRotation)) * 1)) + coords[1];
 
 			if (p == null)
 				p = new Path();
@@ -260,15 +256,16 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			p.rewind();
 
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		}
 	}
 
 	@Override
 	public void onDraw(final Canvas c, final TileRaster osmv) {
 		try {
-			
-			if (!osmv.map.isLocationHandlerEnabled()) return;
+
+			if (!osmv.map.isLocationHandlerEnabled())
+				return;
 
 			// c.drawCircle(osmv.mapWidth/2, osmv.mapHeight/2, 5, circlePaint);
 			if (this.mLocation != null
@@ -276,14 +273,15 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 							.getLongitudeE6() != 0)) {
 
 				final MapRenderer renderer = osmv.getMRendererInfo();
-				double[] co = ConversionCoords.reproject(this.mLocation
-						.getLongitudeE6() / 1E6,
-						this.mLocation.getLatitudeE6() / 1E6, CRSFactory
-								.getCRS("EPSG:4326"), CRSFactory
-								.getCRS(renderer.getSRS()));
+				reprojectedCoordinates = ConversionCoords.reproject(
+						this.mLocation.getLongitudeE6() / 1E6,
+						this.mLocation.getLatitudeE6() / 1E6,
+						CRSFactory.getCRS("EPSG:4326"),
+						CRSFactory.getCRS(renderer.getSRS()));
 
-				int[] coords = osmv.getMRendererInfo().toPixels(co);
-				
+				int[] coords = osmv.getMRendererInfo().toPixels(
+						reprojectedCoordinates);
+
 				lastGPSPosition = new Pixel(coords[0], coords[1]);
 
 				if (this.mLocation.acc != 0) {
@@ -302,6 +300,9 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 							max = mapWidth;
 						}
 
+						if (tileraster.map.navigation)
+							tileraster
+									.adjustViewToAccuracyIfNavigationMode(mLocation.acc);
 						if (distancePixels <= max) {
 							path.addCircle(coords[0], coords[1],
 									(float) distancePixels, Direction.CCW);
@@ -319,19 +320,21 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 						Paints.mPaint);
 
 			}
-		} catch (OutOfMemoryError e) {			
+		} catch (OutOfMemoryError e) {
 			System.gc();
-			log.log(Level.SEVERE,"OutOfMemoryError: ", e);
+			log.log(Level.SEVERE, "OutOfMemoryError: ", e);
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		}
 	}
 
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
-			log.log(Level.FINE, "get Nearest feature viewsimplelocationoverlay: " + pixel.toString());
-			double x = (this.mLocation.getLongitudeE6() / 1E6); 
+			log.log(Level.FINE,
+					"get Nearest feature viewsimplelocationoverlay: "
+							+ pixel.toString());
+			double x = (this.mLocation.getLongitudeE6() / 1E6);
 			double y = (this.mLocation.getLatitudeE6() / 1E6);
 
 			if (x == 0 && y == 0)
@@ -339,17 +342,18 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 			final TileRaster tileRaster = this.getTileRaster();
 
-			double[] co = ConversionCoords.reproject(x, y, CRSFactory
-					.getCRS("EPSG:4326"), CRSFactory.getCRS(tileRaster
-					.getMRendererInfo().getSRS()));
+			double[] co = ConversionCoords.reproject(x, y,
+					CRSFactory.getCRS("EPSG:4326"),
+					CRSFactory.getCRS(tileRaster.getMRendererInfo().getSRS()));
 
 			es.prodevelop.gvsig.mini.geom.Point p = new es.prodevelop.gvsig.mini.geom.Point(
 					co[0], co[1]);
 			log.log(Level.FINE, "pixel to coordinates: " + p.toString());
-//			tileRaster.getMRendererInfo().reprojectGeometryCoordinates(p,
-//					"EPSG:4326");
+			// tileRaster.getMRendererInfo().reprojectGeometryCoordinates(p,
+			// "EPSG:4326");
 			int[] pxy = tileRaster.getMRendererInfo().toPixels(co);
-			log.log(Level.FINE, "coordinates to pixel: " + pxy[0] + "," + pxy[1]);
+			log.log(Level.FINE, "coordinates to pixel: " + pxy[0] + ","
+					+ pxy[1]);
 			final long distance = pixel.distance(new Pixel(pxy[0], pxy[1]));
 			log.log(Level.FINE, "distance location overlay: " + distance);
 			if (distance < ResourceLoader.MAX_DISTANCE && distance >= 0) {
@@ -357,7 +361,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			}
 			return null;
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 			return null;
 		}
 	}
@@ -379,23 +383,23 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 				m.what = Map.SHOW_TOAST;
 				double lat = this.mLocation.getLatitudeE6() / 1E6;
 				double lon = this.mLocation.getLongitudeE6() / 1E6;
-				m.obj = this.getContext().getResources().getString(
-						R.string.typeof)
+				m.obj = this.getContext().getResources()
+						.getString(R.string.typeof)
 						+ ": "
 						+ this.provider
 						+ "\n"
-						+ this.getContext().getResources().getString(
-								R.string.latitude)
+						+ this.getContext().getResources()
+								.getString(R.string.latitude)
 						+ ": "
 						+ lat
 						+ "\n"
-						+ this.getContext().getResources().getString(
-								R.string.longitude) + ": " + lon;
+						+ this.getContext().getResources()
+								.getString(R.string.longitude) + ": " + lon;
 				getTileRaster().map.getMapHandler().sendMessage(m);
 			}
 			return true;
 		} catch (Exception ex) {
-			log.log(Level.SEVERE,"",ex);
+			log.log(Level.SEVERE, "", ex);
 			return false;
 		}
 	}
@@ -418,7 +422,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 				outState.putInt("orientation", this.offsetOrientation);
 			}
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"saveState", e);
+			log.log(Level.SEVERE, "saveState", e);
 		}
 	}
 
@@ -432,7 +436,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			this.provider = outState.getString("myLocProv");
 			this.offsetOrientation = outState.getInt("orientation");
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"loadState", e);
+			log.log(Level.SEVERE, "loadState", e);
 		}
 	}
 
@@ -442,10 +446,10 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 			mLocation = null;
 			p = null;
 		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
+			log.log(Level.SEVERE, "", e);
 		}
 	}
-	
+
 	public int getOffsetOrientation() {
 		return offsetOrientation;
 	}

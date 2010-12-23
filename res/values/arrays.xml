@@ -54,7 +54,10 @@
         <item>@string/settings_key_os_key</item>        
         <item>@string/settings_key_os_url</item>
         <item>@string/settings_key_twitter_user</item>
-        <item>@string/settings_key_twitter_pass</item>        
+        <item>@string/settings_key_twitter_pass</item> 
+         <item>@string/settings_key_gps_cell</item>   
+        <item>@string/settings_key_gps_dist</item>   
+        <item>@string/settings_key_gps_time</item>             
     </string-array>
     
      <string-array name="poi_categories">

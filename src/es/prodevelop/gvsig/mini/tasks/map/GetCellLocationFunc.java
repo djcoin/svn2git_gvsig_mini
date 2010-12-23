@@ -54,6 +54,7 @@ import android.location.Location;
 import android.telephony.CellLocation;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -102,7 +103,7 @@ public class GetCellLocationFunc extends Functionality {
 			
 			GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
 
-			CellLocation.requestLocationUpdate();
+			//CellLocation.requestLocationUpdate();
 			int cellID = location.getCid();
 			int lac = location.getLac();
 
