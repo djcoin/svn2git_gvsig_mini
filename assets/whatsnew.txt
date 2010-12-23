@@ -1,4 +1,51 @@
-gvSIG Mini Copyright v. 1.0.0
+gvSIG Mini Copyright v. 1.1.0
+
+v. 1.1.0
+
+New Features:
+
+* Added option in the Layers Activity to add a TMS layer giving its URL.
+
+* Adapted zoom level to location precission under Navigation Mode
+
+* Allowed install app in SD (valid for Froyo and later)
+
+* Added settings to fix time and distance for GPS updates
+
+* Added a setting to switch on/off Cell location
+
+* Enhanced screen painting
+
+* Disabled orientation sensor by default
+
+* Added support for Z/Y/X and 'QRST' Quadkey layers
+
+* Added a NOT_LOCAL_CACHE mode to TileProvider to download tiles
+
+* Automatically select info_format for getFeatureInfo requests (text/html, text/plain or text/xml)
+
+* Made alert dialogs scrollable
+
+* Added Japanese translation by Hirofumi Hayashi &  Yoichi Kayama
+
+* Added Polish translation by Grzegorz Myrda
+
+--------
+
+Bugs fixed:
+
+* Fixed battery draining when the application is not running
+
+* Removed wake locks, used KEEP_SCREEN_ON instead
+
+* Fixed a bug on the TimerTask of Cell location
+
+* Solved wrong memory usage when downloading tiles
+
+* Changed SRS to CRS in WMS 1.3.0
+
+* Show warning when download tiles functionality is not allowed for a layer.
+
 
 v. 1.0.0
 
