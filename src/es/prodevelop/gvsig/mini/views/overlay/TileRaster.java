@@ -1796,7 +1796,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		public LinearAnimationRunner(final double aTargetX,
 				final double aTargetY, final boolean animate,
 				final boolean zoomChanged) {
-			this(aTargetX, aTargetY, 10, 1000, animate);
+			this(aTargetX, aTargetY, 10, 500, animate);
 			this.zoomChanged = zoomChanged;
 			// start();
 		}
