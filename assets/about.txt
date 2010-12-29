@@ -38,6 +38,8 @@ gvSIG Mini for Android uses these icons with license restrictions or attribution
 
 - menu_download http://earam.deviantart.com/art/the-moonlight-31208162 
 
+- some icons taken from: http://wefunction.com/2008/07/function-free-icon-set/
+
 -------------------------------------------------------------------------------
 
 Polish translation by Grzegorz Myrda

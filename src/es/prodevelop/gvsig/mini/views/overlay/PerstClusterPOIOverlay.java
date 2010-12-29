@@ -70,7 +70,7 @@ import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.symbol.ClusterSymbolSelector;
-import es.prodevelop.gvsig.mini.symbol.OsmPOISymbolSelector;
+import es.prodevelop.gvsig.mini.symbol.ResultSearchSymbolSelector;
 import es.prodevelop.gvsig.mini.symbol.SymbolSelector;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -107,7 +107,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 		try {
 			poiProvider = new PerstOsmPOIClusterProvider(
 					Environment.getExternalStorageDirectory() + File.separator
-							+ "gvSIG/pois/madrid" + File.separator
+							+ "gvSIG/pois/london" + File.separator
 							+ "perst_streets_cluster_cat.db", tileRaster
 							.getMRendererInfo().getZOOM_MAXLEVEL()
 							- tileRaster.getMRendererInfo().getZoomMinLevel(),
@@ -117,7 +117,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			Log.e("", e.getMessage());
 		} finally {
 			clusterSymbolSelector = new ClusterSymbolSelector(this);
-			poiSymbolSelector = new OsmPOISymbolSelector(this);
+			poiSymbolSelector = new ResultSearchSymbolSelector(this);
 
 			// TRANSPORTATION_POI = ResourceLoader
 			// .getBitmap(R.drawable.p_transportation_transport_bus_stop_16_poi);

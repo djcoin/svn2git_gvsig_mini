@@ -126,7 +126,7 @@ public class ResourceLoader {
 					context.getResources(), R.drawable.layer_icon));
 			imgs.put(R.drawable.layer_icon_on, BitmapFactory.decodeResource(
 					context.getResources(), R.drawable.layer_icon_on));
-			// Clusters
+			// POIs 16
 			imgs.put(R.drawable.p_accommodation_hotel_16, BitmapFactory
 					.decodeResource(context.getResources(),
 							R.drawable.p_accommodation_hotel_16));
@@ -160,89 +160,43 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_16,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_16));
+			
+			// POIs 24
+			imgs.put(R.drawable.p_accommodation_hotel_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_24));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_24,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_24));
+			imgs.put(R.drawable.p_food_restaurant_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_24));
+			imgs.put(R.drawable.p_health_hospital_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_24));
+			imgs.put(R.drawable.p_places_poi_place_city_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_24));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_24,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_24));
+			imgs.put(R.drawable.p_recreation_sport_playground_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_24));
+			imgs.put(R.drawable.p_route_tourist_castle2_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_24));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_24));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_24, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_24));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_24,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_24));
 
-			// POIs
-			imgs.put(R.drawable.p_accommodation_hotel_16_poi, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_accommodation_hotel_16_poi));
-			imgs.put(R.drawable.p_arts_culture_tourist_theatre_16_poi,
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_arts_culture_tourist_theatre_16_poi));
-			imgs.put(R.drawable.p_food_restaurant_16_poi, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_food_restaurant_16_poi));
-			imgs.put(R.drawable.p_health_hospital_16_poi, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_health_hospital_16_poi));
-			imgs.put(R.drawable.p_places_poi_place_city_16_poi, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_places_poi_place_city_16_poi));
-			imgs.put(
-					R.drawable.p_public_buildings_tourist_monument_16_poi,
-					BitmapFactory.decodeResource(
-							context.getResources(),
-							R.drawable.p_public_buildings_tourist_monument_16_poi));
-			imgs.put(R.drawable.p_recreation_sport_playground_16_poi,
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_recreation_sport_playground_16_poi));
-			imgs.put(R.drawable.p_route_tourist_castle2_16_poi, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_route_tourist_castle2_16_poi));
-			imgs.put(R.drawable.p_shops_shopping_supermarket_16_poi,
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_shops_shopping_supermarket_16_poi));
-			imgs.put(R.drawable.p_tourism_tourist_attraction_16_poi,
-					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_tourism_tourist_attraction_16_poi));
-			imgs.put(
-					R.drawable.p_transportation_transport_bus_stop_16_poi,
-					BitmapFactory.decodeResource(
-							context.getResources(),
-							R.drawable.p_transportation_transport_bus_stop_16_poi));
-			//
-			// // POIs_SEL
-			// imgs.put(R.drawable.p_accommodation_hotel_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_accommodation_hotel_16_poi_sel));
-			// imgs.put(R.drawable.p_arts_culture_tourist_theatre_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_arts_culture_tourist_theatre_16_poi_sel));
-			// imgs.put(R.drawable.p_food_restaurant_16_poi_sel, BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_food_restaurant_16_poi_sel));
-			// imgs.put(R.drawable.p_health_hospital_16_poi_sel, BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_health_hospital_16_poi_sel));
-			// imgs.put(R.drawable.p_places_poi_place_city_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_places_poi_place_city_16_poi_sel));
-			// imgs.put(R.drawable.p_public_buildings_tourist_monument_16_poi_sel,
-			// BitmapFactory.decodeResource(context.getResources(),
-			// R.drawable.p_public_buildings_tourist_monument_16_poi_sel));
-			// imgs.put(R.drawable.p_recreation_sport_playground_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_recreation_sport_playground_16_poi_sel));
-			// imgs.put(R.drawable.p_route_tourist_castle2_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_route_tourist_castle2_16_poi_sel));
-			// imgs.put(R.drawable.p_shops_shopping_supermarket_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_shops_shopping_supermarket_16_poi_sel));
-			// imgs.put(R.drawable.p_tourism_tourist_attraction_16_poi_sel,
-			// BitmapFactory
-			// .decodeResource(context.getResources(),
-			// R.drawable.p_tourism_tourist_attraction_16_poi_sel));
-			// imgs.put(R.drawable.p_transportation_transport_bus_stop_16_poi_sel,
-			// BitmapFactory.decodeResource(context.getResources(),
-			// R.drawable.p_transportation_transport_bus_stop_16_poi_sel));
-
-			// Clusters
+			// POIs 32
 			imgs.put(R.drawable.p_accommodation_hotel_32, BitmapFactory
 					.decodeResource(context.getResources(),
 							R.drawable.p_accommodation_hotel_32));
@@ -276,7 +230,181 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_32,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_32));
-
+			
+			// POIs bookmark
+			imgs.put(R.drawable.p_accommodation_hotel_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_16f));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_16f,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_16f));
+			imgs.put(R.drawable.p_food_restaurant_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_16f));
+			imgs.put(R.drawable.p_health_hospital_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_16f));
+			imgs.put(R.drawable.p_places_poi_place_city_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_16f));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_16f,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_16f));
+			imgs.put(R.drawable.p_recreation_sport_playground_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_16f));
+			imgs.put(R.drawable.p_route_tourist_castle2_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_16f));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_16f));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_16f, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_16f));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_16f,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_16f));
+			
+			// POIs search
+			imgs.put(R.drawable.p_accommodation_hotel_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_16s));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_16s,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_16s));
+			imgs.put(R.drawable.p_food_restaurant_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_16s));
+			imgs.put(R.drawable.p_health_hospital_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_16s));
+			imgs.put(R.drawable.p_places_poi_place_city_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_16s));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_16s,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_16s));
+			imgs.put(R.drawable.p_recreation_sport_playground_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_16s));
+			imgs.put(R.drawable.p_route_tourist_castle2_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_16s));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_16s));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_16s, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_16s));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_16s,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_16s));
+			
+			// Cluster 18
+			imgs.put(R.drawable.p_accommodation_hotel_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_18b));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_18b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_18b));
+			imgs.put(R.drawable.p_food_restaurant_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_18b));
+			imgs.put(R.drawable.p_health_hospital_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_18b));
+			imgs.put(R.drawable.p_places_poi_place_city_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_18b));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_18b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_18b));
+			imgs.put(R.drawable.p_recreation_sport_playground_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_18b));
+			imgs.put(R.drawable.p_route_tourist_castle2_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_18b));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_18b));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_18b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_18b));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_18b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_18b));
+			
+			// Cluster 38
+			imgs.put(R.drawable.p_accommodation_hotel_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_38b));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_38b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_38b));
+			imgs.put(R.drawable.p_food_restaurant_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_38b));
+			imgs.put(R.drawable.p_health_hospital_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_38b));
+			imgs.put(R.drawable.p_places_poi_place_city_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_38b));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_38b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_38b));
+			imgs.put(R.drawable.p_recreation_sport_playground_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_38b));
+			imgs.put(R.drawable.p_route_tourist_castle2_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_38b));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_38b));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_38b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_38b));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_38b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_38b));
+			
+			// Cluster 28
+			imgs.put(R.drawable.p_accommodation_hotel_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_accommodation_hotel_28b));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_28b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_arts_culture_tourist_theatre_28b));
+			imgs.put(R.drawable.p_food_restaurant_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_food_restaurant_28b));
+			imgs.put(R.drawable.p_health_hospital_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_health_hospital_28b));
+			imgs.put(R.drawable.p_places_poi_place_city_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_places_poi_place_city_28b));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_28b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_public_buildings_tourist_monument_28b));
+			imgs.put(R.drawable.p_recreation_sport_playground_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_recreation_sport_playground_28b));
+			imgs.put(R.drawable.p_route_tourist_castle2_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_28b));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_28b));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_28b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_28b));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_28b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_28b));
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		} finally {
