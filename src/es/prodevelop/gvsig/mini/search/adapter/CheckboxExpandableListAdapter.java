@@ -182,12 +182,12 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 		final String sub = ((TextView) v.findViewById(R.id.sub)).getText()
 				.toString().replaceAll(" ", "_").toLowerCase();
 
-		Metadata.Category cat = ((SearchExpandableActivity) context).getProvider()
-				.getPOIMetadata().getCategoryForSubcategory(sub);
-
-		if (cat != null)
-			button.setImageDrawable(POICategoryIcon.getDrawable16ForCategory(
-					cat.name, context));
+//		Metadata.Category cat = ((SearchExpandableActivity) context).getProvider()
+//				.getPOIMetadata().getCategoryForSubcategory(sub);
+//
+//		if (cat != null)
+//			button.setImageDrawable(POICategoryIcon.getDrawable16ForCategory(
+//					cat.name, context));
 
 		check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -260,8 +260,8 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 		final String cat = t.getText().toString().replaceAll(" ", "_")
 				.toLowerCase();
 
-		button.setImageDrawable(POICategoryIcon.getDrawable32ForCategory(cat,
-				context));
+//		button.setImageDrawable(POICategoryIcon.getDrawable32ForCategory(cat,
+//				context));
 
 		if (cat.compareToIgnoreCase(POICategories.STREETS) == 0)
 			button.setOnClickListener(new OnClickListener() {

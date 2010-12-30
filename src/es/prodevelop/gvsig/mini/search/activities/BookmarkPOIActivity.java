@@ -78,7 +78,7 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 			try {
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/"
+								new PerstOsmPOIClusterProvider("/sdcard/gvSIG/pois/london/"
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			} catch (BaseException e) {

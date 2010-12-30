@@ -38,11 +38,15 @@
 
 package es.prodevelop.gvsig.mini.search.adapter;
 
+import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.filter.KeywordFilter;
+import android.graphics.Bitmap;
 import android.widget.Filter;
 
 public class MultiKeywordFilteredAdapter extends PinnedHeaderListAdapter {
@@ -110,6 +114,20 @@ public class MultiKeywordFilteredAdapter extends PinnedHeaderListAdapter {
 		super.notifyDataSetInvalidated();
 		activity.setTitle("");
 		activity.setProgressBarIndeterminateVisibility(false);
+	}
+	
+	protected Bitmap getBitmapCategory(POI p) {
+		Bitmap b = bitmap;
+		if (b == null) {
+			if (p instanceof OsmPOI) {
+				b = POICategoryIcon.getBitmapSearchCategory(((OsmPOI) p)
+						.getCategory());
+			} else {
+				b = POICategoryIcon
+						.getBitmapSearchCategory(POICategories.PLACES);
+			}
+		}
+		return b;
 	}
 
 }

@@ -82,30 +82,18 @@ public class KeywordFilter extends SimpleFilter {
 
 		ArrayList list = new ArrayList();
 
-		SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
-				.getProvider()).getHelper().getRoot());
-
 		String desc = prefix.toString();
 
-		FullTextSearchResult result = root.getFullTextIndex().search(desc,
-				SpatialIndexRoot.DEFAULT_LANGUAGE,
-				SpatialIndexRoot.DEFAULT_MAX_RESULTS,
-				SpatialIndexRoot.DEFAULT_MAX_TIME);
+		list = ((PerstOsmPOIProvider) activity.getProvider())
+				.fullTextSearch(desc);
 
-		final int size = result.hits.length;
-		for (int i = 0; i < size; i++) {
-			list.add(result.hits[i].getDocument());
-		}
-
-		
 		list = sortResults(list);
-		
 
 		results.values = list;
 		results.count = list.size();
 
 		return results;
-	}	
+	}
 
 	// @Override
 	// protected void publishResults(CharSequence constraint, FilterResults

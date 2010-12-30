@@ -69,9 +69,10 @@ public class AcetateOverlay extends MapOverlay {
 	
 	int touchCounter = 0;
 	final static int TOUCH_COUNTER = 20;
+	public final static String DEFAULT_NAME = "ACETATE";
 	
-	public AcetateOverlay(Context context, TileRaster tileRaster) {
-		super(context, tileRaster);
+	public AcetateOverlay(Context context, TileRaster tileRaster, String name) {
+		super(context, tileRaster, name);
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (BaseException e) {
@@ -286,5 +287,18 @@ public class AcetateOverlay extends MapOverlay {
 	
 	public boolean isFirstTouch() {		
 		return ++touchCounter < TOUCH_COUNTER;			
+	}
+
+	@Override
+	public void onExtentChanged(Extent newExtent, int zoomLevel,
+			double resolution) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayerChanged(String layerName) {
+		// TODO Auto-generated method stub
+		
 	}
 }

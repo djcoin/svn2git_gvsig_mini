@@ -73,9 +73,10 @@ import es.prodevelop.gvsig.mini.util.ResourceLoader;
 public class NameFinderOverlay extends MapOverlay {
 
 	private int indexPOI = -1;
+	public final static String DEFAULT_NAME = "NAME_FINDER";
 
-	public NameFinderOverlay(Context context, TileRaster tileRaster) {
-		super(context, tileRaster);
+	public NameFinderOverlay(Context context, TileRaster tileRaster, String name) {
+		super(context, tileRaster, name);
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (BaseException e) {
@@ -191,5 +192,18 @@ public class NameFinderOverlay extends MapOverlay {
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
+	}
+
+	@Override
+	public void onExtentChanged(Extent newExtent, int zoomLevel,
+			double resolution) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayerChanged(String layerName) {
+		// TODO Auto-generated method stub
+		
 	}
 }

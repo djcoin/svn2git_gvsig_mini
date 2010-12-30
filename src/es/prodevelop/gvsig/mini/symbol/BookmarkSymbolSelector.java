@@ -7,7 +7,7 @@ import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
-import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 
 public class BookmarkSymbolSelector extends SymbolSelector {
 
@@ -25,11 +25,8 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 	private Bitmap ROUTE;
 	private Bitmap PLACES;	
 
-	private PerstClusterPOIOverlay overlay;
-
-	public BookmarkSymbolSelector(PerstClusterPOIOverlay overlay) {
-		this.overlay = overlay;
-
+	public BookmarkSymbolSelector() {
+		
 		TRANSPORTATION = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16f);
 		TOURISM = ResourceLoader

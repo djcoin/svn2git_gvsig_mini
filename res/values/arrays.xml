@@ -61,6 +61,9 @@
     </string-array>
     
      <string-array name="poi_categories">
+     	<item>@string/poi_all</item>
+        <item>@string/search_results</item>
+        <item>@string/bookmark_title</item>
         <item>@string/poi_transportation</item>
         <item>@string/poi_tourism</item>
         <item>@string/poi_recreation</item>

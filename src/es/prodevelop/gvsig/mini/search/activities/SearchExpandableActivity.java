@@ -98,7 +98,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			if (POIProviderManager.getInstance().getPOIProvider() == null)
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/"
+								new PerstOsmPOIClusterProvider("/sdcard/gvSIG/pois/london/"
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			provider = POIProviderManager.getInstance().getPOIProvider();

@@ -72,6 +72,7 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
@@ -91,6 +92,8 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
  */
 public class ViewSimpleLocationOverlay extends MapOverlay {
 
+	public final static String DEFAULT_NAME = "LOCATION";
+	
 	protected Bitmap ob = null;
 	protected Bitmap PERSON_ICON = null;
 	public int rotation;
@@ -118,8 +121,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	private Pixel lastGPSPosition;
 
 	public ViewSimpleLocationOverlay(final Context ctx,
-			final TileRaster tileRaster) {
-		super(ctx, tileRaster);
+			final TileRaster tileRaster, String name) {
+		super(ctx, tileRaster, name);
 		this.tileraster = tileRaster;
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler()
@@ -452,6 +455,19 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	public int getOffsetOrientation() {
 		return offsetOrientation;
+	}
+
+	@Override
+	public void onExtentChanged(Extent newExtent, int zoomLevel,
+			double resolution) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayerChanged(String layerName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

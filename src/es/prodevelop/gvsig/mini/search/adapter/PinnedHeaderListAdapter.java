@@ -271,16 +271,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 					+ formatter.format(formatKM(distance))
 					+ " "
 					+ unit(distance));
-			Bitmap b = bitmap;
-			if (b == null) {
-				if (p instanceof OsmPOI) {
-					b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) p)
-							.getCategory());
-				} else {
-					b = POICategoryIcon
-							.getBitmap32ForCategory(POICategories.STREETS);
-				}
-			}
+			Bitmap b = this.getBitmapCategory(p);
 
 			holder.poiImg.setImageBitmap(b);
 		} else {
@@ -288,131 +279,24 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 			holder.poiImg.setImageBitmap(null);
 		}
 
-		/************************************/
-		// final POI p = (POI) getItem(arg0);
-		//
-		// if (convertView == null) {
-		// convertView = new POIItemView(activity, null);
-		//
-		// // Creates a ViewHolder and store references to the two children
-		// // views
-		// // we want to bind data to.
-		// holder = new ViewHolder();
-		// holder.text = ((POIItemView) convertView).mDesc;
-		// holder.dist = ((POIItemView) convertView).mDist;
-		// holder.poiImg = ((POIItemView) convertView).mImg;
-		//
-		// holder.previewLayout = ((POIItemView) convertView).l;
-		// holder.preview = ((POIItemView) convertView).preview;
-		// holder.optionsButton = ((POIItemView) convertView).mOptionsButton;
-		// holder.detailsButton = ((POIItemView) convertView).mDetailsButton;
-		//
-		// convertView.setTag(holder);
-		// } else {
-		// // Get the ViewHolder back to get fast access to the TextView
-		// // and the ImageView.
-		// holder = (ViewHolder) convertView.getTag();
-		// }
-		//
-		// // ((TextView) arg1).setTextSize(26);
-		// // ((TextView) arg1).setTextColor(Color.WHITE);
-		//
-		// if (p == null)
-		// return convertView;
-		// holder.optionsButton.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// activity.getPOItemClickListener().onPOIClick(arg0, p);
-		// }
-		// });
-		// holder.detailsButton.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// Intent i = new Intent(activity, POIDetailsActivity.class);
-		// if (p != null && p instanceof OsmPOI) {
-		// OsmPOI poi = (OsmPOI) p;
-		// final Point centerM = getCenterMercator();
-		// final double distance = centerM.distance(ConversionCoords
-		// .reproject(p.getX(), p.getY(),
-		// CRSFactory.getCRS("EPSG:4326"),
-		// CRSFactory.getCRS("EPSG:900913")));
-		// String dist = formatter.format(formatKM(distance)) + " "
-		// + unit(distance);
-		// i.putExtra(POIDetailsActivity.X, poi.getX());
-		// i.putExtra(POIDetailsActivity.Y, poi.getY());
-		// i.putExtra(POIDetailsActivity.DIST, dist);
-		// i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
-		// i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
-		// i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
-		// i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
-		// i.putExtra(POIDetailsActivity.IMG, poi.getImage());
-		// i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
-		// i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
-		// i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
-		// i.putExtra(POIDetailsActivity.URL, poi.getUrl());
-		// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
-		// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
-		// activity.startActivity(i);
-		// } else {
-		// // throw exception
-		// }
-		// }
-		// });
-		// String desc = Utilities
-		// .capitalizeFirstLetters((p.getDescription() != null) ? p
-		// .getDescription() : "?");
-		//
-		// if (holder.preview != null) {
-		// if (arg0 == pos) {
-		//
-		// holder.previewLayout.setVisibility(View.VISIBLE);
-		// holder.optionsButton.setVisibility(View.VISIBLE);
-		// if (!(p instanceof OsmPOIStreet))
-		// holder.detailsButton.setVisibility(View.VISIBLE);
-		//
-		// holder.preview.setMapCenterFromLonLat(p);
-		// if ((getItem(arg0) instanceof OsmPOIStreet)) {
-		// holder.preview.setExtent(((OsmPOIStreet) p)
-		// .getBoundingBox());
-		// }
-		// } else {
-		// holder.previewLayout.setVisibility(View.GONE);
-		// holder.optionsButton.setVisibility(View.GONE);
-		// holder.detailsButton.setVisibility(View.GONE);
-		//
-		// }
-		// }
-		//
-		// // Bind the data efficiently with the holder.
-		// holder.text.setText(desc);
-		// final Point centerM = getCenterMercator();
-		//
-		// final double distance = centerM.distance(ConversionCoords.reproject(
-		// p.getX(), p.getY(), CRSFactory.getCRS("EPSG:4326"),
-		// CRSFactory.getCRS("EPSG:900913")));
-		// holder.dist.setText(activity.getResources()
-		// .getString(R.string.distance)
-		// + " "
-		// + formatter.format(formatKM(distance)) + " " + unit(distance));
-		// Bitmap b = bitmap;
-		// if (b == null) {
-		// if (p instanceof OsmPOI) {
-		// b = POICategoryIcon.getBitmap32ForCategory(((OsmPOI) p)
-		// .getCategory());
-		// } else {
-		// b = POICategoryIcon
-		// .getBitmap32ForCategory(POICategories.STREETS);
-		// }
-		// }
-		//
-		// holder.poiImg.setImageBitmap(b);
-		/************************************/
 		int realPosition = getRealPosition(arg0);
 
 		bindSectionHeader(convertView, realPosition, mDisplaySectionHeaders);
 		return convertView;
+	}
+	
+	protected Bitmap getBitmapCategory(POI p) {
+		Bitmap b = bitmap;
+		if (b == null) {
+			if (p instanceof OsmPOI) {
+				b = POICategoryIcon.getBitmapSearchCategory(((OsmPOI) p)
+						.getCategory());
+			} else {
+				b = POICategoryIcon
+						.getBitmapSearchCategory(POICategories.STREETS);
+			}
+		}
+		return b;
 	}
 
 	private void bindSectionHeader(View itemView, int position,

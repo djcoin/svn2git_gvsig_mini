@@ -106,9 +106,6 @@ public class SimpleFilter extends Filter {
 		ArrayList list = new ArrayList();
 		if (prefix.toString().contains(" ")) {
 
-			SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstOsmPOIProvider) activity
-					.getProvider()).getHelper().getRoot());
-
 			String desc = prefix.toString();
 			if (!desc.contains(" 'or' ") && !desc.contains(" 'and' ")) {
 				StringBuffer temp = buildQuery(desc,
@@ -122,16 +119,8 @@ public class SimpleFilter extends Filter {
 				desc = desc.replaceAll(" 'and' ", " AND ");
 			}
 
-			FullTextSearchResult result = root.getFullTextIndex().search(desc,
-					SpatialIndexRoot.DEFAULT_LANGUAGE,
-					SpatialIndexRoot.DEFAULT_MAX_RESULTS,
-					SpatialIndexRoot.DEFAULT_MAX_TIME);
-
-			final int size = result.hits.length;
-			for (int i = 0; i < size; i++) {
-				list.add(result.hits[i].getDocument());
-			}
-
+			list = ((PerstOsmPOIProvider) activity.getProvider())
+					.fullTextSearch(desc);
 			list = sortResults(list);
 
 			results.values = list;

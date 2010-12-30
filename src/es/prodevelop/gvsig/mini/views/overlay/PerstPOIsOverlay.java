@@ -79,6 +79,8 @@ import es.prodevelop.tilecache.renderer.MapRenderer;
 public class PerstPOIsOverlay extends MapOverlay implements
 		LayerChangedListener {
 
+	public final static String DEFAULT_NAME = "POIS_DEPRECATED";
+	
 	PerstPOIsRunnable poiTask;
 	ArrayList pois;
 	PerstOsmPOIProvider poiProvider;
@@ -95,8 +97,8 @@ public class PerstPOIsOverlay extends MapOverlay implements
 
 	private int indexPOI = -1;
 
-	public PerstPOIsOverlay(Context context, TileRaster tileRaster) {
-		super(context, tileRaster);
+	public PerstPOIsOverlay(Context context, TileRaster tileRaster, String name) {
+		super(context, tileRaster, name);
 		poiTask = new PerstPOIsRunnable((Map) context);
 		poiProvider = new PerstOsmPOIProvider("sdcard/gvSIG/pois/london"
 				+ File.separator + TestConstants.PERST_SIMPLE_R_DATABASE);
@@ -461,5 +463,12 @@ public class PerstPOIsOverlay extends MapOverlay implements
 			return e1 < e2;
 		}
 
+	}
+
+	@Override
+	public void onExtentChanged(Extent newExtent, int zoomLevel,
+			double resolution) {
+		// TODO Auto-generated method stub
+		
 	}
 }

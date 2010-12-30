@@ -23,12 +23,9 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 	private Bitmap HEALTH_EMERGENCY;
 	private Bitmap ACCOMODATION;
 	private Bitmap ROUTE;
-	private Bitmap PLACES;	
+	private Bitmap PLACES;
 
-	private PerstClusterPOIOverlay overlay;
-
-	public ResultSearchSymbolSelector(PerstClusterPOIOverlay overlay) {
-		this.overlay = overlay;
+	public ResultSearchSymbolSelector() {
 
 		TRANSPORTATION = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16s);
@@ -47,7 +44,8 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_health_hospital_16s);
 		ACCOMODATION = ResourceLoader
 				.getBitmap(R.drawable.p_accommodation_hotel_16s);
-		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16s);
+		ROUTE = ResourceLoader
+				.getBitmap(R.drawable.p_route_tourist_castle2_16s);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16s);
 	}
@@ -84,7 +82,7 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 				icon = this.ROUTE;
 			else if (cat.compareTo(POICategories.PLACES) == 0)
 				icon = this.PLACES;
-		}		
+		}
 
 		return icon;
 	}

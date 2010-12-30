@@ -63,8 +63,10 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
  */
 public class RouteOverlay extends MapOverlay {
 
-	public RouteOverlay(Context context, TileRaster tileRaster) {
-		super(context, tileRaster);
+	public final static String DEFAULT_NAME = "YOURS";
+	
+	public RouteOverlay(Context context, TileRaster tileRaster, String name) {
+		super(context, tileRaster, name);
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 		} catch (BaseException e) {
@@ -138,6 +140,19 @@ public class RouteOverlay extends MapOverlay {
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
 		}
+	}
+
+	@Override
+	public void onExtentChanged(Extent newExtent, int zoomLevel,
+			double resolution) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onLayerChanged(String layerName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -61,6 +61,7 @@ import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
+import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 
 /**
  * A very very simple abstraction of a GIS Layer
@@ -68,20 +69,23 @@ import es.prodevelop.gvsig.mini.map.GeoUtils;
  * @author rblanco
  *
  */
-public abstract class MapOverlay implements GeoUtils, Contextable {
+public abstract class MapOverlay implements GeoUtils, Contextable, ExtentChangedListener, LayerChangedListener {
 	
 	private TileRaster tileRaster;
 	private Context context;	
+	
+	private String name = "";
+	private boolean isVisible = true;
 	
 	/**
 	 * The constructor
 	 * @param context
 	 * @param tileRaster
 	 */
-	public MapOverlay(final Context context, final TileRaster tileRaster) {
+	public MapOverlay(final Context context, final TileRaster tileRaster, String name) {
 		this.context = context;
 		this.tileRaster = tileRaster;
-		
+		this.name = name;		
 	}
 
 	/**
@@ -175,4 +179,19 @@ public abstract class MapOverlay implements GeoUtils, Contextable {
 	 */
 	public abstract void destroy();
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
 }

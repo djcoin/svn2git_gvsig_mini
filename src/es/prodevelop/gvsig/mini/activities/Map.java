@@ -157,10 +157,13 @@ import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
+import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
+import es.prodevelop.gvsig.mini.views.overlay.MapOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
@@ -667,7 +670,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		try {			
+		try {
 			return super.onPrepareOptionsMenu(menu);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -1663,6 +1666,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						if (osmap.poiOverlay != null)
 							osmap.poiOverlay
 									.setCategories(POICategories.selected);
+
+						if (!POICategories.bookmarkSelected)
+							osmap.removeOverlay(BookmarkOverlay.DEFAULT_NAME);
+						else
+							osmap.addOverlay(new BookmarkOverlay(Map.this,
+									osmap, BookmarkOverlay.DEFAULT_NAME));
+
+						osmap.getOverlay(ResultSearchOverlay.DEFAULT_NAME)
+								.setVisible(POICategories.resultSearchSelected);
+
 						osmap.resumeDraw();
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
@@ -1681,21 +1694,25 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			/* Creating the main Overlay */
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
-						osmap);
+						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
 				try {
 					if (p == null)
-						p = new PerstClusterPOIOverlay(this, osmap);
+						p = new PerstClusterPOIOverlay(this, osmap,
+								PerstClusterPOIOverlay.DEFAULT_NAME);
 					this.osmap.poiOverlay = p;
-					this.osmap.getOverlays().add(p);
-					this.osmap.addExtentChangedListener(p);
+					this.osmap.addOverlay(p);
+
 				} catch (Exception e) {
-					
+
 				}
-				
-				this.osmap.getOverlays()
-						.add(new NameFinderOverlay(this, osmap));
-				this.osmap.getOverlays().add(new RouteOverlay(this, osmap));
-				this.osmap.getOverlays().add(mMyLocationOverlay);
+
+				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
+						ResultSearchOverlay.DEFAULT_NAME));
+				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
+						NameFinderOverlay.DEFAULT_NAME));
+				this.osmap.addOverlay(new RouteOverlay(this, osmap,
+						RouteOverlay.DEFAULT_NAME));
+				this.osmap.addOverlay(mMyLocationOverlay);
 			}
 
 			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
@@ -2610,7 +2627,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	}
 
 	private void processRouteAction(Intent i) {
-		if (i == null)			
+		if (i == null)
 			return;
 		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
 			this.calculateRoute();

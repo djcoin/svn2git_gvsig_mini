@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 436</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 437</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -266,6 +266,7 @@
     
     <string name="street_options">Street options</string>
     <string name="bookmark">Add bookmark</string>
+    <string name="bookmark_title">Bookmarks</string>
     <string name="remove_bookmark">Remove bookmark</string>
     <string name="street_view">Show street view</string>
     <string name="show_wiki">Show Wikipedia</string>
@@ -306,7 +307,10 @@
     <string name="bookmark_added">Bookmark added</string>
     <string name="bookmark_removed">Bookmark removed</string>
     <string name="bookmark_exists">Bookmark already exists</string>
-    <string name="bookmark_failed">Failed to remove bookmark</string>    
+    <string name="bookmark_failed">Failed to remove bookmark</string>
+    
+    <string name="poi_categories">POI categories</string>    
+    <string name="poi_layers">POI layers</string>        
     
     <string name="not_download_tiles">Due to possible restrictions in the layer license,
 		it is not allowed to use this functionality for this layer. You can switch

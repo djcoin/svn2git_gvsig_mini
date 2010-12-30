@@ -38,9 +38,13 @@
 
 package es.prodevelop.gvsig.mini.search.adapter;
 
+import android.graphics.Bitmap;
 import android.widget.Filter;
+import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.filter.BookmarkFilter;
 
@@ -109,6 +113,20 @@ public class BookmarkAdapter extends PinnedHeaderListAdapter {
 		super.notifyDataSetInvalidated();
 		activity.setTitle(activity.getResources().getString(R.string.bookmarks));
 		activity.setProgressBarIndeterminateVisibility(false);
+	}
+	
+	protected Bitmap getBitmapCategory(POI p) {
+		Bitmap b = bitmap;
+		if (b == null) {
+			if (p instanceof OsmPOI) {
+				b = POICategoryIcon.getBitmapFavForCategory(((OsmPOI) p)
+						.getCategory());
+			} else {
+				b = POICategoryIcon
+						.getBitmapFavForCategory(POICategories.PLACES);
+			}
+		}
+		return b;
 	}
 
 }

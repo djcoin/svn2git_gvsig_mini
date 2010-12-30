@@ -260,7 +260,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			this.instantiateTileProviderfromSettings();
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
-			acetate = new AcetateOverlay(context, this);
+			acetate = new AcetateOverlay(context, this,
+					AcetateOverlay.DEFAULT_NAME);
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
 					false, false);
 			this.setFocusable(true);
@@ -276,13 +277,61 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			log.log(Level.SEVERE, "onCreate:", e);
 		}
 	}
+	
+	public boolean containsOverlay(String name) {
+		final List<MapOverlay> overlays = this.mOverlays;
 
-	/**
-	 * 
-	 * @return A List of the current visible MapOverlays
-	 */
-	public List<MapOverlay> getOverlays() {
-		return this.mOverlays;
+		final int size = overlays.size();
+
+		MapOverlay overlay;
+		for (int i = 0; i < size; i++) {
+			overlay = overlays.get(i);
+			if (overlay.getName().compareTo(name) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addOverlay(MapOverlay overlay) {
+		if (containsOverlay(overlay.getName())) {
+			overlay.onLayerChanged("");
+		} else {
+			this.mOverlays.add(overlay);
+			extentChangedListeners.add(overlay);
+		}
+	}
+
+	public void removeOverlay(String name) {
+		final List<MapOverlay> overlays = this.mOverlays;
+
+		final int size = overlays.size();
+
+		MapOverlay overlay;
+		for (int i = 0; i < size; i++) {
+			overlay = overlays.get(i);
+			if (overlay.getName().compareTo(name) == 0) {
+				overlays.remove(i);
+				extentChangedListeners.remove(overlay);
+				overlay.destroy();
+				overlay = null;
+			}
+		}
+	}
+	
+	public MapOverlay getOverlay(String name) {
+		final List<MapOverlay> overlays = this.mOverlays;
+
+		final int size = overlays.size();
+
+		MapOverlay overlay;
+		for (int i = 0; i < size; i++) {
+			overlay = overlays.get(i);
+			if (overlay.getName().compareTo(name) == 0) {
+				return overlay;
+			}
+		}		
+		return null;
 	}
 
 	/**
@@ -1471,6 +1520,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// new LoadClusterIndexAsyncTask(this.map,
 			// this.poiOverlay.getPoiProvider())
 			// .execute(POICategories.CATEGORIES);
+
+			final List<MapOverlay> overlays = this.mOverlays;
+
+			final int length = overlays.size();
+
+			LayerChangedListener overlay;
+			for (int i = 0; i < length; i++) {
+				overlay = overlays.get(i);
+				overlay.onLayerChanged(layerName);
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onlayerchanged:", e);
 		} finally {
@@ -1914,8 +1973,6 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			log.log(Level.SEVERE, "cleanZoomRectangle", e);
 		}
 	}
-	
-	
 
 	@Override
 	public void invalidate() {
@@ -1928,18 +1985,18 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		resumeDraw();
 		super.postInvalidate();
 	}
-	
+
 	public void adjustViewToAccuracyIfNavigationMode(final float accuracy) {
-		try {			
+		try {
 			final MapRenderer renderer = this.getMRendererInfo();
 			Point center = renderer.center;
 			double[] xy = ConversionCoords.reproject(center.getX(),
 					center.getY(), CRSFactory.getCRS(renderer.getSRS()),
 					CRSFactory.getCRS("EPSG:900913"));
-			double minX = xy[0] - accuracy*1;
-			double maxX = xy[0] + accuracy*1;
-			double minY = xy[1] - accuracy*1;
-			double maxY = xy[1] + accuracy*1;
+			double minX = xy[0] - accuracy * 1;
+			double maxX = xy[0] + accuracy * 1;
+			double minY = xy[1] - accuracy * 1;
+			double maxY = xy[1] + accuracy * 1;
 
 			double[] minXY = ConversionCoords.reproject(minX, minY,
 					CRSFactory.getCRS("EPSG:900913"),
@@ -1948,8 +2005,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					CRSFactory.getCRS("EPSG:900913"),
 					CRSFactory.getCRS(renderer.getSRS()));
 
-			this.zoomToExtent(new Extent(minXY[0], minXY[1],
-					maxXY[0], maxXY[1]), true);
+			this.zoomToExtent(
+					new Extent(minXY[0], minXY[1], maxXY[0], maxXY[1]), true);
 		} catch (Exception ignore) {
 
 		}

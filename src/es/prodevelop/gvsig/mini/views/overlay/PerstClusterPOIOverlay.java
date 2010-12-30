@@ -69,8 +69,9 @@ import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.ViewPort;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.ClusterSymbolSelector;
-import es.prodevelop.gvsig.mini.symbol.ResultSearchSymbolSelector;
+import es.prodevelop.gvsig.mini.symbol.OsmPOISymbolSelector;
 import es.prodevelop.gvsig.mini.symbol.SymbolSelector;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -80,7 +81,9 @@ import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 public class PerstClusterPOIOverlay extends MapOverlay implements
-		LayerChangedListener, QuadtreeProviderListener, ExtentChangedListener {
+		QuadtreeProviderListener {
+	
+	public final static String DEFAULT_NAME = "POIS_CLUSTER";
 
 	ArrayList clusters = new ArrayList();
 	ArrayList pois = new ArrayList();
@@ -102,8 +105,8 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 	// Bitmap bufferBitmap;
 	// Canvas bufferCanvas.setBitmap(bufferBitmap);
 
-	public PerstClusterPOIOverlay(Context context, TileRaster tileRaster) {
-		super(context, tileRaster);
+	public PerstClusterPOIOverlay(Context context, TileRaster tileRaster, String name) {
+		super(context, tileRaster, name);
 		try {
 			poiProvider = new PerstOsmPOIClusterProvider(
 					Environment.getExternalStorageDirectory() + File.separator
@@ -112,12 +115,13 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 							.getMRendererInfo().getZOOM_MAXLEVEL()
 							- tileRaster.getMRendererInfo().getZoomMinLevel(),
 					this, tileRaster.getMRendererInfo().getZOOM_MAXLEVEL());
+			POIProviderManager.getInstance().registerPOIProvider(poiProvider);
 		} catch (BaseException e) {
 			// TODO Auto-generated catch block
 			Log.e("", e.getMessage());
 		} finally {
 			clusterSymbolSelector = new ClusterSymbolSelector(this);
-			poiSymbolSelector = new ResultSearchSymbolSelector(this);
+			poiSymbolSelector = new OsmPOISymbolSelector(this);
 
 			// TRANSPORTATION_POI = ResourceLoader
 			// .getBitmap(R.drawable.p_transportation_transport_bus_stop_16_poi);
@@ -494,7 +498,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 	}
 
 	protected void convertCoordinates(final String srsFrom, final String srsTo,
-			final ArrayList pois, final Cancellable cancellable) {		
+			final ArrayList pois, final Cancellable cancellable) {
 		if (pois == null)
 			return;
 		final int size = pois.size();
@@ -509,7 +513,7 @@ public class PerstClusterPOIOverlay extends MapOverlay implements
 			temp = (Point) p.clone();
 			temp.setX(xy[0]);
 			temp.setY(xy[1]);
-			pois.set(i, temp);			
+			pois.set(i, temp);
 		}
 	}
 
