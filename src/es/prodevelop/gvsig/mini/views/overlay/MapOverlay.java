@@ -54,44 +54,55 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.RelativeLayout;
 import es.prodevelop.gvsig.mini.context.Contextable;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
+import es.prodevelop.gvsig.mini.map.ViewPort;
 
 /**
  * A very very simple abstraction of a GIS Layer
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
-public abstract class MapOverlay implements GeoUtils, Contextable, ExtentChangedListener, LayerChangedListener {
-	
+public abstract class MapOverlay implements GeoUtils, Contextable,
+		ExtentChangedListener, LayerChangedListener {
+
 	private TileRaster tileRaster;
-	private Context context;	
-	
+	private Context context;
+
 	private String name = "";
 	private boolean isVisible = true;
-	
+
 	/**
 	 * The constructor
+	 * 
 	 * @param context
 	 * @param tileRaster
 	 */
-	public MapOverlay(final Context context, final TileRaster tileRaster, String name) {
+	public MapOverlay(final Context context, final TileRaster tileRaster,
+			String name) {
 		this.context = context;
 		this.tileRaster = tileRaster;
-		this.name = name;		
+		this.name = name;
 	}
 
 	/**
 	 * Called when drawing the TileRaster view
-	 * @param c The canvas to draw in
-	 * @param maps The TileRaster instance
+	 * 
+	 * @param c
+	 *            The canvas to draw in
+	 * @param maps
+	 *            The TileRaster instance
 	 */
 	public void onManagedDraw(final Canvas c, final TileRaster maps) {
 		onDraw(c, maps);
@@ -100,15 +111,21 @@ public abstract class MapOverlay implements GeoUtils, Contextable, ExtentChanged
 
 	/**
 	 * Draws the MapOVerlay
-	 * @param c The canvas to draw in
-	 * @param maps The TileRaster instance
+	 * 
+	 * @param c
+	 *            The canvas to draw in
+	 * @param maps
+	 *            The TileRaster instance
 	 */
 	protected abstract void onDraw(final Canvas c, final TileRaster maps);
 
 	/**
 	 * Actions to do after onDraw
-	 * @param c The canvas to draw in
-	 * @param maps The TileRaster instance
+	 * 
+	 * @param c
+	 *            The canvas to draw in
+	 * @param maps
+	 *            The TileRaster instance
 	 */
 	protected abstract void onDrawFinished(final Canvas c, final TileRaster maps);
 
@@ -137,47 +154,53 @@ public abstract class MapOverlay implements GeoUtils, Contextable, ExtentChanged
 	}
 
 	/**
-	 * Retrieves the nerest feature from the pressed pixel and pass them to TileRaster
+	 * Retrieves the nerest feature from the pressed pixel and pass them to
+	 * TileRaster
+	 * 
 	 * @param e
 	 * @param osmtile
 	 * @return
 	 */
 	public boolean onLongPress(MotionEvent e, TileRaster osmtile) {
-		try {
-			Pixel pixel = new Pixel((int)e.getX(), (int)e.getY());
+		try {			
+			Pixel pixel = new Pixel((int) e.getX(), (int) e.getY());
 			Feature f = getNearestFeature(pixel);
 			if (f != null) {
 				this.getTileRaster().setSelectedFeature(f);
 				return true;
 			} else {
+//				getTileRaster().map.getPopup().setVisibility(View.INVISIBLE);
 				this.getTileRaster().setSelectedFeature(null);
 				return false;
 			}
 		} catch (Exception ex) {
 			return false;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns the nearest Feature in the MapOverlay to a pixel x-y
+	 * 
 	 * @param pixel
 	 * @return
 	 */
 	public abstract Feature getNearestFeature(Pixel pixel);
-	
+
 	public Context getContext() {
 		return context;
 	}
-	
+
 	public TileRaster getTileRaster() {
 		return tileRaster;
 	}
-	
+
 	/**
 	 * Used to free memory
 	 */
-	public abstract void destroy();
+	public void destroy() {
+		
+	}
 
 	public String getName() {
 		return name;
@@ -193,5 +216,5 @@ public abstract class MapOverlay implements GeoUtils, Contextable, ExtentChanged
 
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
-	}
+	}		
 }

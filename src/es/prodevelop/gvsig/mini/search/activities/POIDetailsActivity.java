@@ -52,6 +52,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -94,6 +95,8 @@ public class POIDetailsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		try {
+			setTitle("POI info");
+
 			final DisplayMetrics metrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -179,8 +182,8 @@ public class POIDetailsActivity extends Activity {
 			MapPreview preview;
 			try {
 				preview = new MapPreview(this, CompatManager.getInstance()
-						.getRegisteredContext(), metrics.widthPixels,
-						metrics.heightPixels / 2);
+						.getRegisteredContext(), metrics.widthPixels
+						- (metrics.widthPixels / 10), metrics.heightPixels / 2);
 				l.addView(preview);
 				((LinearLayout) ((LinearLayout) layout)
 						.findViewById(R.id.map_preview)).addView(l, zzParams);
@@ -339,6 +342,8 @@ public class POIDetailsActivity extends Activity {
 			registerForContextMenu(t);
 
 			setContentView(layout);
+			getWindow().setLayout(LayoutParams.FILL_PARENT,
+					LayoutParams.FILL_PARENT);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}

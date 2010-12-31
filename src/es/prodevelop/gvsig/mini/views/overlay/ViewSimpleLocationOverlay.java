@@ -93,7 +93,7 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	public final static String DEFAULT_NAME = "LOCATION";
-	
+
 	protected Bitmap ob = null;
 	protected Bitmap PERSON_ICON = null;
 	public int rotation;
@@ -334,6 +334,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
+			if (this.mLocation == null)
+				return null;
 			log.log(Level.FINE,
 					"get Nearest feature viewsimplelocationoverlay: "
 							+ pixel.toString());
@@ -461,13 +463,13 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	public void onExtentChanged(Extent newExtent, int zoomLevel,
 			double resolution) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onLayerChanged(String layerName) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

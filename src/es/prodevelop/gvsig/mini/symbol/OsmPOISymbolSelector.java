@@ -2,10 +2,12 @@ package es.prodevelop.gvsig.mini.symbol;
 
 import android.graphics.Bitmap;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
+import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 
 public class OsmPOISymbolSelector extends SymbolSelector {
@@ -22,7 +24,7 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	private Bitmap HEALTH_EMERGENCY;
 	private Bitmap ACCOMODATION;
 	private Bitmap ROUTE;
-	private Bitmap PLACES;	
+	private Bitmap PLACES;
 
 	private PerstClusterPOIOverlay overlay;
 
@@ -53,7 +55,6 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 
 	@Override
 	public Bitmap getSymbol(Point point) {
-		
 
 		OsmPOI p = (OsmPOI) point;
 		Bitmap icon = null;
@@ -86,8 +87,12 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 
 	@Override
 	public String getText(Point p) {
-		// TODO Auto-generated method stub
-		return null;
+		String text = "";
+		if (p instanceof OsmPOI)
+			text = ((OsmPOI) p).getDescription();
+		else if (p instanceof OsmPOIStreet)
+			text = ((OsmPOIStreet) p).getDescription();
+		return Utilities.capitalizeFirstLetters(text);
 	}
 
 	@Override

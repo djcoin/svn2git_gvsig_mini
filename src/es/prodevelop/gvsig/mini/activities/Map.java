@@ -96,6 +96,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -160,9 +161,9 @@ import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
-import es.prodevelop.gvsig.mini.views.overlay.MapOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.PopupView;
 import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
@@ -1688,6 +1689,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			final RelativeLayout.LayoutParams sParams = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.FILL_PARENT,
 					RelativeLayout.LayoutParams.FILL_PARENT);
+
 			rl.addView(l, sParams);
 			rl.addView(sliding, sParams);
 
@@ -2811,6 +2813,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void clearContext() {
 		try {
+			if (c == null)
+				return;
 			final int size = c.getChildCount();
 
 			View child = null;
@@ -3136,8 +3140,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
+				if (this.sliding.isOpened()) {
+					this.sliding.close();
+					return true;
+				}
+
 				log.log(Level.FINE, "KEY BACK pressed");
 				if (!backpressedroulette) {
+
 					backpressed = true;
 					this.onDestroy();
 					Intent i = new Intent();

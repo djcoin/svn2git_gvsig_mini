@@ -208,7 +208,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public static boolean CLEAR_OFF_POIS = false;
 	private IContext androidContext;
 	private MotionEvent lastTouchEvent;
-	private Feature selectedFeature = null;
+	protected Feature selectedFeature = null;
 
 	Canvas bufferCanvas = new Canvas();
 	Bitmap bufferBitmap;
@@ -277,7 +277,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			log.log(Level.SEVERE, "onCreate:", e);
 		}
 	}
-	
+
 	public boolean containsOverlay(String name) {
 		final List<MapOverlay> overlays = this.mOverlays;
 
@@ -318,7 +318,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			}
 		}
 	}
-	
+
 	public MapOverlay getOverlay(String name) {
 		final List<MapOverlay> overlays = this.mOverlays;
 
@@ -330,7 +330,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			if (overlay.getName().compareTo(name) == 0) {
 				return overlay;
 			}
-		}		
+		}
 		return null;
 	}
 
@@ -738,6 +738,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		try {
+			final int size = this.mOverlays.size();
+			int i = 0;
+			MapOverlay overlay;
+
 			resumeDraw();
 			if (map.isPOISlideShown)
 				return true;
@@ -748,8 +752,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				lastTouchEventProcessed = false;
 			}
 			if (!map.navigation) {
-				for (MapOverlay osmvo : this.mOverlays)
-					osmvo.onTouchEvent(event, this);
+				for (i = 0; i < size; i++) {
+					overlay = this.mOverlays.get(i);
+					overlay.onTouchEvent(event, this);
+				}
 				// return true;
 
 				this.mGestureDetector.onTouchEvent(event);
@@ -1277,6 +1283,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				return false;
 
 			try {
+				if (acetate.onSingleTapUp(e, TileRaster.this))
+					return true;
 				for (MapOverlay osmvo : TileRaster.this.mOverlays)
 					if (osmvo.onSingleTapUp(e, TileRaster.this))
 						return true;
@@ -1291,8 +1299,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent arg0) {
-			// TODO Auto-generated method stub
 			return false;
+
 		}
 	}
 
@@ -2365,6 +2373,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		ViewPort.mapWidth = width;
 		this.centerPixelX = width / 2;
 		this.centerPixelY = height / 2;
+
+		acetate.getPopup().setMaxSize(width, height);
 	}
 
 	boolean scaleCanvasForZoom() {

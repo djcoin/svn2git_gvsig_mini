@@ -7,6 +7,7 @@ import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 
 public class ResultSearchSymbolSelector extends SymbolSelector {
@@ -89,8 +90,12 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 
 	@Override
 	public String getText(Point p) {
-		// TODO Auto-generated method stub
-		return null;
+		String text = "";
+		if (p instanceof OsmPOI)
+			text = ((OsmPOI) p).getDescription();
+		else if (p instanceof OsmPOIStreet)
+			text = ((OsmPOIStreet) p).getDescription();
+		return Utilities.capitalizeFirstLetters(text);
 	}
 
 	@Override

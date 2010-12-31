@@ -7,6 +7,7 @@ import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 
 public class BookmarkSymbolSelector extends SymbolSelector {
@@ -23,10 +24,10 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 	private Bitmap HEALTH_EMERGENCY;
 	private Bitmap ACCOMODATION;
 	private Bitmap ROUTE;
-	private Bitmap PLACES;	
+	private Bitmap PLACES;
 
 	public BookmarkSymbolSelector() {
-		
+
 		TRANSPORTATION = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16f);
 		TOURISM = ResourceLoader
@@ -44,7 +45,8 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_health_hospital_16f);
 		ACCOMODATION = ResourceLoader
 				.getBitmap(R.drawable.p_accommodation_hotel_16f);
-		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16f);
+		ROUTE = ResourceLoader
+				.getBitmap(R.drawable.p_route_tourist_castle2_16f);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16f);
 	}
@@ -81,15 +83,19 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 				icon = this.ROUTE;
 			else if (cat.compareTo(POICategories.PLACES) == 0)
 				icon = this.PLACES;
-		}		
+		}
 
 		return icon;
 	}
 
 	@Override
 	public String getText(Point p) {
-		// TODO Auto-generated method stub
-		return null;
+		String text = "";
+		if (p instanceof OsmPOI)
+			text = ((OsmPOI) p).getDescription();
+		else if (p instanceof OsmPOIStreet)
+			text = ((OsmPOIStreet) p).getDescription();
+		return Utilities.capitalizeFirstLetters(text);
 	}
 
 	@Override
