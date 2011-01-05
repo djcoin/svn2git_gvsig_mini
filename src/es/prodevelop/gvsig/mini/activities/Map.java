@@ -1681,7 +1681,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
 					} catch (Exception e) {
-						Log.e("", e.getMessage());
+						// Log.e("", e.getMessage());
 					}
 				}
 			});
@@ -1700,7 +1700,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				try {
 					if (p == null)
 						p = new PerstClusterPOIOverlay(this, osmap,
-								PerstClusterPOIOverlay.DEFAULT_NAME);
+								PerstClusterPOIOverlay.DEFAULT_NAME, true);
 					this.osmap.poiOverlay = p;
 					this.osmap.addOverlay(p);
 

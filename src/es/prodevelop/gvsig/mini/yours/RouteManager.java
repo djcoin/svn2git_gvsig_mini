@@ -6,6 +6,10 @@ public class RouteManager {
 	private Route route;
 	
 	public final static String ROUTE_MODIFIED = "ROUTE MODIFIED";
+	
+	private RouteManager() {
+		registerRoute(new Route());
+	}
 
 	public static RouteManager getInstance() {
 		if (instance == null) {

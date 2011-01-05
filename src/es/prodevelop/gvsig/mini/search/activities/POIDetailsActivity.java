@@ -62,6 +62,7 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.MapPreview;
 import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
@@ -336,8 +337,8 @@ public class POIDetailsActivity extends Activity {
 			// set X
 			t = (TextView) layout.findViewById(R.id.t_xy_value);
 
-			t.setText(String.valueOf(poi.getX()) + ","
-					+ String.valueOf(poi.getY()));
+			Point p = Point.parseString(poi.toShortString(2));
+			t.setText(String.valueOf(p.getX()) + "," + String.valueOf(p.getY()));
 			t.setVisibility(View.VISIBLE);
 			registerForContextMenu(t);
 

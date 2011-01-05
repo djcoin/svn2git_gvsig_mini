@@ -99,7 +99,7 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 	}
 
 	@Override
-	public int[] getMidSymbol() {
+	public int[] getMidSymbol(Point p) {
 		return midIcon;
 	}
 

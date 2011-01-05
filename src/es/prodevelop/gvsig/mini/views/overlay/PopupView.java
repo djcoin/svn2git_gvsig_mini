@@ -17,19 +17,20 @@ public class PopupView extends View {
 	private Bitmap right;
 	private Bitmap arrow;
 
-	private int x = 100;
-	private int y = 100;
+	private int x = 0;
+	private int y = 0;
 
 	private int textWidth = 0;
-	private String text = "sadfadf ";
+	private String text = "";
 	private Rect bounds = new Rect();
 
 	int offsetY = 2;
 
 	int maxX;
 	int maxY;
-//	int panX;
-//	int panY;
+
+	// int panX;
+	// int panY;
 
 	public PopupView(Context context) {
 		super(context);
@@ -86,8 +87,8 @@ public class PopupView extends View {
 	@Override
 	protected void dispatchDraw(final Canvas canvas) {
 		try {
-//			int x = (panX != 0) ? panX : this.x;
-//			int y = (panY != 0) ? panY : this.y;
+			// int x = (panX != 0) ? panX : this.x;
+			// int y = (panY != 0) ? panY : this.y;
 
 			if (this.getVisibility() == View.VISIBLE
 					&& text.trim().length() > 0) {
@@ -95,7 +96,7 @@ public class PopupView extends View {
 			} else {
 				return;
 			}
-			Log.d("", "drawPopup");
+//			Log.d("", "drawPopup");
 
 			int size = getParts();
 
@@ -196,17 +197,17 @@ public class PopupView extends View {
 		return false;
 	}
 
-//	public void updatePos(int x, int y) {
-//		panX = this.x + x;
-//		panY = this.y + y;
-//		invalidate();
-//	}
-//
-//	public void incrementPos(int x, int y) {
-//		panX = 0;
-//		panY = 0;
-//		this.x += x;
-//		this.y += y;
-//		invalidate();
-//	}
+	// public void updatePos(int x, int y) {
+	// panX = this.x + x;
+	// panY = this.y + y;
+	// invalidate();
+	// }
+	//
+	// public void incrementPos(int x, int y) {
+	// panX = 0;
+	// panY = 0;
+	// this.x += x;
+	// this.y += y;
+	// invalidate();
+	// }
 }

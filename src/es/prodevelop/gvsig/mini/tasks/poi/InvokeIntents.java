@@ -39,20 +39,26 @@
 
 package es.prodevelop.gvsig.mini.tasks.poi;
 
+import java.text.DecimalFormat;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import es.prodevelop.android.spatialindex.poi.OsmPOI;
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.activities.BookmarkPOIActivity;
 import es.prodevelop.gvsig.mini.search.activities.FindPOISNearActivity;
 import es.prodevelop.gvsig.mini.search.activities.FindStreetsNearActivity;
+import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 
 public class InvokeIntents {
 
@@ -65,6 +71,45 @@ public class InvokeIntents {
 		} catch (Exception e) {
 			Log.e("", "Failed to invoke call", e);
 		}
+	}
+
+	public static void fillIntentPOIDetails(POI p, Point centerMercator,
+			Intent i) {
+		DecimalFormat formatter = new DecimalFormat("####.00");
+		if (p != null && p instanceof OsmPOI) {
+			OsmPOI poi = (OsmPOI) p;
+			double[] xy = ConversionCoords.reproject(centerMercator.getX(),
+					centerMercator.getY(), CRSFactory.getCRS("EPSG:900913"),
+					CRSFactory.getCRS("EPSG:4326"));
+			centerMercator.setX(xy[0]);
+			centerMercator.setY(xy[1]);
+			final double distance = Calculator.latLonDist(p.getX(), p.getY(),
+					centerMercator.getX(), centerMercator.getY());
+			// final double distance = centerMercator.distance(ConversionCoords
+			// .reproject(p.getX(), p.getY(),
+			// CRSFactory.getCRS("EPSG:4326"),
+			// CRSFactory.getCRS("EPSG:900913")));
+			String dist = formatter.format(formatKM(distance)) + " "
+					+ unit(distance);
+			i.putExtra(POIDetailsActivity.X, poi.getX());
+			i.putExtra(POIDetailsActivity.Y, poi.getY());
+			i.putExtra(POIDetailsActivity.DIST, dist);
+			i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
+			i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
+			i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
+			i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
+			i.putExtra(POIDetailsActivity.IMG, poi.getImage());
+			i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
+			i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
+			i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
+			i.putExtra(POIDetailsActivity.URL, poi.getUrl());
+			i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
+			i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+
+		} else {
+			// throw exception
+		}
+
 	}
 
 	public static void invokeURI(Context context, String uri) {
@@ -103,15 +148,30 @@ public class InvokeIntents {
 		i.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
 		context.startActivity(i);
 	}
-	
-	public static void launchListBookmarks(Context context, double[] centerMercator) {
-		Intent mainIntent = new Intent(context,
-				BookmarkPOIActivity.class);		
+
+	public static void launchListBookmarks(Context context,
+			double[] centerMercator) {
+		Intent mainIntent = new Intent(context, BookmarkPOIActivity.class);
 		mainIntent.putExtra("lon", centerMercator[0]);
 		mainIntent.putExtra("lat", centerMercator[1]);
 		mainIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
 		mainIntent.putExtra(ResultSearchActivity.QUERY, "");
 		context.startActivity(mainIntent);
+	}
+
+	private static double formatKM(double meterDistance) {
+		if (meterDistance > 1000) {
+			return meterDistance / 1000;
+		}
+		return meterDistance;
+	}
+
+	private static String unit(double meterDistance) {
+		if (meterDistance > 1000) {
+			return "Km.";
+		}
+		return "m.";
+		// return"";
 	}
 
 }

@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
@@ -69,7 +68,7 @@ public class PointOverlay extends MapOverlay {
 			final int size = pois.size();
 
 			for (int i = 0; i < size; i++) {
-				POI p = (POI) pois.get(i);
+				Point p = (Point) pois.get(i);
 				draw(p, renderer, c);
 			}
 		}
@@ -87,7 +86,7 @@ public class PointOverlay extends MapOverlay {
 					.toPixels(new double[] { p.getX(), p.getY() });
 
 			Bitmap icon = getSymbolSelector().getSymbol(p);
-			int[] midIcon = getSymbolSelector().getMidSymbol();
+			int[] midIcon = getSymbolSelector().getMidSymbol(p);
 
 			if (icon != null)
 				c.drawBitmap(icon, coords[0] - midIcon[0], coords[1]
@@ -122,8 +121,12 @@ public class PointOverlay extends MapOverlay {
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
-		if (isVisible())
-			draw(getPoints(), maps.getMRendererInfo(), c);
+		try {
+			if (isVisible())
+				draw(getPoints(), maps.getMRendererInfo(), c);
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
 	}
 
 	@Override
@@ -216,17 +219,22 @@ public class PointOverlay extends MapOverlay {
 	}
 
 	public void updatePopup(Point p) {
-		if (p == null)
+		if (p == null) {
+			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
 			return;
+		}
+
 		String text = getSymbolSelector().getText(p);
 		int[] coords = getTileRaster().getMRendererInfo().toPixels(
 				new double[] { p.getX(), p.getY() });
-		getTileRaster().acetate.setPopupPos(coords[0], coords[1]
-				- getSymbolSelector().getMidSymbol()[1]);
+		getTileRaster().acetate.setPopupPos(coords[0]
+				- getSymbolSelector().getMidSymbol(p)[0], coords[1]
+				- getSymbolSelector().getMidSymbol(p)[1]);
 		getTileRaster().acetate.setPopupText(text);
 		getTileRaster().acetate.setPopupVisibility(View.VISIBLE);
-		getTileRaster().acetate.popupOffsetX = getSymbolSelector().getSymbol(p)
-				.getWidth() / 2;
+		// getTileRaster().acetate.popupOffsetX =
+		// getSymbolSelector().getSymbol(p)
+		// .getWidth() / 2;
 		getTileRaster().acetate.popupOffsetY = getSymbolSelector().getSymbol(p)
 				.getHeight();
 	}

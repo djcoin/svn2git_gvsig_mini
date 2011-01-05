@@ -87,6 +87,12 @@ public class ResourceLoader {
 			if (imgs != null)
 				return;
 			imgs = new Hashtable();
+			imgs.put(R.drawable.add_16, BitmapFactory.decodeResource(
+					context.getResources(), R.drawable.add_16));
+			imgs.put(R.drawable.add_48, BitmapFactory.decodeResource(
+					context.getResources(), R.drawable.add_48));
+			imgs.put(R.drawable.add_8, BitmapFactory.decodeResource(
+					context.getResources(), R.drawable.add_8));
 			imgs.put(R.drawable.gps_arrow, BitmapFactory.decodeResource(
 					context.getResources(), R.drawable.gps_arrow));
 			imgs.put(R.drawable.zoom_scales, BitmapFactory.decodeResource(
@@ -160,7 +166,7 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_16,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_16));
-			
+
 			// POIs 24
 			imgs.put(R.drawable.p_accommodation_hotel_24, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -230,7 +236,7 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_32,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_32));
-			
+
 			// POIs bookmark
 			imgs.put(R.drawable.p_accommodation_hotel_16f, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -250,8 +256,8 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_public_buildings_tourist_monument_16f,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_public_buildings_tourist_monument_16f));
-			imgs.put(R.drawable.p_recreation_sport_playground_16f, BitmapFactory
-					.decodeResource(context.getResources(),
+			imgs.put(R.drawable.p_recreation_sport_playground_16f,
+					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_recreation_sport_playground_16f));
 			imgs.put(R.drawable.p_route_tourist_castle2_16f, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -265,7 +271,7 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_16f,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_16f));
-			
+
 			// POIs search
 			imgs.put(R.drawable.p_accommodation_hotel_16s, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -285,8 +291,8 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_public_buildings_tourist_monument_16s,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_public_buildings_tourist_monument_16s));
-			imgs.put(R.drawable.p_recreation_sport_playground_16s, BitmapFactory
-					.decodeResource(context.getResources(),
+			imgs.put(R.drawable.p_recreation_sport_playground_16s,
+					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_recreation_sport_playground_16s));
 			imgs.put(R.drawable.p_route_tourist_castle2_16s, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -300,7 +306,7 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_16s,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_16s));
-			
+
 			// Cluster 18
 			imgs.put(R.drawable.p_accommodation_hotel_18b, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -320,8 +326,8 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_public_buildings_tourist_monument_18b,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_public_buildings_tourist_monument_18b));
-			imgs.put(R.drawable.p_recreation_sport_playground_18b, BitmapFactory
-					.decodeResource(context.getResources(),
+			imgs.put(R.drawable.p_recreation_sport_playground_18b,
+					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_recreation_sport_playground_18b));
 			imgs.put(R.drawable.p_route_tourist_castle2_18b, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -335,42 +341,42 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_transportation_transport_bus_stop_18b,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_transportation_transport_bus_stop_18b));
-			
+
 			// Cluster 38
-			imgs.put(R.drawable.p_accommodation_hotel_38b, BitmapFactory
+			imgs.put(R.drawable.p_accommodation_hotel_22b, BitmapFactory
 					.decodeResource(context.getResources(),
-							R.drawable.p_accommodation_hotel_38b));
-			imgs.put(R.drawable.p_arts_culture_tourist_theatre_38b,
+							R.drawable.p_accommodation_hotel_22b));
+			imgs.put(R.drawable.p_arts_culture_tourist_theatre_22b,
 					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_arts_culture_tourist_theatre_38b));
-			imgs.put(R.drawable.p_food_restaurant_38b, BitmapFactory
+							R.drawable.p_arts_culture_tourist_theatre_22b));
+			imgs.put(R.drawable.p_food_restaurant_22b, BitmapFactory
 					.decodeResource(context.getResources(),
-							R.drawable.p_food_restaurant_38b));
-			imgs.put(R.drawable.p_health_hospital_38b, BitmapFactory
+							R.drawable.p_food_restaurant_22b));
+			imgs.put(R.drawable.p_health_hospital_22b, BitmapFactory
 					.decodeResource(context.getResources(),
-							R.drawable.p_health_hospital_38b));
-			imgs.put(R.drawable.p_places_poi_place_city_38b, BitmapFactory
+							R.drawable.p_health_hospital_22b));
+			imgs.put(R.drawable.p_places_poi_place_city_22b, BitmapFactory
 					.decodeResource(context.getResources(),
-							R.drawable.p_places_poi_place_city_38b));
-			imgs.put(R.drawable.p_public_buildings_tourist_monument_38b,
+							R.drawable.p_places_poi_place_city_22b));
+			imgs.put(R.drawable.p_public_buildings_tourist_monument_22b,
 					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_public_buildings_tourist_monument_38b));
-			imgs.put(R.drawable.p_recreation_sport_playground_38b, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_recreation_sport_playground_38b));
-			imgs.put(R.drawable.p_route_tourist_castle2_38b, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_route_tourist_castle2_38b));
-			imgs.put(R.drawable.p_shops_shopping_supermarket_38b, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_shops_shopping_supermarket_38b));
-			imgs.put(R.drawable.p_tourism_tourist_attraction_38b, BitmapFactory
-					.decodeResource(context.getResources(),
-							R.drawable.p_tourism_tourist_attraction_38b));
-			imgs.put(R.drawable.p_transportation_transport_bus_stop_38b,
+							R.drawable.p_public_buildings_tourist_monument_22b));
+			imgs.put(R.drawable.p_recreation_sport_playground_22b,
 					BitmapFactory.decodeResource(context.getResources(),
-							R.drawable.p_transportation_transport_bus_stop_38b));
-			
+							R.drawable.p_recreation_sport_playground_22b));
+			imgs.put(R.drawable.p_route_tourist_castle2_22b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_route_tourist_castle2_22b));
+			imgs.put(R.drawable.p_shops_shopping_supermarket_22b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_shops_shopping_supermarket_22b));
+			imgs.put(R.drawable.p_tourism_tourist_attraction_22b, BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.p_tourism_tourist_attraction_22b));
+			imgs.put(R.drawable.p_transportation_transport_bus_stop_22b,
+					BitmapFactory.decodeResource(context.getResources(),
+							R.drawable.p_transportation_transport_bus_stop_22b));
+
 			// Cluster 28
 			imgs.put(R.drawable.p_accommodation_hotel_28b, BitmapFactory
 					.decodeResource(context.getResources(),
@@ -390,8 +396,8 @@ public class ResourceLoader {
 			imgs.put(R.drawable.p_public_buildings_tourist_monument_28b,
 					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_public_buildings_tourist_monument_28b));
-			imgs.put(R.drawable.p_recreation_sport_playground_28b, BitmapFactory
-					.decodeResource(context.getResources(),
+			imgs.put(R.drawable.p_recreation_sport_playground_28b,
+					BitmapFactory.decodeResource(context.getResources(),
 							R.drawable.p_recreation_sport_playground_28b));
 			imgs.put(R.drawable.p_route_tourist_castle2_28b, BitmapFactory
 					.decodeResource(context.getResources(),

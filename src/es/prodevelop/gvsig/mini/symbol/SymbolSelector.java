@@ -9,5 +9,5 @@ public abstract class SymbolSelector {
 
 	public abstract String getText(Point p);
 
-	public abstract int[] getMidSymbol();
+	public abstract int[] getMidSymbol(Point p);
 }

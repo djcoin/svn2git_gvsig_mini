@@ -55,47 +55,48 @@ public class ClusterSymbolSelector extends SymbolSelector {
 		this.overlay = overlay;
 		STREET = null;
 		TRANSPORTATION = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_28b);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_22b);
 		TOURISM = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_28b);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_22b);
 		RECREATION = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_28b);
-		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_28b);
+				.getBitmap(R.drawable.p_recreation_sport_playground_22b);
+		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_22b);
 		PUBLIC_BUILDINGS = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_28b);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_22b);
 		ARTS_CULTURE = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_28b);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_22b);
 		SHOPS = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_28b);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_22b);
 		HEALTH_EMERGENCY = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_28b);
+				.getBitmap(R.drawable.p_health_hospital_22b);
 		ACCOMODATION = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_28b);
-		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_28b);
+				.getBitmap(R.drawable.p_accommodation_hotel_22b);
+		ROUTE = ResourceLoader
+				.getBitmap(R.drawable.p_route_tourist_castle2_22b);
 		PLACES = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_28b);
+				.getBitmap(R.drawable.p_places_poi_place_city_22b);
 
 		TRANSPORTATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_38b);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_28b);
 		TOURISM_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_38b);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_28b);
 		RECREATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_38b);
-		FOOD_BIG = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_38b);
+				.getBitmap(R.drawable.p_recreation_sport_playground_28b);
+		FOOD_BIG = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_28b);
 		PUBLIC_BUILDINGS_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_38b);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_28b);
 		ARTS_CULTURE_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_38b);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_28b);
 		SHOPS_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_38b);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_28b);
 		HEALTH_EMERGENCY_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_38b);
+				.getBitmap(R.drawable.p_health_hospital_28b);
 		ACCOMODATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_38b);
+				.getBitmap(R.drawable.p_accommodation_hotel_28b);
 		ROUTE_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_route_tourist_castle2_38b);
+				.getBitmap(R.drawable.p_route_tourist_castle2_28b);
 		PLACES_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_38b);
+				.getBitmap(R.drawable.p_places_poi_place_city_28b);
 
 		TRANSPORTATION_SMALL = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_18b);
@@ -103,8 +104,7 @@ public class ClusterSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_tourism_tourist_attraction_18b);
 		RECREATION_SMALL = ResourceLoader
 				.getBitmap(R.drawable.p_recreation_sport_playground_18b);
-		FOOD_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_food_restaurant_18b);
+		FOOD_SMALL = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_18b);
 		PUBLIC_BUILDINGS_SMALL = ResourceLoader
 				.getBitmap(R.drawable.p_public_buildings_tourist_monument_18b);
 		ARTS_CULTURE_SMALL = ResourceLoader
@@ -238,12 +238,14 @@ public class ClusterSymbolSelector extends SymbolSelector {
 
 	@Override
 	public String getText(Point p) {
-		return null;
+		return "";
 	}
 
 	@Override
-	public int[] getMidSymbol() {
+	public int[] getMidSymbol(Point p) {
+		Bitmap b = getSymbol(p);
+		midIcon = new int[] { (int) (b.getWidth() / 2),
+				(int) (b.getHeight() / 2) };
 		return midIcon;
 	}
-
 }

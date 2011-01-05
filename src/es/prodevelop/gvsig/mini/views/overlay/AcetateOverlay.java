@@ -62,6 +62,7 @@ import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
+import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 /**
@@ -77,6 +78,7 @@ public class AcetateOverlay extends MapOverlay {
 	int touchCounter = 0;
 	final static int TOUCH_COUNTER = 20;
 	public final static String DEFAULT_NAME = "ACETATE";
+	private int lastZoomLevel = -1;
 
 	private PopupView popupView;
 
@@ -118,21 +120,28 @@ public class AcetateOverlay extends MapOverlay {
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		try {
-			final Feature feature = maps.selectedFeature;
+			if (lastZoomLevel == -1 || lastZoomLevel == maps.getZoomLevel()) {
 
-			if (feature == null)
-				return;
+				final Feature feature = maps.selectedFeature;
 
-			IGeometry f = feature.getGeometry();
+				if (feature == null)
+					return;
 
-			if (f != null && f instanceof Point) {
-				Point p = (Point) f;
-				int[] xy = maps.getMRendererInfo().toPixels(
-						new double[] { p.getX(), p.getY() });
-				popupView.setPos(xy[0] + popupOffsetX, xy[1] - popupOffsetY);
+				IGeometry f = feature.getGeometry();
+
+				if (f != null && f instanceof Point) {
+					Point p = (Point) f;
+					int[] xy = maps.getMRendererInfo().toPixels(
+							new double[] { p.getX(), p.getY() });
+					popupView
+							.setPos(xy[0] + popupOffsetX, xy[1] - popupOffsetY);
+				}
+
+				popupView.dispatchDraw(c);
+
+			} else {
+				this.setPopupVisibility(View.INVISIBLE);
 			}
-
-			popupView.dispatchDraw(c);
 
 			// FIXME
 			// if (drawZoomRectangle && rectangle != null) {
@@ -303,6 +312,10 @@ public class AcetateOverlay extends MapOverlay {
 					&& f.getGeometry() instanceof OsmPOI) {
 
 				OsmPOI poi = (OsmPOI) f.getGeometry();
+				double[] xy = ConversionCoords.reproject(poi.getX(),
+						poi.getY(), CRSFactory.getCRS(getTileRaster()
+								.getMRendererInfo().getSRS()), CRSFactory
+								.getCRS("EPSG:4326"));
 				// final Point centerM = getTileRaster().getCenterMercator();
 				// final double distance = centerM.distance(ConversionCoords
 				// .reproject(poi.getX(), poi.getY(),
@@ -310,9 +323,10 @@ public class AcetateOverlay extends MapOverlay {
 				// CRSFactory.getCRS("EPSG:900913")));
 				// String dist = formatter.format(formatKM(distance)) + " "
 				// + unit(distance);
+				
 				String dist = "FIX ME";
-				i.putExtra(POIDetailsActivity.X, poi.getX());
-				i.putExtra(POIDetailsActivity.Y, poi.getY());
+				i.putExtra(POIDetailsActivity.X, xy[0]);
+				i.putExtra(POIDetailsActivity.Y, xy[1]);
 				i.putExtra(POIDetailsActivity.DIST, dist);
 				i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
 				i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
@@ -397,7 +411,8 @@ public class AcetateOverlay extends MapOverlay {
 	@Override
 	public void onExtentChanged(Extent newExtent, int zoomLevel,
 			double resolution) {
-		// TODO Auto-generated method stub
+		if (lastZoomLevel != zoomLevel)
+			setPopupVisibility(View.INVISIBLE);
 
 	}
 
@@ -413,6 +428,7 @@ public class AcetateOverlay extends MapOverlay {
 
 	public void setPopupVisibility(int visibility) {
 		getPopup().setVisibility(visibility);
+		lastZoomLevel = getTileRaster().getZoomLevel();
 		getTileRaster().resumeDraw();
 	}
 

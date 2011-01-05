@@ -10,6 +10,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POI;
@@ -237,6 +238,13 @@ public class BookmarkOverlay extends PointOverlay implements
 	@Override
 	public void onStreetRemoved(OsmPOIStreet street) {
 		onLayerChanged("");
+	}
+
+	@Override
+	public void onClusterExpanded(Collection pois, boolean clearPrevious,
+			Cancellable cancellable, Cluster clusterExpanded) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

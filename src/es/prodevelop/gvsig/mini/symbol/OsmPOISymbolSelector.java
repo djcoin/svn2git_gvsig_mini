@@ -8,7 +8,6 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
-import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 
 public class OsmPOISymbolSelector extends SymbolSelector {
 
@@ -26,11 +25,8 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	private Bitmap ROUTE;
 	private Bitmap PLACES;
 
-	private PerstClusterPOIOverlay overlay;
-
-	public OsmPOISymbolSelector(PerstClusterPOIOverlay overlay) {
-		this.overlay = overlay;
-
+	public OsmPOISymbolSelector() {
+		
 		TRANSPORTATION = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
 		TOURISM = ResourceLoader
@@ -96,7 +92,7 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	}
 
 	@Override
-	public int[] getMidSymbol() {
+	public int[] getMidSymbol(Point p) {
 		return midIcon;
 	}
 
