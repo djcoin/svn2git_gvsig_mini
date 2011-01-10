@@ -71,6 +71,7 @@ import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 import es.prodevelop.gvsig.mini.search.adapter.CheckboxExpandableListAdapter;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class SearchExpandableActivity extends ExpandableListActivity implements
@@ -98,7 +99,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			if (POIProviderManager.getInstance().getPOIProvider() == null)
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/gvSIG/pois/london/"
+								new PerstOsmPOIClusterProvider("/sdcard/" + Utils.TEST_POI_DIR + "/"
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			provider = POIProviderManager.getInstance().getPOIProvider();

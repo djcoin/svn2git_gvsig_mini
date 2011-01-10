@@ -68,6 +68,7 @@ import es.prodevelop.gvsig.mini.symbol.ClusterSymbolSelector;
 import es.prodevelop.gvsig.mini.symbol.OsmPOISymbolSelector;
 import es.prodevelop.gvsig.mini.symbol.SymbolSelector;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -100,7 +101,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 			if (isCluster) {
 				poiProvider = new PerstOsmPOIClusterProvider(
 						Environment.getExternalStorageDirectory()
-								+ File.separator + "gvSIG/pois/london"
+								+ File.separator + Utils.TEST_POI_DIR
 								+ File.separator
 								+ "perst_streets_cluster_cat.db", tileRaster
 								.getMRendererInfo().getZOOM_MAXLEVEL()
