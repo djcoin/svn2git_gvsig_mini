@@ -337,7 +337,7 @@ public class POIDetailsActivity extends Activity {
 			// set X
 			t = (TextView) layout.findViewById(R.id.t_xy_value);
 
-			Point p = Point.parseString(poi.toShortString(2));
+			Point p = Point.parseString(poi.toShortString(4));
 			t.setText(String.valueOf(p.getX()) + "," + String.valueOf(p.getY()));
 			t.setVisibility(View.VISIBLE);
 			registerForContextMenu(t);

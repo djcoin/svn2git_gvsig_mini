@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
@@ -32,6 +33,8 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	private QuadtreeProviderListener clusterRemovedListener;
 	private boolean showRect = false;
 
+	private String cat = "";
+
 	public ExpandedClusterOverlay(Context context, TileRaster tileRaster,
 			String name, Cluster clusterToExpand, boolean showRect) {
 		super(context, tileRaster, name);
@@ -41,10 +44,12 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		mPoiProvider = POIProviderManager.getInstance().getPOIProvider();
 		// this.setName(String.valueOf(clusterToExpand.getID()));
 		setSymbolSelector(new OsmPOISymbolSelector());
+		cat = name.split("_")[0];
 	}
 
 	public void getPOIsOfClusterAsynch() {
 		try {
+			if (checkRemove()) return;
 			mPoiProvider.expandClusterAsynch(mClusterToExpand, this);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
@@ -63,6 +68,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	@Override
 	public void onPOISRetrieved(Collection pois, boolean clearPrevious,
 			Cancellable cancellable) {
+		if (checkRemove()) return;
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), (ArrayList) pois, cancellable);
 		this.setPoints((ArrayList) pois);
@@ -90,13 +96,22 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	public QuadtreeProviderListener getClusterRemovedListener() {
 		return clusterRemovedListener;
 	}
+	
+	private boolean checkRemove() {
+		if (!POICategories.selected.contains(cat)) {
+			getTileRaster().removeOverlay(getName());
+			destroy();
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		super.onDraw(c, maps);
 		final MapRenderer renderer = getTileRaster().getMRendererInfo();
-
-		if (!showRect || !isVisible())
+		
+		if (!showRect || !isVisible() || checkRemove())
 			return;
 		Extent boundingBox = this.mClusterToExpand.getBoundingBox();
 		double[] minXY = ConversionCoords.reproject(boundingBox.getMinX(),
@@ -122,15 +137,16 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 			final MapRenderer renderer = getTileRaster().getMRendererInfo();
 
 			Extent boundingBox = this.mClusterToExpand.getBoundingBox();
-			double[] minXY = ConversionCoords.reproject(boundingBox.getMinX(),
-					boundingBox.getMinY(), CRSFactory.getCRS("EPSG:4326"),
-					CRSFactory.getCRS(renderer.getSRS()));
+			// double[] minXY =
+			// ConversionCoords.reproject(boundingBox.getMinX(),
+			// boundingBox.getMinY(), CRSFactory.getCRS("EPSG:4326"),
+			// CRSFactory.getCRS(renderer.getSRS()));
 
 			double[] maxXY = ConversionCoords.reproject(boundingBox.getMaxX(),
 					boundingBox.getMaxY(), CRSFactory.getCRS("EPSG:4326"),
 					CRSFactory.getCRS(renderer.getSRS()));
 
-			int[] minPixXY = renderer.toPixels(minXY);
+			// int[] minPixXY = renderer.toPixels(minXY);
 			int[] maxPixXY = renderer.toPixels(maxXY);
 
 			Pixel addIconPos = new Pixel(maxPixXY[0] - 24, maxPixXY[1] - 24);
@@ -147,6 +163,15 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		} else {
 			return super.onSingleTapUp(e, osmtile);
 		}
+	}
+
+	public boolean isRemovable(String categoryExpandedName) {
+		return (showRect || getName().startsWith(categoryExpandedName));
+	}
+
+	public void destroy() {
+		super.destroy();
+		mClusterToExpand.setExpanded(false);
 	}
 
 	// @Override

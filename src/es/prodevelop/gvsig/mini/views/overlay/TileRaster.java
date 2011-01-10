@@ -54,6 +54,7 @@
 package es.prodevelop.gvsig.mini.views.overlay;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -305,18 +306,36 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public void removeOverlay(String name) {
 		final List<MapOverlay> overlays = this.mOverlays;
 
-		final int size = overlays.size();
+		List<MapOverlay> copyOverlays = new ArrayList();
+
+		int size = overlays.size();
+
+		for (int i = 0; i < size; i++) {
+			copyOverlays.add(mOverlays.get(i));
+		}
+
+		Iterator<MapOverlay> it = copyOverlays.iterator();
 
 		MapOverlay overlay;
-		for (int i = 0; i < size; i++) {
-			overlay = overlays.get(i);
-			if (overlay.getName().compareTo(name) == 0) {
-				overlays.remove(i);
-				extentChangedListeners.remove(overlay);
-				overlay.destroy();
-				overlay = null;
+
+		while (it.hasNext()) {
+			try {
+				overlay = it.next();
+				if (overlay.getName().compareTo(name) == 0) {
+					if (overlays.remove(overlay))
+						Log.d("", "Overlay removed: " + overlay.getName());
+
+					extentChangedListeners.remove(overlay);
+					overlay.destroy();
+					overlay = null;
+					break;
+				}
+			} catch (Exception e) {
+				Log.e("", "Error on RemoveOverlay: " + name);
 			}
 		}
+
+		// copyOverlays = null;
 	}
 
 	public MapOverlay getOverlay(String name) {
@@ -1561,6 +1580,36 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			log.log(Level.SEVERE, "getCenterLonLat:", e);
 		}
 		return res;
+	}
+
+	public void removeExpanded(String cat) {
+		final List<MapOverlay> overlays = this.mOverlays;
+
+		List<MapOverlay> copyOverlays = new ArrayList();
+
+		int size = overlays.size();
+
+		for (int i = 0; i < size; i++) {
+			copyOverlays.add(mOverlays.get(i));
+		}
+
+		MapOverlay overlay;
+
+		Iterator<MapOverlay> it = copyOverlays.iterator();
+
+		while (it.hasNext()) {
+			overlay = it.next();
+			if (overlay instanceof ExpandedClusterOverlay) {
+				if (((ExpandedClusterOverlay) overlay).isRemovable(cat)) {
+					// overlays.remove(overlay);
+					overlay.setVisible(false);
+					this.removeOverlay(overlay.getName());
+					// size--;
+				}
+			}
+		}
+
+		// copyOverlays = null;
 	}
 
 	/**

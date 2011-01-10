@@ -105,7 +105,8 @@ public class PointOverlay extends MapOverlay {
 
 	@Override
 	public void onLayerChanged(String layerName) {
-		if (getPoints() == null)
+
+		if (getPoints() == null || layerName.length() <= 0)
 			return;
 		MapRenderer newRenderer;
 		try {
@@ -173,6 +174,7 @@ public class PointOverlay extends MapOverlay {
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
+			if (!isVisible()) return null;
 			boolean found = false;
 			final ArrayList pois = this.getPoints();
 

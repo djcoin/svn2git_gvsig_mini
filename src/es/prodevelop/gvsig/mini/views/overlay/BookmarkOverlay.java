@@ -84,6 +84,7 @@ public class BookmarkOverlay extends PointOverlay implements
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
+			if (!isVisible()) return null;
 
 			final ArrayList pois = this.pois;
 			final ArrayList streets = this.streets;

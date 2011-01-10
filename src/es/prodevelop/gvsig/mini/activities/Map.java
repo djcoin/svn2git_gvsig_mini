@@ -1681,7 +1681,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
 					} catch (Exception e) {
-						// Log.e("", e.getMessage());
+//						Log.e("", e.getMessage());
 					}
 				}
 			});

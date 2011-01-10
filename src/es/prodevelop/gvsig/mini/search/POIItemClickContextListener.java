@@ -260,19 +260,19 @@ public class POIItemClickContextListener {
 					R.drawable.twitter_button)));
 
 			if (findNear) {
-				adapter.addItem(new BulletedText(activity.getResources().getString(
-						R.string.find_pois_near), activity.getResources()
-						.getDrawable(R.drawable.bt_poi)));
+				adapter.addItem(new BulletedText(activity.getResources()
+						.getString(R.string.find_pois_near), activity
+						.getResources().getDrawable(R.drawable.bt_poi)));
 
 				// FIND STREETS
-				adapter.addItem(new BulletedText(activity.getResources().getString(
-						R.string.find_streets_near), activity.getResources()
-						.getDrawable(R.drawable.bt_poi)));
-			}			
+				adapter.addItem(new BulletedText(activity.getResources()
+						.getString(R.string.find_streets_near), activity
+						.getResources().getDrawable(R.drawable.bt_poi)));
+			}
 
 			adapter.addItem(new BulletedText(activity.getResources().getString(
 					R.string.street_view), activity.getResources().getDrawable(
-					R.drawable.bt_poi)));
+					R.drawable.bt_streetview)));
 
 			if (p instanceof OsmPOI) {
 				OsmPOI poi = (OsmPOI) p;
@@ -290,7 +290,7 @@ public class POIItemClickContextListener {
 							.getString(R.string.show_wiki)
 							+ " ["
 							+ poi.getWikipedia() + "]", activity.getResources()
-							.getDrawable(R.drawable.bt_poi)));
+							.getDrawable(R.drawable.bt_wikipedia)));
 
 				// WEB
 				if (poi.getWebsite() != null && poi.getWebsite().length() > 0)
@@ -298,7 +298,7 @@ public class POIItemClickContextListener {
 							.getString(R.string.show_web)
 							+ " ["
 							+ poi.getWebsite() + "]", activity.getResources()
-							.getDrawable(R.drawable.bt_poi)));
+							.getDrawable(R.drawable.bt_openbrowser)));
 			}
 
 			lv.setAdapter(adapter);
@@ -383,7 +383,7 @@ public class POIItemClickContextListener {
 	public void addBookmark() {
 		adapter.addItem(new BulletedText(activity.getResources().getString(
 				R.string.bookmark), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
+				R.drawable.bt_star_add)));
 	}
 
 	public void processBookmark(POI p) {

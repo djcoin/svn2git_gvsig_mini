@@ -51,6 +51,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.bucket.mr.MRBucketPRQuadtree;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
@@ -143,7 +144,8 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		try {
 			Bitmap expandableIcon = null;
 			if (p instanceof Cluster) {
-				if (((Cluster) p).isExpanded()) return;
+				if (((Cluster) p).isExpanded())
+					return;
 				int numItems = ((Cluster) p).getNumItems();
 				if (numItems < MRBucketPRQuadtree.EXPAND_CLUSTER_ITEMS)
 					return;
@@ -245,8 +247,13 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 								getSelectedIndex());
 						if (p.isExpandable()) {
 							ExpandedClusterOverlay ex = new ExpandedClusterOverlay(
-									getTileRaster().map, getTileRaster(),
-									String.valueOf(p.getID()), p, true);
+									getTileRaster().map,
+									getTileRaster(),
+									String.valueOf(POICategories.ORDERED_CATEGORIES[p
+											.getCat()]
+											+ "_"
+											+ String.valueOf(p.getID())), p,
+									true);
 							ex.setClusterRemovedListener(this);
 							getTileRaster().addOverlay(ex);
 							ex.getPOIsOfClusterAsynch();
@@ -398,6 +405,17 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 	}
 
 	public void setCategories(ArrayList categories) throws BaseException {
+		final ArrayList selectedCategories = poiProvider
+				.getSelectedCategories();
+
+		int size = selectedCategories.size();
+
+		final ArrayList previouslySelectedCategories = new ArrayList(size);
+
+		for (int i = 0; i < size; i++) {
+			previouslySelectedCategories.add(selectedCategories.get(i));
+		}
+
 		if (categories != null && categories.size() > 0) {
 			// poiProvider.setCurrentZoomLevel(getTileRaster().getZoomLevel());
 			poiProvider.setSelectedCategories(categories);
@@ -406,8 +424,17 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		} else {
 			poiProvider.setSelectedCategories(new ArrayList());
 			// pois.clear();
-			getPoints().clear();
+			final ArrayList points = getPoints();
+			if (points != null)
+				points.clear();
 			getTileRaster().resumeDraw();
+		}
+
+		String cat;
+		for (int i = 0; i < size; i++) {
+			cat = previouslySelectedCategories.get(i).toString();
+			if (!categories.contains(cat))
+				getTileRaster().removeExpanded(cat);
 		}
 	}
 
@@ -419,9 +446,19 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 	@Override
 	public void onClusterExpanded(Collection pois, boolean clearPrevious,
 			Cancellable cancellable, Cluster clusterExpanded) {
+		if (!POICategories.selected
+				.contains(POICategories.ORDERED_CATEGORIES[clusterExpanded
+						.getCat()])) {
+			return;
+		}
+
 		ExpandedClusterOverlay ex = new ExpandedClusterOverlay(
 				getTileRaster().map, getTileRaster(),
-				String.valueOf(clusterExpanded.getID()), clusterExpanded, false);
+
+				String.valueOf(POICategories.ORDERED_CATEGORIES[clusterExpanded
+						.getCat()] + "_" + clusterExpanded.getID()),
+				clusterExpanded, false);
+
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), (ArrayList) pois, cancellable);
 		ex.setPoints((ArrayList) pois);

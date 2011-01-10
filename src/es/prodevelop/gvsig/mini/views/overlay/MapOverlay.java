@@ -162,14 +162,14 @@ public abstract class MapOverlay implements GeoUtils, Contextable,
 	 * @return
 	 */
 	public boolean onLongPress(MotionEvent e, TileRaster osmtile) {
-		try {			
+		try {
 			Pixel pixel = new Pixel((int) e.getX(), (int) e.getY());
 			Feature f = getNearestFeature(pixel);
 			if (f != null) {
 				this.getTileRaster().setSelectedFeature(f);
 				return true;
 			} else {
-//				getTileRaster().map.getPopup().setVisibility(View.INVISIBLE);
+				// getTileRaster().map.getPopup().setVisibility(View.INVISIBLE);
 				this.getTileRaster().setSelectedFeature(null);
 				return false;
 			}
@@ -199,7 +199,7 @@ public abstract class MapOverlay implements GeoUtils, Contextable,
 	 * Used to free memory
 	 */
 	public void destroy() {
-		
+
 	}
 
 	public String getName() {
@@ -216,5 +216,5 @@ public abstract class MapOverlay implements GeoUtils, Contextable,
 
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
-	}		
+	}
 }

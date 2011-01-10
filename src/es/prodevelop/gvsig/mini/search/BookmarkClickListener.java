@@ -65,7 +65,7 @@ public class BookmarkClickListener extends POIItemClickContextListener {
 	public void addBookmark() {
 		adapter.addItem(new BulletedText(activity.getResources().getString(
 				R.string.remove_bookmark), activity.getResources().getDrawable(
-				R.drawable.bt_poi)));
+				R.drawable.bt_star_remove)));
 	}
 
 	public void processBookmark(POI p) {

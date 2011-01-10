@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 437</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 438</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -265,9 +265,9 @@
     <string name="rest_dist">Restaurant - Distance</string>
     
     <string name="street_options">Street options</string>
-    <string name="bookmark">Add bookmark</string>
-    <string name="bookmark_title">Bookmarks</string>
-    <string name="remove_bookmark">Remove bookmark</string>
+    <string name="bookmark">Add favourite</string>
+    <string name="bookmark_title">Favourites</string>
+    <string name="remove_bookmark">Remove favourite</string>
     <string name="street_view">Show street view</string>
     <string name="show_wiki">Show Wikipedia</string>
     <string name="show_web">Show web</string>
@@ -301,13 +301,13 @@
     <string name="start_point">Added start point</string>
     <string name="end_point">Added end point</string>
     <string name="calculate_route">Calculate route?</string>
-    <string name="no_bookmark">There are no bookmarks stored</string>
-    <string name="bookmarks">List Bookmarks</string>    
+    <string name="no_bookmark">There are no favourites stored</string>
+    <string name="bookmarks">List Favourites</string>    
     <string name="search_local">Search local database</string>
-    <string name="bookmark_added">Bookmark added</string>
-    <string name="bookmark_removed">Bookmark removed</string>
-    <string name="bookmark_exists">Bookmark already exists</string>
-    <string name="bookmark_failed">Failed to remove bookmark</string>
+    <string name="bookmark_added">Favourite added</string>
+    <string name="bookmark_removed">Favourite removed</string>
+    <string name="bookmark_exists">Favourite already exists</string>
+    <string name="bookmark_failed">Failed to remove favourite</string>
     
     <string name="poi_categories">POI categories</string>    
     <string name="poi_layers">POI layers</string>        
