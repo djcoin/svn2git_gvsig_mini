@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 438</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 439</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -29,8 +29,10 @@
 	<string name="landscape">Landscape</string>
 	<string name="send_log">Send exception log</string>
 	<string name="fatal_error">gvSIG Mini has detected an error. Would you
-		like to send the exception log to the developers to allow them to fix
-		it?</string>
+		like to
+		send the exception log to the developers to allow them to fix
+		it?
+	</string>
 	<string name="search_hint">Search places/addresses</string>
 	<string name="search_clear_yesno">Do you want to erase all the previously typed
 		search text (search suggestions)?</string>
@@ -43,7 +45,8 @@
 	<string name="LayersActivity_3">Select layers file</string>
 	<string name="LayersActivity_4">Layers file loaded successfully</string>
 	<string name="LayersActivity_5">Can\'t load file! The path you typed does not
-		exist</string>
+		exist
+	</string>
 	<string name="LayersActivity_6">Type WMS server URL:</string>
 	<string name="LayersActivity_7">Get capabilities</string>
 	<string name="LayersActivity_8">Tile map service</string>
@@ -68,253 +71,278 @@
 	<string name="Map_6">Zoom rectangle mode</string>
 	<string name="Map_7">Pan mode</string>
 	<string name="Map_8">Can\'t get weather. Check another location or
-		maybe Internet connection is broken</string>
+		maybe
+		Internet connection is broken</string>
 	<string name="Map_9">Unknown place</string>
-	<string name="Map_10">The weather in (%s) is not available</string>    
-    <string name="Map_11">Weather</string>
-    <string name="Map_12">Today</string>
-    <string name="Map_13">Route has not been found</string>
-    <string name="Map_14">Getting weather...</string>
-    <string name="Map_15">Weather task canceled</string>
-    <string name="Map_16">Server can\'t calculate the route. Try to change the start or end point...</string>
-    <string name="Map_17">Waiting for NameFinder service response...</string>
-    <string name="Map_18">Route calculation canceled</string>
-    <string name="Map_19">Calculating route...</string>
-    <string name="Map_20">Tweet sent</string>
-    <string name="Map_21">Search POI</string>
-    <string name="Map_22">Can\'t connect to server. Check your Internet connection</string>
-    <string name="Map_23">Touch and hold on the display to see more actions on a certain location</string>
-    <string name="Map_24">No location provider available yet</string>
-    <string name="Map_25">Warning: Low memory</string>
-    <string name="Map_26">GPS location disabled</string>
-    <string name="Map_27">GPS location enabled</string>
-    <string name="Map_28">About</string>
-    <string name="Map_29">License</string>
-    <string name="Map_30">What is New</string>
-    <string name="Map_31">Settings</string>
-    <string name="Map_32">Keep display On</string>
-    <string name="Map_33">Force the display to be switched on</string>
-    <string name="Map_34">Touch once to see/hide a zoom scale bar.</string>
-    <string name="Map_Navigator">Navigator</string>
-    <string name="Map_35">Cell location disabled</string>
+	<string name="Map_10">The weather in (%s) is not available</string>
+	<string name="Map_11">Weather</string>
+	<string name="Map_12">Today</string>
+	<string name="Map_13">Route has not been found</string>
+	<string name="Map_14">Getting weather...</string>
+	<string name="Map_15">Weather task canceled</string>
+	<string name="Map_16">Server can\'t calculate the route. Try to change
+		the start or end point...</string>
+	<string name="Map_17">Waiting for NameFinder service response...</string>
+	<string name="Map_18">Route calculation canceled</string>
+	<string name="Map_19">Calculating route...</string>
+	<string name="Map_20">Tweet sent</string>
+	<string name="Map_21">Search POI</string>
+	<string name="Map_22">Can\'t connect to server. Check your Internet
+		connection</string>
+	<string name="Map_23">Touch and hold on the display to see more actions
+		on a certain location</string>
+	<string name="Map_24">No location provider available yet</string>
+	<string name="Map_25">Warning: Low memory</string>
+	<string name="Map_26">GPS location disabled</string>
+	<string name="Map_27">GPS location enabled</string>
+	<string name="Map_28">About</string>
+	<string name="Map_29">License</string>
+	<string name="Map_30">What is New</string>
+	<string name="Map_31">Settings</string>
+	<string name="Map_32">Keep display On</string>
+	<string name="Map_33">Force the display to be switched on</string>
+	<string name="Map_34">Touch once to see/hide a zoom scale bar.</string>
+	<string name="Map_Navigator">Navigator</string>
+	<string name="Map_35">Cell location disabled</string>
 	<string name="Map_36">Cell location enabled</string>
-    
-    
-    
-    <string name="NameFinderActivity_0">POI options</string>
-    <string name="NameFinderActivity_1">From here</string>
-    <string name="NameFinderActivity_2">To here</string>
-    <string name="NameFinderActivity_3">Center on map</string>
-    
-    <string name="WMSLayersActivity_0">Add selected layers</string>
-    <string name="WMSLayersActivity_1">The layer is not supported</string>
-    <string name="WMSLayersActivity_2">Invalid format</string>
-    <string name="WMSLayersActivity_3">Invalid SRS</string>
-    
-    <string name="MapLocation_0">GPS not enabled</string>
-    <string name="MapLocation_1">GPS is not enabled. gvSIG Mini needs to receive data from GPS device to properly show your location on the map. Would you like to enable GPS device now?</string>
-    <string name="MapLocation_2">gvSIG Mini has detected that an error occurred the last time the application was executed. Do you want to send the log file to the developers?</string>
-    <string name="MapLocation_3">The data is too large to be displayed</string>
-    
-    <string name="TweetMyLocationFunc_0">My location</string>
-    
-    <string name="Utils_0">Select mail client</string>
-    
-    
-    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    <string name="unknown">Unknown</string>
-    <string name="alert_dialog_text_entry">Twitter Account</string>
-    <string name="alert_dialog_username">Name:</string>
-    <string name="alert_dialog_password">Password:</string>
-    <string name="alert_dialog_cancel">Cancel</string>
-    <string name="alert_dialog_cache">Number of levels:</string>
-    <string name="alert_dialog_cache_title">Tiles cache</string>
-    <string name="alert_dialog_tweet">Tweet</string>
-    <string name="alert_dialog_start_cache">Start caching</string>
-    <string name="alert_dialog_text_search">Search</string>
-    <string name="alert_dialog_text_cancel">Cancel</string>
-    <string name="alert_dialog_text_ok">OK</string>
-    
-    <string name="download_tiles_01">Download Layers</string>
-    <string name="download_tiles_02">An Internet browser is going to be open in order to download the file "gvsigminilayers.gvtiles", tap the link in the browser to add new layers to gvSIG Mini. You can also add layers files to your SDCard and execute them with your file Browser to add new layers.</string>
-    <string name="download_tiles_03">Layers File Downloaded</string>
-    <string name="download_tiles_04">Select zoom levels to download</string>
-    <string name="download_tiles_05">Min/max zoom levels: </string>
-    <string name="download_tiles_06">Total tiles to download: </string>
-    <string name="download_tiles_07">Total MB to download: </string>
-    <string name="download_tiles_08">Overwrite previous cache?</string>
-    <string name="download_tiles_09">Total downloaded MB: </string>
-    <string name="download_tiles_10">Time elapsed: </string>
-    <string name="download_tiles_11">Estimated time left: </string>
-    <string name="download_tiles_12">Tile downloader cancelled</string>
-    <string name="download_tiles_13">Press the cancel button to cancel the process</string>
-    <string name="download_tiles_14">Download tiles</string>
-    <string name="download_tiles_15">Move the slide bar to select the max zoom level to download tiles. The process will download the tiles that fill the display from the current zoom level of the view to the zoom level selected with the slide bar.</string>
-    
-    <string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
-    
-    <string name="settings_gps">GPS</string>
-    <string name="settings_switch_gps">GPS on/off</string>
-    <string name="settings_orientation">Orientation</string>
-    <string name="settings_switch_orientation">Orientation sensor on/off</string>
-    <string name="settings_orientation_enabled">Orientation enabled</string>
-    <string name="settings_orientation_disabled">Orientation disabled</string>
-    <string name="settings_maps_cache">Maps cache</string>
-    <string name="settings_mode">Mode</string>    
-    <string name="settings_downloaded_data">Downloaded data</string>
-    <string name="summary_settings_downloaded_data">(%s) MB downloaded for this session</string>
-    <string name="settings_tilling_strategy">Tiling strategy</string>
-    <string name="title_settings_tilling_strategy">Select tiling strategy</string>
-    <string name="settings_tile_name">Tile name suffix</string>
-    <string name="settings_tilex">Z/X/Y</string>
-    <string name="settings_quadkey">Quadkey</string>
-    <string name="settings_online">Online</string>
-    <string name="settings_offline">Offline</string>
-    <string name="settings_connected">No storage</string>
-    <string name="settings_update">Overwrite</string>
-    <string name="settings_tilling_mode">Cache mode</string>
-    <string name="settings_mode_offline">Offline maps</string>
-    <string name="settings_mode_offline_on">Get maps exclusively from SD card</string>
-    <string name="settings_mode_offline_off">Select cache mode</string>
-    <string name="title_settings_tilling_mode">Select cache mode</string>
-    <string name="settings_generic">Generic settings</string>
-    <string name="settings_clear_suggestions">Clear suggestions</string>
-    <string name="settings_clear_suggestions_summary">Erase search history</string>
-    <string name="settings_OS">OpenSpace API settings</string>
-    <string name="settings_OS_get_key">Register for an OS API key</string>
-    <string name="settings_OS_get_key_URL">https://openspace.ordnancesurvey.co.uk/osmapapi/register.do</string>
-    <string name="settings_OS_enable">Custom OS API settings</string>
-    <string name="settings_OS_key">OS API custom key</string>
-    <string name="settings_OS_url">OS API custom URL</string>
-    <string name="settings_twitter_not_configured">Your Twitter account is not configured...</string>
-    <string name="settings_twitter">Twitter account</string>
-    <string name="settings_twitter_user">Twitter user</string>
-    <string name="settings_twitter_pass">Twitter password</string>
-    <string name="twitter_go_settings">You must configure your Twitter account. Would you like to open the settings activity in order to fill your Twitter user and password?</string>
-    <string name="settings_gps_time">GPS update time (milliseconds)</string>
+
+
+	<string name="NameFinderActivity_0">POI options</string>
+	<string name="NameFinderActivity_1">From here</string>
+	<string name="NameFinderActivity_2">To here</string>
+	<string name="NameFinderActivity_3">Center on map</string>
+
+	<string name="WMSLayersActivity_0">Add selected layers</string>
+	<string name="WMSLayersActivity_1">The layer is not supported</string>
+	<string name="WMSLayersActivity_2">Invalid format</string>
+	<string name="WMSLayersActivity_3">Invalid SRS</string>
+
+	<string name="MapLocation_0">GPS not enabled</string>
+	<string name="MapLocation_1">GPS is not enabled. gvSIG Mini needs to receive
+		data from GPS device to properly show your location on the map. Would
+		you like to enable GPS device now?</string>
+	<string name="MapLocation_2">gvSIG Mini has detected that an error occurred the
+		last time the application was executed. Do you want to send the log
+		file to the developers?</string>
+	<string name="MapLocation_3">The data is too large to be displayed</string>
+
+	<string name="TweetMyLocationFunc_0">My location</string>
+
+	<string name="Utils_0">Select mail client</string>
+
+
+
+
+
+
+
+
+
+
+
+
+	<string name="unknown">Unknown</string>
+	<string name="alert_dialog_text_entry">Twitter Account</string>
+	<string name="alert_dialog_username">Name:</string>
+	<string name="alert_dialog_password">Password:</string>
+	<string name="alert_dialog_cancel">Cancel</string>
+	<string name="alert_dialog_cache">Number of levels:</string>
+	<string name="alert_dialog_cache_title">Tiles cache</string>
+	<string name="alert_dialog_tweet">Tweet</string>
+	<string name="alert_dialog_start_cache">Start caching</string>
+	<string name="alert_dialog_text_search">Search</string>
+	<string name="alert_dialog_text_cancel">Cancel</string>
+	<string name="alert_dialog_text_ok">OK</string>
+
+	<string name="download_tiles_01">Download Layers</string>
+	<string name="download_tiles_02">An Internet browser is going to be open in order to
+		download the file "gvsigminilayers.gvtiles", tap the link in the
+		browser to add new layers to gvSIG Mini. You can also add layers files
+		to your SDCard and execute them with your file Browser to add new
+		layers.</string>
+	<string name="download_tiles_03">Layers File Downloaded</string>
+	<string name="download_tiles_04">Select zoom levels to download</string>
+	<string name="download_tiles_05">Min/max zoom levels: </string>
+	<string name="download_tiles_06">Total tiles to download: </string>
+	<string name="download_tiles_07">Total MB to download: </string>
+	<string name="download_tiles_08">Overwrite previous cache?</string>
+	<string name="download_tiles_09">Total downloaded MB: </string>
+	<string name="download_tiles_10">Time elapsed: </string>
+	<string name="download_tiles_11">Estimated time left: </string>
+	<string name="download_tiles_12">Tile downloader cancelled</string>
+	<string name="download_tiles_13">Press the cancel button to cancel the process
+	</string>
+	<string name="download_tiles_14">Download tiles</string>
+	<string name="download_tiles_15">Move the slide bar to select the max zoom level to
+		download tiles. The process will download the tiles that fill the
+		display from the current zoom level of the view to the zoom level
+		selected with the slide bar.</string>
+
+	<string name="GetFeatureInfoFunc_0">The layer is not queryable</string>
+
+	<string name="settings_gps">GPS</string>
+	<string name="settings_switch_gps">GPS on/off</string>
+	<string name="settings_orientation">Orientation</string>
+	<string name="settings_switch_orientation">Orientation sensor on/off</string>
+	<string name="settings_orientation_enabled">Orientation enabled</string>
+	<string name="settings_orientation_disabled">Orientation disabled</string>
+	<string name="settings_maps_cache">Maps cache</string>
+	<string name="settings_mode">Mode</string>
+	<string name="settings_downloaded_data">Downloaded data</string>
+	<string name="summary_settings_downloaded_data">(%s) MB downloaded for this session</string>
+	<string name="settings_tilling_strategy">Tiling strategy</string>
+	<string name="title_settings_tilling_strategy">Select tiling strategy</string>
+	<string name="settings_tile_name">Tile name suffix</string>
+	<string name="settings_tilex">Z/X/Y</string>
+	<string name="settings_quadkey">Quadkey</string>
+	<string name="settings_online">Online</string>
+	<string name="settings_offline">Offline</string>
+	<string name="settings_connected">No storage</string>
+	<string name="settings_update">Overwrite</string>
+	<string name="settings_tilling_mode">Cache mode</string>
+	<string name="settings_mode_offline">Offline maps</string>
+	<string name="settings_mode_offline_on">Get maps exclusively from SD card</string>
+	<string name="settings_mode_offline_off">Select cache mode</string>
+	<string name="title_settings_tilling_mode">Select cache mode</string>
+	<string name="settings_generic">Generic settings</string>
+	<string name="settings_clear_suggestions">Clear suggestions</string>
+	<string name="settings_clear_suggestions_summary">Erase search history</string>
+	<string name="settings_OS">OpenSpace API settings</string>
+	<string name="settings_OS_get_key">Register for an OS API key</string>
+	<string name="settings_OS_get_key_URL">https://openspace.ordnancesurvey.co.uk/osmapapi/register.do
+	</string>
+	<string name="settings_OS_enable">Custom OS API settings</string>
+	<string name="settings_OS_key">OS API custom key</string>
+	<string name="settings_OS_url">OS API custom URL</string>
+	<string name="settings_twitter_not_configured">Your Twitter account is not configured...</string>
+	<string name="settings_twitter">Twitter account</string>
+	<string name="settings_twitter_user">Twitter user</string>
+	<string name="settings_twitter_pass">Twitter password</string>
+	<string name="twitter_go_settings">You must configure your Twitter account. Would you
+		like to open the settings activity in order to fill your Twitter user
+		and password?</string>
+	<string name="settings_gps_time">GPS update time (milliseconds)</string>
 	<string name="settings_gps_dist">GPS update distance (meters)</string>
 	<string name="settings_gps_cell">Cell location on/off</string>
-    
-    <string name="settings_key_gps">gps state</string>
-    <string name="settings_key_offline_maps">offline maps</string>
-    <string name="settings_key_orientation">orientation state</string>
-    <string name="settings_key_data_transfer">data transfer</string>
-    <string name="settings_key_tile_name">tile name</string>
-    <string name="settings_key_list_strategy">list strategy</string>
-    <string name="settings_key_list_mode">list mode</string>
-    <string name="settings_key_clear_suggestions">clear suggestions</string>
-    <string name="settings_key_os_register">os register</string>
-    <string name="settings_key_os_key">os key</string>
-    <string name="settings_key_os_url">os url</string>
-    <string name="settings_key_os_custom">os custom</string>
-    <string name="settings_key_twitter_user">twitter user</string>
-    <string name="settings_key_twitter_pass">twitter pass</string>
-    <string name="settings_key_gps_time">gps time</string>
+
+	<string name="settings_key_gps">gps state</string>
+	<string name="settings_key_offline_maps">offline maps</string>
+	<string name="settings_key_orientation">orientation state</string>
+	<string name="settings_key_data_transfer">data transfer</string>
+	<string name="settings_key_tile_name">tile name</string>
+	<string name="settings_key_list_strategy">list strategy</string>
+	<string name="settings_key_list_mode">list mode</string>
+	<string name="settings_key_clear_suggestions">clear suggestions</string>
+	<string name="settings_key_os_register">os register</string>
+	<string name="settings_key_os_key">os key</string>
+	<string name="settings_key_os_url">os url</string>
+	<string name="settings_key_os_custom">os custom</string>
+	<string name="settings_key_twitter_user">twitter user</string>
+	<string name="settings_key_twitter_pass">twitter pass</string>
+	<string name="settings_key_gps_time">gps time</string>
 	<string name="settings_key_gps_dist">gps distance</string>
 	<string name="settings_key_gps_cell">gps cell</string>
-    
-    <string name="relaunch">Tap the display to show the map view or press the back key to exit gvSIG Mini</string>
-    
-    <string name="load_offline">Loaded (%s) in offline mode</string>
-    
-    <string name="poi_all">All</string>
-    <string name="streets">Streets</string>
-    <string name="poi_transportation">Transportation</string>
-    <string name="poi_tourism">Tourism</string>
-    <string name="poi_recreation">Recreation</string>
-    <string name="poi_food">Food</string>
-    <string name="poi_public_buildings">Public buildings</string>
-    <string name="poi_arts_culture">Arts culture</string>
+
+	<string name="relaunch">Tap the display to show the map view or press the
+		back key to exit gvSIG Mini</string>
+
+	<string name="load_offline">Loaded (%s) in offline mode</string>
+
+	<string name="poi_all">All</string>
+	<string name="streets">Streets</string>
+	<string name="poi_transportation">Transportation</string>
+	<string name="poi_tourism">Tourism</string>
+	<string name="poi_recreation">Recreation</string>
+	<string name="poi_food">Food</string>
+	<string name="poi_public_buildings">Public buildings</string>
+	<string name="poi_arts_culture">Arts culture</string>
 	<string name="poi_shops">Shops</string>
 	<string name="poi_health_emergency">Health emergency</string>
 	<string name="poi_accomodation">Accomodation</string>
 	<string name="poi_route">Route</string>
 	<string name="poi_places">Places</string>
-	
+
 	<string name="loading_poi_categories">Loading POI categories...</string>
 	<string name="loading_poi_category">Loading category: </string>
 	<string name="removing_poi_category">Removing category: </string>
 
-    <string name="filter">Type to filter</string>
-    <string name="clear_filter">Tap a keyword to search</string>
-    <string name="no_results">No results found</string>
-    <string name="distance">Distance: </string>
-    <string name="sort_distance">Distance</string>
-    <string name="sort_name">Name</string>
-    <string name="no_sort">No sort results</string>        
-    <string name="search_prefix">Prefix</string>
-    <string name="search_text">Full text</string>
-    <string name="search_by">Search by</string>    
-    <string name="sort_results">Sort results by</string>
-    <string name="search_filter">Search filter</string>
-    <string name="type">Type at least 3 letters...</string>	
-    <string name="advanced_search">Advanced search</string>
-    <string name="clear">Clear</string>
-    <string name="searching">Searching ...</string>
-    <string name="search_results">Search results</string>
-    <string name="cat_dist">Category - Distance</string>
-    <string name="rest_dist">Restaurant - Distance</string>
-    
-    <string name="street_options">Street options</string>
-    <string name="bookmark">Add favourite</string>
-    <string name="bookmark_title">Favourites</string>
-    <string name="remove_bookmark">Remove favourite</string>
-    <string name="street_view">Show street view</string>
-    <string name="show_wiki">Show Wikipedia</string>
-    <string name="show_web">Show web</string>
-    <string name="call_number">Call this number</string>
-    <string name="add_contact">Add contact</string>
-    <string name="find_pois_near">Find POIs near</string>
-    <string name="find_streets_near">Find streets near</string>
-    
-    
-    <string name="type_keyword">Type a keyword</string>
-    <string name="fill_text">Please, type a text to filter...</string>
-    <string name="fill_category">Please, select at least one category to filter</string>
-    <string name="perform_search">Performing search...</string>
-    <string name="show_options">Show options</string>
-    <string name="show_details">Show details</string>
-    
-    <string name="category">Category:</string>
-    <string name="subcategory">Subcategory:</string>
-    <string name="info">Info:</string>
-    <string name="phone">Phone:</string>
-    <string name="email">email:</string>
-    <string name="url">URL:</string>
-    <string name="web">Website:</string>
-    <string name="wiki">Wikipedia:</string>
-    <string name="img">Image:</string>
-    <string name="address">Address:</string>
-    <string name="copy">Copy text</string>
-    <string name="share_text">Share text</string>
-    <string name="show_map">Show in map</string>
-    
-    <string name="start_point">Added start point</string>
-    <string name="end_point">Added end point</string>
-    <string name="calculate_route">Calculate route?</string>
-    <string name="no_bookmark">There are no favourites stored</string>
-    <string name="bookmarks">List Favourites</string>    
-    <string name="search_local">Search local database</string>
-    <string name="bookmark_added">Favourite added</string>
-    <string name="bookmark_removed">Favourite removed</string>
-    <string name="bookmark_exists">Favourite already exists</string>
-    <string name="bookmark_failed">Failed to remove favourite</string>
-    
-    <string name="poi_categories">POI categories</string>    
-    <string name="poi_layers">POI layers</string>        
-    
-    <string name="not_download_tiles">Due to possible restrictions in the layer license,
-		it is not allowed to use this functionality for this layer. You can switch
-		to any OPEN STREET MAPS layer to automatically download tiles.</string>
+	<string name="filter">Type to filter</string>
+	<string name="clear_filter">Tap a keyword to search</string>
+	<string name="no_results">No results found</string>
+	<string name="distance">Distance: </string>
+	<string name="sort_distance">Distance</string>
+	<string name="sort_name">Name</string>
+	<string name="no_sort">No sort results</string>
+	<string name="search_prefix">Prefix</string>
+	<string name="search_text">Full text</string>
+	<string name="search_by">Search by</string>
+	<string name="sort_results">Sort results by</string>
+	<string name="search_filter">Search filter</string>
+	<string name="type">Type at least 3 letters...</string>
+	<string name="advanced_search">Advanced search</string>
+	<string name="clear">Clear</string>
+	<string name="searching">Searching ...</string>
+	<string name="search_results">Search results</string>
+	<string name="cat_dist">Category - Distance</string>
+	<string name="rest_dist">Restaurant - Distance</string>
+
+	<string name="street_options">Street options</string>
+	<string name="bookmark">Add favourite</string>
+	<string name="bookmark_title">Favourites</string>
+	<string name="remove_bookmark">Remove favourite</string>
+	<string name="street_view">Show street view</string>
+	<string name="show_wiki">Show Wikipedia</string>
+	<string name="show_web">Show web</string>
+	<string name="call_number">Call this number</string>
+	<string name="add_contact">Add contact</string>
+	<string name="find_pois_near">Find POIs near</string>
+	<string name="find_streets_near">Find streets near</string>
+
+
+	<string name="type_keyword">Type a keyword</string>
+	<string name="fill_text">Please, type a text to filter...</string>
+	<string name="fill_category">Please, select at least one category to filter
+	</string>
+	<string name="perform_search">Performing search...</string>
+	<string name="show_options">Show options</string>
+	<string name="show_details">Show details</string>
+
+	<string name="category">Category:</string>
+	<string name="subcategory">Subcategory:</string>
+	<string name="info">Info:</string>
+	<string name="phone">Phone:</string>
+	<string name="email">email:</string>
+	<string name="url">URL:</string>
+	<string name="web">Website:</string>
+	<string name="wiki">Wikipedia:</string>
+	<string name="img">Image:</string>
+	<string name="address">Address:</string>
+	<string name="copy">Copy text</string>
+	<string name="share_text">Share text</string>
+	<string name="show_map">Show in map</string>
+
+	<string name="start_point">Added start point</string>
+	<string name="end_point">Added end point</string>
+	<string name="calculate_route">Calculate route?</string>
+	<string name="no_bookmark">There are no favourites stored</string>
+	<string name="bookmarks">List Favourites</string>
+	<string name="search_local">Search local database</string>
+	<string name="bookmark_added">Favourite added</string>
+	<string name="bookmark_removed">Favourite removed</string>
+	<string name="bookmark_exists">Favourite already exists</string>
+	<string name="bookmark_failed">Failed to remove favourite</string>
+
+	<string name="poi_categories">POI categories</string>
+	<string name="poi_layers">POI layers</string>
+
+	<string name="poi_info">POI info</string>
+
+	<string name="not_download_tiles">Due to possible restrictions in the layer license,
+		it is not allowed to use this functionality for this layer. You can
+		switch
+		to any OPEN STREET MAPS layer to automatically download tiles.
+	</string>
 </resources>
 
 

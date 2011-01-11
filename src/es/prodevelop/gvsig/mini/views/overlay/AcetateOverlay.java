@@ -63,6 +63,7 @@ import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -313,38 +314,51 @@ public class AcetateOverlay extends MapOverlay {
 			if (f != null && f.getGeometry() != null
 					&& f.getGeometry() instanceof OsmPOI) {
 
+				final double[] centerLonLat = getTileRaster().getCenterLonLat();
+				double[] xy = ConversionCoords.reproject(centerLonLat[0],
+						centerLonLat[1], CRSFactory.getCRS("EPSG:4326"),
+						CRSFactory.getCRS("EPSG:900913"));
+
 				OsmPOI poi = (OsmPOI) f.getGeometry();
-				double[] xy = ConversionCoords.reproject(poi.getX(),
-						poi.getY(), CRSFactory.getCRS(getTileRaster()
-								.getMRendererInfo().getSRS()), CRSFactory
-								.getCRS("EPSG:4326"));
-
-				double distance = Calculator.latLonDist(getTileRaster()
-						.getCenterLonLat()[0], getTileRaster()
-						.getCenterLonLat()[0], xy[0], xy[1]);
-				
-				// final Point centerM = getTileRaster().getCenterMercator();
-				// final double distance = centerM.distance(ConversionCoords
-				// .reproject(poi.getX(), poi.getY(),
-				// CRSFactory.getCRS("EPSG:4326"),
-				// CRSFactory.getCRS("EPSG:900913")));
-				 String dist = Utils.formatDistance(distance);
-
-//				String dist = "FIX ME";
-				i.putExtra(POIDetailsActivity.X, xy[0]);
-				i.putExtra(POIDetailsActivity.Y, xy[1]);
-				i.putExtra(POIDetailsActivity.DIST, dist);
-				i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
-				i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
-				i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
-				i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
-				i.putExtra(POIDetailsActivity.IMG, poi.getImage());
-				i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
-				i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
-				i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
-				i.putExtra(POIDetailsActivity.URL, poi.getUrl());
-				i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
-				i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+				OsmPOI p = (OsmPOI) poi.clone();
+				double[] pxy = ConversionCoords.reproject(p.getX(), p.getY(),
+						CRSFactory.getCRS(getTileRaster().getMRendererInfo()
+								.getSRS()), CRSFactory.getCRS("EPSG:4326"));
+				p.setX(pxy[0]);
+				p.setY(pxy[1]);
+				InvokeIntents.fillIntentPOIDetails(p, new Point(xy[0], xy[1]),
+						i);
+				// double[] xy = ConversionCoords.reproject(poi.getX(),
+				// poi.getY(), CRSFactory.getCRS(getTileRaster()
+				// .getMRendererInfo().getSRS()), CRSFactory
+				// .getCRS("EPSG:4326"));
+				//
+				// double distance = Calculator.latLonDist(getTileRaster()
+				// .getCenterLonLat()[0], getTileRaster()
+				// .getCenterLonLat()[0], xy[0], xy[1]);
+				//
+				// // final Point centerM = getTileRaster().getCenterMercator();
+				// // final double distance = centerM.distance(ConversionCoords
+				// // .reproject(poi.getX(), poi.getY(),
+				// // CRSFactory.getCRS("EPSG:4326"),
+				// // CRSFactory.getCRS("EPSG:900913")));
+				// String dist = Utils.formatDistance(distance);
+				//
+				// // String dist = "FIX ME";
+				// i.putExtra(POIDetailsActivity.X, xy[0]);
+				// i.putExtra(POIDetailsActivity.Y, xy[1]);
+				// i.putExtra(POIDetailsActivity.DIST, dist);
+				// i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
+				// i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
+				// i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
+				// i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
+				// i.putExtra(POIDetailsActivity.IMG, poi.getImage());
+				// i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
+				// i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
+				// i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
+				// i.putExtra(POIDetailsActivity.URL, poi.getUrl());
+				// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
+				// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
 				getContext().startActivity(i);
 			}
 			return true;

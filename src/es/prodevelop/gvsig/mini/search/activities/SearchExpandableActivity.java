@@ -99,7 +99,8 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			if (POIProviderManager.getInstance().getPOIProvider() == null)
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/" + Utils.TEST_POI_DIR + "/"
+								new PerstOsmPOIClusterProvider("/sdcard/"
+										+ Utils.TEST_POI_DIR + "/"
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			provider = POIProviderManager.getInstance().getPOIProvider();
@@ -406,19 +407,23 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 
 	@Override
 	public void afterTextChanged(Editable arg0) {
+		Log.d("", "afterTextChanged");
 	}
 
 	@Override
 	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
 			int arg3) {
+		Log.d("", "beforeTextChanged");
 	}
 
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		getAutoCompleteAdapter().getFilter().filter(
-				arg0.toString().toLowerCase());
-		// this.setTitle(R.string.please_wait);
+		filter(arg0.toString());
+	}
+
+	public void filter(String text) {
+		getAutoCompleteAdapter().getFilter().filter(text.toLowerCase());
 		setProgressBarIndeterminateVisibility(true);
 	}
 

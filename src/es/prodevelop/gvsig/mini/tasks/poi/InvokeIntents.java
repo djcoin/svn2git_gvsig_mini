@@ -79,6 +79,7 @@ public class InvokeIntents {
 
 		if (p != null && p instanceof OsmPOI) {
 			OsmPOI poi = (OsmPOI) p;
+			
 			double[] xy = ConversionCoords.reproject(centerMercator.getX(),
 					centerMercator.getY(), CRSFactory.getCRS("EPSG:900913"),
 					CRSFactory.getCRS("EPSG:4326"));

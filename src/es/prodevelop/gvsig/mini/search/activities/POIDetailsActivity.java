@@ -96,7 +96,7 @@ public class POIDetailsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		try {
-			setTitle("POI info");
+			setTitle(R.string.poi_info);
 
 			final DisplayMetrics metrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -173,29 +173,34 @@ public class POIDetailsActivity extends Activity {
 				}
 			});
 
-			LinearLayout l = new LinearLayout(this);
-			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.WRAP_CONTENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-			zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
-			// zzParams.setMargins(20, 20, 20, 20);
-			MapPreview preview;
-			try {
-				preview = new MapPreview(this, CompatManager.getInstance()
-						.getRegisteredContext(), metrics.widthPixels
-						- (metrics.widthPixels / 10), metrics.heightPixels / 2);
-				l.addView(preview);
-				((LinearLayout) ((LinearLayout) layout)
-						.findViewById(R.id.map_preview)).addView(l, zzParams);
-				preview.setVisibility(View.VISIBLE);
-				l.setVisibility(View.VISIBLE);
+			// LinearLayout l = (LinearLayout) layout
+			// .findViewById(R.id.map_preview);
 
-				preview.setMapCenterFromLonLat(poi);
-			} catch (BaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// LinearLayout l = new LinearLayout(this);
+//			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
+//					RelativeLayout.LayoutParams.WRAP_CONTENT,
+//					RelativeLayout.LayoutParams.WRAP_CONTENT);
+//			zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+//			zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
+			// zzParams.setMargins(20, 20, 20, 20);
+//			MapPreview preview;
+//			try {
+//				preview = new MapPreview(this, CompatManager.getInstance()
+//						.getRegisteredContext(), metrics.widthPixels
+//						- (metrics.widthPixels / 10), metrics.heightPixels / 2);
+//				// l.addView(preview);
+//				((LinearLayout) ((LinearLayout) layout)
+//						.findViewById(R.id.map_preview)).addView(preview,
+//						zzParams);
+//				preview.setVisibility(View.VISIBLE);
+////				l.setVisibility(View.VISIBLE);
+//
+//				preview.setMapCenterFromLonLat(poi);
+//
+//			} catch (BaseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 			String descPOI = Utilities.capitalizeFirstLetters((poi
 					.getDescription() != null) ? poi.getDescription() : "?");
@@ -341,6 +346,8 @@ public class POIDetailsActivity extends Activity {
 			t.setText(String.valueOf(p.getX()) + "," + String.valueOf(p.getY()));
 			t.setVisibility(View.VISIBLE);
 			registerForContextMenu(t);
+
+			// layout.addView(l);
 
 			setContentView(layout);
 			getWindow().setLayout(LayoutParams.FILL_PARENT,

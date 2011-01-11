@@ -83,7 +83,7 @@ public class AutoCompleteFilter extends Filter {
 		}
 
 		Iterator<FullTextIndex.Keyword> it = root.getFullTextIndex()
-				.getKeywords(prefix.toString());
+				.getKeywords(prefix.toString().toLowerCase());
 
 		ArrayList list = new ArrayList();
 		while (it.hasNext()) {
