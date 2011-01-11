@@ -2079,11 +2079,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public void setSelectedFeature(Feature f) {
 		try {
 			this.selectedFeature = f;
-			if (f != null) {
-				Point geom = (Point) f.getGeometry();
-				log.log(Level.FINE, "selectedFeature: " + geom.toString());
-				this.animateTo(geom.getX(), geom.getY());
-			}
+//			if (f != null) {
+//				Point geom = (Point) f.getGeometry();
+//				log.log(Level.FINE, "selectedFeature: " + geom.toString());
+//				this.animateTo(geom.getX(), geom.getY());
+//			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setSelectedFeature", e);
 		}

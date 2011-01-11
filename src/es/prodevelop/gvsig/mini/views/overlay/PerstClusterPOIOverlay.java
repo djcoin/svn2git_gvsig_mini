@@ -237,7 +237,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		try {
 			if (isCluster) {
 				if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
-					super.onSingleTapUp(e, osmtile);
+					return super.onSingleTapUp(e, osmtile);
 				} else {
 					super.onSingleTapUp(e, osmtile);
 					if (getSelectedIndex() == -1) {
@@ -259,12 +259,11 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 							ex.getPOIsOfClusterAsynch();
 						}
 					}
+					return true;
 				}
 			} else {
-				super.onSingleTapUp(e, osmtile);
+				return super.onSingleTapUp(e, osmtile);
 			}
-
-			return false;
 		} catch (Exception ex) {
 			return false;
 		}
