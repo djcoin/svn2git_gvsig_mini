@@ -56,6 +56,7 @@ import es.prodevelop.gvsig.mini.search.activities.FindStreetsNearActivity;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -75,7 +76,7 @@ public class InvokeIntents {
 
 	public static void fillIntentPOIDetails(POI p, Point centerMercator,
 			Intent i) {
-		DecimalFormat formatter = new DecimalFormat("####.00");
+
 		if (p != null && p instanceof OsmPOI) {
 			OsmPOI poi = (OsmPOI) p;
 			double[] xy = ConversionCoords.reproject(centerMercator.getX(),
@@ -89,8 +90,7 @@ public class InvokeIntents {
 			// .reproject(p.getX(), p.getY(),
 			// CRSFactory.getCRS("EPSG:4326"),
 			// CRSFactory.getCRS("EPSG:900913")));
-			String dist = formatter.format(formatKM(distance)) + " "
-					+ unit(distance);
+			String dist = Utils.formatDistance(distance);
 			i.putExtra(POIDetailsActivity.X, poi.getX());
 			i.putExtra(POIDetailsActivity.Y, poi.getY());
 			i.putExtra(POIDetailsActivity.DIST, dist);
@@ -158,20 +158,4 @@ public class InvokeIntents {
 		mainIntent.putExtra(ResultSearchActivity.QUERY, "");
 		context.startActivity(mainIntent);
 	}
-
-	private static double formatKM(double meterDistance) {
-		if (meterDistance > 1000) {
-			return meterDistance / 1000;
-		}
-		return meterDistance;
-	}
-
-	private static String unit(double meterDistance) {
-		if (meterDistance > 1000) {
-			return "Km.";
-		}
-		return "m.";
-		// return"";
-	}
-
 }

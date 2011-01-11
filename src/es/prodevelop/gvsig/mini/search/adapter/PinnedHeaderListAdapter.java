@@ -70,6 +70,7 @@ import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -203,28 +204,31 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 				Intent i = new Intent(activity, POIDetailsActivity.class);
 				if (p != null && p instanceof OsmPOI) {
 					OsmPOI poi = (OsmPOI) p;
-//					final Point centerM = getCenterMercator();
-//					final double distance = centerM.distance(ConversionCoords
-//							.reproject(p.getX(), p.getY(),
-//									CRSFactory.getCRS("EPSG:4326"),
-//									CRSFactory.getCRS("EPSG:900913")));
-//					String dist = formatter.format(formatKM(distance)) + " "
-//							+ unit(distance);
-//					i.putExtra(POIDetailsActivity.X, poi.getX());
-//					i.putExtra(POIDetailsActivity.Y, poi.getY());
-//					i.putExtra(POIDetailsActivity.DIST, dist);
-//					i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
-//					i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
-//					i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
-//					i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
-//					i.putExtra(POIDetailsActivity.IMG, poi.getImage());
-//					i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
-//					i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
-//					i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
-//					i.putExtra(POIDetailsActivity.URL, poi.getUrl());
-//					i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
-//					i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
-					InvokeIntents.fillIntentPOIDetails(poi, activity.getCenter(), i);
+					// final Point centerM = getCenterMercator();
+					// final double distance = centerM.distance(ConversionCoords
+					// .reproject(p.getX(), p.getY(),
+					// CRSFactory.getCRS("EPSG:4326"),
+					// CRSFactory.getCRS("EPSG:900913")));
+					// String dist = formatter.format(formatKM(distance)) + " "
+					// + unit(distance);
+					// i.putExtra(POIDetailsActivity.X, poi.getX());
+					// i.putExtra(POIDetailsActivity.Y, poi.getY());
+					// i.putExtra(POIDetailsActivity.DIST, dist);
+					// i.putExtra(POIDetailsActivity.DESC,
+					// poi.getDescription());
+					// i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
+					// i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
+					// i.putExtra(POIDetailsActivity.SCAT,
+					// poi.getSubcategory());
+					// i.putExtra(POIDetailsActivity.IMG, poi.getImage());
+					// i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
+					// i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
+					// i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
+					// i.putExtra(POIDetailsActivity.URL, poi.getUrl());
+					// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
+					// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+					InvokeIntents.fillIntentPOIDetails(poi,
+							activity.getCenter(), i);
 
 					activity.startActivity(i);
 				} else {
@@ -253,7 +257,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 							.getBoundingBox());
 				}
 			} else {
-				holder.previewLayout.setVisibility(View.GONE);				
+				holder.previewLayout.setVisibility(View.GONE);
 				holder.optionsButton.setVisibility(View.GONE);
 				holder.detailsButton.setVisibility(View.GONE);
 
@@ -265,22 +269,19 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 		if (p.getX() != 0 && p.getY() != 0) {
 			final Point centerM = getCenterMercator();
 
-//			final double distance = centerM.distance(ConversionCoords
-//					.reproject(p.getX(), p.getY(),
-//							CRSFactory.getCRS("EPSG:4326"),
-//							CRSFactory.getCRS("EPSG:900913")));
-			double[] centerXY = ConversionCoords.reproject(centerM.getX(), centerM.getY(),
-					CRSFactory.getCRS("EPSG:900913"),
+			// final double distance = centerM.distance(ConversionCoords
+			// .reproject(p.getX(), p.getY(),
+			// CRSFactory.getCRS("EPSG:4326"),
+			// CRSFactory.getCRS("EPSG:900913")));
+			double[] centerXY = ConversionCoords.reproject(centerM.getX(),
+					centerM.getY(), CRSFactory.getCRS("EPSG:900913"),
 					CRSFactory.getCRS("EPSG:4326"));
 
 			final double distance = Calculator.latLonDist(p.getX(), p.getY(),
 					centerXY[0], centerXY[1]);
 			holder.dist.setText(activity.getResources().getString(
 					R.string.distance)
-					+ " "
-					+ formatter.format(formatKM(distance))
-					+ " "
-					+ unit(distance));
+					+ " " + Utils.formatDistance(distance));
 			Bitmap b = this.getBitmapCategory(p);
 
 			holder.poiImg.setImageBitmap(b);
@@ -294,7 +295,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 		bindSectionHeader(convertView, realPosition, mDisplaySectionHeaders);
 		return convertView;
 	}
-	
+
 	protected Bitmap getBitmapCategory(POI p) {
 		Bitmap b = bitmap;
 		if (b == null) {
@@ -474,7 +475,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public void onDestroy() {
 		preview.destroy();
 	}

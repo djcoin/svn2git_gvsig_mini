@@ -74,6 +74,7 @@ import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.filter.SimpleFilter;
 import es.prodevelop.gvsig.mini.search.indexer.CategoryIndexer;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -83,7 +84,6 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 
 	SimpleFilter mFilter;
 	SearchActivity activity;
-	DecimalFormat formatter = new DecimalFormat("####.00");
 	Indexed category;
 	Metadata metadata;
 	Bitmap bitmap;
@@ -284,8 +284,8 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 		holder.text.setText(desc);
 		final Point centerM = getCenterMercator();
 
-		double[] centerXY = ConversionCoords.reproject(centerM.getX(), centerM.getY(),
-				CRSFactory.getCRS("EPSG:900913"),
+		double[] centerXY = ConversionCoords.reproject(centerM.getX(),
+				centerM.getY(), CRSFactory.getCRS("EPSG:900913"),
 				CRSFactory.getCRS("EPSG:4326"));
 
 		// final double distance = centerM.distance(ConversionCoords.reproject(
@@ -296,7 +296,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 		holder.dist.setText(activity.getResources()
 				.getString(R.string.distance)
 				+ " "
-				+ formatter.format(formatKM(distance)) + " " + unit(distance));
+				+ Utils.formatDistance(distance));
 		Bitmap b = bitmap;
 		if (b == null) {
 			if (p instanceof OsmPOI) {

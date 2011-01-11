@@ -40,6 +40,7 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,6 +63,7 @@ import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
@@ -316,15 +318,19 @@ public class AcetateOverlay extends MapOverlay {
 						poi.getY(), CRSFactory.getCRS(getTileRaster()
 								.getMRendererInfo().getSRS()), CRSFactory
 								.getCRS("EPSG:4326"));
+
+				double distance = Calculator.latLonDist(getTileRaster()
+						.getCenterLonLat()[0], getTileRaster()
+						.getCenterLonLat()[0], xy[0], xy[1]);
+				
 				// final Point centerM = getTileRaster().getCenterMercator();
 				// final double distance = centerM.distance(ConversionCoords
 				// .reproject(poi.getX(), poi.getY(),
 				// CRSFactory.getCRS("EPSG:4326"),
 				// CRSFactory.getCRS("EPSG:900913")));
-				// String dist = formatter.format(formatKM(distance)) + " "
-				// + unit(distance);
-				
-				String dist = "FIX ME";
+				 String dist = Utils.formatDistance(distance);
+
+//				String dist = "FIX ME";
 				i.putExtra(POIDetailsActivity.X, xy[0]);
 				i.putExtra(POIDetailsActivity.Y, xy[1]);
 				i.putExtra(POIDetailsActivity.DIST, dist);

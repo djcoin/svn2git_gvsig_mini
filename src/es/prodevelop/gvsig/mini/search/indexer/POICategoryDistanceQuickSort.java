@@ -42,22 +42,15 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
-import es.prodevelop.gvsig.mini.common.impl.CollectionQuickSort;
+import es.prodevelop.gvsig.mini.common.impl.PointDistanceQuickSort;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
-public class POICategoryDistanceQuickSort extends CollectionQuickSort {
-
-	Point center;
-	Point centerLatLon;
+public class POICategoryDistanceQuickSort extends PointDistanceQuickSort {
 
 	public POICategoryDistanceQuickSort(Point pointToCompareWith) {
-		center = pointToCompareWith;
-		double[] latLon = ConversionCoords.reproject(center.getX(),
-				center.getY(), CRSFactory.getCRS("EPSG:900913"),
-				CRSFactory.getCRS("EPSG:4326"));
-		centerLatLon = new Point(latLon[0], latLon[1]);
+		super(pointToCompareWith);
 	}
 
 	@Override
@@ -91,30 +84,4 @@ public class POICategoryDistanceQuickSort extends CollectionQuickSort {
 			}
 		}
 	}
-
-	private boolean calcDistance(Point xx, Point yy) {
-		// double[] lonlatXX = ConversionCoords.reproject(xx.getX(), xx.getY(),
-		// CRSFactory.getCRS("EPSG:4326"),
-		// CRSFactory.getCRS("EPSG:900913"));
-		//
-		// double[] lonlatYY = ConversionCoords.reproject(yy.getX(), yy.getY(),
-		// CRSFactory.getCRS("EPSG:4326"),
-		// CRSFactory.getCRS("EPSG:900913"));
-		//
-		// double ix = center.distance(lonlatXX[0], lonlatXX[1]);
-		// double iy = center.distance(lonlatYY[0], lonlatYY[1]);
-		double[] xx_ = ConversionCoords.reproject(xx.getX(),
-				xx.getY(), CRSFactory.getCRS("EPSG:900913"),
-				CRSFactory.getCRS("EPSG:4326"));
-		double[] yy_ = ConversionCoords.reproject(yy.getX(),
-				yy.getY(), CRSFactory.getCRS("EPSG:900913"),
-				CRSFactory.getCRS("EPSG:4326"));
-		double ix = Calculator.latLonDist(centerLatLon.getX(),
-				centerLatLon.getY(), xx_[0], xx_[1]);
-		double iy = Calculator.latLonDist(centerLatLon.getX(),
-				centerLatLon.getY(), yy_[0], yy_[1]);
-
-		return (ix < iy);
-	}
-
 }

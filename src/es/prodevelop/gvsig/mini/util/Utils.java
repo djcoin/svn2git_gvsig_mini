@@ -58,6 +58,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 
 import android.app.SearchManager;
@@ -71,12 +72,13 @@ import es.prodevelop.gvsig.mini.map.GeoUtils;
 
 /**
  * Utility mehtods
- * @author aromeu 
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public class Utils implements GeoUtils {
-	
+
 	public final static String TEST_POI_DIR = "gvSIG/pois/london";
 	public final static String LAYERS_VERSION = "v0.2.1";
 	public final static String APP_DIR = "gvSIG";
@@ -91,11 +93,12 @@ public class Utils implements GeoUtils {
 	public final static int COMPASS_ACCURACY = 1;
 	public final static int MIN_ROTATION = 10;
 	public final static int REPAINT_TIME = 200;
+
 	public static int[] getMapTileFromCoordinates(final int aLat,
 			final int aLon, final int zoom, final int[] reuse) {
 		return getMapTileFromCoordinates(aLat / 1E6, aLon / 1E6, zoom, reuse);
 	}
-	
+
 	public final static String SUPPORT_MAIL = "minijira[at]prodevelop[dot]es";
 
 	public static int[] getMapTileFromCoordinates(final double aLat,
@@ -103,11 +106,11 @@ public class Utils implements GeoUtils {
 		final int[] out = (aUseAsReturnValue != null) ? aUseAsReturnValue
 				: new int[2];
 
-		out[MAPTILE_LATITUDE_INDEX] = (int) Math.floor((1 - Math.log(Math
-				.tan(aLat * Math.PI / 180)
-				+ 1 / Math.cos(aLat * Math.PI / 180))
-				/ Math.PI)
-				/ 2 * (1 << zoom));
+		out[MAPTILE_LATITUDE_INDEX] = (int) Math
+				.floor((1 - Math.log(Math.tan(aLat * Math.PI / 180) + 1
+						/ Math.cos(aLat * Math.PI / 180))
+						/ Math.PI)
+						/ 2 * (1 << zoom));
 		out[MAPTILE_LONGITUDE_INDEX] = (int) Math.floor((aLon + 180) / 360
 				* (1 << zoom));
 
@@ -163,12 +166,13 @@ public class Utils implements GeoUtils {
 		}
 	}
 
-//	public static void sendExceptionEmail(final Context ctx, final String pBody) {
-//		openEmail(ctx, pBody, "gvSIG Mini-Exception (v" + ")",
-//				new String[] { "aromeu@prodevelop.es" });
-//		Toast.makeText(ctx, "Please describe your bug!", Toast.LENGTH_LONG)
-//				.show();
-//	}
+	// public static void sendExceptionEmail(final Context ctx, final String
+	// pBody) {
+	// openEmail(ctx, pBody, "gvSIG Mini-Exception (v" + ")",
+	// new String[] { "aromeu@prodevelop.es" });
+	// Toast.makeText(ctx, "Please describe your bug!", Toast.LENGTH_LONG)
+	// .show();
+	// }
 
 	public static void openEmail(final Context ctx, final String pBody,
 			final String pSubject, final String[] pReceivers, String fileAttach) {
@@ -190,7 +194,8 @@ public class Utils implements GeoUtils {
 		if (pBody != null) {
 			mailIntent.putExtra(android.content.Intent.EXTRA_TEXT, pBody);
 		}
-		mailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+fileAttach));
+		mailIntent.putExtra(Intent.EXTRA_STREAM,
+				Uri.parse("file://" + fileAttach));
 		mailIntent.setType("text/plain");
 
 		ctx.startActivity(Intent
@@ -199,34 +204,36 @@ public class Utils implements GeoUtils {
 
 	public static void openWeb(final Context ctx, final String pBody,
 			final String pSubject, final String[] pReceivers) {
-//		final Intent mailIntent = new Intent(android.content.Intent.ACTION_SEND);
-//		 final Intent mailIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-//
-//		 mailIntent.putExtra(SearchManager.QUERY, "gvsigminilayers.zip");
-		 final Intent mailIntent = new Intent(Intent.ACTION_WEB_SEARCH);
+		// final Intent mailIntent = new
+		// Intent(android.content.Intent.ACTION_SEND);
+		// final Intent mailIntent = new Intent(Intent.ACTION_WEB_SEARCH);
+		//
+		// mailIntent.putExtra(SearchManager.QUERY, "gvsigminilayers.zip");
+		final Intent mailIntent = new Intent(Intent.ACTION_WEB_SEARCH);
 
-		 mailIntent.putExtra(SearchManager.QUERY, "gvsigminilayers.gvtiles");		 
+		mailIntent.putExtra(SearchManager.QUERY, "gvsigminilayers.gvtiles");
 
-//		mailIntent.setType("plain/text");
-//
-//		if (pReceivers != null && pReceivers.length > 0) {
-//			mailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, pReceivers);
-//		}
-//
-//		if (pSubject != null) {
-//			mailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, pSubject);
-//		}
-//
-//		if (pBody != null) {
-//			mailIntent.putExtra(android.content.Intent.EXTRA_TEXT, pBody);
-//		}
-//		mailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+fileAttach));
-//		mailIntent.setType("text/plain");
-//
+		// mailIntent.setType("plain/text");
+		//
+		// if (pReceivers != null && pReceivers.length > 0) {
+		// mailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, pReceivers);
+		// }
+		//
+		// if (pSubject != null) {
+		// mailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, pSubject);
+		// }
+		//
+		// if (pBody != null) {
+		// mailIntent.putExtra(android.content.Intent.EXTRA_TEXT, pBody);
+		// }
+		// mailIntent.putExtra(Intent.EXTRA_STREAM,
+		// Uri.parse("file://"+fileAttach));
+		// mailIntent.setType("text/plain");
+		//
 		ctx.startActivity(Intent
 				.createChooser(mailIntent, "Select Web Browser"));
 	}
-	
+
 	public static int getNextSquareNumberAbove(final double factor) {
 		int out = 0;
 		int cur = 1;
@@ -247,22 +254,42 @@ public class Utils implements GeoUtils {
 		URLConnection urlconnec = url.openConnection();
 		urlconnec.setConnectTimeout(30000);
 		return urlconnec.getInputStream();
-	}	
-	
+	}
+
 	public static void downloadLayerFile(final Context ctx) {
-		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Exception",
-				new String[] { getSupportMail() });		
+		openWeb(ctx, "",
+				ctx.getResources().getString(R.string.app_name_itemizedoverlay)
+						+ "-Exception", new String[] { getSupportMail() });
 	}
-	
+
 	public static void askLayers(final Context ctx) {
-		openWeb(ctx, "", ctx.getResources().getString(R.string.app_name_itemizedoverlay) + "-Layers",
-				new String[] { getSupportMail() });		
+		openWeb(ctx, "",
+				ctx.getResources().getString(R.string.app_name_itemizedoverlay)
+						+ "-Layers", new String[] { getSupportMail() });
 	}
-	
+
 	public static String getSupportMail() {
 		return SUPPORT_MAIL.replace("[at]", "@").replace("[dot]", ".");
 	}
-	
-	
-	
+
+	public static double formatKM(double meterDistance) {
+		if (meterDistance > 1000) {
+			return meterDistance / 1000;
+		}
+		return meterDistance;
+	}
+
+	public static String unit(double meterDistance) {
+		if (meterDistance > 1000) {
+			return "Km.";
+		}
+		return "m.";
+		// return"";
+	}
+
+	public static String formatDistance(double distance) {
+		DecimalFormat formatter = new DecimalFormat("####.00");
+		return formatter.format(Utils.formatKM(distance)) + " "
+				+ Utils.unit(distance);
+	}
 }

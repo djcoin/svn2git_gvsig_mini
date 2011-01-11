@@ -6,12 +6,14 @@ import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListene
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.ResultSearchSymbolSelector;
 import android.content.Context;
+import android.graphics.Canvas;
 
 public class ResultSearchOverlay extends PointOverlay implements
 		FullTextSearchListener {
 
 	public final static String DEFAULT_NAME = "RESULT_SEARCH";
 	private String textSearch;
+	private boolean hasConvertedCoordinates = false;
 
 	public ResultSearchOverlay(Context context, TileRaster tileRaster,
 			String name) {
@@ -22,10 +24,19 @@ public class ResultSearchOverlay extends PointOverlay implements
 	}
 
 	@Override
+	protected void onDraw(Canvas c, TileRaster maps) {
+		if (!hasConvertedCoordinates) {
+			this.convertCoordinates("EPSG:4326", getTileRaster()
+					.getMRendererInfo().getSRS(), getPoints(), null);
+			hasConvertedCoordinates = true;
+		}
+		super.onDraw(c, maps);
+	}
+
+	@Override
 	public void onSearchResults(String textSearch, ArrayList list) {
 		this.setPoints(list);
-		this.convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
-				.getSRS(), getPoints(), null);
 		this.textSearch = textSearch;
+		hasConvertedCoordinates = false;
 	}
 }
