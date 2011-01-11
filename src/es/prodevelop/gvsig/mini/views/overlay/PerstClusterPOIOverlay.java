@@ -50,6 +50,7 @@ import android.graphics.Canvas;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.bucket.mr.MRBucketPRQuadtree;
@@ -430,11 +431,17 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		}
 
 		String cat;
+		boolean anyRemoved = false;
 		for (int i = 0; i < size; i++) {
 			cat = previouslySelectedCategories.get(i).toString();
-			if (!categories.contains(cat))
+			if (!categories.contains(cat)) {
 				getTileRaster().removeExpanded(cat);
+				anyRemoved = true;
+			}
 		}
+
+		if (anyRemoved)
+			getTileRaster().acetate.getPopup().setVisibility(View.INVISIBLE);
 	}
 
 	public Hashtable<String, Integer> getMaxClusterSizeCat() {

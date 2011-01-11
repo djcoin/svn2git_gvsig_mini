@@ -326,8 +326,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						Log.d("", "Overlay removed: " + overlay.getName());
 
 					extentChangedListeners.remove(overlay);
-					overlay.destroy();
+					overlay.destroy() ;
 					overlay = null;
+					acetate.getPopup().setVisibility(View.INVISIBLE);
 					break;
 				}
 			} catch (Exception e) {
@@ -2079,11 +2080,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public void setSelectedFeature(Feature f) {
 		try {
 			this.selectedFeature = f;
-//			if (f != null) {
-//				Point geom = (Point) f.getGeometry();
-//				log.log(Level.FINE, "selectedFeature: " + geom.toString());
-//				this.animateTo(geom.getX(), geom.getY());
-//			}
+			// if (f != null) {
+			// Point geom = (Point) f.getGeometry();
+			// log.log(Level.FINE, "selectedFeature: " + geom.toString());
+			// this.animateTo(geom.getX(), geom.getY());
+			// }
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "setSelectedFeature", e);
 		}
