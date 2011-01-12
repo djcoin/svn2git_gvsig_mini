@@ -167,7 +167,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 				this.getTileRaster().removeOverlay(this.getName());
 				destroy();
 			}
-			return false;
+			return true;
 		} else {
 			return super.onSingleTapUp(e, osmtile);
 		}

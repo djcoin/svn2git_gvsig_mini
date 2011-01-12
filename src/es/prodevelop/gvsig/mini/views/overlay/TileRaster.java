@@ -1322,8 +1322,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				try {
 					for (MapOverlay osmvo : TileRaster.this.mOverlays)
-						if (osmvo.onSingleTapUp(e, TileRaster.this))
-							return true;
+						try {
+							if (osmvo.onSingleTapUp(e, TileRaster.this))
+								return true;
+						} catch (Exception ignore) {
+
+						}
 				} catch (Exception ignore) {
 
 				}
