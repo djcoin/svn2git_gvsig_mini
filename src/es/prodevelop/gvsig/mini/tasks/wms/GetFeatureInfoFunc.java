@@ -13,6 +13,7 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
@@ -23,12 +24,14 @@ import es.prodevelop.tilecache.renderer.wms.WMSRenderer;
 public class GetFeatureInfoFunc extends Functionality {
 
 	private int res;
-	private Logger logger = Logger.getLogger(GetFeatureInfoFunc.class.getName());
+	private Logger logger = Logger
+			.getLogger(GetFeatureInfoFunc.class.getName());
 
 	public GetFeatureInfoFunc(Map map, int id) {
 		super(map, id);
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(logger);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(logger);
 		} catch (BaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,18 +65,36 @@ public class GetFeatureInfoFunc extends Functionality {
 					final WMSStatus status = wmsRenderer.buildWMSStatus();
 					status.setWidth(getMap().osmap.getWidth());
 					status.setHeight(getMap().osmap.getHeight());
-					status
-							.setExtent(getMap().vp.calculateExtent(getMap().osmap.getWidth(),
-									getMap().osmap.getHeight(), getMap().osmap.getMRendererInfo()
-											.getCenter()));
-					String info = driver.getFeatureInfo(status, getMap().osmap
-							.getWidth() / 2, getMap().osmap.getHeight() / 2, 10,
+					status.setExtent(getMap().vp.calculateExtent(getMap().osmap
+							.getWidth(), getMap().osmap.getHeight(),
+							getMap().osmap.getMRendererInfo().getCenter()));
+
+					URL url = driver.getClient().getFeatureInfoURL(status,
+							getMap().osmap.getWidth() / 2,
+							getMap().osmap.getHeight() / 2, 10,
 							new WMSCancellable());
-					logger.log(Level.FINE, "GetFeatureInfo: " + info);
-					Message m = Message.obtain();
-					m.what = Map.SHOW_OK_DIALOG;
-					m.obj = info;
-					getMap().getMapHandler().sendMessage(m);
+
+					if (url == null)
+						getMap().showToast(R.string.error_connecting_server);
+					else {
+
+						if (status.getInfoFormat().contains("html")) {
+							InvokeIntents.openBrowser(getMap(), url.toString());							
+							Message m = Message.obtain();
+							m.what = Map.VOID;					
+							getMap().getMapHandler().sendMessage(m);
+						} else {
+							String info = driver.getFeatureInfo(status,
+									getMap().osmap.getWidth() / 2,
+									getMap().osmap.getHeight() / 2, 10,
+									new WMSCancellable());
+							logger.log(Level.FINE, "GetFeatureInfo: " + info);
+							Message m = Message.obtain();
+							m.what = Map.SHOW_OK_DIALOG;
+							m.obj = info;
+							getMap().getMapHandler().sendMessage(m);
+						}
+					}
 				} else {
 					showToastError();
 				}
@@ -81,17 +102,18 @@ public class GetFeatureInfoFunc extends Functionality {
 				showToastError();
 			}
 		} catch (Exception e) {
-			logger.log(Level.SEVERE,"",e);
+			logger.log(Level.SEVERE, "", e);
 			res = TaskHandler.ERROR;
 			super.stop();
 		}
 		return true;
 	}
-	
+
 	private void showToastError() {
 		Message m = Message.obtain();
 		m.what = Map.SHOW_TOAST;
-		m.obj = getMap().getResources().getString(R.string.GetFeatureInfoFunc_0); 
+		m.obj = getMap().getResources()
+				.getString(R.string.GetFeatureInfoFunc_0);
 		getMap().getMapHandler().sendMessage(m);
 		res = TaskHandler.FINISHED;
 	}
