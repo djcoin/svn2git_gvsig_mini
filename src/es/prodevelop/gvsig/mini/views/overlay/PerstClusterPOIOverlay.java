@@ -51,6 +51,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.bucket.mr.MRBucketPRQuadtree;
@@ -260,6 +261,8 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 							ex.setClusterRemovedListener(this);
 							getTileRaster().addOverlay(ex);
 							ex.getPOIsOfClusterAsynch();
+						} else {
+							Toast.makeText(getTileRaster().map, R.string.zoom_to_expand, Toast.LENGTH_SHORT).show();
 						}
 					}
 					return true;

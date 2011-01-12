@@ -303,7 +303,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			} else {
 				this.mOverlays.add(overlay);
 			}
-				
+
 			extentChangedListeners.add(overlay);
 		}
 	}
@@ -1319,9 +1319,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			try {
 				if (acetate.onSingleTapUp(e, TileRaster.this))
 					return true;
-				for (MapOverlay osmvo : TileRaster.this.mOverlays)
-					if (osmvo.onSingleTapUp(e, TileRaster.this))
-						return true;
+				try {
+					for (MapOverlay osmvo : TileRaster.this.mOverlays)
+						if (osmvo.onSingleTapUp(e, TileRaster.this))
+							return true;
+				} catch (Exception ignore) {
+
+				}
 
 				map.switchSlideBar();
 			} catch (Exception ex) {

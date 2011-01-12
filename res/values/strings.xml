@@ -344,6 +344,7 @@
 		to any OPEN STREET MAPS layer to automatically download tiles.
 	</string>
 	<string name="location_not_available">Your location is not available</string>
+	<string name="zoom_to_expand">Zoom in to show more POIs</string>
 </resources>
 
 
