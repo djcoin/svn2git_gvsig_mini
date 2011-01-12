@@ -446,7 +446,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		}
 
 		if (anyRemoved)
-			getTileRaster().acetate.getPopup().setVisibility(View.INVISIBLE);
+			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
 	}
 
 	public Hashtable<String, Integer> getMaxClusterSizeCat() {

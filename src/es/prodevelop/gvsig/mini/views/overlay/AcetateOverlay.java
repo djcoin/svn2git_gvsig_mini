@@ -120,6 +120,8 @@ public class AcetateOverlay extends MapOverlay {
 	int popupOffsetX;
 	int popupOffsetY;
 
+	private Feature lastFeature;
+
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		try {
@@ -127,10 +129,14 @@ public class AcetateOverlay extends MapOverlay {
 
 				final Feature feature = maps.selectedFeature;
 
-				if (feature == null)
-					return;
+				if (feature == null) {
+					if (lastFeature == null)
+						return;
+				} else {
+					lastFeature = feature;
+				}
 
-				IGeometry f = feature.getGeometry();
+				IGeometry f = lastFeature.getGeometry();
 
 				if (f != null && f instanceof Point) {
 					Point p = (Point) f;
@@ -333,7 +339,11 @@ public class AcetateOverlay extends MapOverlay {
 			}
 			return true;
 		} else {
-			popupView.setVisibility(View.INVISIBLE);
+			// if (popupView.getVisibility() == View.VISIBLE) {
+			// popupView.setVisibility(View.INVISIBLE);
+			// return true;
+			// }
+
 			return false;
 		}
 	}
@@ -412,8 +422,12 @@ public class AcetateOverlay extends MapOverlay {
 
 	}
 
-	public PopupView getPopup() {
+	private PopupView getPopup() {
 		return this.popupView;
+	}
+
+	public int getPopupVisibility() {
+		return getPopup().getVisibility();
 	}
 
 	public void setPopupVisibility(int visibility) {

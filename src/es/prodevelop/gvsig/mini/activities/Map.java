@@ -1698,16 +1698,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
-				// try {
-				// if (p == null)
-				// p = new PerstClusterPOIOverlay(this, osmap,
-				// PerstClusterPOIOverlay.DEFAULT_NAME, true);
-				// this.osmap.poiOverlay = p;
-				// this.osmap.addOverlay(p);
-				//
-				// } catch (Exception e) {
-				//
-				// }
+				try {
+					if (p == null)
+						p = new PerstClusterPOIOverlay(this, osmap,
+								PerstClusterPOIOverlay.DEFAULT_NAME, true);
+					this.osmap.poiOverlay = p;
+					this.osmap.addOverlay(p);
+
+				} catch (Exception e) {
+
+				}
 
 				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
 						ResultSearchOverlay.DEFAULT_NAME));
@@ -3106,6 +3106,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				clearContext();
 				return;
 			}
+
 			if (s.getVisibility() == View.VISIBLE) {
 				s.setVisibility(View.INVISIBLE);
 			} else {
@@ -3147,6 +3148,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
 				if (this.sliding.isOpened()) {
 					this.sliding.close();
+					return true;
+				}
+
+				if (osmap.acetate.getPopupVisibility() == View.VISIBLE) {
+					osmap.acetate.setPopupVisibility(View.INVISIBLE);
 					return true;
 				}
 

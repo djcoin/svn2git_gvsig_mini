@@ -228,7 +228,7 @@ public class PointOverlay extends MapOverlay {
 
 	public void updatePopup(Point p) {
 		if (p == null) {
-			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
+//			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
 			return;
 		}
 

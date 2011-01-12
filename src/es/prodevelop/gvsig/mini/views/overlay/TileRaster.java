@@ -162,7 +162,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	private TileRasterThread surfaceThread;
 
 	Cancellable cancellable = Utilities.getNewCancellable();
-	AcetateOverlay acetate;
+	public AcetateOverlay acetate;
 	boolean panMode = true;
 
 	private float xOff = 0.0f, yOff = 0.0f, relativeScale = 1.0f;
@@ -333,7 +333,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					extentChangedListeners.remove(overlay);
 					overlay.destroy();
 					overlay = null;
-					acetate.getPopup().setVisibility(View.INVISIBLE);
+					acetate.setPopupVisibility(View.INVISIBLE);
 					break;
 				}
 			} catch (Exception e) {
@@ -1319,6 +1319,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			try {
 				if (acetate.onSingleTapUp(e, TileRaster.this))
 					return true;
+
 				try {
 					for (MapOverlay osmvo : TileRaster.this.mOverlays)
 						if (osmvo.onSingleTapUp(e, TileRaster.this))
@@ -1327,6 +1328,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				}
 
+				// if (!acetateTouch)
 				map.switchSlideBar();
 			} catch (Exception ex) {
 				log.log(Level.SEVERE, "singletapconfirmed", ex);
@@ -2442,7 +2444,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		this.centerPixelX = width / 2;
 		this.centerPixelY = height / 2;
 
-		acetate.getPopup().setMaxSize(width, height);
+		acetate.setPopupMaxSize(width, height);
 	}
 
 	boolean scaleCanvasForZoom() {
