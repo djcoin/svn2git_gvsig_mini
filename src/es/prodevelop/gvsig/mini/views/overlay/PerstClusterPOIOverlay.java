@@ -94,6 +94,8 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 	private PerstClusterPOIOverlay onlyPointsOverlay;
 	private boolean isCluster = false;
+	
+	private ArrayList expandedExtents = new ArrayList();
 
 	public PerstClusterPOIOverlay(Context context, TileRaster tileRaster,
 			String name, boolean isCluster) {
@@ -244,7 +246,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 					if (getSelectedIndex() == -1) {
 						return false;
 					} else {
-						Cluster p = (Cluster) getPoints().get(
+ 						Cluster p = (Cluster) getPoints().get(
 								getSelectedIndex());
 						if (p.isExpandable()) {
 							ExpandedClusterOverlay ex = new ExpandedClusterOverlay(

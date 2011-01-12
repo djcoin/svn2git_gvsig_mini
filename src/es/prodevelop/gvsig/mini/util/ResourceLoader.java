@@ -65,7 +65,7 @@ public class ResourceLoader {
 			.getName());
 	static Context context;
 	static Hashtable imgs;
-	public static int MAX_DISTANCE = 50;
+	public static int MAX_DISTANCE = 16;
 	public static int MIN_PAN = 5;
 
 	/**
@@ -414,7 +414,7 @@ public class ResourceLoader {
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		} finally {
-			MAX_DISTANCE = getBitmap(R.drawable.startpoi).getWidth();
+//			MAX_DISTANCE = getBitmap(R.drawable.startpoi).getWidth();
 			MIN_PAN = MAX_DISTANCE / 4;
 		}
 	}

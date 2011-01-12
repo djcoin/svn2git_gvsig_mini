@@ -228,7 +228,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 					// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
 					// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
 					InvokeIntents.fillIntentPOIDetails(poi,
-							activity.getCenter(), i);
+							activity.getCenter(), i, activity);
 
 					activity.startActivity(i);
 				} else {
@@ -277,11 +277,20 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 					centerM.getY(), CRSFactory.getCRS("EPSG:900913"),
 					CRSFactory.getCRS("EPSG:4326"));
 
-			final double distance = Calculator.latLonDist(p.getX(), p.getY(),
-					centerXY[0], centerXY[1]);
+			String distanceText = "";
+			if (centerXY[0] == 0 || centerXY[1] == 0)
+				distanceText = activity.getResources().getString(
+						R.string.location_not_available);
+			else {
+				final double distance = Calculator.latLonDist(p.getX(), p.getY(),
+						centerXY[0], centerXY[1]);
+				distanceText = Utils.formatDistance(distance);
+			}
+			
+			
 			holder.dist.setText(activity.getResources().getString(
 					R.string.distance)
-					+ " " + Utils.formatDistance(distance));
+					+ " " + distanceText);
 			Bitmap b = this.getBitmapCategory(p);
 
 			holder.poiImg.setImageBitmap(b);

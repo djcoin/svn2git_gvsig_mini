@@ -85,8 +85,8 @@ public class SettingsActivity extends PreferenceActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		try {
 			super.onCreate(savedInstanceState);
-//			CompatManager.getInstance().getRegisteredLogHandler()
-//					.configureLogger(log);
+			// CompatManager.getInstance().getRegisteredLogHandler()
+			// .configureLogger(log);
 
 			// Load the preferences from an XML resource
 			addPreferencesFromResource(R.xml.settings);
@@ -263,12 +263,28 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	private void processEditTextPreference(EditTextPreference p,
 			boolean onlySummary) {
+		String text = p.getText();
+
+		if (text == null)
+			text = "";
+
+		if (text.length() == 0
+				&& (p.getKey()
+						.compareTo(
+								this.getText(R.string.settings_key_gps_dist)
+										.toString()) == 0 || p.getKey()
+						.compareTo(
+								this.getText(R.string.settings_key_gps_time)
+										.toString()) == 0)) {
+			text = "0";
+		}
+
 		if (!onlySummary)
-			Settings.getInstance().putValue(p.getKey(), p.getText());
+			Settings.getInstance().putValue(p.getKey(), text);
 		if (p.getKey().contains("pass"))
 			p.setSummary("********");
 		else
-			p.setSummary(p.getText());
+			p.setSummary(text);
 	}
 
 	private void processListPreference(ListPreference p, boolean onlySummary) {

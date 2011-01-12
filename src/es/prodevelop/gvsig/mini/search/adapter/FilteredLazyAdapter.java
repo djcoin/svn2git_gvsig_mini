@@ -248,7 +248,7 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 					// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
 					// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
 					InvokeIntents.fillIntentPOIDetails(poi,
-							activity.getCenter(), i);
+							activity.getCenter(), i, activity);
 					activity.startActivity(i);
 				} else {
 					// throw exception
@@ -291,12 +291,18 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 		// final double distance = centerM.distance(ConversionCoords.reproject(
 		// p.getX(), p.getY(), CRSFactory.getCRS("EPSG:4326"),
 		// CRSFactory.getCRS("EPSG:900913")));
-		final double distance = Calculator.latLonDist(p.getX(), p.getY(),
-				centerXY[0], centerXY[1]);
+		String distanceText = "";
+		if (centerXY[0] == 0 && centerXY[1] == 0)
+			distanceText = activity.getResources().getString(
+					R.string.location_not_available);
+		else {
+			final double distance = Calculator.latLonDist(p.getX(), p.getY(),
+					centerXY[0], centerXY[1]);
+			distanceText = Utils.formatDistance(distance);
+		}
+
 		holder.dist.setText(activity.getResources()
-				.getString(R.string.distance)
-				+ " "
-				+ Utils.formatDistance(distance));
+				.getString(R.string.distance) + " " + distanceText);
 		Bitmap b = bitmap;
 		if (b == null) {
 			if (p instanceof OsmPOI) {

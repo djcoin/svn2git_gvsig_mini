@@ -101,6 +101,7 @@ public abstract class SearchActivity extends ListActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		try {
+			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 			getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
 			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);

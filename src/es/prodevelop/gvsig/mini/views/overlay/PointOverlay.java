@@ -145,16 +145,21 @@ public class PointOverlay extends MapOverlay {
 		Point p;
 		Pixel pix;
 		final int size = points.size();
+		int[] offset;
+		int[] coords;
 		for (int i = 0; i < size; i++) {
 			p = (Point) points.get(i);
-
-			int[] coords = getTileRaster().getMRendererInfo().toPixels(
+			offset = getSymbolSelector().getMidSymbol(p);
+			coords = getTileRaster().getMRendererInfo().toPixels(
 					new double[] { p.getX(), p.getY() });
 
 			// log.log(Level.FINE, "coordinates to pixel: " + coords[0] +
 			// "," + coords[1]);
 
 			pix = new Pixel(coords[0], coords[1]);
+
+//			pix.setX(pix.getX() - offset[0]);
+//			pix.setY(pix.getY() - offset[1]);
 			long newDistance = pix.distance(new Pixel(pixel.getX(), pixel
 					.getY()));
 			// log.log(Level.FINE, "distance: " + newDistance);
@@ -174,7 +179,8 @@ public class PointOverlay extends MapOverlay {
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
-			if (!isVisible()) return null;
+			if (!isVisible())
+				return null;
 			boolean found = false;
 			final ArrayList pois = this.getPoints();
 

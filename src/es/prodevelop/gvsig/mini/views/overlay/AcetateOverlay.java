@@ -148,16 +148,16 @@ public class AcetateOverlay extends MapOverlay {
 
 			// FIXME
 			// if (drawZoomRectangle && rectangle != null) {
-			// if (rectangle.width() <= 0 || rectangle.height()<= 0) {
-			// rectangle.left -=1;
+			// if (rectangle.width() <= 0 || rectangle.height() <= 0) {
+			// rectangle.left -= 1;
 			// rectangle.right += 1;
 			// rectangle.top -= 1;
-			// rectangle.bottom +=1;
+			// rectangle.bottom += 1;
 			// }
 			// c.drawRect(rectangle, Paints.rectanglePaint);
 			// }
-			// if (toX >= 0 && toY >= 0 && fromX >= 0 && fromY >= 0 &&
-			// !maps.panMode) {
+			// if (toX >= 0 && toY >= 0 && fromX >= 0 && fromY >= 0
+			// && !maps.panMode) {
 			// path.rewind();
 			// path.moveTo(fromX, fromY);
 			// path.lineTo(fromX, toY);
@@ -276,7 +276,8 @@ public class AcetateOverlay extends MapOverlay {
 					ViewPort.mTouchMapOffsetX = 0;
 					ViewPort.mTouchMapOffsetY = 0;
 					t.setMapCenter(center[0], center[1]);
-					t.scrollingCenter.setCoordinates(center);
+					if (t.scrollingCenter != null)
+						t.scrollingCenter.setCoordinates(center);
 				} else {
 					this.updateRectangle();
 
@@ -327,38 +328,7 @@ public class AcetateOverlay extends MapOverlay {
 				p.setX(pxy[0]);
 				p.setY(pxy[1]);
 				InvokeIntents.fillIntentPOIDetails(p, new Point(xy[0], xy[1]),
-						i);
-				// double[] xy = ConversionCoords.reproject(poi.getX(),
-				// poi.getY(), CRSFactory.getCRS(getTileRaster()
-				// .getMRendererInfo().getSRS()), CRSFactory
-				// .getCRS("EPSG:4326"));
-				//
-				// double distance = Calculator.latLonDist(getTileRaster()
-				// .getCenterLonLat()[0], getTileRaster()
-				// .getCenterLonLat()[0], xy[0], xy[1]);
-				//
-				// // final Point centerM = getTileRaster().getCenterMercator();
-				// // final double distance = centerM.distance(ConversionCoords
-				// // .reproject(poi.getX(), poi.getY(),
-				// // CRSFactory.getCRS("EPSG:4326"),
-				// // CRSFactory.getCRS("EPSG:900913")));
-				// String dist = Utils.formatDistance(distance);
-				//
-				// // String dist = "FIX ME";
-				// i.putExtra(POIDetailsActivity.X, xy[0]);
-				// i.putExtra(POIDetailsActivity.Y, xy[1]);
-				// i.putExtra(POIDetailsActivity.DIST, dist);
-				// i.putExtra(POIDetailsActivity.DESC, poi.getDescription());
-				// i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
-				// i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
-				// i.putExtra(POIDetailsActivity.SCAT, poi.getSubcategory());
-				// i.putExtra(POIDetailsActivity.IMG, poi.getImage());
-				// i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
-				// i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
-				// i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
-				// i.putExtra(POIDetailsActivity.URL, poi.getUrl());
-				// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
-				// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+						i, getTileRaster().map);
 				getContext().startActivity(i);
 			}
 			return true;

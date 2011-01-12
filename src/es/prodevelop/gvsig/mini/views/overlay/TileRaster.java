@@ -298,7 +298,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		if (containsOverlay(overlay.getName())) {
 			overlay.onLayerChanged("");
 		} else {
-			this.mOverlays.add(overlay);
+			if (overlay instanceof ExpandedClusterOverlay) {
+				this.mOverlays.add(0, overlay);
+			} else {
+				this.mOverlays.add(overlay);
+			}
+				
 			extentChangedListeners.add(overlay);
 		}
 	}
@@ -326,7 +331,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						Log.d("", "Overlay removed: " + overlay.getName());
 
 					extentChangedListeners.remove(overlay);
-					overlay.destroy() ;
+					overlay.destroy();
 					overlay = null;
 					acetate.getPopup().setVisibility(View.INVISIBLE);
 					break;
@@ -1106,9 +1111,18 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						.getZoomLevel());
 			}
 
-			/* Draw all Overlays. */
-			for (MapOverlay osmvo : this.mOverlays)
-				osmvo.onManagedDraw(c, this);
+			final ArrayList<MapOverlay> overlays = (ArrayList<MapOverlay>) this.mOverlays;
+			final int numLayers = overlays.size();
+
+			MapOverlay o;
+			for (int i = 0; i < numLayers; i++) {
+				try {
+					o = overlays.get(i);
+					o.onManagedDraw(c, this);
+				} catch (Exception e) {
+					// Concurrent modifications can occur
+				}
+			}
 
 			acetate.onManagedDraw(c, this);
 

@@ -48,6 +48,7 @@ import android.util.Log;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
+import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.activities.BookmarkPOIActivity;
@@ -75,23 +76,25 @@ public class InvokeIntents {
 	}
 
 	public static void fillIntentPOIDetails(POI p, Point centerMercator,
-			Intent i) {
+			Intent i, Context c) {
 
 		if (p != null && p instanceof OsmPOI) {
 			OsmPOI poi = (OsmPOI) p;
-			
+
 			double[] xy = ConversionCoords.reproject(centerMercator.getX(),
 					centerMercator.getY(), CRSFactory.getCRS("EPSG:900913"),
 					CRSFactory.getCRS("EPSG:4326"));
 			centerMercator.setX(xy[0]);
 			centerMercator.setY(xy[1]);
-			final double distance = Calculator.latLonDist(p.getX(), p.getY(),
-					centerMercator.getX(), centerMercator.getY());
-			// final double distance = centerMercator.distance(ConversionCoords
-			// .reproject(p.getX(), p.getY(),
-			// CRSFactory.getCRS("EPSG:4326"),
-			// CRSFactory.getCRS("EPSG:900913")));
-			String dist = Utils.formatDistance(distance);
+			String dist = "";
+			if (xy[0] == 0 && xy[1] == 0)
+				dist = c.getResources().getString(
+						R.string.location_not_available);
+			else {
+				final double distance = Calculator.latLonDist(p.getX(),
+						p.getY(), xy[0], xy[1]);
+				dist = Utils.formatDistance(distance);
+			}
 			i.putExtra(POIDetailsActivity.X, poi.getX());
 			i.putExtra(POIDetailsActivity.Y, poi.getY());
 			i.putExtra(POIDetailsActivity.DIST, dist);

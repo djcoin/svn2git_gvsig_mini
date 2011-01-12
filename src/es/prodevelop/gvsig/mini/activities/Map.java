@@ -320,6 +320,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			super.onCreate(savedInstanceState);
 			try {
+				setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 				CompatManager.getInstance().getRegisteredLogHandler()
 						.configureLogger(log);
 				Settings.getInstance().addOnSettingsChangedListener(this);
@@ -922,11 +923,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				try {
 					Intent mainIntent = new Intent(this,
 							SearchExpandableActivity.class);
-					Point center = this.osmap.getMRendererInfo().getCenter();
+					// Point center = this.osmap.getMRendererInfo().getCenter();
+					Point center = this.mMyLocationOverlay.getLocationLonLat();
 					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS(this.osmap
-									.getMRendererInfo().getSRS()), CRSFactory
-									.getCRS("EPSG:900913"));
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
 					mainIntent.putExtra("lon", lonlat[0]);
 					mainIntent.putExtra("lat", lonlat[1]);
 					this.startActivity(mainIntent);
@@ -1681,7 +1682,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
 					} catch (Exception e) {
-//						Log.e("", e.getMessage());
+						// Log.e("", e.getMessage());
 					}
 				}
 			});

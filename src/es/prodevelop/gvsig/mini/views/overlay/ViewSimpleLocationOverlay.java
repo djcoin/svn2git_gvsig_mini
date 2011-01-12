@@ -75,6 +75,7 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
+import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
@@ -470,6 +471,14 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	public void onLayerChanged(String layerName) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public Point getLocationLonLat() {
+		if (mLocation == null
+				|| !getTileRaster().map.isLocationHandlerEnabled())
+			return new Point(0, 0);
+		return new Point(this.mLocation.getLongitudeE6() / 1E6,
+				this.mLocation.getLatitudeE6() / 1E6);
 	}
 
 }

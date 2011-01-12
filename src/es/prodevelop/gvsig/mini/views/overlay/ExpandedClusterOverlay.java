@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,6 +36,8 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 
 	private String cat = "";
 
+	private Bitmap addIcon;
+
 	public ExpandedClusterOverlay(Context context, TileRaster tileRaster,
 			String name, Cluster clusterToExpand, boolean showRect) {
 		super(context, tileRaster, name);
@@ -45,11 +48,13 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		// this.setName(String.valueOf(clusterToExpand.getID()));
 		setSymbolSelector(new OsmPOISymbolSelector());
 		cat = name.split("_")[0];
+		addIcon = ResourceLoader.getBitmap(R.drawable.add_48);
 	}
 
 	public void getPOIsOfClusterAsynch() {
 		try {
-			if (checkRemove()) return;
+			if (checkRemove())
+				return;
 			mPoiProvider.expandClusterAsynch(mClusterToExpand, this);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
@@ -68,7 +73,8 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	@Override
 	public void onPOISRetrieved(Collection pois, boolean clearPrevious,
 			Cancellable cancellable) {
-		if (checkRemove()) return;
+		if (checkRemove())
+			return;
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), (ArrayList) pois, cancellable);
 		this.setPoints((ArrayList) pois);
@@ -96,7 +102,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	public QuadtreeProviderListener getClusterRemovedListener() {
 		return clusterRemovedListener;
 	}
-	
+
 	private boolean checkRemove() {
 		if (!POICategories.selected.contains(cat)) {
 			getTileRaster().removeOverlay(getName());
@@ -110,7 +116,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	protected void onDraw(Canvas c, TileRaster maps) {
 		super.onDraw(c, maps);
 		final MapRenderer renderer = getTileRaster().getMRendererInfo();
-		
+
 		if (!showRect || !isVisible() || checkRemove())
 			return;
 		Extent boundingBox = this.mClusterToExpand.getBoundingBox();
@@ -128,8 +134,8 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		c.drawRect((float) minPixXY[0], (float) maxPixXY[1],
 				(float) maxPixXY[0], (float) minPixXY[1], Paints.circlePaint);
 
-		c.drawBitmap(ResourceLoader.getBitmap(R.drawable.add_48),
-				maxPixXY[0] - 24, maxPixXY[1] - 24, Paints.mPaintR);
+		c.drawBitmap(addIcon, maxPixXY[0] - (addIcon.getWidth() / 2),
+				maxPixXY[1] - (addIcon.getHeight() / 2), Paints.mPaintR);
 	}
 
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
@@ -149,12 +155,14 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 			// int[] minPixXY = renderer.toPixels(minXY);
 			int[] maxPixXY = renderer.toPixels(maxXY);
 
-			Pixel addIconPos = new Pixel(maxPixXY[0] - 24, maxPixXY[1] - 24);
+			Pixel addIconPos = new Pixel(
+					maxPixXY[0] - (addIcon.getWidth() / 2), maxPixXY[1]
+							- (addIcon.getHeight() / 2));
 
 			Pixel p = new Pixel((int) e.getX(), (int) e.getY());
-			if (p.distance(addIconPos) < 48) {
+			if (p.distance(addIconPos) < addIcon.getWidth()) {
 				showRect = false;
-				this.mClusterToExpand.setExpanded(true);
+				this.mClusterToExpand.setExpanded(true);				
 			} else {
 				this.getTileRaster().removeOverlay(this.getName());
 				destroy();

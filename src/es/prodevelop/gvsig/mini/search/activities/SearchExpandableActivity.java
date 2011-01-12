@@ -46,6 +46,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ExpandableListActivity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -96,6 +97,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		super.onCreate(icicle);
 		// setContentView(R.layout.search_expandable_main);
 		try {
+			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 			if (POIProviderManager.getInstance().getPOIProvider() == null)
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
@@ -166,7 +168,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 					}
 
 					if (anyChecked) {
-						launchSearch();
+						launchSearch(autoCompleteTextView.getText().toString());
 						return;
 					} else {
 						final boolean[][] childs = expListAdapter.childChecked;
@@ -184,7 +186,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 					}
 
 					if (anyChecked) {
-						launchSearch();
+						launchSearch(autoCompleteTextView.getText().toString());
 						return;
 					} else {
 						// show dialog
@@ -207,6 +209,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			double lat = getIntent().getDoubleExtra("lat", 0);
 			this.setCenter(new Point(lon, lat));
 			autoCompleteTextView.addTextChangedListener(this);
+			handleIntent(getIntent());
 		} catch (BaseException e) {
 			Log.e("", e.getMessage());
 		} catch (Exception e) {
@@ -214,10 +217,22 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		}
 	}
 
-	private void launchSearch() {
+	@Override
+	protected void onNewIntent(Intent intent) {
+		setIntent(intent);
+		handleIntent(intent);
+	}
+
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			launchSearch(query);
+		}
+	}
+
+	private void launchSearch(String q) {
 		ArrayList list = getSelectedCategoriesAndSubcategories();
-		String[] keywords = autoCompleteTextView.getText().toString()
-				.split(" ");
+		String[] keywords = q.split(" ");
 
 		String part1 = buildKeyWordString(keywords);
 

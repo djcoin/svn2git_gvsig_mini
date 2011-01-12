@@ -121,6 +121,8 @@ public class Settings {
 	public int getIntValue(String key) throws NoSuchFieldError {
 		try {
 			return Integer.valueOf(properties.get(key).toString()).intValue();
+		} catch (NumberFormatException e) {
+			return 0;
 		} catch (Exception e) {
 			try {
 				initializeFromSharedPreferences(context, true);
@@ -177,7 +179,7 @@ public class Settings {
 			Log.e("", e.getMessage());
 		}
 	}
-	
+
 	public void updateStringSharedPreference(String key, String value,
 			Context context) {
 		try {
@@ -185,6 +187,8 @@ public class Settings {
 					.getDefaultSharedPreferences(context);
 
 			// if (preferences.contains(key)) {
+			if (value == null)
+				value = "";
 			Editor edit = preferences.edit();
 			edit.putString(key, value);
 			edit.commit();

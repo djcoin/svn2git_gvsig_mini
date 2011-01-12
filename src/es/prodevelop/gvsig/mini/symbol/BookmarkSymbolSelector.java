@@ -49,6 +49,10 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_route_tourist_castle2_16f);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16f);
+		
+		if (PLACES != null) {
+			midIcon[1] = PLACES.getHeight();
+		}
 	}
 
 	@Override
