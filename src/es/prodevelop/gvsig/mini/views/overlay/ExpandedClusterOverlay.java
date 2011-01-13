@@ -193,6 +193,10 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		return (showRect || getName().startsWith(categoryExpandedName));
 	}
 
+	public boolean isRemovable() {
+		return (showRect);
+	}
+
 	public void destroy() {
 		super.destroy();
 		setNodeExpanded(false);

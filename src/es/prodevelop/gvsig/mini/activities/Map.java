@@ -3151,6 +3151,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					return true;
 				}
 
+				if (osmap.removeExpanded()) {
+					return true;
+				}
+
 				if (osmap.acetate.getPopupVisibility() == View.VISIBLE) {
 					osmap.acetate.setPopupVisibility(View.INVISIBLE);
 					return true;

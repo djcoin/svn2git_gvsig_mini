@@ -1637,6 +1637,42 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		// copyOverlays = null;
 	}
 
+	public boolean removeExpanded() {
+		try {
+			final List<MapOverlay> overlays = this.mOverlays;
+
+			List<MapOverlay> copyOverlays = new ArrayList();
+
+			int size = overlays.size();
+
+			for (int i = 0; i < size; i++) {
+				copyOverlays.add(mOverlays.get(i));
+			}
+
+			MapOverlay overlay;
+
+			Iterator<MapOverlay> it = copyOverlays.iterator();
+
+			while (it.hasNext()) {
+				overlay = it.next();
+				if (overlay instanceof ExpandedClusterOverlay) {
+					if (((ExpandedClusterOverlay) overlay).isRemovable()) {
+						// overlays.remove(overlay);
+						overlay.setVisible(false);
+						this.removeOverlay(overlay.getName());
+						return true;
+						// size--;
+					}
+				}
+			}
+			return false;
+
+		} catch (Exception e) {
+			Log.e("", "Error removingExpanded");
+			return false;
+		}
+	}
+
 	/**
 	 * Sets the center of the map from a longitude, latitude. Also makes the
 	 * coordinates conversion to the SRS of the MapRenderer
