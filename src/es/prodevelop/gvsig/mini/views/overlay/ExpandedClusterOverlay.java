@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.memory.cluster.ClusterNode;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
@@ -37,6 +39,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	private String cat = "";
 
 	private Bitmap addIcon;
+	private ClusterNode mNode;
 
 	public ExpandedClusterOverlay(Context context, TileRaster tileRaster,
 			String name, Cluster clusterToExpand, boolean showRect) {
@@ -162,7 +165,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 			Pixel p = new Pixel((int) e.getX(), (int) e.getY());
 			if (p.distance(addIconPos) < addIcon.getWidth()) {
 				showRect = false;
-				this.mClusterToExpand.setExpanded(true);				
+				setNodeExpanded(true);
 			} else {
 				this.getTileRaster().removeOverlay(this.getName());
 				destroy();
@@ -173,13 +176,26 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		}
 	}
 
+	private void setNodeExpanded(final boolean expanded) {
+		this.mClusterToExpand.setExpanded(expanded);
+		try {
+			if (mNode == null)
+				mNode = mPoiProvider.getClusterTree(cat).getNodeByID(
+						this.mClusterToExpand.getID());
+			mNode.setExpanded(expanded);
+		} catch (BaseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
 	public boolean isRemovable(String categoryExpandedName) {
 		return (showRect || getName().startsWith(categoryExpandedName));
 	}
 
 	public void destroy() {
 		super.destroy();
-		mClusterToExpand.setExpanded(false);
+		setNodeExpanded(false);
 	}
 
 	// @Override
