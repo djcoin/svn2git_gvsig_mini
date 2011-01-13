@@ -49,6 +49,7 @@ import android.widget.ListView;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.OpenPOIDetailsItemClickListener;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.ToggleItemClickListener;
@@ -67,19 +68,22 @@ public class StreetSearchActivity extends SearchActivity {
 		try {
 			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-			getListView().setOnItemClickListener(new ToggleItemClickListener());
+			getListView().setOnItemClickListener(
+					new OpenPOIDetailsItemClickListener(this));
 
 			listener = new POIItemClickContextListener(this,
-					R.drawable.p_places_poi_place_city_32, R.string.street_options, true);
-			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+					R.drawable.p_places_poi_place_city_32,
+					R.string.street_options, true);
+			getListView().setOnItemLongClickListener(
+					new OnItemLongClickListener() {
 
-				@Override
-				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					return getPOItemClickListener().onPOIClick(arg2,
-							(POI) getListAdapter().getItem(arg2));
-				}
-			});
+						@Override
+						public boolean onItemLongClick(AdapterView<?> arg0,
+								View arg1, int arg2, long arg3) {
+							return getPOItemClickListener().onPOIClick(arg2,
+									(POI) getListAdapter().getItem(arg2));
+						}
+					});
 
 			getAutoCompleteTextView().setOnItemClickListener(
 					new OnItemClickListener() {
@@ -155,5 +159,5 @@ public class StreetSearchActivity extends SearchActivity {
 	@Override
 	public String getQuery() {
 		return POICategories.STREETS;
-	}	
+	}
 }

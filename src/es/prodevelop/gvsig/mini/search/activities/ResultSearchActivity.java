@@ -47,6 +47,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Filterable;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.OpenPOIDetailsItemClickListener;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.ToggleItemClickListener;
@@ -69,7 +70,7 @@ public class ResultSearchActivity extends SearchActivity {
 
 			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-			getListView().setOnItemClickListener(new ToggleItemClickListener());
+			getListView().setOnItemClickListener(new OpenPOIDetailsItemClickListener(this));
 
 			listener = new POIItemClickContextListener(this, R.drawable.pois,
 					R.string.NameFinderActivity_0, true);

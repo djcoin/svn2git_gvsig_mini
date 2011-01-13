@@ -46,6 +46,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.search.OpenPOIDetailsItemClickListener;
 import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
@@ -65,7 +66,7 @@ public class POISearchActivity extends SearchActivity {
 
 			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-			getListView().setOnItemClickListener(new ToggleItemClickListener());
+			getListView().setOnItemClickListener(new OpenPOIDetailsItemClickListener(this));
 
 			category = this.getIntent().getStringExtra(SearchActivity.CATEGORY);
 			if (category == null)
