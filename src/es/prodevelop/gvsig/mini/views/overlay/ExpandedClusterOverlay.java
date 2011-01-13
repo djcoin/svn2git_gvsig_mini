@@ -142,6 +142,8 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	}
 
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
+		if (!isVisible())
+			return false;
 		if (showRect) {
 			final MapRenderer renderer = getTileRaster().getMRendererInfo();
 

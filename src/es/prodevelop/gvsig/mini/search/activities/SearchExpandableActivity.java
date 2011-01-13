@@ -133,6 +133,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 															// TextViews
 			);
 
+			expListAdapter.setCheckedAll(true);
 			LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
 					R.layout.search_expandable_main, null));
 			this.setContentView(l);

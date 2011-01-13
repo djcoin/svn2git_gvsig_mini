@@ -70,8 +70,8 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 		PinnedHeaderListView.PinnedHeaderAdapter, OnScrollListener {
 	private boolean mDisplaySectionHeaders = true;
 
-//	private MapPreview preview;
-//	private LinearLayout lastPreviewLayout;
+	// private MapPreview preview;
+	// private LinearLayout lastPreviewLayout;
 
 	/**
 	 * An approximation of the background color of the pinned header. This color
@@ -85,9 +85,9 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 	public PinnedHeaderListAdapter(SearchActivity activity) {
 		super(activity);
 		try {
-//			preview = new MapPreview(activity, CompatManager.getInstance()
-//					.getRegisteredContext(), activity.metrics.widthPixels,
-//					activity.metrics.heightPixels / 2);
+			// preview = new MapPreview(activity, CompatManager.getInstance()
+			// .getRegisteredContext(), activity.metrics.widthPixels,
+			// activity.metrics.heightPixels / 2);
 		} catch (Exception e) {
 			Log.e("Pinned", e.getMessage());
 		}
@@ -151,23 +151,24 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 			holder.dist = (TextView) convertView.findViewById(R.id.dist);
 			holder.poiImg = (ImageView) convertView.findViewById(R.id.img);
 
-//			LinearLayout l = new LinearLayout(activity);
-//			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
-//					RelativeLayout.LayoutParams.WRAP_CONTENT,
-//					RelativeLayout.LayoutParams.WRAP_CONTENT);
-//			zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//			zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
-//			// zzParams.setMargins(20, 20, 20, 20);
-//			((LinearLayout) ((LinearLayout) convertView)
-//					.findViewById(R.id.map_preview)).addView(l, zzParams);
-//			holder.previewLayout = l;
-//			holder.preview = preview;
+			// LinearLayout l = new LinearLayout(activity);
+			// final RelativeLayout.LayoutParams zzParams = new
+			// RelativeLayout.LayoutParams(
+			// RelativeLayout.LayoutParams.WRAP_CONTENT,
+			// RelativeLayout.LayoutParams.WRAP_CONTENT);
+			// zzParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+			// zzParams.addRule(RelativeLayout.CENTER_VERTICAL);
+			// // zzParams.setMargins(20, 20, 20, 20);
+			// ((LinearLayout) ((LinearLayout) convertView)
+			// .findViewById(R.id.map_preview)).addView(l, zzParams);
+			// holder.previewLayout = l;
+			// holder.preview = preview;
 			holder.optionsButton = (Button) convertView
 					.findViewById(R.id.show_options);
-//			holder.detailsButton = (Button) convertView
-//					.findViewById(R.id.show_details);
-//			holder.optionsButton.setFocusable(false);
-//			holder.detailsButton.setFocusable(false);
+			// holder.detailsButton = (Button) convertView
+			// .findViewById(R.id.show_details);
+			holder.optionsButton.setVisibility(View.VISIBLE);
+			// holder.detailsButton.setFocusable(false);
 
 			convertView.setTag(holder);
 		} else {
@@ -188,49 +189,49 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 				activity.getPOItemClickListener().onPOIClick(arg0, p);
 			}
 		});
-//		holder.detailsButton.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Intent i = new Intent(activity, POIDetailsActivity.class);
-//				if (p != null && p instanceof OsmPOI) {
-//					OsmPOI poi = (OsmPOI) p;
-//					InvokeIntents.fillIntentPOIDetails(poi,
-//							activity.getCenter(), i, activity);
-//
-//					activity.startActivity(i);
-//				} else {
-//					// throw exception
-//				}
-//			}
-//		});
+		// holder.detailsButton.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// Intent i = new Intent(activity, POIDetailsActivity.class);
+		// if (p != null && p instanceof OsmPOI) {
+		// OsmPOI poi = (OsmPOI) p;
+		// InvokeIntents.fillIntentPOIDetails(poi,
+		// activity.getCenter(), i, activity);
+		//
+		// activity.startActivity(i);
+		// } else {
+		// // throw exception
+		// }
+		// }
+		// });
 		String desc = Utilities
 				.capitalizeFirstLetters((p.getDescription() != null) ? p
 						.getDescription() : "?");
 
-//		if (holder.preview != null) {
-//			if (arg0 == pos && p.getX() != 0 && p.getY() != 0) {
-//				if (lastPreviewLayout != null)
-//					lastPreviewLayout.removeView(preview);
-//				holder.previewLayout.addView(preview);
-//				lastPreviewLayout = holder.previewLayout;
-//				holder.previewLayout.setVisibility(View.VISIBLE);
-//				holder.optionsButton.setVisibility(View.VISIBLE);
-//				if (!(p instanceof OsmPOIStreet))
-//					holder.detailsButton.setVisibility(View.VISIBLE);
-//
-//				holder.preview.setMapCenterFromLonLat(p);
-//				if ((getItem(arg0) instanceof OsmPOIStreet)) {
-//					holder.preview.setExtent(((OsmPOIStreet) p)
-//							.getBoundingBox());
-//				}
-//			} else {
-//				holder.previewLayout.setVisibility(View.GONE);
-//				holder.optionsButton.setVisibility(View.GONE);
-//				holder.detailsButton.setVisibility(View.GONE);
-//
-//			}
-//		}
+		// if (holder.preview != null) {
+		// if (arg0 == pos && p.getX() != 0 && p.getY() != 0) {
+		// if (lastPreviewLayout != null)
+		// lastPreviewLayout.removeView(preview);
+		// holder.previewLayout.addView(preview);
+		// lastPreviewLayout = holder.previewLayout;
+		// holder.previewLayout.setVisibility(View.VISIBLE);
+		// holder.optionsButton.setVisibility(View.VISIBLE);
+		// if (!(p instanceof OsmPOIStreet))
+		// holder.detailsButton.setVisibility(View.VISIBLE);
+		//
+		// holder.preview.setMapCenterFromLonLat(p);
+		// if ((getItem(arg0) instanceof OsmPOIStreet)) {
+		// holder.preview.setExtent(((OsmPOIStreet) p)
+		// .getBoundingBox());
+		// }
+		// } else {
+		// holder.previewLayout.setVisibility(View.GONE);
+		// holder.optionsButton.setVisibility(View.GONE);
+		// holder.detailsButton.setVisibility(View.GONE);
+		//
+		// }
+		// }
 
 		// Bind the data efficiently with the holder.
 		holder.text.setText(desc);
@@ -250,12 +251,11 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 				distanceText = activity.getResources().getString(
 						R.string.location_not_available);
 			else {
-				final double distance = Calculator.latLonDist(p.getX(), p.getY(),
-						centerXY[0], centerXY[1]);
+				final double distance = Calculator.latLonDist(p.getX(),
+						p.getY(), centerXY[0], centerXY[1]);
 				distanceText = Utils.formatDistance(distance);
 			}
-			
-			
+
 			holder.dist.setText(activity.getResources().getString(
 					R.string.distance)
 					+ " " + distanceText);
@@ -454,6 +454,6 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 	}
 
 	public void onDestroy() {
-//		preview.destroy();
+		// preview.destroy();
 	}
 }

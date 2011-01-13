@@ -50,8 +50,8 @@ public class PointOverlay extends MapOverlay {
 		Point p;
 		Point temp;
 		for (int i = 0; i < size; i++) {
-			// if (cancellable != null && cancellable.getCanceled())
-			// return;
+//			if (cancellable != null && cancellable.getCanceled())
+//				return;
 			p = (Point) pois.get(i);
 			final double[] xy = ConversionCoords.reproject(p.getX(), p.getY(),
 					CRSFactory.getCRS(srsFrom), CRSFactory.getCRS(srsTo));

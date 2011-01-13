@@ -95,7 +95,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 	private PerstClusterPOIOverlay onlyPointsOverlay;
 	private boolean isCluster = false;
-	
+
 	private ArrayList expandedExtents = new ArrayList();
 
 	public PerstClusterPOIOverlay(Context context, TileRaster tileRaster,
@@ -247,7 +247,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 					if (getSelectedIndex() == -1) {
 						return false;
 					} else {
- 						Cluster p = (Cluster) getPoints().get(
+						Cluster p = (Cluster) getPoints().get(
 								getSelectedIndex());
 						if (p.isExpandable()) {
 							ExpandedClusterOverlay ex = new ExpandedClusterOverlay(
@@ -262,7 +262,9 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 							getTileRaster().addOverlay(ex);
 							ex.getPOIsOfClusterAsynch();
 						} else {
-							Toast.makeText(getTileRaster().map, R.string.zoom_to_expand, Toast.LENGTH_SHORT).show();
+							Toast.makeText(getTileRaster().map,
+									R.string.zoom_to_expand, Toast.LENGTH_SHORT)
+									.show();
 						}
 					}
 					return true;
@@ -407,6 +409,12 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onLayerChanged(String layerName) {
+		onExtentChanged(getTileRaster().getMRendererInfo().getCurrentExtent(),
+				getTileRaster().getZoomLevel(), -1);
 	}
 
 	public void setCategories(ArrayList categories) throws BaseException {

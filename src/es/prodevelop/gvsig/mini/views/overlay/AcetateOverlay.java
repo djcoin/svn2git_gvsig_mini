@@ -321,9 +321,11 @@ public class AcetateOverlay extends MapOverlay {
 			if (f != null && f.getGeometry() != null
 					&& f.getGeometry() instanceof OsmPOI) {
 
-				final double[] centerLonLat = getTileRaster().getCenterLonLat();
-				double[] xy = ConversionCoords.reproject(centerLonLat[0],
-						centerLonLat[1], CRSFactory.getCRS("EPSG:4326"),
+				Point center = ((ViewSimpleLocationOverlay) (getTileRaster()
+						.getOverlay(ViewSimpleLocationOverlay.DEFAULT_NAME)))
+						.getLocationLonLat();
+				double[] xy = ConversionCoords.reproject(center.getX(),
+						center.getY(), CRSFactory.getCRS("EPSG:4326"),
 						CRSFactory.getCRS("EPSG:900913"));
 
 				OsmPOI poi = (OsmPOI) f.getGeometry();
