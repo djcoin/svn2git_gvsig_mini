@@ -41,6 +41,7 @@ package es.prodevelop.gvsig.mini.search;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +54,7 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
@@ -130,9 +132,14 @@ public class POIItemClickContextListener {
 						switch (position) {
 						case 0:
 							// SHOW ON MAP
-							ShowGMapsFromPoint sg = new ShowGMapsFromPoint(
-									activity, p);
-							sg.execute();
+							Intent i = new Intent(activity, Map.class);
+							i.putExtra("zoom", 15);
+							i.putExtra("lon", p.getX());
+							i.putExtra("lat", p.getY());
+							// ShowGMapsFromPoint sg = new ShowGMapsFromPoint(
+							// activity, p);
+							// sg.execute();
+							activity.startActivity(i);
 							activity.finish();
 							break;
 						case 1:

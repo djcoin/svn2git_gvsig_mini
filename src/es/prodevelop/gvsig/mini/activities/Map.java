@@ -207,6 +207,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		OnSettingsChangedListener {
 	SlideBar s;
 	public boolean isPOISlideShown = false;
+	private boolean wasScaleBarVisible = false;
 
 	public final static int CODE_SETTINGS = 3215;
 	PerstClusterPOIOverlay p;
@@ -256,7 +257,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private MenuItem myLicense;
 	public Handler mHandler;
 	public static ViewPort vp;
-	int nearopt = 0;
+	int nearopt = 0;	
 	public static final int ROUTE_CANCELED = 100;
 	public static final int ROUTE_INITED = 101;
 	public static final int WEATHER_INITED = 102;
@@ -1651,6 +1652,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					Map.this.isPOISlideShown = true;
 					osmap.pauseDraw();
 					z.setVisibility(View.INVISIBLE);
+					if (s.getVisibility() == View.VISIBLE) {
+						wasScaleBarVisible = true;
+					} else {
+						wasScaleBarVisible = false;
+					}
 					s.setVisibility(View.INVISIBLE);
 				}
 			});
@@ -1664,7 +1670,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								.setBackgroundResource(R.drawable.slide_up_icon);
 						Map.this.isPOISlideShown = false;
 						z.setVisibility(View.VISIBLE);
-						s.setVisibility(View.VISIBLE);
+						if (wasScaleBarVisible)
+							s.setVisibility(View.VISIBLE);
 						if (osmap.poiOverlay != null)
 							osmap.poiOverlay
 									.setCategories(POICategories.selected);
