@@ -38,7 +38,10 @@
 
 package es.prodevelop.gvsig.mini.search.activities;
 
+import java.io.File;
+
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,7 +69,7 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 					R.string.NameFinderActivity_0);
 		} catch (Exception e) {
 			Log.e("BookmarkAct", e.getMessage());
-		}		
+		}
 	}
 
 	@Override
@@ -79,7 +82,11 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 			try {
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/" + Utils.TEST_POI_DIR + "/"
+								new PerstOsmPOIClusterProvider(Environment
+										.getExternalStorageDirectory()
+										+ File.separator
+										+ Utils.TEST_POI_DIR
+										+ File.separator
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			} catch (BaseException e) {
@@ -112,7 +119,7 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 			}
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
-		}		
+		}
 		return super.onMenuItemSelected(featureId, item);
 	}
 }

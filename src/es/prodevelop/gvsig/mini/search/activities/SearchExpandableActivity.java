@@ -38,6 +38,7 @@
 
 package es.prodevelop.gvsig.mini.search.activities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import android.app.ExpandableListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
@@ -101,8 +103,9 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			if (POIProviderManager.getInstance().getPOIProvider() == null)
 				POIProviderManager.getInstance()
 						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider("/sdcard/"
-										+ Utils.TEST_POI_DIR + "/"
+								new PerstOsmPOIClusterProvider(Environment.getExternalStorageDirectory()
+										+ File.separator + Utils.TEST_POI_DIR
+										+ File.separator
 										+ "perst_streets_cluster_cat.db", 18,
 										null, 18));
 			provider = POIProviderManager.getInstance().getPOIProvider();
