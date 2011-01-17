@@ -433,6 +433,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void processActionSearch(Intent i) {
 		if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 			String query = i.getStringExtra(SearchManager.QUERY);
+			if (query == null)
+				query = i.getDataString();
 			Intent newIntent = new Intent(this, ResultSearchActivity.class);
 			newIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
 			newIntent.putExtra(ResultSearchActivity.QUERY, query.toString());
