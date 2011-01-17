@@ -49,6 +49,7 @@ import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
@@ -77,7 +78,7 @@ public class FinishPointFunctionality extends StartPointFunctionality {
 			MapRenderer mapRenderer = getMap().osmap.getMRendererInfo();
 			double[] p = mapRenderer.transformCenter("EPSG:4326");
 			Point endPoint = new Point(p[0], p[1]);			
-			getMap().route.setEndPoint(endPoint);
+			RouteManager.getInstance().getRegisteredRoute().setEndPoint(endPoint);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"FinishPointFunc execute: " , e);
 		} finally {

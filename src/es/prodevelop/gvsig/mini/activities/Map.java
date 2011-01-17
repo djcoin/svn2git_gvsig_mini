@@ -141,6 +141,8 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
+import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -227,7 +229,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public static String twitpass = null;
 	private ViewSimpleLocationOverlay mMyLocationOverlay;
 	public TileRaster osmap;
-	public final Route route = new Route();
 	public NamedMultiPoint nameds;
 	private Point nearestPOI;
 	private int indexNP;
@@ -257,7 +258,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private MenuItem myLicense;
 	public Handler mHandler;
 	public static ViewPort vp;
-	int nearopt = 0;	
+	int nearopt = 0;
 	public static final int ROUTE_CANCELED = 100;
 	public static final int ROUTE_INITED = 101;
 	public static final int WEATHER_INITED = 102;
@@ -410,11 +411,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// dialog, towards the application
 			Intent i = getIntent();
 
-			if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-				String query = i.getStringExtra(SearchManager.QUERY);
-				searchInNameFinder(query, false);
-			}
-
+			this.processActionSearch(i);
 			this.processGeoAction(i);
 			this.processOfflineIntentActoin(i);
 
@@ -430,6 +427,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			LogFeedbackActivity.showSendLogDialog(this);
 		} finally {
 			// this.obtainCellLocation();
+		}
+	}
+
+	public void processActionSearch(Intent i) {
+		if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+			String query = i.getStringExtra(SearchManager.QUERY);
+			Intent newIntent = new Intent(this, ResultSearchActivity.class);
+			newIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
+			newIntent.putExtra(ResultSearchActivity.QUERY, query.toString());
+			fillSearchCenter(newIntent);
+			startActivity(newIntent);
+			return;
 		}
 	}
 
@@ -535,7 +544,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void calculateRoute() {
 		try {
 			log.log(Level.FINE, "calculate route");
-			if (route.canCalculate()) {
+			if (RouteManager.getInstance().getRegisteredRoute().canCalculate()) {
 				this.launchRouteCalculation();
 				// User context update
 				this.userContext.setUsedRoutes(true);
@@ -555,7 +564,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void launchRouteCalculation() {
 		try {
 			log.log(Level.FINE, "launching route calculation");
-			route.iscancelled = false;
+			RouteManager.getInstance().getRegisteredRoute().iscancelled = false;
 			YOURSFunctionality yoursFunc = new YOURSFunctionality(this, 0);
 			yoursFunc.onClick(null);
 			userContext.setUsedRoutes(true);
@@ -588,7 +597,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					int pos = Integer.parseInt(intent.getExtras()
 							.get("selected").toString());
 					Named p = (Named) nameds.getPoint(pos);
-					route.setStartPoint(new Point(p.getX(), p.getY()));
+					RouteManager.getInstance().getRegisteredRoute()
+							.setStartPoint(new Point(p.getX(), p.getY()));
 					calculateRoute();
 					osmap.setMapCenter(p.projectedCoordinates.getX(),
 							p.projectedCoordinates.getY());
@@ -599,7 +609,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					int pos1 = Integer.parseInt(intent.getExtras()
 							.get("selected").toString());
 					Named p1 = (Named) nameds.getPoint(pos1);
-					route.setEndPoint(new Point(p1.getX(), p1.getY()));
+					RouteManager.getInstance().getRegisteredRoute()
+							.setEndPoint(new Point(p1.getX(), p1.getY()));
 					calculateRoute();
 					osmap.setMapCenter(p1.projectedCoordinates.getX(),
 							p1.projectedCoordinates.getY());
@@ -717,6 +728,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
 		return true;
+	}
+
+	private void fillSearchCenter(Intent i) {
+		Point center = this.mMyLocationOverlay.getLocationLonLat();
+		double[] lonlat = ConversionCoords.reproject(center.getX(),
+				center.getY(), CRSFactory.getCRS("EPSG:4326"),
+				CRSFactory.getCRS("EPSG:900913"));
+		i.putExtra("lon", lonlat[0]);
+		i.putExtra("lat", lonlat[1]);
 	}
 
 	@Override
@@ -925,12 +945,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					Intent mainIntent = new Intent(this,
 							SearchExpandableActivity.class);
 					// Point center = this.osmap.getMRendererInfo().getCenter();
-					Point center = this.mMyLocationOverlay.getLocationLonLat();
-					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS("EPSG:4326"),
-							CRSFactory.getCRS("EPSG:900913"));
-					mainIntent.putExtra("lon", lonlat[0]);
-					mainIntent.putExtra("lat", lonlat[1]);
+					fillSearchCenter(mainIntent);
 					this.startActivity(mainIntent);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
@@ -1407,8 +1422,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								+ "return");
 			}
 
-			route.setStartPoint(starPoint);
-			route.setEndPoint(endPoint);
+			RouteManager.getInstance().getRegisteredRoute()
+					.setStartPoint(starPoint);
+			RouteManager.getInstance().getRegisteredRoute()
+					.setEndPoint(endPoint);
 			if (!isDone) {
 				log.log(Level.FINE,
 						"Route was calculating before saving instance: Relaunch it");
@@ -1426,7 +1443,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			LineString line = new LineString(xCoords, yCoords);
 			FeatureCollection f = new FeatureCollection();
 			f.addFeature(new Feature(line));
-			route.setRoute(f);
+			RouteManager.getInstance().getRegisteredRoute().setRoute(f);
 
 			cleanRoute = outState.getBoolean("cleanRouteVisible", false);
 			log.log(Level.FINE, "route loaded");
@@ -1444,9 +1461,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void saveRoute(Bundle outState) {
 		try {
-			Point routeStart = this.route.getStartPoint();
-			Point routeEnd = this.route.getEndPoint();
-			FeatureCollection r = this.route.getRoute();
+			Point routeStart = RouteManager.getInstance().getRegisteredRoute()
+					.getStartPoint();
+			Point routeEnd = RouteManager.getInstance().getRegisteredRoute()
+					.getEndPoint();
+			FeatureCollection r = RouteManager.getInstance()
+					.getRegisteredRoute().getRoute();
 
 			boolean isDone = true;
 			try {
@@ -2048,7 +2068,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					if (dialog2 != null)
 						dialog2.dismiss();
 					osmap.getMRendererInfo().reprojectGeometryCoordinates(
-							route.getRoute().getFeatureAt(0).getGeometry(),
+							RouteManager.getInstance().getRegisteredRoute()
+									.getRoute().getFeatureAt(0).getGeometry(),
 							"EPSG:4326");
 					Map.this.updateContext(Map.ROUTE_SUCCEEDED);
 					osmap.resumeDraw();
@@ -2100,7 +2121,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					break;
 				case Map.ROUTE_CANCELED:
 					log.log(Level.FINE, "ROUTE_CANCELED");
-					route.deleteRoute(false);
+					RouteManager.getInstance().getRegisteredRoute()
+							.deleteRoute(false);
 					// route.deleteEndPoint();
 					// route.deleteStartPoint();
 					// yoursFunc.cancel();
@@ -2128,7 +2150,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					break;
 				case Map.ROUTE_INITED:
 					log.log(Level.FINE, "ROUTE_INITED");
-					route.deleteRoute(false);
+					RouteManager.getInstance().getRegisteredRoute()
+							.deleteRoute(false);
 					dialog2 = ProgressDialog.show(Map.this, Map.this
 							.getResources().getString(R.string.please_wait),
 							Map.this.getResources().getString(R.string.Map_19),
@@ -2141,7 +2164,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						@Override
 						public void onCancel(DialogInterface dialog2) {
 							try {
-								route.deleteRoute(false);
+								RouteManager.getInstance().getRegisteredRoute()
+										.deleteRoute(false);
 								// ivCleanRoute.setVisibility(View.INVISIBLE);
 								osmap.resumeDraw();
 								Map.this.getItemContext().cancelCurrentTask();
@@ -2705,8 +2729,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				else if (context instanceof WMSRouteContext)
 					context = new RouteContext(this);
 				else if (context instanceof WMSPOIContext) {
-					if (route != null
-							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+					if (RouteManager.getInstance().getRegisteredRoute() != null
+							&& RouteManager.getInstance().getRegisteredRoute()
+									.getState() == Tags.ROUTE_WITH_2_POINT) {
 						context = new RoutePOIContext(this);
 					} else {
 						context = new POIContext(this);
@@ -2714,15 +2739,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				}
 
 				else if (context instanceof WMSGPSItemContext)
-					if (route != null
-							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+					if (RouteManager.getInstance().getRegisteredRoute() != null
+							&& RouteManager.getInstance().getRegisteredRoute()
+									.getState() == Tags.ROUTE_WITH_2_POINT) {
 						context = new RouteContext(this);
 					} else {
 						context = new DefaultContext(this);
 					}
 				else if (context instanceof POIContext)
-					if (route != null
-							&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+					if (RouteManager.getInstance().getRegisteredRoute() != null
+							&& RouteManager.getInstance().getRegisteredRoute()
+									.getState() == Tags.ROUTE_WITH_2_POINT) {
 						context = new RoutePOIContext(this);
 					}
 
@@ -2735,16 +2762,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			else if (context instanceof RouteContext)
 				context = new WMSRouteContext(this);
 			else if (context instanceof POIContext)
-				if (route != null
-						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+				if (RouteManager.getInstance().getRegisteredRoute() != null
+						&& RouteManager.getInstance().getRegisteredRoute()
+								.getState() == Tags.ROUTE_WITH_2_POINT) {
 					context = new WMSRoutePOIContext(this);
 				} else {
 					context = new WMSPOIContext(this);
 				}
 			else if (context instanceof DefaultContext
 					|| context instanceof GPSItemContext)
-				if (route != null
-						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+				if (RouteManager.getInstance().getRegisteredRoute() != null
+						&& RouteManager.getInstance().getRegisteredRoute()
+								.getState() == Tags.ROUTE_WITH_2_POINT) {
 					context = new WMSRouteContext(this);
 				} else {
 					context = new WMSGPSItemContext(this);
@@ -3064,8 +3093,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				break;
 			case Map.POI_SUCCEEDED:
 				log.log(Level.FINE, "POI_SUCCEEDED");
-				if (route != null
-						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+				if (RouteManager.getInstance().getRegisteredRoute() != null
+						&& RouteManager.getInstance().getRegisteredRoute()
+								.getState() == Tags.ROUTE_WITH_2_POINT) {
 					this.setContext(new RoutePOIContext(this));
 				} else {
 					this.setContext(new POIContext(this));
@@ -3073,8 +3103,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				break;
 			case Map.POI_CLEARED:
 				log.log(Level.FINE, "POI_CLEARED");
-				if (route != null
-						&& route.getState() == Tags.ROUTE_WITH_2_POINT) {
+				if (RouteManager.getInstance().getRegisteredRoute() != null
+						&& RouteManager.getInstance().getRegisteredRoute()
+								.getState() == Tags.ROUTE_WITH_2_POINT) {
 					this.setContext(new RouteContext(this));
 				} else {
 					this.setContext(new DefaultContext(this));
@@ -3306,10 +3337,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
 					onCreate(null);
 				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-					String query = i.getStringExtra(SearchManager.QUERY);
-					// Execute the search (common with POI and address as of
-					// 0.3.0 version)
-					searchInNameFinder(query, true);
+					processActionSearch(i);
+					return;
 				} else {
 					String mapLayer = i.getStringExtra("layer");
 					log.log(Level.FINE, "previous layer: " + mapLayer);

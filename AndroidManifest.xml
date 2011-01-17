@@ -49,7 +49,7 @@
 		</activity>
 
 		<activity android:name=".search.activities.SearchExpandableActivity"
-			android:label=""  android:launchMode="singleTop">
+			android:label="" android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -139,6 +139,10 @@
 		<!-- Provides search suggestions for previous queries -->
 		<provider android:name=".search.SearchSuggestionsMiniProvider"
 			android:authorities=".search.SearchSuggestionsMiniProvider" />
+
+		<!-- Provides search suggestions while searching for POIs -->
+		<provider android:name=".search.suggestions.POIFullTextSuggestionProvider"
+			android:authorities=".search.suggestions.POIFullTextSuggestionProvider" />
 
 		<!-- this one declares the searchable Activity for the whole app -->
 		<meta-data android:name="android.app.default_searchable"

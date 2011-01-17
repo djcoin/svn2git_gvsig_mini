@@ -60,6 +60,7 @@ import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.yours.Route;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 
 /**
  * Queries the YOURS service with the start and end point, set by the user,
@@ -83,7 +84,7 @@ public class YOURSFunctionality extends Functionality {
 
 	public YOURSFunctionality(Map map, int id) {
 		super(map, id);
-		this.route = map.route;
+		this.route = RouteManager.getInstance().getRegisteredRoute();
 		handler = new YOURSHandler();
 		this.addObserver(handler);
 		try {

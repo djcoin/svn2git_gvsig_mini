@@ -50,6 +50,7 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 
 /**
  * Deletes the route and notifies MapHandler with Map.ROUTE_CLEARED
@@ -74,7 +75,7 @@ public class DeleteRouteFunctionality extends Functionality {
 	@Override
 	public boolean execute() {
 		try {
-			getMap().route.deleteRoute(true);
+			RouteManager.getInstance().getRegisteredRoute().deleteRoute(true);
 			getMap().getMapHandler().sendEmptyMessage(Map.ROUTE_CLEARED);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);

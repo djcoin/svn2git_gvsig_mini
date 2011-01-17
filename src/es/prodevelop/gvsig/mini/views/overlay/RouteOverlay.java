@@ -54,6 +54,7 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.ViewPort;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 
 /**
  * A Map Overlay that manages draw of Route service LineString
@@ -85,7 +86,7 @@ public class RouteOverlay extends MapOverlay {
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
 		try {
-			FeatureCollection r = maps.map.route.getRoute();
+			FeatureCollection r = RouteManager.getInstance().getRegisteredRoute().getRoute();
 			final ViewPort vp = maps.map.vp;
 			final Extent extent = vp.calculateExtent(maps.mapWidth,
 					maps.mapHeight, maps.getMRendererInfo().getCenter());
@@ -97,13 +98,13 @@ public class RouteOverlay extends MapOverlay {
 					maps.geomDrawer.draw(l, c, extent, vp);
 			}
 
-			es.prodevelop.gvsig.mini.geom.Point m = maps.map.route
+			es.prodevelop.gvsig.mini.geom.Point m = RouteManager.getInstance().getRegisteredRoute()
 					.getStartPoint();
 
 			if (m != null)
 				maps.geomDrawer.drawstart(m, c, extent, vp);
 
-			es.prodevelop.gvsig.mini.geom.Point m1 = maps.map.route
+			es.prodevelop.gvsig.mini.geom.Point m1 = RouteManager.getInstance().getRegisteredRoute()
 					.getEndPoint();
 
 			if (m1 != null)

@@ -49,6 +49,7 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 /**
@@ -80,7 +81,7 @@ public class StartPointFunctionality extends Functionality {
 			MapRenderer mapRenderer = getMap().osmap.getMRendererInfo();
 			double[] p = mapRenderer.transformCenter("EPSG:4326");
 			Point startPoint = new Point(p[0], p[1]);			
-			getMap().route.setStartPoint(startPoint);
+			RouteManager.getInstance().getRegisteredRoute().setStartPoint(startPoint);
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"StartPointFunc execute: ", e);
 		} finally {

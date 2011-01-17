@@ -117,6 +117,7 @@ import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.yours.Route;
+import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.provider.Downloader;
@@ -1474,7 +1475,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				this.setRenderer(renderer);
 
 			try {
-				final Route route = map.route;
+				final Route route = RouteManager.getInstance()
+						.getRegisteredRoute();
 				if (route != null)
 					renderer.reprojectGeometryCoordinates(route.getRoute()
 							.getFeatureAt(0).getGeometry(), previous.getSRS());
@@ -1566,7 +1568,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			Log.d("TileRaster", "onLayerChanged " + renderer.getFullNAME());
 			map.persist();
-			if (!this.poiOverlay.getPoiProvider().isLoaded())
+			if (this.poiOverlay != null
+					&& !this.poiOverlay.getPoiProvider().isLoaded())
 				this.map.osmap.poiOverlay.getPoiProvider().loadCategories(
 						POICategories.CATEGORIES, null);
 			// new LoadClusterIndexAsyncTask(this.map,
