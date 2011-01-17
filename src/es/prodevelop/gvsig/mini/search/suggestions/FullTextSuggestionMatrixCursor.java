@@ -2,6 +2,8 @@ package es.prodevelop.gvsig.mini.search.suggestions;
 
 import java.util.ArrayList;
 
+import es.prodevelop.gvsig.mini.utiles.Utilities;
+
 import android.app.SearchManager;
 import android.database.MatrixCursor;
 import android.provider.BaseColumns;
@@ -41,6 +43,7 @@ public class FullTextSuggestionMatrixCursor extends MatrixCursor {
 		for (int i = 0; i < size; i++) {
 			word = words.get(i).toString();
 			if (word != null && word.length() != 0) {
+				word = Utilities.capitalizeFirstLetters(word);
 				this.addRow(new Object[] { -1, word, "", /*
 														 * 0, 0, null,
 														 */word,

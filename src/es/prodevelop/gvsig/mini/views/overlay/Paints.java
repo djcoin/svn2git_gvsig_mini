@@ -70,11 +70,20 @@ public class Paints {
 	public static Paint circlePaintV = new Paint();
 
 	public static Paint poiTextPaint = new Paint();
+	public static Paint poiHighTextPaint = new Paint();
 	public static Paint poiTextWhitePaint = new Paint();
 	public static Paint poiFillTextPaint = new Paint();
 	public static Paint poiBorderTextPaint = new Paint();
 
 	static {
+		
+		// poiTextPaint.setStrokeWidth(5);
+		poiHighTextPaint.setTypeface(Typeface.SANS_SERIF);
+		// poiTextPaint.setStrokeCap(Paint.Cap.ROUND);
+		poiHighTextPaint.setTextSize(24);
+		poiHighTextPaint.setAntiAlias(true);
+
+		
 		/** PAINT TO DRAW THE NUMBER OF ITEMS OF A CLUSTERED POI **/
 		// poiTextPaint.setStrokeWidth(5);
 		poiTextPaint.setTypeface(Typeface.SANS_SERIF);

@@ -152,7 +152,7 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public void notifyDataSetInvalidated() {
 		// TODO Auto-generated method stub
-		super.notifyDataSetInvalidated();
+		super.notifyDataSetChanged();
 	}
 
 	class ViewHolder {

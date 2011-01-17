@@ -1,10 +1,12 @@
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,10 +34,18 @@ public class PopupView extends View {
 	// int panX;
 	// int panY;
 
-	public PopupView(Context context) {
+	private Paint textPaint = Paints.poiTextPaint;
+
+	public PopupView(Activity context) {
 		super(context);
 		this.setFocusable(true);
 		this.setFocusableInTouchMode(true);
+		DisplayMetrics metrics = new DisplayMetrics();
+		context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		if (metrics.densityDpi != DisplayMetrics.DENSITY_LOW) {
+			textPaint = Paints.poiHighTextPaint;
+			offsetY = 4;
+		}
 		mid = BitmapFactory.decodeResource(context.getResources(),
 				R.drawable.mid);
 		left = BitmapFactory.decodeResource(context.getResources(),
@@ -57,14 +67,12 @@ public class PopupView extends View {
 	}
 
 	public void setText(String text) {
-		textWidth = (int) Paints.poiTextPaint.measureText(text, 0,
-				text.length());
+		textWidth = (int) textPaint.measureText(text, 0, text.length());
 
 		boolean modifiedText = false;
 		while (textWidth > maxX) {
 			text = text.substring(0, text.length() - 1);
-			textWidth = (int) Paints.poiTextPaint.measureText(text, 0,
-					text.length());
+			textWidth = (int) textPaint.measureText(text, 0, text.length());
 			modifiedText = true;
 		}
 
@@ -72,7 +80,7 @@ public class PopupView extends View {
 			text += "...";
 		this.text = text;
 
-		Paints.poiTextPaint.getTextBounds(text, 0, text.length(), bounds);
+		textPaint.getTextBounds(text, 0, text.length(), bounds);
 	}
 
 	public int getParts() {
@@ -96,7 +104,7 @@ public class PopupView extends View {
 			} else {
 				return;
 			}
-//			Log.d("", "drawPopup");
+			// Log.d("", "drawPopup");
 
 			int size = getParts();
 
@@ -109,7 +117,7 @@ public class PopupView extends View {
 			if (!isEven) {
 				offset = mid.getWidth() / 2;
 				canvas.drawBitmap(mid, x - offset,
-						y - arrow.getHeight() - mid.getHeight() + 2,
+						y - arrow.getHeight() - mid.getHeight() + offsetY,
 						Paints.pcenter);
 				size--;
 			}
@@ -149,7 +157,7 @@ public class PopupView extends View {
 					y - (arrow.getHeight()), Paints.pcenter);
 
 			canvas.drawText(text, x - (textWidth / 2), y - arrow.getHeight()
-					- ((bounds.bottom - bounds.top)), Paints.poiTextPaint);
+					- ((bounds.bottom - bounds.top)) + (2 * offsetY), textPaint);
 			// canvas.drawBitmap(left, x - mid.getWidth() / 2 - left.getWidth(),
 			// y - mid.getHeight()/2, Paints.pcenter);
 

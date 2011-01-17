@@ -40,10 +40,10 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
-import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -64,8 +64,6 @@ import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
-import es.prodevelop.gvsig.mini.util.Utils;
-import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 /**
@@ -95,7 +93,7 @@ public class AcetateOverlay extends MapOverlay {
 			e.printStackTrace();
 		}
 		try {
-			popupView = new PopupView(context);
+			popupView = new PopupView((Activity) context);
 			path = new Path();
 			t = getTileRaster();
 		} catch (Exception e) {

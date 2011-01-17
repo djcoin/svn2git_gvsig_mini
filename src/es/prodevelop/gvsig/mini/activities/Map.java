@@ -1719,7 +1719,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			final RelativeLayout.LayoutParams sParams = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.FILL_PARENT,
 					RelativeLayout.LayoutParams.FILL_PARENT);
-
+			//
 			rl.addView(l, sParams);
 			rl.addView(sliding, sParams);
 
@@ -1735,7 +1735,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					this.osmap.addOverlay(p);
 
 				} catch (Exception e) {
-
+					Log.e("", e.getMessage());
 				}
 
 				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
