@@ -19,13 +19,26 @@
 						android:textColor="#FFFFFF"></ImageView>
 				</LinearLayout>
 				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:id="@+id/poi_desc" android:orientation="vertical">
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_weight="1" android:id="@+id/poi_desc"
+					android:orientation="vertical">
 					<TextView android:id="@+id/desc" android:layout_height="wrap_content"
 						android:layout_width="fill_parent" android:textSize="26sp"
 						android:textColor="#FFFFFF"></TextView>
 					<TextView android:id="@+id/dist" android:layout_width="fill_parent"
 						android:layout_height="wrap_content"></TextView>
+				</LinearLayout>
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="wrap_content" android:layout_height="fill_parent"
+					android:id="@+id/map_options" android:orientation="vertical"
+					android:gravity="center_vertical" android:focusable="false">
+					<Button android:id="@+id/show_options" android:text="@string/show_options"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:gravity="center_vertical" android:focusable="false"
+						android:visibility="gone" />
+					<!-- <Button android:id="@+id/show_details" android:text="@string/show_details" -->
+					<!-- android:layout_width="wrap_content" android:layout_height="wrap_content" -->
+					<!-- android:gravity="center_horizontal" android:visibility="gone" /> -->
 				</LinearLayout>
 			</LinearLayout>
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
