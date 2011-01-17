@@ -4,9 +4,9 @@ public class RouteManager {
 
 	private static RouteManager instance;
 	private Route route;
-	
+
 	public final static String ROUTE_MODIFIED = "ROUTE MODIFIED";
-	
+
 	private RouteManager() {
 		registerRoute(new Route());
 	}
@@ -23,6 +23,8 @@ public class RouteManager {
 	}
 
 	public Route getRegisteredRoute() {
+		if (route == null)
+			registerRoute(new Route());
 		return route;
 	}
 }
