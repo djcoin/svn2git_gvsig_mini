@@ -50,7 +50,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		mPoiProvider = POIProviderManager.getInstance().getPOIProvider();
 		// this.setName(String.valueOf(clusterToExpand.getID()));
 		setSymbolSelector(new OsmPOISymbolSelector());
-		cat = name.split("_")[0];
+		cat = name.split("#")[0];
 		addIcon = ResourceLoader.getBitmap(R.drawable.add_48);
 	}
 

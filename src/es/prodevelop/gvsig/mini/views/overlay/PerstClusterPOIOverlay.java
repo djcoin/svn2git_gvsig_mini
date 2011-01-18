@@ -255,7 +255,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 									getTileRaster(),
 									String.valueOf(POICategories.ORDERED_CATEGORIES[p
 											.getCat()]
-											+ "_"
+											+ "#"
 											+ String.valueOf(p.getID())), p,
 									true);
 							ex.setClusterRemovedListener(this);
@@ -475,7 +475,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 				getTileRaster().map, getTileRaster(),
 
 				String.valueOf(POICategories.ORDERED_CATEGORIES[clusterExpanded
-						.getCat()] + "_" + clusterExpanded.getID()),
+						.getCat()] + "#" + clusterExpanded.getID()),
 				clusterExpanded, false);
 
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
