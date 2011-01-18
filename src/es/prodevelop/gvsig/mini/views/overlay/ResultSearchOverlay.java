@@ -7,6 +7,7 @@ import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.ResultSearchSymbolSelector;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.view.View;
 
 public class ResultSearchOverlay extends PointOverlay implements
 		FullTextSearchListener {
@@ -38,5 +39,12 @@ public class ResultSearchOverlay extends PointOverlay implements
 		this.setPoints(list);
 		this.textSearch = textSearch;
 		hasConvertedCoordinates = false;
+	}
+
+	public void setVisible(boolean isVisible) {
+		if (this.isVisible() && !isVisible) {
+			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
+		}
+		super.setVisible(isVisible);
 	}
 }
