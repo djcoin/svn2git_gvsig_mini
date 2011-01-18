@@ -49,6 +49,10 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_route_tourist_castle2_16s);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16s);
+		
+		if (PLACES != null) {
+			midIcon[1] = PLACES.getHeight();
+		}
 	}
 
 	@Override

@@ -65,7 +65,7 @@ public class ResourceLoader {
 			.getName());
 	static Context context;
 	static Hashtable imgs;
-	public static int MAX_DISTANCE = 16;
+	public static int MAX_DISTANCE = 32;
 	public static int MIN_PAN = 5;
 
 	/**

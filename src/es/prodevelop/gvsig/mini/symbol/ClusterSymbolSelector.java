@@ -10,7 +10,9 @@ import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 
 public class ClusterSymbolSelector extends SymbolSelector {
 
-	private int[] midIcon = new int[] { 9, 9 };
+	private int[] midIconSmall = new int[] { 9, 9 };
+	private int[] midIconMedium = new int[] { 9, 9 };
+	private int[] midIconBig = new int[] { 9, 9 };
 
 	private Bitmap STREET;
 	private Bitmap TRANSPORTATION;
@@ -119,6 +121,21 @@ public class ClusterSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_route_tourist_castle2_18b);
 		PLACES_SMALL = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_18b);
+
+		if (PLACES != null) {
+			midIconMedium[0] = PLACES.getWidth();
+			midIconMedium[1] = PLACES.getHeight();
+		}
+
+		if (PLACES_SMALL != null) {
+			midIconSmall[0] = PLACES_SMALL.getWidth();
+			midIconSmall[1] = PLACES_SMALL.getHeight();
+		}
+
+		if (PLACES_BIG != null) {
+			midIconBig[0] = PLACES_BIG.getWidth();
+			midIconBig[1] = PLACES_BIG.getHeight();
+		}
 	}
 
 	@Override
@@ -226,12 +243,6 @@ public class ClusterSymbolSelector extends SymbolSelector {
 				icon = this.PLACES_BIG;
 			break;
 		}
-		if (items <= small)
-			midIcon = new int[] { 9, 9 };
-		else if (items <= medium && items > small)
-			midIcon = new int[] { 14, 14 };
-		else
-			midIcon = new int[] { 19, 19 };
 
 		return icon;
 	}
@@ -244,8 +255,6 @@ public class ClusterSymbolSelector extends SymbolSelector {
 	@Override
 	public int[] getMidSymbol(Point p) {
 		Bitmap b = getSymbol(p);
-		midIcon = new int[] { (int) (b.getWidth() / 2),
-				(int) (b.getHeight() / 2) };
-		return midIcon;
+		return new int[] { (int) (b.getWidth() / 2), (int) (b.getHeight() / 2) };
 	}
 }
