@@ -47,4 +47,8 @@ public class ResultSearchOverlay extends PointOverlay implements
 		}
 		super.setVisible(isVisible);
 	}
+	
+	public String getQuery() {
+		return this.textSearch;
+	}
 }

@@ -43,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -55,16 +57,27 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.MapPreview;
+import es.prodevelop.gvsig.mini.search.activities.POISearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
+import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
+import es.prodevelop.gvsig.mini.search.activities.StreetSearchActivity;
 import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
+import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class CategoriesListView extends PinnedHeaderListView {
 
@@ -160,10 +173,10 @@ public class CategoriesListView extends PinnedHeaderListView {
 					list.add(POICategories.CATEGORIES.get(i - 3).toString()
 							.toLowerCase());
 			}
-			
+
 			POICategories.resultSearchSelected = selected[1];
 			POICategories.bookmarkSelected = selected[2];
-			
+
 			return list;
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
@@ -215,6 +228,9 @@ public class CategoriesListView extends PinnedHeaderListView {
 					CategoriesListView.this.getContext());
 			mainView.setOrientation(LinearLayout.VERTICAL);
 			try {
+				final LinearLayout checkView = new LinearLayout(
+						CategoriesListView.this.getContext());
+				checkView.setOrientation(LinearLayout.HORIZONTAL);
 				final BulletedCheckBox btv;
 				final int pos = position;
 
@@ -261,7 +277,94 @@ public class CategoriesListView extends PinnedHeaderListView {
 
 				bindSectionHeader(mainView, realPosition,
 						mDisplaySectionHeaders);
-				mainView.addView(btv, 1);
+				ImageButton imgB = new ImageButton(
+						CategoriesListView.this.getContext());
+
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.weight = 1;
+
+				imgB.setBackgroundResource(R.drawable.arrow_button_l);
+
+				if (pos != -1 && texts != null && pos < texts.length) {
+					final String cat = texts[pos].replaceAll(" ", "_")
+							.toLowerCase();
+
+					imgB.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							switch (pos) {
+							case 0:
+								Intent mainIntent = new Intent(context,
+										SearchExpandableActivity.class);
+								// Point center =
+								// this.osmap.getMRendererInfo().getCenter();
+								((Map) context).fillSearchCenter(mainIntent);
+								context.startActivity(mainIntent);
+								break;
+							case 1:
+								Intent i = new Intent(context,
+										ResultSearchActivity.class);
+								((Map) context).fillSearchCenter(i);
+								MapOverlay overlay = ((Map) context).osmap
+										.getOverlay(ResultSearchOverlay.DEFAULT_NAME);
+								String query = "";
+								if (overlay != null) {
+									query = ((ResultSearchOverlay) overlay)
+											.getQuery();
+								}
+								i.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW,
+										true);
+								if (query != null && query.length() > 0) {
+									i.putExtra(ResultSearchActivity.QUERY,
+											query.toString());
+									context.startActivity(i);
+								}
+
+								break;
+							case 2:
+								Point center = ((Map) context).osmap
+										.getMRendererInfo().getCenter();
+								double[] lonlat = ConversionCoords.reproject(
+										center.getX(), center.getY(),
+										CRSFactory.getCRS(((Map) context).osmap
+												.getMRendererInfo().getSRS()),
+										CRSFactory.getCRS("EPSG:900913"));
+								InvokeIntents.launchListBookmarks(context,
+										lonlat);
+								break;
+							default:
+								if (cat.compareToIgnoreCase(POICategories.STREETS) == 0) {
+									Intent streetIntent = new Intent(context,
+											StreetSearchActivity.class);
+									((Map) CategoriesListView.this.getContext())
+											.fillSearchCenter(streetIntent);
+									streetIntent.putExtra(
+											SearchActivity.CATEGORY,
+											POICategories.STREETS);
+									context.startActivity(streetIntent);
+								} else {
+									Intent poiIntent = new Intent(context,
+											POISearchActivity.class);
+									((Map) CategoriesListView.this.getContext())
+											.fillSearchCenter(poiIntent);
+									poiIntent.putExtra(SearchActivity.CATEGORY,
+											cat);
+									((Activity) context)
+											.startActivityForResult(poiIntent,
+													-11);
+								}
+								break;
+							}
+						}
+					});
+				}
+
+				checkView.addView(btv, params);
+				checkView.addView(imgB);
+				mainView.addView(checkView, 1);
+
 				// mainView.addView(img, 1);
 
 			} catch (Exception e) {

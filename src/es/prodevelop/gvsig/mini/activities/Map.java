@@ -732,7 +732,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		return true;
 	}
 
-	private void fillSearchCenter(Intent i) {
+	public void fillSearchCenter(Intent i) {
 		Point center = this.mMyLocationOverlay.getLocationLonLat();
 		double[] lonlat = ConversionCoords.reproject(center.getX(),
 				center.getY(), CRSFactory.getCRS("EPSG:4326"),
@@ -1728,18 +1728,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
-				// try {
-				// if (p == null)
-				// p = new PerstClusterPOIOverlay(this, osmap,
-				// PerstClusterPOIOverlay.DEFAULT_NAME, true);
-				// this.osmap.addOverlay(p);
-				//
-				// } catch (Exception e) {
-				// Log.e("", e.getMessage());
-				// }
-				//
-				// this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
-				// ResultSearchOverlay.DEFAULT_NAME));
+//				try {
+//					if (p == null)
+//						p = new PerstClusterPOIOverlay(this, osmap,
+//								PerstClusterPOIOverlay.DEFAULT_NAME, true);
+//					this.osmap.addOverlay(p);
+//
+//				} catch (Exception e) {
+//					Log.e("", e.getMessage());
+//				}
+//
+//				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
+//						ResultSearchOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
 						NameFinderOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new RouteOverlay(this, osmap,

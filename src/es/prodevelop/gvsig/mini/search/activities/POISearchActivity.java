@@ -66,7 +66,8 @@ public class POISearchActivity extends SearchActivity {
 
 			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-			getListView().setOnItemClickListener(new OpenPOIDetailsItemClickListener(this));
+			getListView().setOnItemClickListener(
+					new OpenPOIDetailsItemClickListener(this));
 
 			category = this.getIntent().getStringExtra(SearchActivity.CATEGORY);
 			if (category == null)
@@ -143,7 +144,7 @@ public class POISearchActivity extends SearchActivity {
 			initializeAdapters();
 			this.attachSectionedAdapter();
 		} catch (Exception e) {
-			Log.e("", e.getMessage());
+			Log.e("", "Error initializing POISearchActivity");
 		}
 	}
 
