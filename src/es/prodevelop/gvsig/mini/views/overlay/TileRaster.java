@@ -151,8 +151,6 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		OnClickListener, OnLongClickListener, LayerChangedListener,
 		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
 
-	public PerstClusterPOIOverlay poiOverlay;
-
 	private ArrayList extentChangedListeners = new ArrayList();
 
 	Point scrollingCenter;
@@ -1568,9 +1566,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			Log.d("TileRaster", "onLayerChanged " + renderer.getFullNAME());
 			map.persist();
-			if (this.poiOverlay != null
-					&& !this.poiOverlay.getPoiProvider().isLoaded())
-				this.map.osmap.poiOverlay.getPoiProvider().loadCategories(
+			PerstClusterPOIOverlay poiOverlay = (PerstClusterPOIOverlay) getOverlay(PerstClusterPOIOverlay.DEFAULT_NAME);
+			if (poiOverlay != null && !poiOverlay.getPoiProvider().isLoaded())
+				poiOverlay.getPoiProvider().loadCategories(
 						POICategories.CATEGORIES, null);
 			// new LoadClusterIndexAsyncTask(this.map,
 			// this.poiOverlay.getPoiProvider())
@@ -1712,7 +1710,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public void zoomToExtent(final Extent extent, boolean layerChanged,
 			int currentZoomLevel) {
 		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged,
-				currentZoomLevel);
+				currentZoomLevel, false, null);
 	}
 
 	/**
@@ -1724,8 +1722,26 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 *            If true then the Scaler is not applied when zooming
 	 */
 	public void zoomToExtent(final Extent extent, boolean layerChanged) {
+		zoomToExtent(extent, layerChanged, false, null);
+	}
+
+	/**
+	 * Zooms the view to fit an Extent
+	 * 
+	 * @param extent
+	 *            The extent to fit
+	 * @param layerChanged
+	 *            If true then the Scaler is not applied when zooming
+	 * @param forceZoomMore
+	 *            If true adds one level to the zoom calculated to fit the
+	 *            extent
+	 * @param animateTo
+	 *            If is not null, animates to this point
+	 */
+	public void zoomToExtent(final Extent extent, boolean layerChanged,
+			boolean forceZoomMore, Point animateToCenter) {
 		zoomToSpan(extent.getWidth(), extent.getHeight(), layerChanged,
-				this.getZoomLevel());
+				this.getZoomLevel(), forceZoomMore, animateToCenter);
 	}
 
 	/**
@@ -1739,9 +1755,15 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 *            If true then the Scaler is not applied when zooming
 	 * @param currentZoomLevel
 	 *            The zoom level to get the resolution from
+	 * @param forceZoomMore
+	 *            If true adds one level to the zoom calculated to fit the
+	 *            extent
+	 * @param animateTo
+	 *            If is not null, animates to this point
 	 */
 	public void zoomToSpan(final double width, final double height,
-			boolean layerChanged, int currentZoomLevel) {
+			boolean layerChanged, int currentZoomLevel, boolean forceZoomMore,
+			Point animateToCenter) {
 		if (width <= 0 || height <= 0) {
 			return;
 		}
@@ -1750,6 +1772,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		if (zoomLevel != -1) {
 			if (!layerChanged && zoomLevel <= this.getZoomLevel())
 				zoomLevel++;
+			if (forceZoomMore)
+				zoomLevel++;
+			if (animateToCenter != null)
+				animateTo(animateToCenter.getX(), animateToCenter.getY());
 			setZoomLevel(zoomLevel, !layerChanged);
 		}
 	}

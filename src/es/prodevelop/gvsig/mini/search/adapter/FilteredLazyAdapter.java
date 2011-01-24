@@ -38,9 +38,6 @@
 
 package es.prodevelop.gvsig.mini.search.adapter;
 
-import java.text.DecimalFormat;
-
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +47,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -58,7 +56,6 @@ import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.Metadata.Indexed;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
-import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
@@ -69,11 +66,9 @@ import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.MapPreview;
 import es.prodevelop.gvsig.mini.search.POICategoryIcon;
-import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.filter.SimpleFilter;
 import es.prodevelop.gvsig.mini.search.indexer.CategoryIndexer;
-import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Calculator;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
@@ -185,14 +180,14 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 				l.addView(preview);
 				((LinearLayout) ((LinearLayout) convertView)
 						.findViewById(R.id.map_preview)).addView(l, zzParams);
-//				holder.previewLayout = l;
+				// holder.previewLayout = l;
 				holder.preview = preview;
-				holder.optionsButton = (Button) convertView
+				holder.optionsButton = (ImageButton) convertView
 						.findViewById(R.id.show_options);
-//				holder.detailsButton = (Button) convertView
-//						.findViewById(R.id.show_details);
+				// holder.detailsButton = (Button) convertView
+				// .findViewById(R.id.show_details);
 				holder.optionsButton.setFocusable(false);
-//				holder.detailsButton.setFocusable(false);
+				// holder.detailsButton.setFocusable(false);
 			} catch (BaseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -217,68 +212,68 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 				activity.getPOItemClickListener().onPOIClick(arg0, p);
 			}
 		});
-//		holder.detailsButton.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				Intent i = new Intent(activity, POIDetailsActivity.class);
-//				if (p != null && p instanceof OsmPOI) {
-//					OsmPOI poi = (OsmPOI) p;
-//					// final Point centerM = getCenterMercator();
-//					// final double distance = centerM.distance(ConversionCoords
-//					// .reproject(p.getX(), p.getY(),
-//					// CRSFactory.getCRS("EPSG:4326"),
-//					// CRSFactory.getCRS("EPSG:900913")));
-//					// String dist = formatter.format(formatKM(distance)) + " "
-//					// + unit(distance);
-//					// i.putExtra(POIDetailsActivity.X, poi.getX());
-//					// i.putExtra(POIDetailsActivity.Y, poi.getY());
-//					// i.putExtra(POIDetailsActivity.DIST, dist);
-//					// i.putExtra(POIDetailsActivity.DESC,
-//					// poi.getDescription());
-//					// i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
-//					// i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
-//					// i.putExtra(POIDetailsActivity.SCAT,
-//					// poi.getSubcategory());
-//					// i.putExtra(POIDetailsActivity.IMG, poi.getImage());
-//					// i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
-//					// i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
-//					// i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
-//					// i.putExtra(POIDetailsActivity.URL, poi.getUrl());
-//					// i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
-//					// i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
-//					InvokeIntents.fillIntentPOIDetails(poi,
-//							activity.getCenter(), i, activity);
-//					activity.startActivity(i);
-//				} else {
-//					// throw exception
-//				}
-//			}
-//		});
+		// holder.detailsButton.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// Intent i = new Intent(activity, POIDetailsActivity.class);
+		// if (p != null && p instanceof OsmPOI) {
+		// OsmPOI poi = (OsmPOI) p;
+		// // final Point centerM = getCenterMercator();
+		// // final double distance = centerM.distance(ConversionCoords
+		// // .reproject(p.getX(), p.getY(),
+		// // CRSFactory.getCRS("EPSG:4326"),
+		// // CRSFactory.getCRS("EPSG:900913")));
+		// // String dist = formatter.format(formatKM(distance)) + " "
+		// // + unit(distance);
+		// // i.putExtra(POIDetailsActivity.X, poi.getX());
+		// // i.putExtra(POIDetailsActivity.Y, poi.getY());
+		// // i.putExtra(POIDetailsActivity.DIST, dist);
+		// // i.putExtra(POIDetailsActivity.DESC,
+		// // poi.getDescription());
+		// // i.putExtra(POIDetailsActivity.ADDR, poi.getAddress());
+		// // i.putExtra(POIDetailsActivity.CAT, poi.getCategory());
+		// // i.putExtra(POIDetailsActivity.SCAT,
+		// // poi.getSubcategory());
+		// // i.putExtra(POIDetailsActivity.IMG, poi.getImage());
+		// // i.putExtra(POIDetailsActivity.INFO, poi.getInfo());
+		// // i.putExtra(POIDetailsActivity.MAIL, poi.getEmail());
+		// // i.putExtra(POIDetailsActivity.PHONE, poi.getPhone());
+		// // i.putExtra(POIDetailsActivity.URL, poi.getUrl());
+		// // i.putExtra(POIDetailsActivity.WEB, poi.getWebsite());
+		// // i.putExtra(POIDetailsActivity.WIKI, poi.getWikipedia());
+		// InvokeIntents.fillIntentPOIDetails(poi,
+		// activity.getCenter(), i, activity);
+		// activity.startActivity(i);
+		// } else {
+		// // throw exception
+		// }
+		// }
+		// });
 		String desc = Utilities
 				.capitalizeFirstLetters((p.getDescription() != null) ? p
 						.getDescription() : "?");
 
-//		if (holder.preview != null) {
-//			if (arg0 == pos) {
-//
-//				holder.previewLayout.setVisibility(View.VISIBLE);
-//				holder.optionsButton.setVisibility(View.VISIBLE);
-//				if (!(p instanceof OsmPOIStreet))
-//					holder.detailsButton.setVisibility(View.VISIBLE);
-//
-//				holder.preview.setMapCenterFromLonLat(p);
-//				if ((getItem(arg0) instanceof OsmPOIStreet)) {
-//					holder.preview.setExtent(((OsmPOIStreet) p)
-//							.getBoundingBox());
-//				}
-//			} else {
-//				holder.previewLayout.setVisibility(View.GONE);
-//				holder.optionsButton.setVisibility(View.GONE);
-//				holder.detailsButton.setVisibility(View.GONE);
-//
-//			}
-//		}
+		// if (holder.preview != null) {
+		// if (arg0 == pos) {
+		//
+		// holder.previewLayout.setVisibility(View.VISIBLE);
+		// holder.optionsButton.setVisibility(View.VISIBLE);
+		// if (!(p instanceof OsmPOIStreet))
+		// holder.detailsButton.setVisibility(View.VISIBLE);
+		//
+		// holder.preview.setMapCenterFromLonLat(p);
+		// if ((getItem(arg0) instanceof OsmPOIStreet)) {
+		// holder.preview.setExtent(((OsmPOIStreet) p)
+		// .getBoundingBox());
+		// }
+		// } else {
+		// holder.previewLayout.setVisibility(View.GONE);
+		// holder.optionsButton.setVisibility(View.GONE);
+		// holder.detailsButton.setVisibility(View.GONE);
+		//
+		// }
+		// }
 
 		// Bind the data efficiently with the holder.
 		holder.text.setText(desc);
@@ -398,10 +393,10 @@ public class FilteredLazyAdapter extends BaseAdapter implements Filterable,
 		TextView text;
 		TextView dist;
 		MapPreview preview;
-//		LinearLayout previewLayout;
+		// LinearLayout previewLayout;
 		ImageView poiImg;
-		Button optionsButton;
-//		Button detailsButton;
+		ImageButton optionsButton;
+		// Button detailsButton;
 	}
 
 	public SectionIndexer getIndexer() {

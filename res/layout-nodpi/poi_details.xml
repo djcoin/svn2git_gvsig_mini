@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical" android:layout_marginRight="10dip"
+	android:layout_marginLeft="10dip">
 	<ScrollView android:fillViewport="true"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,10 +33,10 @@
 					android:layout_width="wrap_content" android:layout_height="fill_parent"
 					android:id="@+id/map_options" android:orientation="vertical"
 					android:gravity="center_vertical" android:focusable="false">
-					<Button android:id="@+id/show_options" android:text="@string/show_options"
+					<ImageButton android:id="@+id/show_options"
 						android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:gravity="center_vertical" android:focusable="false"
-						android:visibility="gone" />
+						android:background="@drawable/opt_button" android:focusable="false"
+						android:gravity="center_vertical" android:visibility="gone" />
 					<!-- <Button android:id="@+id/show_details" android:text="@string/show_details" -->
 					<!-- android:layout_width="wrap_content" android:layout_height="wrap_content" -->
 					<!-- android:gravity="center_horizontal" android:visibility="gone" /> -->
@@ -126,8 +127,9 @@
 				android:layout_width="wrap_content" android:layout_height="fill_parent"
 				android:id="@+id/map_options" android:orientation="horizontal"
 				android:gravity="center_horizontal">
-				<Button android:id="@+id/show_options" android:text="@string/show_options"
+				<ImageButton android:id="@+id/show_options"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:background="@drawable/opt_button" android:focusable="false"
 					android:gravity="center_horizontal" android:visibility="gone" />
 				<Button android:id="@+id/show_details" android:text="@string/show_details"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"

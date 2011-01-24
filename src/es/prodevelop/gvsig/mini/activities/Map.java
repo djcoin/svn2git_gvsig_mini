@@ -1694,9 +1694,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						z.setVisibility(View.VISIBLE);
 						if (wasScaleBarVisible)
 							s.setVisibility(View.VISIBLE);
-						if (osmap.poiOverlay != null)
-							osmap.poiOverlay
-									.setCategories(POICategories.selected);
+						PerstClusterPOIOverlay poiOverlay = (PerstClusterPOIOverlay) osmap
+								.getOverlay(PerstClusterPOIOverlay.DEFAULT_NAME);
+						if (poiOverlay != null)
+							poiOverlay.setCategories(POICategories.selected);
 
 						if (!POICategories.bookmarkSelected)
 							osmap.removeOverlay(BookmarkOverlay.DEFAULT_NAME);
@@ -1727,19 +1728,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
-				try {
-					if (p == null)
-						p = new PerstClusterPOIOverlay(this, osmap,
-								PerstClusterPOIOverlay.DEFAULT_NAME, true);
-					this.osmap.poiOverlay = p;
-					this.osmap.addOverlay(p);
-
-				} catch (Exception e) {
-					Log.e("", e.getMessage());
-				}
-
-				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
-						ResultSearchOverlay.DEFAULT_NAME));
+				// try {
+				// if (p == null)
+				// p = new PerstClusterPOIOverlay(this, osmap,
+				// PerstClusterPOIOverlay.DEFAULT_NAME, true);
+				// this.osmap.addOverlay(p);
+				//
+				// } catch (Exception e) {
+				// Log.e("", e.getMessage());
+				// }
+				//
+				// this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
+				// ResultSearchOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
 						NameFinderOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new RouteOverlay(this, osmap,
@@ -2651,6 +2651,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "onResume");
 			super.onResume();
+			osmap.resumeDraw();
 			processGeoAction(getIntent());
 			processRouteAction(getIntent());
 			processOfflineIntentActoin(getIntent());
@@ -3281,6 +3282,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "onPause");
 			super.onPause();
 			// if (wl != null && wl.isHeld())
+			osmap.pauseDraw();
 			osmap.setKeepScreenOn(false);
 
 		} catch (Exception e)

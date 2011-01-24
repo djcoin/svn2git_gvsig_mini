@@ -105,6 +105,8 @@ public abstract class MapOverlay implements GeoUtils, Contextable,
 	 *            The TileRaster instance
 	 */
 	public void onManagedDraw(final Canvas c, final TileRaster maps) {
+		if (!isVisible())
+			return;
 		onDraw(c, maps);
 		onDrawFinished(c, maps);
 	}

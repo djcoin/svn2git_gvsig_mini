@@ -12,6 +12,7 @@ import android.view.View;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
+import es.prodevelop.gvsig.mini.context.map.RoutePOIContext;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
@@ -39,7 +40,7 @@ public class PointOverlay extends MapOverlay {
 
 	@Override
 	public ItemContext getItemContext() {
-		return new GPSItemContext(getTileRaster().map);
+		return new RoutePOIContext(getTileRaster().map);
 	}
 
 	protected void convertCoordinates(final String srsFrom, final String srsTo,
@@ -50,8 +51,8 @@ public class PointOverlay extends MapOverlay {
 		Point p;
 		Point temp;
 		for (int i = 0; i < size; i++) {
-//			if (cancellable != null && cancellable.getCanceled())
-//				return;
+			// if (cancellable != null && cancellable.getCanceled())
+			// return;
 			p = (Point) pois.get(i);
 			final double[] xy = ConversionCoords.reproject(p.getX(), p.getY(),
 					CRSFactory.getCRS(srsFrom), CRSFactory.getCRS(srsTo));
@@ -137,19 +138,19 @@ public class PointOverlay extends MapOverlay {
 	}
 
 	public int findNearestIndexToPixel(final Pixel pixel, final ArrayList points) {
-		if (points == null)
+		if (points == null || !isVisible())
 			return -1;
 		long distance = Long.MAX_VALUE;
 		int nearest = -1;
 
-		Point p;
+		Point p = null;
 		Pixel pix;
 		final int size = points.size();
 		int[] offset;
 		int[] coords;
 		for (int i = 0; i < size; i++) {
 			p = (Point) points.get(i);
-			offset = getSymbolSelector().getMidSymbol(p);
+			offset = getSymbolSelector().getMidPopup(p);
 			coords = getTileRaster().getMRendererInfo().toPixels(
 					new double[] { p.getX(), p.getY() });
 
@@ -158,8 +159,8 @@ public class PointOverlay extends MapOverlay {
 
 			pix = new Pixel(coords[0], coords[1]);
 
-//			pix.setX(pix.getX() - offset[0]);
-//			pix.setY(pix.getY() - offset[1]);
+			// pix.setX(pix.getX() - offset[0]);
+			// pix.setY(pix.getY() - offset[1]);
 			long newDistance = pix.distance(new Pixel(pixel.getX(), pixel
 					.getY()));
 			// log.log(Level.FINE, "distance: " + newDistance);
@@ -170,7 +171,11 @@ public class PointOverlay extends MapOverlay {
 			}
 		}
 
-		if (distance > ResourceLoader.MAX_DISTANCE && distance >= 0)
+		int maxDistance = ResourceLoader.MAX_DISTANCE;
+		if (p != null)
+			maxDistance = getSymbolSelector().getMaxTouchDistance(p);
+
+		if (distance > maxDistance && distance >= 0)
 			nearest = -1;
 
 		return nearest;
@@ -228,16 +233,20 @@ public class PointOverlay extends MapOverlay {
 
 	public void updatePopup(Point p) {
 		if (p == null) {
-//			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
+			// getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
 			return;
 		}
 
 		String text = getSymbolSelector().getText(p);
 		int[] coords = getTileRaster().getMRendererInfo().toPixels(
 				new double[] { p.getX(), p.getY() });
+		getTileRaster().acetate.popupOffsetX = getSymbolSelector().getMidPopup(
+				p)[0];
+		getTileRaster().acetate.popupOffsetY = getSymbolSelector().getMidPopup(
+				p)[1];
 		getTileRaster().acetate.setPopupPos(coords[0]
-				- getSymbolSelector().getMidSymbol(p)[0], coords[1]
-				- getSymbolSelector().getMidSymbol(p)[1]);
+				- getSymbolSelector().getMidPopup(p)[0], coords[1]
+				- getSymbolSelector().getMidPopup(p)[1]);
 		getTileRaster().acetate.setPopupText(text);
 		getTileRaster().acetate.setPopupVisibility(View.VISIBLE);
 		// getTileRaster().acetate.popupOffsetX =
@@ -250,6 +259,7 @@ public class PointOverlay extends MapOverlay {
 	@Override
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
 		try {
+			if (!isVisible()) return false;
 			super.onSingleTapUp(e, osmtile);
 
 			if (getSelectedIndex() == -1) {

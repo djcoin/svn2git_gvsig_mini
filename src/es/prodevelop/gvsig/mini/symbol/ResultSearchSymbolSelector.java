@@ -106,5 +106,17 @@ public class ResultSearchSymbolSelector extends SymbolSelector {
 	public int[] getMidSymbol(Point p) {
 		return midIcon;
 	}
-
+	
+	@Override
+	public int[] getMidPopup(Point p) {
+		int[] midPopup = new int[2];
+		if (PLACES != null) {
+			midPopup[0] = PLACES.getWidth() / 2;
+			midPopup[1] = PLACES.getHeight() / 2;
+		} else {
+			midPopup = midIcon;
+		}
+		
+		return midPopup;
+	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">gvSIG Mini Maps</string>
-	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 440</string>
+	<string name="app_name_itemizedoverlay">gvSIG Mini 1.2.0 BN 442</string>
 
 	<string name="warning">Warning</string>
 	<string name="error">Error</string>
@@ -345,6 +345,7 @@
 	</string>
 	<string name="location_not_available">Your location is not available</string>
 	<string name="zoom_to_expand">Zoom in to show more POIs</string>
+	<string name="cluster_elements">%s points. Tap to expand</string>
 </resources>
 
 

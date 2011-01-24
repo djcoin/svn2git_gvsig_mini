@@ -147,16 +147,16 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 			final Canvas c) {
 		try {
 			Bitmap expandableIcon = null;
-			if (p instanceof Cluster) {
-				if (((Cluster) p).isExpanded())
-					return;
-				int numItems = ((Cluster) p).getNumItems();
-				if (numItems < MRBucketPRQuadtree.EXPAND_CLUSTER_ITEMS)
-					return;
-				if (((Cluster) p).isExpandable())
-					expandableIcon = ResourceLoader
-							.getBitmap(R.drawable.add_16);
-			}
+			// if (p instanceof Cluster) {
+			// if (((Cluster) p).isExpanded())
+			// return;
+			// int numItems = ((Cluster) p).getNumItems();
+			// if (numItems < MRBucketPRQuadtree.EXPAND_CLUSTER_ITEMS)
+			// return;
+			// if (((Cluster) p).isExpandable())
+			// expandableIcon = ResourceLoader
+			// .getBitmap(R.drawable.add_16);
+			// }
 
 			final Extent viewExtent = getTileRaster().getMRendererInfo()
 					.getCurrentExtent();
@@ -173,9 +173,9 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 				c.drawBitmap(icon, coords[0] - midIcon[0], coords[1]
 						- midIcon[1], Paints.mPaintR);
 
-			if (expandableIcon != null)
-				c.drawBitmap(expandableIcon, coords[0] - midIcon[0] - 8,
-						coords[1] - midIcon[1] - 8, Paints.mPaintR);
+			// if (expandableIcon != null)
+			// c.drawBitmap(expandableIcon, coords[0] - midIcon[0] - 8,
+			// coords[1] - midIcon[1] - 8, Paints.mPaintR);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}
@@ -243,31 +243,31 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 				if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
 					return super.onSingleTapUp(e, osmtile);
 				} else {
-					super.onSingleTapUp(e, osmtile);
-					if (getSelectedIndex() == -1) {
-						return false;
-					} else {
-						Cluster p = (Cluster) getPoints().get(
-								getSelectedIndex());
-						if (p.isExpandable()) {
-							ExpandedClusterOverlay ex = new ExpandedClusterOverlay(
-									getTileRaster().map,
-									getTileRaster(),
-									String.valueOf(POICategories.ORDERED_CATEGORIES[p
-											.getCat()]
-											+ "#"
-											+ String.valueOf(p.getID())), p,
-									true);
-							ex.setClusterRemovedListener(this);
-							getTileRaster().addOverlay(ex);
-							ex.getPOIsOfClusterAsynch();
-						} else {
-							Toast.makeText(getTileRaster().map,
-									R.string.zoom_to_expand, Toast.LENGTH_SHORT)
-									.show();
-						}
-					}
-					return true;
+					return super.onSingleTapUp(e, osmtile);
+					// if (getSelectedIndex() == -1) {
+					// return false;
+					// } else {
+					// Cluster p = (Cluster) getPoints().get(
+					// getSelectedIndex());
+					// if (p.isExpandable()) {
+					// ExpandedClusterOverlay ex = new ExpandedClusterOverlay(
+					// getTileRaster().map,
+					// getTileRaster(),
+					// String.valueOf(POICategories.ORDERED_CATEGORIES[p
+					// .getCat()]
+					// + "#"
+					// + String.valueOf(p.getID())), p,
+					// true);
+					// ex.setClusterRemovedListener(this);
+					// getTileRaster().addOverlay(ex);
+					// ex.getPOIsOfClusterAsynch();
+					// } else {
+					// Toast.makeText(getTileRaster().map,
+					// R.string.zoom_to_expand, Toast.LENGTH_SHORT)
+					// .show();
+					// }
+					// }
+					// return true;
 				}
 			} else {
 				return super.onSingleTapUp(e, osmtile);

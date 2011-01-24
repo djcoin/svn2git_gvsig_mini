@@ -49,7 +49,7 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 				.getBitmap(R.drawable.p_route_tourist_castle2_16f);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16f);
-		
+
 		if (PLACES != null) {
 			midIcon[1] = PLACES.getHeight();
 		}
@@ -105,6 +105,19 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 	@Override
 	public int[] getMidSymbol(Point p) {
 		return midIcon;
+	}
+
+	@Override
+	public int[] getMidPopup(Point p) {
+		int[] midPopup = new int[2];
+		if (PLACES != null) {
+			midPopup[1] = PLACES.getHeight() / 2;
+			midPopup[0] = PLACES.getWidth() / 2;
+		} else {
+			midPopup = midIcon;
+		}
+
+		return midPopup;
 	}
 
 }

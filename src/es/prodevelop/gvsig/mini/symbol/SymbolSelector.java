@@ -10,4 +10,15 @@ public abstract class SymbolSelector {
 	public abstract String getText(Point p);
 
 	public abstract int[] getMidSymbol(Point p);
+
+	public int[] getMidPopup(Point p) {
+		final int[] mid = getMidSymbol(p);
+		if (mid != null && mid.length == 2)
+			return new int[] { 0, getMidSymbol(p)[1] };
+		return new int[] { 0, 0 };
+	}
+
+	public int getMaxTouchDistance(Point p) {
+		return getMidPopup(p)[1] * 2;
+	}
 }

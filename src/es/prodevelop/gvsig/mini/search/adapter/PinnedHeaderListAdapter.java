@@ -48,7 +48,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
@@ -163,7 +163,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 			// .findViewById(R.id.map_preview)).addView(l, zzParams);
 			// holder.previewLayout = l;
 			// holder.preview = preview;
-			holder.optionsButton = (Button) convertView
+			holder.optionsButton = (ImageButton) convertView
 					.findViewById(R.id.show_options);
 			// holder.detailsButton = (Button) convertView
 			// .findViewById(R.id.show_details);

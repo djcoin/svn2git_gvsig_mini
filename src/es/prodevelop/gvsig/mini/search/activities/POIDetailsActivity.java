@@ -53,17 +53,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.common.CompatManager;
-import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.search.MapPreview;
 import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.POIItemClickContextListener;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
@@ -162,7 +158,7 @@ public class POIDetailsActivity extends Activity {
 			TextView descTV = (TextView) layout.findViewById(R.id.desc);
 			TextView distTV = (TextView) layout.findViewById(R.id.dist);
 			ImageView poiImg = (ImageView) layout.findViewById(R.id.img);
-			Button bt = (Button) layout.findViewById(R.id.show_options);
+			ImageButton bt = (ImageButton) layout.findViewById(R.id.show_options);
 			bt.setVisibility(View.VISIBLE);
 
 			bt.setOnClickListener(new OnClickListener() {
@@ -433,7 +429,7 @@ public class POIDetailsActivity extends Activity {
 
 	private POIItemClickContextListener getPOItemClickListener() {
 		if (listener == null) {
-			listener = new POIItemClickContextListener(this, 0, 0, false);
+			listener = new POIItemClickContextListener(this, 0, 0, true);
 		}
 		return listener;
 	}

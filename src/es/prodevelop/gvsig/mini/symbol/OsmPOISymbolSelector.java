@@ -26,7 +26,7 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	private Bitmap PLACES;
 
 	public OsmPOISymbolSelector() {
-		
+
 		TRANSPORTATION = ResourceLoader
 				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
 		TOURISM = ResourceLoader
@@ -47,7 +47,7 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16);
 		PLACES = ResourceLoader
 				.getBitmap(R.drawable.p_places_poi_place_city_16);
-		
+
 		if (PLACES != null) {
 			midIcon[0] = PLACES.getWidth() / 2;
 			midIcon[1] = PLACES.getHeight() / 2;
@@ -99,6 +99,5 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	@Override
 	public int[] getMidSymbol(Point p) {
 		return midIcon;
-	}
-
+	}	
 }

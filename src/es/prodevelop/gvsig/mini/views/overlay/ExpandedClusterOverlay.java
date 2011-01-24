@@ -178,7 +178,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 		}
 	}
 
-	private void setNodeExpanded(final boolean expanded) {
+	public void setNodeExpanded(final boolean expanded) {
 		this.mClusterToExpand.setExpanded(expanded);
 		try {
 			if (mNode == null)

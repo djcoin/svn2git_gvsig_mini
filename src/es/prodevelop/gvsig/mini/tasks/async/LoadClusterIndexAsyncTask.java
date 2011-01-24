@@ -48,6 +48,7 @@ import es.prodevelop.android.spatialindex.quadtree.provide.LoadCategoryListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 public class LoadClusterIndexAsyncTask extends
@@ -89,14 +90,14 @@ public class LoadClusterIndexAsyncTask extends
 			if (pDialog != null)
 				pDialog.dismiss();
 
-//			MapRenderer renderer = this.map.osmap.getMRendererInfo();
-//
-//			this.map.osmap.poiOverlay.onExtentChanged(renderer.getCurrentExtent(),
-//					renderer.getZoomLevel(), renderer.getCurrentRes());
+			// MapRenderer renderer = this.map.osmap.getMRendererInfo();
+			//
+			// this.map.osmap.poiOverlay.onExtentChanged(renderer.getCurrentExtent(),
+			// renderer.getZoomLevel(), renderer.getCurrentRes());
 		} catch (Exception e) {
-			
+
 		} finally {
-			this.map.osmap.resumeDraw();			
+			this.map.osmap.resumeDraw();
 		}
 
 	}
@@ -107,7 +108,7 @@ public class LoadClusterIndexAsyncTask extends
 	 * @see android.os.AsyncTask#onPreExecute()
 	 */
 	@Override
-	protected void onPreExecute() {			
+	protected void onPreExecute() {
 		// TODO Auto-generated method stub
 		this.map.osmap.pauseDraw();
 		super.onPreExecute();
@@ -164,8 +165,9 @@ public class LoadClusterIndexAsyncTask extends
 	protected Integer doInBackground(ArrayList... params) {
 		// TODO Auto-generated method stub
 		try {
-			this.map.osmap.poiOverlay.getPoiProvider().loadCategories(
-					params[0], this);
+			((PerstClusterPOIOverlay) this.map.osmap
+					.getOverlay(PerstClusterPOIOverlay.DEFAULT_NAME))
+					.getPoiProvider().loadCategories(params[0], this);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

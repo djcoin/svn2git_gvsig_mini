@@ -51,7 +51,9 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
+import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
@@ -142,6 +144,30 @@ public class AcetateOverlay extends MapOverlay {
 							new double[] { p.getX(), p.getY() });
 					popupView
 							.setPos(xy[0] + popupOffsetX, xy[1] - popupOffsetY);
+					if (f instanceof Cluster
+							&& popupView.getVisibility() == View.VISIBLE) {
+						final Cluster cl = (Cluster) f;
+						final Extent bbox = cl.getBoundingBox();
+						final String SRS = getTileRaster().getMRendererInfo()
+								.getSRS();
+						double[] minXY = ConversionCoords.reproject(
+								bbox.getMinX(), bbox.getMinY(),
+								CRSFactory.getCRS("EPSG:4326"),
+								CRSFactory.getCRS(SRS));
+						double[] maxXY = ConversionCoords.reproject(
+								bbox.getMaxX(), bbox.getMaxY(),
+								CRSFactory.getCRS("EPSG:4326"),
+								CRSFactory.getCRS(SRS));
+
+						int[] minPixXY = maps.getMRendererInfo()
+								.toPixels(minXY);
+						int[] maxPixXY = maps.getMRendererInfo()
+								.toPixels(maxXY);
+
+						c.drawRect((float) minPixXY[0], (float) maxPixXY[1],
+								(float) maxPixXY[0], (float) minPixXY[1],
+								Paints.circlePaint);
+					}
 				}
 
 				popupView.dispatchDraw(c);
@@ -314,28 +340,51 @@ public class AcetateOverlay extends MapOverlay {
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
 		if (popupView.onTouchEvent(e)) {
 			popupView.setVisibility(View.VISIBLE);
-			Intent i = new Intent(getContext(), POIDetailsActivity.class);
+
 			Feature f = osmtile.selectedFeature;
-			if (f != null && f.getGeometry() != null
-					&& f.getGeometry() instanceof OsmPOI) {
+			if (f != null && f.getGeometry() != null) {
+				if (f.getGeometry() instanceof OsmPOI) {
+					Intent i = new Intent(getContext(),
+							POIDetailsActivity.class);
+					Point center = ((ViewSimpleLocationOverlay) (getTileRaster()
+							.getOverlay(ViewSimpleLocationOverlay.DEFAULT_NAME)))
+							.getLocationLonLat();
+					double[] xy = ConversionCoords.reproject(center.getX(),
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
 
-				Point center = ((ViewSimpleLocationOverlay) (getTileRaster()
-						.getOverlay(ViewSimpleLocationOverlay.DEFAULT_NAME)))
-						.getLocationLonLat();
-				double[] xy = ConversionCoords.reproject(center.getX(),
-						center.getY(), CRSFactory.getCRS("EPSG:4326"),
-						CRSFactory.getCRS("EPSG:900913"));
-
-				OsmPOI poi = (OsmPOI) f.getGeometry();
-				OsmPOI p = (OsmPOI) poi.clone();
-				double[] pxy = ConversionCoords.reproject(p.getX(), p.getY(),
-						CRSFactory.getCRS(getTileRaster().getMRendererInfo()
-								.getSRS()), CRSFactory.getCRS("EPSG:4326"));
-				p.setX(pxy[0]);
-				p.setY(pxy[1]);
-				InvokeIntents.fillIntentPOIDetails(p, new Point(xy[0], xy[1]),
-						i, getTileRaster().map);
-				getContext().startActivity(i);
+					OsmPOI poi = (OsmPOI) f.getGeometry();
+					OsmPOI p = (OsmPOI) poi.clone();
+					double[] pxy = ConversionCoords.reproject(p.getX(), p
+							.getY(), CRSFactory.getCRS(getTileRaster()
+							.getMRendererInfo().getSRS()), CRSFactory
+							.getCRS("EPSG:4326"));
+					p.setX(pxy[0]);
+					p.setY(pxy[1]);
+					InvokeIntents.fillIntentPOIDetails(p, new Point(xy[0],
+							xy[1]), i, getTileRaster().map);
+					getContext().startActivity(i);
+				} else if (f.getGeometry() instanceof Cluster) {
+					final Cluster c = (Cluster) f.getGeometry();
+					final Extent bbox = c.getBoundingBox();
+					final String SRS = getTileRaster().getMRendererInfo()
+							.getSRS();
+					double[] minXY = ConversionCoords.reproject(bbox.getMinX(),
+							bbox.getMinY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS(SRS));
+					double[] maxXY = ConversionCoords.reproject(bbox.getMaxX(),
+							bbox.getMaxY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS(SRS));
+					Extent ex = new Extent(minXY[0], minXY[1], maxXY[0],
+							maxXY[1]);
+					getTileRaster().zoomToExtent(ex, false, false, ex.getCenter());
+//					final MapOverlay overlay = getTileRaster().getOverlay(
+//							String.valueOf(POICategories.ORDERED_CATEGORIES[c
+//									.getCat()] + "#" + c.getID()));
+//					if (overlay != null && overlay instanceof ExpandedClusterOverlay) {
+//						((ExpandedClusterOverlay)overlay).setNodeExpanded(true);
+//					}
+				}
 			}
 			return true;
 		} else {

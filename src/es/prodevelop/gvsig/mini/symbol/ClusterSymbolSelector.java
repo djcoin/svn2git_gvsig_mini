@@ -249,7 +249,17 @@ public class ClusterSymbolSelector extends SymbolSelector {
 
 	@Override
 	public String getText(Point p) {
-		return "";
+		try {
+			if (p instanceof Cluster) {
+				return String.format(overlay.getContext().getResources()
+						.getString(R.string.cluster_elements),
+						((Cluster) p).getNumItems());
+			} else {
+				return "";
+			}
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 	@Override
