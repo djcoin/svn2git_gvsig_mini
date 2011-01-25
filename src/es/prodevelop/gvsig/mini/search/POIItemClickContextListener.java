@@ -175,14 +175,26 @@ public class POIItemClickContextListener {
 							sh.execute();
 							break;
 						case 5:
+							if (findNear)
 							// FIND POIS NEAR
 							InvokeIntents.findPOISNear(activity,
 									p.toShortString(2));
+							else {
+								ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
+										activity, p);
+								s.execute();
+							}
 							break;
 						case 6:
+							if (findNear)
 							// FIND STREETS
 							InvokeIntents.findStreetsNear(activity,
 									p.toShortString(2));
+							else {
+								ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
+										activity, p);
+								s.execute();
+							}	
 							break;
 
 						case 7:

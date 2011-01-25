@@ -105,12 +105,12 @@ public class LayersActivity extends ExpandableListActivity {
 	private final static Logger log = Logger.getLogger(LayersActivity.class
 			.getName());
 
-	private static final String LAYER = "LAYER";
-	private static final String CHILD = "CHILD";
+	public static final String LAYER = "LAYER";
+	public static final String CHILD = "CHILD";
 	private static final String FROM_FILE_EXPLORER = "FromFileExplorer";
 	private static final String GVTILES = "gvtiles";
 
-	private ExpandableListAdapter mAdapter;
+	protected ExpandableListAdapter mAdapter;
 	private boolean layers = false;
 	private String server;
 	public static final int WMS_CONNECTED = 0;
@@ -479,7 +479,7 @@ public class LayersActivity extends ExpandableListActivity {
 		}
 	}
 
-	private void loadLayersList(Hashtable layers) {
+	protected void loadLayersList(Hashtable layers) {
 		try {
 			log.log(Level.FINE, "loadLayersList");
 			List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();

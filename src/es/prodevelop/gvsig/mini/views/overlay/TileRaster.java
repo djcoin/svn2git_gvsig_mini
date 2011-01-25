@@ -767,7 +767,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			MapOverlay overlay;
 
 			resumeDraw();
-			if (map.isPOISlideShown)
+			if (map.isPOISlideShown())
 				return true;
 			// System.out.println("onTouchEvent");
 			// Log.d("", event.getX() + ", " + event.getY());
@@ -1235,7 +1235,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public boolean onDown(MotionEvent e) {
-			if (TileRaster.this.map.isPOISlideShown)
+			if (TileRaster.this.map.isPOISlideShown())
 				return true;
 			if (!TileRaster.this.getScroller().isFinished()) {
 				TileRaster.this.getScroller().forceFinished(true);
@@ -1251,7 +1251,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
-			if (TileRaster.this.map.isPOISlideShown)
+			if (TileRaster.this.map.isPOISlideShown())
 				return true;
 			// System.out.println("onFling");
 			startScrolling();
@@ -1265,7 +1265,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public void onLongPress(MotionEvent e) {
 			try {
-				if (TileRaster.this.map.isPOISlideShown)
+				if (TileRaster.this.map.isPOISlideShown())
 					return;
 				TileRaster.this.onLongPress(e);
 			} catch (Exception est) {
@@ -1288,7 +1288,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			try {
-				if (TileRaster.this.map.isPOISlideShown)
+				if (TileRaster.this.map.isPOISlideShown())
 					return true;
 				log.log(Level.FINE, "double tap");
 				double[] coords = TileRaster.this.getMRendererInfo()
@@ -1310,7 +1310,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
-			if (TileRaster.this.map.isPOISlideShown)
+			if (TileRaster.this.map.isPOISlideShown())
 				return true;
 			if (invalidateLongPress)
 				return false;

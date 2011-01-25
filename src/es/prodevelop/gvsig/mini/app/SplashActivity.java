@@ -91,6 +91,7 @@ public class SplashActivity extends Activity {
 	private double lat = 0;
 	private double lon = 0;
 	private int z = -1;
+	Class goTo = Map.class;
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -130,9 +131,9 @@ public class SplashActivity extends Activity {
 						try {
 
 							Intent mainIntent = new Intent(SplashActivity.this,
-									Map.class);
-//							Initializer.getInstance().initialize(
-//									getApplicationContext());
+									goTo);
+							// Initializer.getInstance().initialize(
+							// getApplicationContext());
 							fillIntent(mainIntent);
 							SplashActivity.this.startActivityForResult(
 									mainIntent, 0);
@@ -298,8 +299,7 @@ public class SplashActivity extends Activity {
 					t.setIndeterminate(true);
 					break;
 				case Initializer.INITIALIZE_FINISHED:
-					Intent mainIntent = new Intent(SplashActivity.this,
-							Map.class);
+					Intent mainIntent = new Intent(SplashActivity.this, goTo);
 					fillIntent(mainIntent);
 					SplashActivity.this.startActivityForResult(mainIntent, 0);
 					((ProgressBar) SplashActivity.this

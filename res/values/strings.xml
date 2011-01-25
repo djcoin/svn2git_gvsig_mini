@@ -346,6 +346,10 @@
 	<string name="location_not_available">Your location is not available</string>
 	<string name="zoom_to_expand">Zoom in to show more POIs</string>
 	<string name="cluster_elements">%s points. Tap to expand</string>
+	<string name="num_results_found">%s results found</string>
+	<string name="nearest_places">Nearest places</string>
+	<string name="my_guides">My guides</string>
+	<string name="other_maps">Other maps</string>
 </resources>
 
 

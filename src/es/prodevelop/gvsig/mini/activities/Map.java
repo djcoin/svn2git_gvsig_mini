@@ -63,6 +63,7 @@ import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
 
+import android.R.color;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -96,7 +97,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -109,6 +109,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
@@ -140,9 +141,8 @@ import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
-import es.prodevelop.gvsig.mini.search.activities.ResultSearchActivity;
-import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 import es.prodevelop.gvsig.mini.tasks.TaskHandler;
@@ -161,11 +161,12 @@ import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView;
+import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView.CheckBoxBulletAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.PopupView;
 import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
@@ -174,7 +175,6 @@ import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerCloseListen
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerOpenListener;
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
-import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.IDownloadWaiter;
@@ -208,11 +208,10 @@ import es.prodevelop.tilecache.util.Utilities;
 public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		OnSettingsChangedListener {
 	SlideBar s;
-	public boolean isPOISlideShown = false;
-	private boolean wasScaleBarVisible = false;
+
+	boolean wasScaleBarVisible = false;
 
 	public final static int CODE_SETTINGS = 3215;
-	PerstClusterPOIOverlay p;
 
 	AlertDialog downloadTileAlert;
 	Cancellable downloadCancellable;
@@ -222,12 +221,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private TextView totalTiles;
 	private TextView totalMB;
 	private TextView totalZoom;
-	private SlidingDrawer2 sliding;
 
 	private TileDownloadWaiterDelegate tileWaiter;
 	public static String twituser = null;
 	public static String twitpass = null;
-	private ViewSimpleLocationOverlay mMyLocationOverlay;
+	public ViewSimpleLocationOverlay mMyLocationOverlay;
 	public TileRaster osmap;
 	public NamedMultiPoint nameds;
 	private Point nearestPOI;
@@ -240,7 +238,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	ImageView ivCompassY;
 	ImageView ivCompass;
 	public ProgressDialog dialog2 = null;
-	private boolean recenterOnGPS = false;
+	public boolean recenterOnGPS = false;
 	private boolean backpressed = false;
 	public boolean backpressedroulette = false;
 	private AlertDialog alertP;
@@ -276,6 +274,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public static final int SHOW_OK_DIALOG = 114;
 	public static final int GETFEATURE_INITED = 115;
 	public static final int SHOW_TWEET_DIALOG_SETTINGS = 116;
+	public static final int SHOW_LOADING = 117;
+	public static final int HIDE_LOADING = 118;
 	public static final int POI_CANCELED = 1;
 	public static final int POI_SUCCEEDED = 2;
 	public static final int ROUTE_SUCCEEDED = 3;
@@ -304,7 +304,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	boolean mUpdatingAnimation;
 	// PowerManager.WakeLock wl;
-	private MapHandler handler = new MapHandler();
+	MapHandler handler = new MapHandler();
 	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
@@ -432,15 +432,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	public void processActionSearch(Intent i) {
 		if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-			String query = i.getStringExtra(SearchManager.QUERY);
-			if (query == null)
-				query = i.getDataString();
-			Intent newIntent = new Intent(this, ResultSearchActivity.class);
-			newIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
-			newIntent.putExtra(ResultSearchActivity.QUERY, query.toString());
-			fillSearchCenter(newIntent);
-			startActivity(newIntent);
-			return;
+			String q = i.getStringExtra(SearchManager.QUERY);
+			if (q == null)
+				q = i.getDataString();
+			final String query = q;
+			searchInNameFinder(query, false);
+			// Intent newIntent = new Intent(this, ResultSearchActivity.class);
+			// newIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
+			// newIntent.putExtra(ResultSearchActivity.QUERY, query.toString());
+			// fillSearchCenter(newIntent);
+			// startActivity(newIntent);
+			// return;
 		}
 	}
 
@@ -724,8 +726,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					R.drawable.menu_location);
 			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
 					R.drawable.menu_location);
-			pMenu.add(0, 11, 11, R.string.search_local);
-			pMenu.add(0, 12, 12, R.string.bookmarks);
+//			pMenu.add(0, 11, 11, R.string.search_local);
+//			pMenu.add(0, 12, 12, R.string.bookmarks);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
@@ -974,7 +976,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		return result;
 	}
 
-	private void showNavigationModeAlert() {
+	protected void showNavigationModeAlert() {
 		try {
 			RadioGroup r = new RadioGroup(this);
 			RadioButton r1 = new RadioButton(this);
@@ -1664,82 +1666,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
 					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 			z = new ZoomControls(this);
-			sliding = (SlidingDrawer2) factory.inflate(R.layout.slide, null);
-			sliding.setOnDrawerOpenListener(new OnDrawerOpenListener() {
-
-				@Override
-				public void onDrawerOpened() {
-					((Button) sliding.getHandle())
-							.setBackgroundResource(R.drawable.slide_down_icon);
-					Map.this.isPOISlideShown = true;
-					osmap.pauseDraw();
-					z.setVisibility(View.INVISIBLE);
-					if (s.getVisibility() == View.VISIBLE) {
-						wasScaleBarVisible = true;
-					} else {
-						wasScaleBarVisible = false;
-					}
-					s.setVisibility(View.INVISIBLE);
-				}
-			});
-
-			sliding.setOnDrawerCloseListener(new OnDrawerCloseListener() {
-
-				@Override
-				public void onDrawerClosed() {
-					try {
-						((Button) sliding.getHandle())
-								.setBackgroundResource(R.drawable.slide_up_icon);
-						Map.this.isPOISlideShown = false;
-						z.setVisibility(View.VISIBLE);
-						if (wasScaleBarVisible)
-							s.setVisibility(View.VISIBLE);
-						PerstClusterPOIOverlay poiOverlay = (PerstClusterPOIOverlay) osmap
-								.getOverlay(PerstClusterPOIOverlay.DEFAULT_NAME);
-						if (poiOverlay != null)
-							poiOverlay.setCategories(POICategories.selected);
-
-						if (!POICategories.bookmarkSelected)
-							osmap.removeOverlay(BookmarkOverlay.DEFAULT_NAME);
-						else
-							osmap.addOverlay(new BookmarkOverlay(Map.this,
-									osmap, BookmarkOverlay.DEFAULT_NAME));
-
-						osmap.getOverlay(ResultSearchOverlay.DEFAULT_NAME)
-								.setVisible(POICategories.resultSearchSelected);
-
-						osmap.resumeDraw();
-
-						// Map.this.osmap.poiOverlay.onTouchEvent(null, null);
-					} catch (Exception e) {
-						// Log.e("", e.getMessage());
-					}
-				}
-			});
 			final TextView l = new TextView(this);
 			final RelativeLayout.LayoutParams sParams = new RelativeLayout.LayoutParams(
 					RelativeLayout.LayoutParams.FILL_PARENT,
 					RelativeLayout.LayoutParams.FILL_PARENT);
 			//
 			rl.addView(l, sParams);
-			rl.addView(sliding, sParams);
 
 			/* Creating the main Overlay */
 			{
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
-//				try {
-//					if (p == null)
-//						p = new PerstClusterPOIOverlay(this, osmap,
-//								PerstClusterPOIOverlay.DEFAULT_NAME, true);
-//					this.osmap.addOverlay(p);
-//
-//				} catch (Exception e) {
-//					Log.e("", e.getMessage());
-//				}
-//
-//				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
-//						ResultSearchOverlay.DEFAULT_NAME));
+
 				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
 						NameFinderOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new RouteOverlay(this, osmap,
@@ -1941,6 +1879,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
+	public void setLoadingVisible(boolean visible) {
+
+	}
+
 	/**
 	 * This class Handles messages from Functionalities
 	 * 
@@ -1948,13 +1890,19 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * @author rblanco
 	 * 
 	 */
-	private class MapHandler extends Handler {
+	class MapHandler extends Handler {
 		@Override
 		public void handleMessage(final Message msg) {
 			try {
 				log.log(Level.FINE, "MapHandler -> handleMessage");
 				final int what = msg.what;
 				switch (what) {
+				case Map.SHOW_LOADING:
+					setLoadingVisible(true);
+					break;
+				case Map.HIDE_LOADING:
+					setLoadingVisible(false);
+					break;
 				case TaskHandler.NO_RESPONSE:
 					log.log(Level.FINE, "task handler NO_RESPONSE");
 					if (dialog2 != null)
@@ -3182,15 +3130,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "onConfigurationChanged: ", e);
 		}
 	}
+	
+	public boolean isPOISlideShown() {
+		return false;
+	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
 			if (keyCode == KeyEvent.KEYCODE_BACK) {
-				if (this.sliding.isOpened()) {
-					this.sliding.close();
-					return true;
-				}
 
 				if (osmap.removeExpanded()) {
 					return true;

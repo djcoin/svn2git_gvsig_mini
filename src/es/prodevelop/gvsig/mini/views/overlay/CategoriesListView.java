@@ -184,13 +184,13 @@ public class CategoriesListView extends PinnedHeaderListView {
 		}
 	}
 
-	protected class CheckBoxBulletAdapter extends BaseAdapter implements
+	public  class CheckBoxBulletAdapter extends BaseAdapter implements
 			PinnedHeaderListView.PinnedHeaderAdapter, OnScrollListener,
 			SectionIndexer {
 
 		String[] texts;
 		int[] idsImages;
-		boolean[] selected;
+		public boolean[] selected;
 
 		public CheckBoxBulletAdapter(String[] texts, int[] idsImages) {
 			try {
