@@ -27,12 +27,20 @@
 		<!-- android:layout_marginLeft="5dip" android:layout_marginRight="5dip" -->
 		<!-- android:layout_marginTop="5dip" android:layout_marginBottom="5dip"></Spinner> -->
 	</LinearLayout>
+	<LinearLayout android:id="@+id/advanced_search_layout"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:gravity="center_horizontal">
+		<Button android:id="@+id/advanced_button" android:text="@string/show_advanced_options"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:clickable="true" android:gravity="center_horizontal" />
+	</LinearLayout>
 	<LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:orientation="vertical" android:gravity="bottom">
 		<ExpandableListView android:id="@+id/android:list"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:clickable="true" />
+			android:clickable="true" android:visibility="gone" />
 	</LinearLayout>
 </LinearLayout>

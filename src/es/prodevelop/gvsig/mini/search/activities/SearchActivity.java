@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -201,6 +202,18 @@ public abstract class SearchActivity extends ListActivity implements
 			// });
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
 		}
 	}
 

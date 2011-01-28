@@ -168,6 +168,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 			// holder.detailsButton = (Button) convertView
 			// .findViewById(R.id.show_details);
 			holder.optionsButton.setVisibility(View.VISIBLE);
+			holder.optionsButton.setFocusable(false);
 			// holder.detailsButton.setFocusable(false);
 
 			convertView.setTag(holder);

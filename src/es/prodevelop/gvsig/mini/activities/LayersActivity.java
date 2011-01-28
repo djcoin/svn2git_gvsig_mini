@@ -70,6 +70,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.SimpleExpandableListAdapter;
@@ -657,6 +658,18 @@ public class LayersActivity extends ExpandableListActivity {
 			log.log(Level.SEVERE, "loadSampleList: ", e);
 		}
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
+		}
+	}
 
 	@Override
 	public boolean onChildClick(android.widget.ExpandableListView parent,
@@ -682,7 +695,7 @@ public class LayersActivity extends ExpandableListActivity {
 					Intent i = new Intent();
 					if (getIntent().getBooleanExtra(FROM_FILE_EXPLORER, false)) {
 						i = new Intent(this,
-								es.prodevelop.gvsig.mini.activities.Map.class);
+								Utils.DEFAULT_MAP_CLASS);
 						i.putExtra("layer", s);
 						i.putExtra(GVTILES, gvTiles);
 						log.log(Level.FINE,
@@ -812,6 +825,8 @@ public class LayersActivity extends ExpandableListActivity {
 			log.log(Level.SEVERE, "LayersActivity onActivityResult: ", e);
 			// Utils.showSendLogDialog(this, R.string.fatal_error);
 		}
+		
+		
 	}
 
 	/**

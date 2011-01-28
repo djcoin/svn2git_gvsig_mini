@@ -54,6 +54,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.view.KeyEvent;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
 
@@ -330,6 +331,18 @@ public class SettingsActivity extends PreferenceActivity implements
 			Settings.getInstance().notifyObserversWithChanges();
 		} catch (Exception e) {
 
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
 		}
 	}
 }

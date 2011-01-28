@@ -50,11 +50,20 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -75,7 +84,7 @@ import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class SearchExpandableActivity extends ExpandableListActivity implements
 		SearchActivityWrapper {
-	
+
 	CheckboxExpandableListAdapter expListAdapter;
 	private MultiAutoCompleteTextView autoCompleteTextView;
 	private AutoCompleteAdapter autoCompleteAdapter;
@@ -94,7 +103,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		super.onCreate(icicle);
 		// setContentView(R.layout.search_expandable_main);
 		try {
-			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);			
+			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
 			expListAdapter = new CheckboxExpandableListAdapter(this,
 					createGroupList(), // groupData describes the first-level
@@ -123,7 +132,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			);
 
 			expListAdapter.setCheckedAll(true);
-			LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
+			final LinearLayout l = ((LinearLayout) getLayoutInflater().inflate(
 					R.layout.search_expandable_main, null));
 			this.setContentView(l);
 
@@ -185,15 +194,46 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 				}
 			});
 
+			final Button advButton = (Button) l
+					.findViewById(R.id.advanced_button);
+			advButton.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					advButton.setVisibility(View.GONE);
+					l.findViewById(android.R.id.list).setVisibility(
+							View.VISIBLE);
+				}
+			});
+
 			this.setAutoCompleteAdapter(new AutoCompleteAdapter(this));
 			autoCompleteTextView.setTokenizer(new SpaceTokenizer());
 			autoCompleteTextView.setAdapter(getAutoCompleteAdapter());
 			autoCompleteTextView.setThreshold(1);
 
+			AnimationSet set = new AnimationSet(true);
+
+			Animation animation = new AlphaAnimation(0.0f, 1.0f);
+			animation.setDuration(100);
+			set.addAnimation(animation);
+
+			animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
+					0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+					Animation.RELATIVE_TO_SELF, -1.0f,
+					Animation.RELATIVE_TO_SELF, 0.0f);
+			animation.setDuration(500);
+
+			set.addAnimation(animation);
+
+			LayoutAnimationController controller = new LayoutAnimationController(
+					set, 0.25f);
+
+			l.setLayoutAnimation(controller);
 			setContentView(l);
 
 			// getSearchOptions().sort =
 			// spinnerSort.getSelectedItem().toString();
+
 			setListAdapter(expListAdapter);
 			double lon = getIntent().getDoubleExtra("lon", 0);
 			double lat = getIntent().getDoubleExtra("lat", 0);
@@ -202,6 +242,18 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			handleIntent(getIntent());
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {
+			return false;
 		}
 	}
 
@@ -333,8 +385,10 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	}
 
 	private List createGroupList() throws BaseException {
-		Metadata me = POIProviderManager.getInstance().getPOIProvider().getPOIMetadata();
-		Metadata ms = POIProviderManager.getInstance().getPOIProvider().getStreetMetadata();
+		Metadata me = POIProviderManager.getInstance().getPOIProvider()
+				.getPOIMetadata();
+		Metadata ms = POIProviderManager.getInstance().getPOIProvider()
+				.getStreetMetadata();
 		ArrayList categories = me.getCategories();
 		ArrayList result = new ArrayList();
 		String cat;
@@ -366,7 +420,8 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	}
 
 	private List createChildList() throws BaseException {
-		Metadata me = POIProviderManager.getInstance().getPOIProvider().getPOIMetadata();
+		Metadata me = POIProviderManager.getInstance().getPOIProvider()
+				.getPOIMetadata();
 		ArrayList categories = me.getCategories();
 		ArrayList result = new ArrayList();
 		String subc;
@@ -433,7 +488,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	@Override
 	public QuadtreeProvider getProvider() throws BaseException {
 		return POIProviderManager.getInstance().getPOIProvider();
-	}	
+	}
 
 	@Override
 	public AutoCompleteAdapter getAutoCompleteAdapter() {

@@ -48,6 +48,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -55,14 +60,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
-import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.search.POICategoryIcon;
 import es.prodevelop.gvsig.mini.search.activities.POISearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivityWrapper;
-import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.search.activities.StreetSearchActivity;
 
 public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
@@ -70,6 +72,7 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 	public boolean[] parentChecked;
 	public boolean[][] childChecked;
 	private Context context;
+	private LayoutAnimationController controller;
 
 	public CheckboxExpandableListAdapter(Context context,
 			List<? extends Map<String, ?>> groupData, int groupLayout,
@@ -91,6 +94,21 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 				maxLength = length;
 		}
 		childChecked = new boolean[size][maxLength];
+
+		AnimationSet set = new AnimationSet(true);
+
+		Animation animation = new AlphaAnimation(0.0f, 1.0f);
+		animation.setDuration(100);
+		set.addAnimation(animation);
+
+		animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+				Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+				-1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+		animation.setDuration(500);
+
+		set.addAnimation(animation);
+
+		controller = new LayoutAnimationController(set, 0.25f);
 	}
 
 	public void setCheckedAll(boolean checked) {
@@ -320,6 +338,9 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 		});
 
 		check.setChecked(parentChecked[groupPosition]);
+
+		if (controller != null)
+			v.setLayoutAnimation(controller);
 
 		return v;
 	}

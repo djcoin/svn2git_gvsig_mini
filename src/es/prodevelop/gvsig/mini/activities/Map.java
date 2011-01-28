@@ -63,7 +63,6 @@ import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
 
-import android.R.color;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -108,8 +107,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
-import es.prodevelop.android.spatialindex.poi.POICategories;
-import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
@@ -160,19 +157,11 @@ import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
-import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView;
-import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView.CheckBoxBulletAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.CircularRouleteView;
 import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
-import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
-import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerCloseListener;
-import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerOpenListener;
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
@@ -334,10 +323,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 				// "Prueba de ScreenPower");
 
-//				if (getIntent() != null
-//						&& getIntent().getAction().compareTo(
-//								SplashActivity.OFFLINE_INTENT_ACTION) != 0)
-					onNewIntent(getIntent());
+				// if (getIntent() != null
+				// && getIntent().getAction().compareTo(
+				// SplashActivity.OFFLINE_INTENT_ACTION) != 0)
+				onNewIntent(getIntent());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onCreate", e);
 				// log.log(Level.SEVERE,e.getMessage());
@@ -726,8 +715,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					R.drawable.menu_location);
 			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
 					R.drawable.menu_location);
-//			pMenu.add(0, 11, 11, R.string.search_local);
-//			pMenu.add(0, 12, 12, R.string.bookmarks);
+			// pMenu.add(0, 11, 11, R.string.search_local);
+			// pMenu.add(0, 12, 12, R.string.bookmarks);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
@@ -3130,7 +3119,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "onConfigurationChanged: ", e);
 		}
 	}
-	
+
 	public boolean isPOISlideShown() {
 		return false;
 	}
@@ -3165,6 +3154,20 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					clearContext();
 					backpressedroulette = false;
 					return true;
+				}
+			} else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				try {
+					if (POIProviderManager.getInstance().getPOIProvider() != null) {
+						Intent mainIntent = new Intent(this,
+								SearchExpandableActivity.class);
+						// Point center =
+						// this.osmap.getMRendererInfo().getCenter();
+						fillSearchCenter(mainIntent);
+						this.startActivity(mainIntent);
+						return true;
+					}
+				} catch (BaseException e) {
+					return false;
 				}
 			}
 			return super.onKeyDown(keyCode, event);

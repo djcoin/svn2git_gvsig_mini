@@ -60,6 +60,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -115,6 +116,18 @@ public class NameFinderActivity extends ListActivity {
 			super.onStop();
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
 		}
 	}
 
@@ -410,5 +423,5 @@ public class NameFinderActivity extends ListActivity {
 				return null;
 			}
 		}
-	}	
+	}
 }

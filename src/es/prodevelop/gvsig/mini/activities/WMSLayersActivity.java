@@ -52,6 +52,7 @@ import org.gvsig.remoteclient.wms.WMSLayer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.common.CompatManager;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
+import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriver;
 import es.prodevelop.gvsig.mini.wms.FMapWMSDriverFactory;
 import es.prodevelop.gvsig.mini.wms.WMSException;
@@ -397,6 +401,18 @@ public class WMSLayersActivity extends ListActivity {
 				log.log(Level.SEVERE,"",e);
 			}
 			return mainView;
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
 		}
 	}
 }

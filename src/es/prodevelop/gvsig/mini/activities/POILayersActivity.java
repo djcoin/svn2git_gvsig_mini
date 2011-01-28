@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import android.view.KeyEvent;
 import android.widget.SimpleExpandableListAdapter;
 import es.prodevelop.gvsig.mini.R;
 
@@ -118,5 +119,16 @@ public class POILayersActivity extends LayersActivity {
 			// log.log(Level.SEVERE, "loadLayersList: ", e);
 		}
 	}
-
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		try {
+			if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} catch (Exception e) {			
+			return false;
+		}
+	}
 }

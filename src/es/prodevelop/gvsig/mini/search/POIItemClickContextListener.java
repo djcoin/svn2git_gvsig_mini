@@ -133,7 +133,8 @@ public class POIItemClickContextListener {
 						switch (position) {
 						case 0:
 							// SHOW ON MAP
-							Intent i = new Intent(activity, Utils.DEFAULT_MAP_CLASS);
+							Intent i = new Intent(activity,
+									Utils.DEFAULT_MAP_CLASS);
 							i.putExtra("zoom", 15);
 							i.putExtra("lon", p.getX());
 							i.putExtra("lat", p.getY());
@@ -177,9 +178,9 @@ public class POIItemClickContextListener {
 							break;
 						case 5:
 							if (findNear)
-							// FIND POIS NEAR
-							InvokeIntents.findPOISNear(activity,
-									p.toShortString(2));
+								// FIND POIS NEAR
+								InvokeIntents.findPOISNear(activity,
+										p.toShortString(2));
 							else {
 								ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
 										activity, p);
@@ -188,14 +189,14 @@ public class POIItemClickContextListener {
 							break;
 						case 6:
 							if (findNear)
-							// FIND STREETS
-							InvokeIntents.findStreetsNear(activity,
-									p.toShortString(2));
+								// FIND STREETS
+								InvokeIntents.findStreetsNear(activity,
+										p.toShortString(2));
 							else {
 								ShowStreetViewFromPoint s = new ShowStreetViewFromPoint(
 										activity, p);
 								s.execute();
-							}	
+							}
 							break;
 
 						case 7:
@@ -282,12 +283,13 @@ public class POIItemClickContextListener {
 			if (findNear) {
 				adapter.addItem(new BulletedText(activity.getResources()
 						.getString(R.string.find_pois_near), activity
-						.getResources().getDrawable(R.drawable.bt_poi)));
+						.getResources().getDrawable(R.drawable.bt_around_poi)));
 
 				// FIND STREETS
 				adapter.addItem(new BulletedText(activity.getResources()
 						.getString(R.string.find_streets_near), activity
-						.getResources().getDrawable(R.drawable.bt_poi)));
+						.getResources()
+						.getDrawable(R.drawable.bt_around_adress)));
 			}
 
 			adapter.addItem(new BulletedText(activity.getResources().getString(
@@ -301,7 +303,7 @@ public class POIItemClickContextListener {
 							.getString(R.string.call_number)
 							+ " ["
 							+ poi.getPhone() + "]", activity.getResources()
-							.getDrawable(R.drawable.bt_poi)));
+							.getDrawable(R.drawable.bt_call)));
 
 				// WIKI
 				if (poi.getWikipedia() != null
