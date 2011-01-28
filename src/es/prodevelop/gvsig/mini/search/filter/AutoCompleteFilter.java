@@ -48,6 +48,7 @@ import android.util.Log;
 import android.widget.Filter;
 import es.prodevelop.android.spatialindex.quadtree.persist.perst.SpatialIndexRoot;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstQuadtreeProvider;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivityWrapper;
 
 /**
@@ -69,35 +70,42 @@ public class AutoCompleteFilter extends Filter {
 	protected FilterResults performFiltering(CharSequence prefix) {
 		FilterResults results = new FilterResults();
 
-		SpatialIndexRoot root = ((SpatialIndexRoot) ((PerstQuadtreeProvider) activity
-				.getProvider()).getHelper().getRoot());
+		SpatialIndexRoot root;
+		try {
+			root = ((SpatialIndexRoot) ((PerstQuadtreeProvider) activity
+					.getProvider()).getHelper().getRoot());
 
-		if (prefix == null) {
-			results.count = 0;
+			if (prefix == null) {
+				results.count = 0;
+				return results;
+			}
+
+			if (prefix.toString().length() <= 0) {
+				results.count = 0;
+				return results;
+			}
+
+			Iterator<FullTextIndex.Keyword> it = root.getFullTextIndex()
+					.getKeywords(prefix.toString().toLowerCase());
+
+			ArrayList list = new ArrayList();
+			while (it.hasNext()) {
+				list.add(it.next().getNormalForm());
+			}
+
+			if (list.size() == 0) {
+				results.count = 0;
+				return results;
+			}
+
+			results.values = list;
+			results.count = list.size();
 			return results;
+		} catch (BaseException e) {
+			// TODO Auto-generated catch block
+			Log.e("", e.getMessage());
+			return null;
 		}
-
-		if (prefix.toString().length() <= 0) {
-			results.count = 0;
-			return results;
-		}
-
-		Iterator<FullTextIndex.Keyword> it = root.getFullTextIndex()
-				.getKeywords(prefix.toString().toLowerCase());
-
-		ArrayList list = new ArrayList();
-		while (it.hasNext()) {
-			list.add(it.next().getNormalForm());
-		}
-
-		if (list.size() == 0) {
-			results.count = 0;
-			return results;
-		}
-
-		results.values = list;
-		results.count = list.size();
-		return results;
 	}
 
 	@Override
@@ -114,6 +122,6 @@ public class AutoCompleteFilter extends Filter {
 					(ArrayList) results.values);
 			// getListView().setFastScrollEnabled(false);
 			activity.getAutoCompleteAdapter().notifyDataSetInvalidated();
-		}	
+		}
 	}
 }

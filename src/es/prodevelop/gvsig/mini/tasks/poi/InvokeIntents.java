@@ -134,7 +134,7 @@ public class InvokeIntents {
 	}
 
 	public static void routeModified(Context context) {
-		Intent i = new Intent(context, Map.class);
+		Intent i = new Intent(context, Utils.DEFAULT_MAP_CLASS);
 		i.putExtra(RouteManager.ROUTE_MODIFIED, true);
 		context.startActivity(i);
 	}

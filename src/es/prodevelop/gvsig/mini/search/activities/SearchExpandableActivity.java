@@ -38,7 +38,6 @@
 
 package es.prodevelop.gvsig.mini.search.activities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +49,6 @@ import android.app.ExpandableListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
@@ -65,7 +63,6 @@ import android.widget.TextView;
 import es.prodevelop.android.spatialindex.poi.Metadata;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
-import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
@@ -74,13 +71,11 @@ import es.prodevelop.gvsig.mini.search.SpaceTokenizer;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 import es.prodevelop.gvsig.mini.search.adapter.CheckboxExpandableListAdapter;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
-import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 
 public class SearchExpandableActivity extends ExpandableListActivity implements
 		SearchActivityWrapper {
-
-	PerstOsmPOIClusterProvider provider;
+	
 	CheckboxExpandableListAdapter expListAdapter;
 	private MultiAutoCompleteTextView autoCompleteTextView;
 	private AutoCompleteAdapter autoCompleteAdapter;
@@ -99,16 +94,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		super.onCreate(icicle);
 		// setContentView(R.layout.search_expandable_main);
 		try {
-			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
-			if (POIProviderManager.getInstance().getPOIProvider() == null)
-				POIProviderManager.getInstance()
-						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider(Environment.getExternalStorageDirectory()
-										+ File.separator + Utils.TEST_POI_DIR
-										+ File.separator
-										+ "perst_streets_cluster_cat.db", 18,
-										null, 18));
-			provider = POIProviderManager.getInstance().getPOIProvider();
+			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);			
 
 			expListAdapter = new CheckboxExpandableListAdapter(this,
 					createGroupList(), // groupData describes the first-level
@@ -214,8 +200,6 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			this.setCenter(new Point(lon, lat));
 			autoCompleteTextView.addTextChangedListener(this);
 			handleIntent(getIntent());
-		} catch (BaseException e) {
-			Log.e("", e.getMessage());
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
 		}
@@ -348,9 +332,9 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		return list;
 	}
 
-	private List createGroupList() {
-		Metadata me = provider.getPOIMetadata();
-		Metadata ms = provider.getStreetMetadata();
+	private List createGroupList() throws BaseException {
+		Metadata me = POIProviderManager.getInstance().getPOIProvider().getPOIMetadata();
+		Metadata ms = POIProviderManager.getInstance().getPOIProvider().getStreetMetadata();
 		ArrayList categories = me.getCategories();
 		ArrayList result = new ArrayList();
 		String cat;
@@ -381,8 +365,8 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		return (List) result;
 	}
 
-	private List createChildList() {
-		Metadata me = provider.getPOIMetadata();
+	private List createChildList() throws BaseException {
+		Metadata me = POIProviderManager.getInstance().getPOIProvider().getPOIMetadata();
 		ArrayList categories = me.getCategories();
 		ArrayList result = new ArrayList();
 		String subc;
@@ -447,14 +431,9 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	}
 
 	@Override
-	public QuadtreeProvider getProvider() {
-		return this.provider;
-	}
-
-	@Override
-	public void setProvider(QuadtreeProvider provider) {
-		this.provider = (PerstOsmPOIClusterProvider) provider;
-	}
+	public QuadtreeProvider getProvider() throws BaseException {
+		return POIProviderManager.getInstance().getPOIProvider();
+	}	
 
 	@Override
 	public AutoCompleteAdapter getAutoCompleteAdapter() {

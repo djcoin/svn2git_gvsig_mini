@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/perst.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.android.spatialindex.provider"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/es.prodevelop.android.spatialindex.base"/>
+	<classpathentry kind="lib" path="lib/es.prodevelop.android.common-0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

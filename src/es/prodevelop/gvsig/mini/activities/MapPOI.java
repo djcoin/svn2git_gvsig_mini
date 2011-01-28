@@ -1,7 +1,44 @@
+/* gvSIG Mini. A free mobile phone viewer of free maps.
+ *
+ * Copyright (C) 2011 Prodevelop.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * For more information, contact:
+ *
+ *   Prodevelop, S.L.
+ *   Pza. Don Juan de Villarrasa, 14 - 5
+ *   46001 Valencia
+ *   Spain
+ *
+ *   +34 963 510 612
+ *   +34 963 510 968
+ *   prode@prodevelop.es
+ *   http://www.prodevelop.es
+ *
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Peque�a y
+ *   Mediana Empresa de la Comunidad Valenciana) &
+ *   European Union FEDER funds.
+ *   
+ *   2011.
+ *   author Alberto Romeu aromeu@prodevelop.es
+ */
+
 package es.prodevelop.gvsig.mini.activities;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import android.R.color;
 import android.app.SearchManager;
@@ -24,22 +61,23 @@ import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProv
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.offline.reader.OfflineMapsReader;
+import es.prodevelop.gvsig.mini.search.POIProviderChangedListener;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView;
 import es.prodevelop.gvsig.mini.views.overlay.CategoriesListView.CheckBoxBulletAdapter;
-import es.prodevelop.gvsig.mini.views.overlay.NameFinderOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.PerstClusterPOIOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
-import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerCloseListener;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerOpenListener;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
+import es.prodevelop.tilecache.layers.Layers;
 
-public class MapPOI extends Map {
+public class MapPOI extends Map implements POIProviderChangedListener {
 
 	ProgressBar loadingResults;
 	public boolean isPOISlideShown = false;
@@ -51,8 +89,8 @@ public class MapPOI extends Map {
 	public final static int MY_LOC_MENU = 2;
 	public final static int FAV_MENU = 3;
 	public final static int NEAR_LOC_MENU = 4;
-	public final static int SETTINGS_MENU = 5;
-	public final static int MAPS_MENU = 6;
+	public final static int SETTINGS_MENU = 6;
+	public final static int MAPS_MENU = 5;
 	public final static int NAV_MENU = 7;
 	public final static int LICENSE_MENU = 8;
 	public final static int ABOUT_MENU = 9;
@@ -62,6 +100,8 @@ public class MapPOI extends Map {
 	MenuItem advSearchItem;
 	MenuItem settingsItem;
 	MenuItem nagItem;
+	MenuItem favItem;
+	MenuItem nearLocItem;
 
 	/**
 	 * Instantiates the UI: TileRaster, ZoomControls, SlideBar in a
@@ -72,6 +112,7 @@ public class MapPOI extends Map {
 	public void loadUI(Bundle savedInstanceState) {
 		try {
 			super.loadUI(savedInstanceState);
+			osmap.setPoiProviderFailListener(this);
 			final LayoutInflater factory = LayoutInflater.from(this);
 			sliding = (SlidingDrawer2) factory.inflate(R.layout.slide, null);
 			sliding.setOnDrawerOpenListener(new OnDrawerOpenListener() {
@@ -161,7 +202,7 @@ public class MapPOI extends Map {
 				}
 
 				this.osmap.addOverlay(new ResultSearchOverlay(this, osmap,
-						ResultSearchOverlay.DEFAULT_NAME));				
+						ResultSearchOverlay.DEFAULT_NAME));
 			}
 
 		} catch (Exception e) {
@@ -432,34 +473,35 @@ public class MapPOI extends Map {
 	public boolean onCreateOptionsMenu(Menu pMenu) {
 		try {
 
-			searchItem = pMenu.add(0, SEARCH_MENU, 0,
+			searchItem = pMenu.add(0, SEARCH_MENU, SEARCH_MENU,
 					R.string.alert_dialog_text_search).setIcon(
 					R.drawable.menu00);
 
-			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, 2,
+			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
 					R.string.advanced_search).setIcon(R.drawable.menu00);
 
-			locationItem = pMenu.add(0, MY_LOC_MENU, 4, R.string.Map_4)
-					.setIcon(R.drawable.menu_location);
+			locationItem = pMenu.add(0, MY_LOC_MENU, MY_LOC_MENU,
+					R.string.Map_4).setIcon(R.drawable.menu_location);
 
-			pMenu.add(0, FAV_MENU, 5, R.string.bookmark_title).setIcon(
-					R.drawable.bookmark_38);// .setEnabled(connection);
+			favItem = pMenu.add(0, FAV_MENU, FAV_MENU, R.string.bookmark_title)
+					.setIcon(R.drawable.bookmark_38);// .setEnabled(connection);
 
-			pMenu.add(0, NEAR_LOC_MENU, 7, R.string.nearest_places).setIcon(
-					R.drawable.menu00);
+			nearLocItem = pMenu.add(0, NEAR_LOC_MENU, NEAR_LOC_MENU,
+					R.string.nearest_places).setIcon(R.drawable.menu00);
 
-			settingsItem = pMenu.add(0, SETTINGS_MENU, 8, R.string.Map_31)
-					.setIcon(android.R.drawable.ic_menu_preferences);
+			settingsItem = pMenu.add(0, SETTINGS_MENU, SETTINGS_MENU,
+					R.string.Map_31).setIcon(
+					android.R.drawable.ic_menu_preferences);
 
-			pMenu.add(0, MAPS_MENU, 9, R.string.Map_5).setIcon(
+			pMenu.add(0, MAPS_MENU, MAPS_MENU, R.string.Map_5).setIcon(
 					R.drawable.menu02);
 
-			nagItem = pMenu.add(0, NAV_MENU, 10, R.string.Map_Navigator)
+			nagItem = pMenu.add(0, NAV_MENU, NAV_MENU, R.string.Map_Navigator)
 					.setIcon(R.drawable.menu_navigation).setEnabled(connection);
 
-			pMenu.add(0, LICENSE_MENU, 11, R.string.Map_29);
+			pMenu.add(0, LICENSE_MENU, LICENSE_MENU, R.string.Map_29);
 
-			pMenu.add(0, ABOUT_MENU, 12, R.string.Map_28);
+			pMenu.add(0, ABOUT_MENU, ABOUT_MENU, R.string.Map_28);
 		} catch (Exception e) {
 			// log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
 		}
@@ -481,5 +523,48 @@ public class MapPOI extends Map {
 		} catch (Exception e) {
 			// log.log(Level.SEVERE, "viewLayers: ", e);
 		}
+	}
+
+	@Override
+	public void onNewIntent(Intent i) {
+		try {
+			OfflineMapsReader reader = new OfflineMapsReader();
+
+			ArrayList<String> offmaps = reader.readOfflineMaps();
+
+			final int size = offmaps.size();
+
+			for (int j = 0; j < size; j++) {
+				Layers.getInstance().addLayer(offmaps.get(j));
+			}
+			Layers.getInstance().persist();
+
+			if (i == null) {
+				Log.d("Map", "intent is null");
+				return;
+			}
+
+			super.onNewIntent(i);
+		} catch (Exception e) {
+			Log.e("", "error no New Intent");
+		}
+	}
+
+	@Override
+	public void onPOIProviderFail() {
+		sliding.setVisibility(View.INVISIBLE);
+		favItem.setEnabled(false);
+		nearLocItem.setEnabled(false);
+		searchItem.setEnabled(false);
+		advSearchItem.setEnabled(false);
+	}
+
+	@Override
+	public void onNewPOIProvider() {
+		sliding.setVisibility(View.VISIBLE);
+		favItem.setEnabled(true);
+		nearLocItem.setEnabled(true);
+		searchItem.setEnabled(true);
+		advSearchItem.setEnabled(true);
 	}
 }

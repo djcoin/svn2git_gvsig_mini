@@ -84,7 +84,6 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 	ArrayList clusters = new ArrayList();
 	// ArrayList pois = new ArrayList();
-	PerstOsmPOIClusterProvider poiProvider;
 
 	Pixel firstPOIPixel = null;
 	Pixel lastPOIPixel = null;
@@ -104,25 +103,12 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		try {
 			this.isCluster = isCluster;
 			if (isCluster) {
-				poiProvider = new PerstOsmPOIClusterProvider(
-						Environment.getExternalStorageDirectory()
-								+ File.separator + Utils.TEST_POI_DIR
-								+ File.separator
-								+ "perst_streets_cluster_cat.db", tileRaster
-								.getMRendererInfo().getZOOM_MAXLEVEL()
-								- tileRaster.getMRendererInfo()
-										.getZoomMinLevel(), this, tileRaster
-								.getMRendererInfo().getZOOM_MAXLEVEL());
-				POIProviderManager.getInstance().registerPOIProvider(
-						poiProvider);
-				poiProvider.setCurrentZoomLevel(tileRaster.getZoomLevel());
-
 				this.setSymbolSelector(new ClusterSymbolSelector(this));
 				onlyPointsOverlay = new PerstClusterPOIOverlay(context,
 						tileRaster, name, false);
 				onlyPointsOverlay.setSymbolSelector(new OsmPOISymbolSelector());
 			}
-		} catch (BaseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			Log.e("", e.getMessage());
 		} finally {
@@ -188,59 +174,81 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 	}
 
 	public int getSelectedIndex() {
-		if (isCluster) {
-			if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
-				return onlyPointsOverlay.getSelectedIndex();
+		try {
+			if (isCluster) {
+				if (getPoiProvider().shouldShowPOIS(
+						getTileRaster().getZoomLevel())) {
+					return onlyPointsOverlay.getSelectedIndex();
+				} else {
+					return super.getSelectedIndex();
+				}
 			} else {
 				return super.getSelectedIndex();
 			}
-		} else {
+		} catch (BaseException e) {
 			return super.getSelectedIndex();
 		}
 	}
 
 	public void setSelectedIndex(int selectedIndex) {
-		if (isCluster) {
-			if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
-				onlyPointsOverlay.setSelectedIndex(selectedIndex);
-				return;
+		try {
+			if (isCluster) {
+				if (getPoiProvider().shouldShowPOIS(
+						getTileRaster().getZoomLevel())) {
+					onlyPointsOverlay.setSelectedIndex(selectedIndex);
+					return;
+				} else {
+					super.setSelectedIndex(selectedIndex);
+					return;
+				}
 			} else {
 				super.setSelectedIndex(selectedIndex);
 				return;
 			}
-		} else {
+		} catch (BaseException e) {
 			super.setSelectedIndex(selectedIndex);
 			return;
 		}
 	}
 
 	public SymbolSelector getSymbolSelector() {
-		if (isCluster) {
-			if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
-				return onlyPointsOverlay.getSymbolSelector();
-			} else {
-				return super.getSymbolSelector();
+		try {
+			if (isCluster) {
+				if (getPoiProvider().shouldShowPOIS(
+						getTileRaster().getZoomLevel())) {
+					return onlyPointsOverlay.getSymbolSelector();
+				} else {
+					return super.getSymbolSelector();
+				}
 			}
+			return super.getSymbolSelector();
+		} catch (BaseException e) {
+			return super.getSymbolSelector();
 		}
-		return super.getSymbolSelector();
 	}
 
 	public ArrayList getPoints() {
-		if (isCluster) {
-			if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
-				return onlyPointsOverlay.getPoints();
-			} else {
-				return super.getPoints();
+		try {
+			if (isCluster) {
+				if (getPoiProvider().shouldShowPOIS(
+						getTileRaster().getZoomLevel())) {
+					return onlyPointsOverlay.getPoints();
+				} else {
+					return super.getPoints();
+				}
 			}
+			return super.getPoints();
+		} catch (BaseException e) {
+			return super.getPoints();
 		}
-		return super.getPoints();
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
 		try {
 			if (isCluster) {
-				if (poiProvider.shouldShowPOIS(getTileRaster().getZoomLevel())) {
+				if (getPoiProvider().shouldShowPOIS(
+						getTileRaster().getZoomLevel())) {
 					return super.onSingleTapUp(e, osmtile);
 				} else {
 					return super.onSingleTapUp(e, osmtile);
@@ -379,9 +387,10 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 	/**
 	 * @return the poiProvider
+	 * @throws BaseException
 	 */
-	public PerstOsmPOIClusterProvider getPoiProvider() {
-		return poiProvider;
+	public PerstOsmPOIClusterProvider getPoiProvider() throws BaseException {
+		return POIProviderManager.getInstance().getPOIProvider();
 	}
 
 	@Override
@@ -402,7 +411,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 				maxXY[1]);
 
 		try {
-			poiProvider.getPOIsAsynch(extentGetPOIS,
+			getPoiProvider().getPOIsAsynch(extentGetPOIS,
 					ViewPort.LAT_LON_RES[zoomLevel] * 64, zoomLevel,
 					Utilities.getNewCancellable(), false);
 		} catch (BaseException e) {
@@ -418,7 +427,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 	}
 
 	public void setCategories(ArrayList categories) throws BaseException {
-		final ArrayList selectedCategories = poiProvider
+		final ArrayList selectedCategories = getPoiProvider()
 				.getSelectedCategories();
 
 		int size = selectedCategories.size();
@@ -431,11 +440,11 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 		if (categories != null && categories.size() > 0) {
 			// poiProvider.setCurrentZoomLevel(getTileRaster().getZoomLevel());
-			poiProvider.setSelectedCategories(categories);
+			getPoiProvider().setSelectedCategories(categories);
 			this.onExtentChanged(getTileRaster().getMRendererInfo()
 					.getCurrentExtent(), getTileRaster().getZoomLevel(), 0);
 		} else {
-			poiProvider.setSelectedCategories(new ArrayList());
+			getPoiProvider().setSelectedCategories(new ArrayList());
 			// pois.clear();
 			final ArrayList points = getPoints();
 			if (points != null)
@@ -457,8 +466,9 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 			getTileRaster().acetate.setPopupVisibility(View.INVISIBLE);
 	}
 
-	public Hashtable<String, Integer> getMaxClusterSizeCat() {
-		return ((PerstOsmPOIClusterProvider) this.poiProvider)
+	public Hashtable<String, Integer> getMaxClusterSizeCat()
+			throws BaseException {
+		return ((PerstOsmPOIClusterProvider) this.getPoiProvider())
 				.getMaxClusterSizeCat();
 	}
 

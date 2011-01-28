@@ -68,8 +68,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
-import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.activities.MapPOI;
 import es.prodevelop.gvsig.mini.activities.Settings;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Constants;
 
 /**
@@ -90,8 +91,7 @@ public class SplashActivity extends Activity {
 	private boolean intentProcessed = false;
 	private double lat = 0;
 	private double lon = 0;
-	private int z = -1;
-	Class goTo = Map.class;
+	private int z = -1;	
 
 	/** Splash Screen gvSIG. */
 	@Override
@@ -131,7 +131,7 @@ public class SplashActivity extends Activity {
 						try {
 
 							Intent mainIntent = new Intent(SplashActivity.this,
-									goTo);
+									Utils.DEFAULT_MAP_CLASS);
 							// Initializer.getInstance().initialize(
 							// getApplicationContext());
 							fillIntent(mainIntent);
@@ -299,7 +299,7 @@ public class SplashActivity extends Activity {
 					t.setIndeterminate(true);
 					break;
 				case Initializer.INITIALIZE_FINISHED:
-					Intent mainIntent = new Intent(SplashActivity.this, goTo);
+					Intent mainIntent = new Intent(SplashActivity.this, Utils.DEFAULT_MAP_CLASS);
 					fillIntent(mainIntent);
 					SplashActivity.this.startActivityForResult(mainIntent, 0);
 					((ProgressBar) SplashActivity.this

@@ -36,42 +36,47 @@
  *   author Alberto Romeu aromeu@prodevelop.es
  */
 
-package es.prodevelop.gvsig.mini.search;
+package es.prodevelop.gvsig.mini.offline.reader;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import es.prodevelop.android.spatialindex.poi.OsmPOI;
-import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
-import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
-import es.prodevelop.gvsig.mini.search.adapter.FilteredLazyAdapter;
-import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class OpenPOIDetailsItemClickListener implements OnItemClickListener {
+import android.util.Log;
+import es.prodevelop.android.common.preferences.offlinemaps.OfflineMapsPreferenceTags;
 
-	private SearchActivity activity;
+public class OfflineMapsReader {
 
-	public OpenPOIDetailsItemClickListener(SearchActivity activity) {
-		this.activity = activity;
-	}
+	public ArrayList<String> readOfflineMaps() {
+		String dirPath = OfflineMapsPreferenceTags.OFFLINE_MAPS_DIR;
+		String fileName = OfflineMapsPreferenceTags.OFFLINE_MAPS_FILE;
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		if (arg0.getAdapter() instanceof FilteredLazyAdapter) {
-			final FilteredLazyAdapter adapter = (FilteredLazyAdapter) arg0
-					.getAdapter();
+		ArrayList<String> list = new ArrayList<String>();
 
-			Intent i = new Intent(activity, POIDetailsActivity.class);
-			Object p = adapter.getItem(arg2);
-			if (p != null && p instanceof OsmPOI) {
-				OsmPOI poi = (OsmPOI) p;
-				InvokeIntents.fillIntentPOIDetails(poi, activity.getCenter(),
-						i, activity);
-
-				activity.startActivity(i);
-
+		FileReader configReader = null;
+		BufferedReader reader = null;
+		try {
+			File f = new File(dirPath + fileName);
+			if (f != null && f.exists()) {
+				configReader = new FileReader(f);
+				reader = new BufferedReader(configReader);
+			} else {
+				return null;
 			}
+
+			String line = null;
+			String[] part;
+			HashMap properties = new HashMap();
+			while ((line = reader.readLine()) != null) {
+				list.add(line);
+			}
+
+			return list;
+		} catch (Exception e) {
+			Log.e("", "error reading offmaps");
+			return null;
 		}
 	}
 }

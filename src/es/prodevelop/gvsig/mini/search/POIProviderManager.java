@@ -40,6 +40,7 @@ package es.prodevelop.gvsig.mini.search;
 
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 
 public class POIProviderManager {
 
@@ -62,7 +63,9 @@ public class POIProviderManager {
 				provider.getDatabasePath() + "_fav"));
 	}
 
-	public PerstOsmPOIClusterProvider getPOIProvider() {
+	public PerstOsmPOIClusterProvider getPOIProvider() throws BaseException {
+		if (this.poiProvider == null)
+			throw new BaseException("No POI provider registered");
 		return this.poiProvider;
 	}
 

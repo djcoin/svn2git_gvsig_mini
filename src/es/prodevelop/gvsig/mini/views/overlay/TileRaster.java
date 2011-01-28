@@ -53,6 +53,7 @@
 
 package es.prodevelop.gvsig.mini.views.overlay;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,6 +66,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -84,6 +86,9 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.Toast;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListener;
+import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
+import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
@@ -112,6 +117,8 @@ import es.prodevelop.gvsig.mini.map.MultiTouchController.PositionAndScale;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.projection.TileConversor;
+import es.prodevelop.gvsig.mini.search.POIProviderChangedListener;
+import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
@@ -152,6 +159,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
 
 	private ArrayList extentChangedListeners = new ArrayList();
+
+	private POIProviderChangedListener poiProviderFailListener;
+
+	public void setPoiProviderFailListener(
+			POIProviderChangedListener poiProviderFailListener) {
+		this.poiProviderFailListener = poiProviderFailListener;
+	}
 
 	Point scrollingCenter;
 	private boolean isScrolling = false;
@@ -1567,9 +1581,75 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			Log.d("TileRaster", "onLayerChanged " + renderer.getFullNAME());
 			map.persist();
 			PerstClusterPOIOverlay poiOverlay = (PerstClusterPOIOverlay) getOverlay(PerstClusterPOIOverlay.DEFAULT_NAME);
-			if (poiOverlay != null && !poiOverlay.getPoiProvider().isLoaded())
-				poiOverlay.getPoiProvider().loadCategories(
-						POICategories.CATEGORIES, null);
+			if (poiOverlay != null && renderer.isOffline()) {
+				/*
+				 * get the previous provider and bookmark provider, close the
+				 * database, free memory
+				 * 
+				 * register the new provider if the database not exists, show a
+				 * message and disable POI options and slidingdrawer if exists
+				 * register also the bookmark provider
+				 */
+				try {
+					PerstOsmPOIClusterProvider provider = POIProviderManager
+							.getInstance().getPOIProvider();
+					provider.getHelper().closeDatabase();
+					PerstBookmarkProvider bookmarkProvider = (PerstBookmarkProvider) POIProviderManager
+							.getInstance().getBookmarkProvider();
+					bookmarkProvider.getHelper().closeDatabase();
+				} catch (BaseException e) {
+					Log.e("", e.getMessage());
+				}
+
+				try {
+					String name = renderer.getOfflineLayerName();
+					String[] parts = name.split("_");
+					if (parts.length == 3) {
+						name = parts[0].toLowerCase();
+					}
+					PerstOsmPOIClusterProvider provider = new PerstOsmPOIClusterProvider(
+							Environment.getExternalStorageDirectory()
+									+ File.separator + Utils.APP_DIR
+									+ File.separator + Utils.POIS_DIR
+									+ File.separator + name + File.separator
+									+ name + ".db", getMRendererInfo()
+									.getZOOM_MAXLEVEL()
+									- getMRendererInfo().getZoomMinLevel(),
+							poiOverlay, getMRendererInfo().getZOOM_MAXLEVEL());
+
+					POIProviderManager.getInstance().registerPOIProvider(
+							provider);
+
+					POIProviderManager.getInstance().getPOIProvider()
+							.loadCategories(POICategories.CATEGORIES, null);
+
+					provider.setCurrentZoomLevel(getZoomLevel());
+
+					POIProviderManager
+							.getInstance()
+							.getPOIProvider()
+							.setListener(
+									(FullTextSearchListener) getOverlay(ResultSearchOverlay.DEFAULT_NAME));
+				} catch (Exception e) {
+					Log.e("", "error registering database");
+				}
+
+			} else {
+
+			}
+
+			try {
+				PerstOsmPOIClusterProvider provider = POIProviderManager
+						.getInstance().getPOIProvider();
+				if (this.poiProviderFailListener != null) {
+					poiProviderFailListener.onNewPOIProvider();
+				}
+			} catch (BaseException e) {
+				if (this.poiProviderFailListener != null) {
+					poiProviderFailListener.onPOIProviderFail();
+				}
+			}
+
 			// new LoadClusterIndexAsyncTask(this.map,
 			// this.poiOverlay.getPoiProvider())
 			// .execute(POICategories.CATEGORIES);

@@ -78,21 +78,6 @@ public class BookmarkPOIActivity extends ResultSearchActivity {
 				getListView(), false);
 		((PinnedHeaderListView) getListView()).setPinnedHeaderView(pinnedHeader
 				.findViewById(R.id.section_text));
-		if (POIProviderManager.getInstance().getPOIProvider() == null)
-			try {
-				POIProviderManager.getInstance()
-						.registerPOIProvider(
-								new PerstOsmPOIClusterProvider(Environment
-										.getExternalStorageDirectory()
-										+ File.separator
-										+ Utils.TEST_POI_DIR
-										+ File.separator
-										+ "perst_streets_cluster_cat.db", 18,
-										null, 18));
-			} catch (BaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		listAdapter = new BookmarkAdapter(this);
 		this.getListView().setAdapter(this.listAdapter);
 		this.setListAdapter(this.listAdapter);

@@ -63,6 +63,7 @@ import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.poi.ShareAnyPOITask;
 import es.prodevelop.gvsig.mini.tasks.poi.ShowGMapsFromPoint;
 import es.prodevelop.gvsig.mini.tasks.poi.ShowStreetViewFromPoint;
+import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mini.yours.Route;
@@ -132,7 +133,7 @@ public class POIItemClickContextListener {
 						switch (position) {
 						case 0:
 							// SHOW ON MAP
-							Intent i = new Intent(activity, Map.class);
+							Intent i = new Intent(activity, Utils.DEFAULT_MAP_CLASS);
 							i.putExtra("zoom", 15);
 							i.putExtra("lon", p.getX());
 							i.putExtra("lat", p.getY());

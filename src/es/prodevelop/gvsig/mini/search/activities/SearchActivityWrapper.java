@@ -41,6 +41,7 @@ package es.prodevelop.gvsig.mini.search.activities;
 import android.text.TextWatcher;
 import android.widget.MultiAutoCompleteTextView;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProvider;
+import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.adapter.AutoCompleteAdapter;
 
@@ -54,9 +55,7 @@ public interface SearchActivityWrapper extends TextWatcher {
 	public final static int SEARCH_CALL = 5;
 	public final static int SEARCH_FIND_NEAR = 6;
 
-	public QuadtreeProvider getProvider();
-
-	public void setProvider(QuadtreeProvider provider);
+	public QuadtreeProvider getProvider() throws BaseException;	
 
 	public AutoCompleteAdapter getAutoCompleteAdapter();
 

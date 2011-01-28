@@ -334,9 +334,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 				// "Prueba de ScreenPower");
 
-				if (getIntent() != null
-						&& getIntent().getAction().compareTo(
-								SplashActivity.OFFLINE_INTENT_ACTION) != 0)
+//				if (getIntent() != null
+//						&& getIntent().getAction().compareTo(
+//								SplashActivity.OFFLINE_INTENT_ACTION) != 0)
 					onNewIntent(getIntent());
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onCreate", e);
