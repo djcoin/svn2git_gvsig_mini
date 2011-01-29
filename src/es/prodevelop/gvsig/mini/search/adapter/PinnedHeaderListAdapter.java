@@ -130,7 +130,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 
 	@Override
 	public View getView(final int arg0, View convertView, ViewGroup arg2) {
-		ViewHolder holder;
+		final ViewHolder holder;
 
 		// When convertView is not null, we can reuse it directly, there is
 		// no need
@@ -187,7 +187,7 @@ public class PinnedHeaderListAdapter extends FilteredLazyAdapter implements
 
 			@Override
 			public void onClick(View v) {
-				activity.getPOItemClickListener().onPOIClick(arg0, p);
+				activity.getPOItemClickListener().onPOIClick(arg0, p, holder.optionsButton);
 			}
 		});
 		// holder.detailsButton.setOnClickListener(new OnClickListener() {

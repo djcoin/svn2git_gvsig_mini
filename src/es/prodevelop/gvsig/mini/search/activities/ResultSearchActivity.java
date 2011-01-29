@@ -80,7 +80,7 @@ public class ResultSearchActivity extends SearchActivity {
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					return getPOItemClickListener().onPOIClick(arg2,
-							(POI) getListAdapter().getItem(arg2));
+							(POI) getListAdapter().getItem(arg2), arg1);
 				}
 			});
 

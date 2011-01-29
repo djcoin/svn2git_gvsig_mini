@@ -158,14 +158,14 @@ public class POIDetailsActivity extends Activity {
 			TextView descTV = (TextView) layout.findViewById(R.id.desc);
 			TextView distTV = (TextView) layout.findViewById(R.id.dist);
 			ImageView poiImg = (ImageView) layout.findViewById(R.id.img);
-			ImageButton bt = (ImageButton) layout.findViewById(R.id.show_options);
+			final ImageButton bt = (ImageButton) layout.findViewById(R.id.show_options);
 			bt.setVisibility(View.VISIBLE);
 
 			bt.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
-					getPOItemClickListener().onPOIClick(-1, poi);
+					getPOItemClickListener().onPOIClick(-1, poi, bt);
 				}
 			});
 

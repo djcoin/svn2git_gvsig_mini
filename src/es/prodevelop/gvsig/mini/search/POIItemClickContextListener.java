@@ -45,6 +45,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -54,15 +55,15 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.BookmarkManagerTask;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.poi.ShareAnyPOITask;
-import es.prodevelop.gvsig.mini.tasks.poi.ShowGMapsFromPoint;
 import es.prodevelop.gvsig.mini.tasks.poi.ShowStreetViewFromPoint;
+import es.prodevelop.gvsig.mini.util.ActionItem;
+import es.prodevelop.gvsig.mini.util.QuickAction;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Tags;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
@@ -95,8 +96,60 @@ public class POIItemClickContextListener {
 		this.findNear = findNear;
 	}
 
-	public boolean onPOIClick(int position, final POI p) {
+	public boolean onPOIClick(int position, final POI p, final View anchor) {
 		try {
+			final QuickAction qa = new QuickAction(anchor);
+			final ActionItem chart = new ActionItem();
+			
+			chart.setTitle("Chart");
+			chart.setIcon(activity.getResources().getDrawable(R.drawable.bt_poi));
+			chart.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(activity, "Chart selected" , Toast.LENGTH_SHORT).show();
+					qa.dismiss();
+				}
+			});
+			
+//			
+//			final ActionItem production = new ActionItem();
+//			
+//			production.setTitle("Products");
+//			production.setIcon(activity.getResources().getDrawable(R.drawable.bt_poi));
+//			production.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					Toast.makeText(activity, "Products selected", Toast.LENGTH_SHORT).show();
+//				}
+//			});
+			
+			
+			
+			qa.addActionItem(chart);
+//			qa.addActionItem(production);
+			qa.setAnimStyle(QuickAction.ANIM_AUTO);
+			
+			qa.show();
+			
+			
+			if (true) return true;
+			
+//			
+//			Button btn1 = (Button) this.findViewById(R.id.btn1);
+//			btn1.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					QuickAction qa = new QuickAction(v);
+//					
+//					qa.addActionItem(chart);
+//					qa.addActionItem(production);
+//					qa.setAnimStyle(QuickAction.ANIM_AUTO);
+//					
+//					qa.show();
+//				}
+//			});
+			
+			
 			// ((LazyAdapter) getListAdapter()).pos = arg2;
 			// ((LazyAdapter) getListAdapter()).notifyDataSetChanged();
 			if (p.getX() == 0 && p.getY() == 0)
