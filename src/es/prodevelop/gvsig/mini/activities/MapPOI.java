@@ -103,6 +103,8 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	MenuItem favItem;
 	MenuItem nearLocItem;
 
+	private boolean poiProviderEnabled = false;
+
 	/**
 	 * Instantiates the UI: TileRaster, ZoomControls, SlideBar in a
 	 * RelativeLayout
@@ -470,6 +472,27 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		try {
+			if (favItem != null)
+				favItem.setEnabled(poiProviderEnabled);
+
+			if (nearLocItem != null)
+				nearLocItem.setEnabled(poiProviderEnabled);
+
+			if (searchItem != null)
+				searchItem.setEnabled(poiProviderEnabled);
+
+			if (advSearchItem != null)
+				advSearchItem.setEnabled(poiProviderEnabled);
+			return super.onPrepareOptionsMenu(menu);
+		} catch (Exception e) {
+			Log.e("", "Error on prepare menu");
+			return false;
+		}
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu pMenu) {
 		try {
 
@@ -477,8 +500,8 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 					R.string.alert_dialog_text_search).setIcon(
 					R.drawable.menu00);
 
-			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
-					R.string.advanced_search).setIcon(R.drawable.menu00);
+//			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
+//					R.string.advanced_search).setIcon(R.drawable.menu00);
 
 			locationItem = pMenu.add(0, MY_LOC_MENU, MY_LOC_MENU,
 					R.string.Map_4).setIcon(R.drawable.menu_location);
@@ -487,7 +510,7 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 					.setIcon(R.drawable.bookmark_38);// .setEnabled(connection);
 
 			nearLocItem = pMenu.add(0, NEAR_LOC_MENU, NEAR_LOC_MENU,
-					R.string.nearest_places).setIcon(R.drawable.menu00);
+					R.string.nearest_places).setIcon(R.drawable.poi_near);
 
 			settingsItem = pMenu.add(0, SETTINGS_MENU, SETTINGS_MENU,
 					R.string.Map_31).setIcon(
@@ -553,18 +576,12 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	@Override
 	public void onPOIProviderFail() {
 		sliding.setVisibility(View.INVISIBLE);
-		favItem.setEnabled(false);
-		nearLocItem.setEnabled(false);
-		searchItem.setEnabled(false);
-		advSearchItem.setEnabled(false);
+		poiProviderEnabled = false;
 	}
 
 	@Override
 	public void onNewPOIProvider() {
 		sliding.setVisibility(View.VISIBLE);
-		favItem.setEnabled(true);
-		nearLocItem.setEnabled(true);
-		searchItem.setEnabled(true);
-		advSearchItem.setEnabled(true);
+		poiProviderEnabled = true;
 	}
 }

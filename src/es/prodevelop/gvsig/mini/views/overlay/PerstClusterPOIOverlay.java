@@ -55,10 +55,12 @@ import android.widget.Toast;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.bucket.mr.MRBucketPRQuadtree;
+import es.prodevelop.android.spatialindex.quadtree.provide.LoadCategoryListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.MapPOI;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
@@ -78,7 +80,7 @@ import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
 public class PerstClusterPOIOverlay extends PointOverlay implements
-		QuadtreeProviderListener {
+		QuadtreeProviderListener, LoadCategoryListener {
 
 	public final static String DEFAULT_NAME = "POIS_CLUSTER";
 
@@ -493,5 +495,42 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 		ex.setPoints((ArrayList) pois);
 		getTileRaster().addOverlay(ex);
 		// ex.getPOIsOfClusterAsynch();
+	}
+
+	@Override
+	public void onLoadingCategoryIndex(String category) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onCategoryIndexLoaded(String category) {
+		try {
+			setCategories(POICategories.selected);
+			if (!POICategories.bookmarkSelected)
+				getTileRaster().removeOverlay(BookmarkOverlay.DEFAULT_NAME);
+			else
+				getTileRaster().addOverlay(
+						new BookmarkOverlay(getTileRaster().map,
+								getTileRaster(), BookmarkOverlay.DEFAULT_NAME));
+
+			getTileRaster().getOverlay(ResultSearchOverlay.DEFAULT_NAME)
+					.setVisible(POICategories.resultSearchSelected);
+
+			getTileRaster().resumeDraw();
+		} catch (BaseException e) {
+			Log.e("", e.getMessage());
+		}
+	}
+
+	@Override
+	public void onCategoryIndexRemoved(String category) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRemovingCategoryIndex(String category) {
+		getTileRaster().resumeDraw();
 	}
 }

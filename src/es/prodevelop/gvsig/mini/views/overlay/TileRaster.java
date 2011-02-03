@@ -1599,6 +1599,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					bookmarkProvider.getHelper().closeDatabase();
 				} catch (BaseException e) {
 					Log.e("", e.getMessage());
+				} catch (Exception e) {
+					Log.e("", e.getMessage());
 				}
 
 				try {
@@ -1620,8 +1622,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					POIProviderManager.getInstance().registerPOIProvider(
 							provider);
 
-					POIProviderManager.getInstance().getPOIProvider()
-							.loadCategories(POICategories.CATEGORIES, null);
+					POIProviderManager
+							.getInstance()
+							.getPOIProvider()
+							.loadCategories(POICategories.CATEGORIES,
+									poiOverlay);
 
 					provider.setCurrentZoomLevel(getZoomLevel());
 
@@ -1641,8 +1646,14 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			try {
 				PerstOsmPOIClusterProvider provider = POIProviderManager
 						.getInstance().getPOIProvider();
-				if (this.poiProviderFailListener != null) {
-					poiProviderFailListener.onNewPOIProvider();
+				if (provider != null) {
+					if (this.poiProviderFailListener != null) {
+						poiProviderFailListener.onNewPOIProvider();
+					}
+				} else {
+					if (this.poiProviderFailListener != null) {
+						poiProviderFailListener.onPOIProviderFail();
+					}
 				}
 			} catch (BaseException e) {
 				if (this.poiProviderFailListener != null) {

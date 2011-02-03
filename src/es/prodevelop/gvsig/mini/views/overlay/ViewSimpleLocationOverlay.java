@@ -106,6 +106,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	TileRaster tileraster;
 	private final static Logger log = Logger
 			.getLogger(ViewSimpleLocationOverlay.class.getName());
+	private boolean noOrientation = false;
 
 	protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(
 			18, 18);
@@ -159,6 +160,8 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	private void drawOrientation(Canvas c, TileRaster osmv, int[] coords) {
 		try {
 			try {
+//				if (!noOrientation)
+//					return;
 				if (!Settings.getInstance().getBooleanValue(
 						osmv.map.getText(R.string.settings_key_orientation)
 								.toString())) {
@@ -166,6 +169,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 					return;
 				}
 			} catch (NoSuchFieldError e) {
+				noOrientation = true;
 				log.log(Level.SEVERE, "", e);
 			}
 

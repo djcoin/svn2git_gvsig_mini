@@ -38,6 +38,7 @@
 
 package es.prodevelop.gvsig.mini.search;
 
+import android.util.Log;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
@@ -80,12 +81,22 @@ public class POIProviderManager {
 	}
 
 	public void unregisterPOIProvider() {
-		this.poiProvider.getHelper().close();
-		this.poiProvider = null;
+		try {
+			if (this.poiProvider != null)
+				this.poiProvider.getHelper().close();
+			this.poiProvider = null;
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
 	}
 
 	public void unregisterBookmarkPOIProvider() {
-		this.bookmarkProvider.getHelper().close();
-		this.bookmarkProvider = null;
+		try {
+			if (this.bookmarkProvider != null)
+				this.bookmarkProvider.getHelper().close();
+			this.bookmarkProvider = null;
+		} catch (Exception e) {
+			Log.e("", e.getMessage());
+		}
 	}
 }

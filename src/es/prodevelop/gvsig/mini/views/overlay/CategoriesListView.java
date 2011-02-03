@@ -158,6 +158,7 @@ public class CategoriesListView extends PinnedHeaderListView {
 
 		adapter = new CheckBoxBulletAdapter(list, imgs);
 		this.setAdapter(adapter);
+		POICategories.selected = getCheckedCategories();
 	}
 
 	public ArrayList getCheckedCategories() {
@@ -184,7 +185,7 @@ public class CategoriesListView extends PinnedHeaderListView {
 		}
 	}
 
-	public  class CheckBoxBulletAdapter extends BaseAdapter implements
+	public class CheckBoxBulletAdapter extends BaseAdapter implements
 			PinnedHeaderListView.PinnedHeaderAdapter, OnScrollListener,
 			SectionIndexer {
 
@@ -197,6 +198,10 @@ public class CategoriesListView extends PinnedHeaderListView {
 				this.texts = texts;
 				this.idsImages = idsImages;
 				selected = new boolean[texts.length];
+
+				for (int i = 0; i < texts.length; i++) {
+					selected[i] = true;
+				}
 			} catch (Exception e) {
 
 			}

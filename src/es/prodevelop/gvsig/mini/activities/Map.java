@@ -3246,6 +3246,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private void processOfflineIntentActoin(Intent i) throws Exception {
 		Log.d("Map", "OFFLINE_INTENT_ACTION");
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
+		if (completeURLString == null)
+			return;
 		completeURLString = completeURLString.replaceAll("&gt;",
 				MapRenderer.NAME_SEPARATOR);
 		String urlString = completeURLString.split(";")[1];
@@ -3288,10 +3290,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			try {
 
 				setIntent(i);
-				processGeoAction(i);
-				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
-					onCreate(null);
-				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+				processGeoAction(i);				
+				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					processActionSearch(i);
 					return;
 				} else {
