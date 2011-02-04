@@ -40,8 +40,6 @@
 
 package es.prodevelop.gvsig.mini.tasks;
 
-
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,57 +48,64 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
 
 /**
- * A Background task executable on a WorkQueue and represented on screen 
- * by a button 
- * @author aromeu 
+ * A Background task executable on a WorkQueue and represented on screen by a
+ * button
+ * 
+ * @author aromeu
  * @author rblanco
- *
+ * 
  */
 public abstract class Functionality extends Task {
-	
-	private final static Logger log = Logger.getLogger(Functionality.class.getName());
+
+	private final static Logger log = Logger.getLogger(Functionality.class
+			.getName());
 	private Map map;
 	private int id;
-	
+
 	/**
 	 * The constructor
-	 * @param map The map instance
-	 * @param id The id of the resource drawable that allows to represent the
-	 * Functionality in a button
+	 * 
+	 * @param map
+	 *            The map instance
+	 * @param id
+	 *            The id of the resource drawable that allows to represent the
+	 *            Functionality in a button
 	 */
 	public Functionality(Map map, int id) {
 		try {
-			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
+			CompatManager.getInstance().getRegisteredLogHandler()
+					.configureLogger(log);
 			this.map = map;
 			this.id = id;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
-		}		
-	}	
-
-	public void run() {
-		try {
-			map.getItemContext().setExecutingFunctionality(this);
-			super.run();			
-			execute();
-			super.stop();
-		} catch (Exception e) {
-			log.log(Level.SEVERE,"",e);
-		} finally {
-			
 		}
 	}
 
-	public abstract boolean execute();		
-	
+	public void run() {
+		try {
+			if (map != null)
+				map.getItemContext().setExecutingFunctionality(this);
+			super.run();
+			execute();
+			super.stop();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		} finally {
+
+		}
+	}
+
+	public abstract boolean execute();
+
 	public Map getMap() {
 		return map;
 	}
-	
+
 	public int getID() {
 		return id;
 	}
-	
+
 	/**
 	 * Launches the Functionality on the WorkQueue. Functionalities are launched
 	 * in a different (2 threaded) WorkQueue from TileProvider tasks.

@@ -158,7 +158,7 @@ public class CategoriesListView extends PinnedHeaderListView {
 
 		adapter = new CheckBoxBulletAdapter(list, imgs);
 		this.setAdapter(adapter);
-		POICategories.selected = getCheckedCategories();
+//		POICategories.selected = getCheckedCategories();
 	}
 
 	public ArrayList getCheckedCategories() {
@@ -199,9 +199,9 @@ public class CategoriesListView extends PinnedHeaderListView {
 				this.idsImages = idsImages;
 				selected = new boolean[texts.length];
 
-				for (int i = 0; i < texts.length; i++) {
-					selected[i] = true;
-				}
+//				for (int i = 0; i < texts.length; i++) {
+//					selected[i] = true;
+//				}
 			} catch (Exception e) {
 
 			}
@@ -329,13 +329,12 @@ public class CategoriesListView extends PinnedHeaderListView {
 
 								break;
 							case 2:
-								Point center = ((Map) context).osmap
-										.getMRendererInfo().getCenter();
+								Point center = ((Map) context).mMyLocationOverlay
+										.getLocationLonLat();
 								double[] lonlat = ConversionCoords.reproject(
 										center.getX(), center.getY(),
-										CRSFactory.getCRS(((Map) context).osmap
-												.getMRendererInfo().getSRS()),
-										CRSFactory.getCRS("EPSG:900913"));
+										CRSFactory.getCRS("EPSG:4326"),
+										CRSFactory.getCRS("EPSG:900913"));								
 								InvokeIntents.launchListBookmarks(context,
 										lonlat);
 								break;

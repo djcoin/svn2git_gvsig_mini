@@ -68,7 +68,7 @@ public class DefaultContext implements ItemContext {
 	private final static Logger log = Logger.getLogger(DefaultContext.class.getName());
 	protected Map map;
 	WeatherFunctionality weatherFunc;
-	HashMap h;
+	protected HashMap h;
 	Functionality executing;
 	
 	/**

@@ -59,6 +59,7 @@ import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.BookmarkManagerTask;
+import es.prodevelop.gvsig.mini.tasks.poi.CenterPOIOnMap;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.poi.ShareAnyPOITask;
 import es.prodevelop.gvsig.mini.tasks.poi.ShowStreetViewFromPoint;
@@ -111,15 +112,9 @@ public class POIItemClickContextListener {
 				public void onClick(View v) {
 					// SHOW ON MAP
 					try {
-						Intent i = new Intent(activity, Utils.DEFAULT_MAP_CLASS);
-						i.putExtra("zoom", 15);
-						i.putExtra("lon", p.getX());
-						i.putExtra("lat", p.getY());
-						// ShowGMapsFromPoint sg = new ShowGMapsFromPoint(
-						// activity, p);
-						// sg.execute();
-						activity.startActivity(i);
-						activity.finish();
+						CenterPOIOnMap centerOnMap = new CenterPOIOnMap(null,
+								0, p, activity);
+						centerOnMap.execute();
 						qa.dismiss();
 					} catch (Exception e) {
 						Log.e("", "Exception on show map");
@@ -222,7 +217,7 @@ public class POIItemClickContextListener {
 						try {
 							// FIND POIS NEAR
 							InvokeIntents.findPOISNear(activity,
-									p.toShortString(2));
+									p.toShortString(6));
 							qa.dismiss();
 						} catch (Exception e) {
 							Log.e("", "Error on poisNear");

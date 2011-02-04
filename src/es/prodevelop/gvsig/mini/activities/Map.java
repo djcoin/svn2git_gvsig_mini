@@ -302,6 +302,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	ProgressBar downloadTilesPB;
 
 	public final static int SEARCH_EXP_CODE = 444;
+	private ItemContext overlayContext;
 
 	/**
 	 * Called when the activity is first created.
@@ -946,11 +947,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				break;
 			case 12:
 				try {
-					Point center = this.osmap.getMRendererInfo().getCenter();
+					Point center = mMyLocationOverlay.getLocationLonLat();
 					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS(this.osmap
-									.getMRendererInfo().getSRS()), CRSFactory
-									.getCRS("EPSG:900913"));
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
 					InvokeIntents.launchListBookmarks(this, lonlat);
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
@@ -2742,48 +2742,75 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			if (context == null)
 				return;
 
-			LayoutInflater factory = LayoutInflater.from(this);
-			final int[] viewsID = context.getViewsId();
-			final int size = viewsID.length;
+			showCircularView(context);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showContext: ", e);
+		}
+	}
+	
+	public void showCircularView(ItemContext context) {
+		LayoutInflater factory = LayoutInflater.from(this);
+		final int[] viewsID = context.getViewsId();
+		final int size = viewsID.length;
 
-			HashMap h = context.getFunctionalities();
+		HashMap h = context.getFunctionalities();
+		
+		if (h == null) return;
 
-			int id;
-			View view;
-			Functionality func;
-			c = new CircularRouleteView(this, true);
+		int id;
+		View view;
+		Functionality func;
+		c = new CircularRouleteView(this, true);
 
-			for (int i = 0; i < size; i++) {
-				try {
-					id = viewsID[i];
-					view = (View) factory.inflate(id, null);
-					func = (Functionality) h.get(id);
-					if (func != null)
-						view.setOnClickListener(func);
-					c.addView(view);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "show context", e);
+		for (int i = 0; i < size; i++) {
+			try {
+				id = viewsID[i];
+				view = (View) factory.inflate(id, null);
+				func = (Functionality) h.get(id);
+				if (func != null)
+					view.setOnClickListener(func);
+				c.addView(view);
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "show context", e);
 
-				}
 			}
+		}
 
-			c.setVisibility(View.VISIBLE);
-			final int count = rl.getChildCount();
-			View v;
-			for (int i = 0; i < count; i++) {
-				v = rl.getChildAt(i);
-				if (v instanceof CircularRouleteView) {
-					rl.removeView(v);
-				}
+		c.setVisibility(View.VISIBLE);
+		final int count = rl.getChildCount();
+		View v;
+		for (int i = 0; i < count; i++) {
+			v = rl.getChildAt(i);
+			if (v instanceof CircularRouleteView) {
+				rl.removeView(v);
 			}
-			rl.addView(c);
+		}
+		rl.addView(c);
 
-			// Change user context to store that the CircularRouleteView has
-			// been
-			// shown once at least
-			userContext.setUsedCircleMenu(true);
-			userContext.setLastExecCircle();
-			backpressedroulette = true;
+		// Change user context to store that the CircularRouleteView has
+		// been
+		// shown once at least
+		userContext.setUsedCircleMenu(true);
+		userContext.setLastExecCircle();
+		backpressedroulette = true;
+	}
+	
+	/**
+	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
+	 * 
+	 * @param context
+	 *            The ItemContext that contains the IDs of the Drawables to
+	 *            instantiate buttons and associate Functionalities to it
+	 */
+	public void showOverlayContext() {
+		try {
+			final ItemContext context = this.overlayContext;
+			
+			if (context == null) 
+				return;
+			
+			showCircularView(context);
+			
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "showContext: ", e);
 		}
@@ -3248,6 +3275,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
 		if (completeURLString == null)
 			return;
+		i.removeExtra(Constants.URL_STRING);
 		completeURLString = completeURLString.replaceAll("&gt;",
 				MapRenderer.NAME_SEPARATOR);
 		String urlString = completeURLString.split(";")[1];
@@ -3822,5 +3850,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	private void updateModeTileProvider() {
 
+	}
+	
+	public void setOverlayContext(ItemContext context) {
+		this.overlayContext = context;
 	}
 }

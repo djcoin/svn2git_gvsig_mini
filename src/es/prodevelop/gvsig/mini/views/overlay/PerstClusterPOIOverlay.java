@@ -53,6 +53,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.bucket.mr.MRBucketPRQuadtree;
 import es.prodevelop.android.spatialindex.quadtree.provide.LoadCategoryListener;
@@ -63,6 +64,7 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.MapPOI;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
+import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Pixel;
@@ -120,7 +122,24 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 
 	@Override
 	public ItemContext getItemContext() {
-		return new POIContext(getTileRaster().map);
+		if (isCluster)
+			try {
+				return new OSMPOIContext(getTileRaster().map, false, false,
+						(Point) getPoints().get(getSelectedIndex()));
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null)
+					Log.e("", e.getMessage());
+				return null;
+			}
+		else
+			try {
+				return new OSMPOIContext(getTileRaster().map, false, false,
+						(Point) getPoints().get(getSelectedIndex()));
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null)
+					Log.e("", e.getMessage());
+				return null;
+			}
 	}
 
 	@Override

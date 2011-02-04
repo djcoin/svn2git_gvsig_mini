@@ -86,6 +86,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.Toast;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.provide.BookmarkProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
@@ -704,15 +705,17 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					&& TileRaster.this.mTouchMapOffsetX > -ResourceLoader.MIN_PAN
 					&& TileRaster.this.mTouchMapOffsetY > -ResourceLoader.MIN_PAN) {
 
-				for (MapOverlay osmvo : this.mOverlays)
-					if (osmvo.onLongPress(e, this)) {
-						map.showContext(osmvo.getItemContext());
-						return true;
-					}
-
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
+
+				for (MapOverlay osmvo : this.mOverlays)
+					if (osmvo.onLongPress(e, this)) {
+						map.setOverlayContext(osmvo.getItemContext());
+						map.showOverlayContext();
+						this.animateTo(coords[0], coords[1]);
+						return true;
+					}
 
 				this.animateTo(coords[0], coords[1]);
 				map.showContext(map.getItemContext());
@@ -1630,6 +1633,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 					provider.setCurrentZoomLevel(getZoomLevel());
 
+					POIProviderManager
+							.getInstance()
+							.getBookmarkProvider()
+							.setQuadtreeProviderListener(
+									(BookmarkProviderListener) getOverlay(BookmarkOverlay.DEFAULT_NAME));
 					POIProviderManager
 							.getInstance()
 							.getPOIProvider()

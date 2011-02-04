@@ -129,8 +129,7 @@ public class MemoryFilter extends SimpleFilter {
 			list = (ArrayList) index.getList(rect);
 
 			POICategoryDistanceQuickSort q = new POICategoryDistanceQuickSort(
-					((MemoryAdapter) this.activity.listAdapter)
-							.getCenterMercator());
+					new Point(xy[0], xy[1]));
 			Object[] ordered = q.sort(list);
 			final int length = ordered.length;
 

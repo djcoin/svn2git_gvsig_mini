@@ -40,11 +40,15 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import java.util.ArrayList;
 
+import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListener;
+import es.prodevelop.gvsig.mini.context.ItemContext;
+import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.ResultSearchSymbolSelector;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 public class ResultSearchOverlay extends PointOverlay implements
@@ -87,5 +91,17 @@ public class ResultSearchOverlay extends PointOverlay implements
 	
 	public String getQuery() {
 		return this.textSearch;
+	}
+	
+	@Override
+	public ItemContext getItemContext() {
+		try {
+			return new OSMPOIContext(getTileRaster().map, false, true,
+					(POI) getPoints().get(getSelectedIndex()));
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+			return null;
+		}
 	}
 }

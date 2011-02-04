@@ -126,6 +126,8 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 								.setBackgroundResource(R.drawable.slide_down_icon);
 						isPOISlideShown = true;
 						osmap.pauseDraw();
+						if (MapPOI.this.c != null)
+							c.setVisibility(View.GONE);
 						z.setVisibility(View.INVISIBLE);
 						if (s.getVisibility() == View.VISIBLE) {
 							wasScaleBarVisible = true;
@@ -359,11 +361,10 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 				break;
 			case FAV_MENU:
 				try {
-					Point center = this.osmap.getMRendererInfo().getCenter();
+					Point center = mMyLocationOverlay.getLocationLonLat();
 					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS(this.osmap
-									.getMRendererInfo().getSRS()), CRSFactory
-									.getCRS("EPSG:900913"));
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
 					InvokeIntents.launchListBookmarks(this, lonlat);
 				} catch (Exception e) {
 
@@ -379,7 +380,7 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 					Point p = new Point(
 							this.mMyLocationOverlay.mLocation.getLongitudeE6() / 1E6,
 							this.mMyLocationOverlay.mLocation.getLatitudeE6() / 1E6);
-					InvokeIntents.findPOISNear(this, p.toShortString(2));
+					InvokeIntents.findPOISNear(this, p.toShortString(6));
 				}
 				break;
 			case SETTINGS_MENU:
@@ -496,12 +497,13 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	public boolean onCreateOptionsMenu(Menu pMenu) {
 		try {
 
-			searchItem = pMenu.add(0, SEARCH_MENU, SEARCH_MENU,
+			// searchItem = pMenu.add(0, SEARCH_MENU, SEARCH_MENU,
+			// R.string.alert_dialog_text_search).setIcon(
+			// R.drawable.menu00);
+
+			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
 					R.string.alert_dialog_text_search).setIcon(
 					R.drawable.menu00);
-
-//			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
-//					R.string.advanced_search).setIcon(R.drawable.menu00);
 
 			locationItem = pMenu.add(0, MY_LOC_MENU, MY_LOC_MENU,
 					R.string.Map_4).setIcon(R.drawable.menu_location);
