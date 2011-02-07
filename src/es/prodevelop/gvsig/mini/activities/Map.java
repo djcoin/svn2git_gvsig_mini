@@ -62,15 +62,12 @@ import java.util.logging.Logger;
 import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
-import org.apache.http.impl.client.RequestWrapper;
-import org.xmlpull.v1.XmlPullParser;
 
 import com.markupartist.android.widget.ActionBar;
 import com.markupartist.android.widget.ActionBar.AbstractAction;
 import com.markupartist.android.widget.ActionBar.IntentAction;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
@@ -87,11 +84,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Xml;
-import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -100,13 +94,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -121,11 +112,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
-import es.prodevelop.gvsig.mini.app.SplashActivity;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.IEvent;
@@ -224,6 +218,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private TextView totalTiles;
 	private TextView totalMB;
 	private TextView totalZoom;
+
 	private TileDownloadWaiterDelegate tileWaiter;
 	public static String twituser = null;
 	public static String twitpass = null;
@@ -316,6 +311,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	public final static int SEARCH_EXP_CODE = 444;
 	private ItemContext overlayContext;
+	private ActionBar actionBar;
 
 	/**
 	 * Called when the activity is first created.
@@ -331,13 +327,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				Settings.getInstance().addOnSettingsChangedListener(this);
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
-
-				// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				// setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-				// requestWindowFeature(Window.FEATURE_NO_TITLE);
-				// getWindow().setFlags(
-				// WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 				// PowerManager pm = (PowerManager)
 				// getSystemService(Context.POWER_SERVICE);
@@ -360,7 +349,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			// nameFinderTask = new NameFinderTask(this, handler);
 			rl = new RelativeLayout(this);
-
 			// TMSRenderer t = TMSRenderer.getTMSRenderer(
 			// "http://www.idee.es/wms-c/PNOA/PNOA/1.0.0/PNOA/");
 			loadSettings(savedInstanceState);
@@ -412,22 +400,19 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					inflater.inflate(R.layout.actionbars, null),
 					new ViewGroup.LayoutParams(
 							ViewGroup.LayoutParams.FILL_PARENT,
-							ViewGroup.LayoutParams.FILL_PARENT));
+							ViewGroup.LayoutParams.WRAP_CONTENT));
 
-			ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
-			
+			actionBar = (ActionBar) findViewById(R.id.actionbar);
+
 			/*
-			 * Add items and set the contentbar title 
+			 * Add items and set the contentbar title
 			 */
-			
-			actionBar.setTitle("gvSIG Mini");
-			
-			/*
-			 * Set Actions
-			 */
-			
-			actionBar.addAction(new MyCenterLocation());
-			actionBar.addAction(new MyCenterUbication());
+
+			actionBar.setTitle(R.string.action_bar_title);
+
+			addLayersActivityAction();
+			addMyLocationAction();			
+			addSearchAction();
 
 			// this.addContentView(actionbar, R.layout.pruebas);
 			// if (isSaved) setContentView(null);
@@ -462,6 +447,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} finally {
 			// this.obtainCellLocation();
 		}
+	}
+
+	public void addMyLocationAction() {
+		actionBar.addAction(new MyCenterLocation());
+	}
+
+	public void addLayersActivityAction() {
+		actionBar.addAction(new LayersActivityAction());
+	}
+
+	public void addSearchAction() {
+		actionBar.addAction(new SearchAction());
 	}
 
 	public void processActionSearch(Intent i) {
@@ -780,7 +777,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private class MyCenterLocation extends AbstractAction {
 
 		public MyCenterLocation() {
-			super(R.drawable.gd_action_bar_locate_normal);
+			super(R.drawable.gd_action_bar_locate_myself);
 		}
 
 		@Override
@@ -802,24 +799,33 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	}
 
-	private class MyCenterUbication extends AbstractAction {
+	private class SearchAction extends AbstractAction {
 
-		public MyCenterUbication() {
-			super(R.drawable.gd_action_bar_locate_myself_normal);
+		public SearchAction() {
+			super(R.drawable.gd_action_bar_search);
 		}
 
 		@Override
 		public void performAction(View view) {
 			try {
-				Map.this.osmap
-						.adjustViewToAccuracyIfNavigationMode(Map.this.mMyLocationOverlay.mLocation.acc);
-				Map.this.osmap
-						.setMapCenterFromLonLat(
-								Map.this.mMyLocationOverlay.mLocation
-										.getLongitudeE6() / 1E6,
-								Map.this.mMyLocationOverlay.mLocation
-										.getLatitudeE6() / 1E6);
+				Map.this.onSearchRequested();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
 
+	}
+
+	private class LayersActivityAction extends AbstractAction {
+
+		public LayersActivityAction() {
+			super(R.drawable.gd_action_bar_sort_by_size);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.viewLayers();
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "My location: ", e);
 			}
@@ -1848,7 +1854,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			});
 
 			rl.addView(s, slideParams);
-			
+
 			/* Controls */
 			{
 
@@ -2312,38 +2318,38 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			// this.onSearchRequested();
 			log.log(Level.FINE, "show address dialog");
-			final EditText input = new EditText(this);
-
-			// new AlertDialog.Builder(
-			// new ContextThemeWrapper(this,
-			// R.style.AlertDialogCustom))
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setIcon(R.drawable.menu00)
-					.setTitle(R.string.Map_3)
-					.setView(input)
-					.setPositiveButton(R.string.alert_dialog_text_search,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									try {
-										Editable value = input.getText();
-										// Call to NameFinder with the text
-										searchInNameFinder(value.toString(),
-												false);
 
-									} catch (Exception e) {
-										log.log(Level.SEVERE,
-												"clickNameFinderAddress: ", e);
-									}
-									return;
-								}
-							})
-					.setNegativeButton(R.string.alert_dialog_text_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).show();
+			alert.setIcon(R.drawable.menu00);
+			alert.setTitle(R.string.Map_3);
+			final EditText input = new EditText(this);
+			alert.setView(input);
+
+			alert.setPositiveButton(R.string.alert_dialog_text_search,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+								Editable value = input.getText();
+								// Call to NameFinder with the text
+								searchInNameFinder(value.toString(), false);
+
+							} catch (Exception e) {
+								log.log(Level.SEVERE,
+										"clickNameFinderAddress: ", e);
+							}
+							return;
+						}
+					});
+
+			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -2703,6 +2709,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			return;
 		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
 			this.calculateRoute();
+			i.putExtra(RouteManager.ROUTE_MODIFIED, false);
 		}
 	}
 
@@ -2841,15 +2848,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "showContext: ", e);
 		}
 	}
-	
+
 	public void showCircularView(ItemContext context) {
 		LayoutInflater factory = LayoutInflater.from(this);
 		final int[] viewsID = context.getViewsId();
 		final int size = viewsID.length;
 
 		HashMap h = context.getFunctionalities();
-		
-		if (h == null) return;
+
+		if (h == null)
+			return;
 
 		int id;
 		View view;
@@ -2888,7 +2896,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		userContext.setLastExecCircle();
 		backpressedroulette = true;
 	}
-	
+
 	/**
 	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
 	 * 
@@ -2899,12 +2907,12 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void showOverlayContext() {
 		try {
 			final ItemContext context = this.overlayContext;
-			
-			if (context == null) 
+
+			if (context == null)
 				return;
-			
+
 			showCircularView(context);
-			
+
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "showContext: ", e);
 		}
@@ -3377,10 +3385,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		MapRenderer renderer = MapRendererManager.getInstance()
 				.getMapRendererFactory()
 				.getMapRenderer(layerName, urlString.split(","));
-		if (renderer.isOffline())
-			renderer.setNAME(renderer.getNAME() + MapRenderer.NAME_SEPARATOR
-					+ renderer.getOfflineLayerName());
-		Layers.getInstance().addLayer(renderer.toString());
+		// if (renderer.isOffline())
+		// renderer.setNAME(renderer.getNAME() + MapRenderer.NAME_SEPARATOR
+		// + renderer.getOfflineLayerName());
+		Layers.getInstance().addLayer(completeURLString);
 		Layers.getInstance().persist();
 		Log.d("Map", renderer.getFullNAME());
 		osmap.onLayerChanged(renderer.getFullNAME());
@@ -3392,6 +3400,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		final int zoom = i.getIntExtra("zoom", -1);
 		if (zoom == -1)
 			return;
+		i.putExtra("zoom", -1);
 
 		final double lat = i.getDoubleExtra("lat", 0);
 		final double lon = i.getDoubleExtra("lon", 0);
@@ -3412,7 +3421,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			try {
 
 				setIntent(i);
-				processGeoAction(i);				
+				processGeoAction(i);
 				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					processActionSearch(i);
 					return;
@@ -3945,8 +3954,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private void updateModeTileProvider() {
 
 	}
-	
+
 	public void setOverlayContext(ItemContext context) {
 		this.overlayContext = context;
+	}
+
+	public ActionBar getActionbar() {
+		return this.actionBar;
+	}
+	
+	public void setActionbar(ActionBar actionbar) {
+		this.actionBar = actionbar;
 	}
 }

@@ -145,10 +145,15 @@ public class StreetSearchActivity extends SearchActivity {
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		if (arg1 != 0 && arg2 != 0 && arg2 != 0)
-			getSearchOptions().sort = getResources().getString(R.string.no);
-		super.onTextChanged(arg0, arg1, arg2, arg3);
-		// advancedTextView.setText(arg0);
+		try {
+			if (arg1 != 0 && arg2 != 0 && arg2 != 0)
+				getSearchOptions().sort = getResources().getString(R.string.no);
+			super.onTextChanged(arg0, arg1, arg2, arg3);
+
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+		}
 	}
 
 	@Override

@@ -75,6 +75,8 @@ public class BookmarkOverlay extends PointOverlay implements
 	public BookmarkOverlay(Context context, TileRaster tileRaster, String name) {
 		super(context, tileRaster, name);
 		setSymbolSelector(new BookmarkSymbolSelector());
+		refreshPOIs();
+		refreshStreets();
 	}
 
 	public void refreshPOIs() {
@@ -99,13 +101,8 @@ public class BookmarkOverlay extends PointOverlay implements
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
-		super.onDraw(c, maps);
+		// super.onDraw(c, maps);
 		final MapRenderer renderer = this.getTileRaster().getMRendererInfo();
-
-		if (pois == null && streets == null) {
-			refreshPOIs();
-			refreshStreets();
-		}
 
 		draw(pois, renderer, c);
 		draw(streets, renderer, c);
@@ -235,7 +232,8 @@ public class BookmarkOverlay extends PointOverlay implements
 	@Override
 	public void onPOISRetrieved(Collection pois, boolean clearPrevious,
 			Cancellable cancellable) {
-		this.pois = (ArrayList) pois;
+		if (pois != null && pois.size() > 0)
+			this.pois = (ArrayList) pois;
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), this.pois, null);
 		getTileRaster().resumeDraw();

@@ -1679,8 +1679,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			LayerChangedListener overlay;
 			for (int i = 0; i < length; i++) {
-				overlay = overlays.get(i);
-				overlay.onLayerChanged(layerName);
+				try {
+					overlay = overlays.get(i);
+					if (overlay instanceof ExpandedClusterOverlay)
+						this.removeOverlay(((ExpandedClusterOverlay) overlay)
+								.getName());
+					else
+						overlay.onLayerChanged(layerName);
+				} catch (Exception ignore) {
+
+				}
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onlayerchanged:", e);

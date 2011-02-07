@@ -47,10 +47,10 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ExpandableListActivity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -63,6 +63,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -103,6 +104,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		super.onCreate(icicle);
 		// setContentView(R.layout.search_expandable_main);
 		try {
+			setTitle(R.string.search_hint);
 			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
 			expListAdapter = new CheckboxExpandableListAdapter(this,
@@ -242,6 +244,35 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			handleIntent(getIntent());
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
+		} finally {
+			if (autoCompleteTextView != null) {
+				autoCompleteTextView
+						.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+							@Override
+							public void onFocusChange(View v, boolean hasFocus) {
+								if (hasFocus) {
+									// getWindow()
+									// .setSoftInputMode(
+									// WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+									InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									// only will trigger it if no physical
+									// keyboard is open
+									mgr.showSoftInput(autoCompleteTextView,
+											InputMethodManager.SHOW_IMPLICIT);
+								} else {
+									// getWindow()
+									// .setSoftInputMode(
+									// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+									InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									mgr.hideSoftInputFromWindow(
+											autoCompleteTextView
+													.getWindowToken(), 0);
+								}
+							}
+						});
+				autoCompleteTextView.clearFocus();
+				autoCompleteTextView.requestFocus();
+			}
 		}
 	}
 
@@ -477,7 +508,12 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		filter(arg0.toString());
+		try {
+			filter(arg0.toString());
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+		}
 	}
 
 	public void filter(String text) {

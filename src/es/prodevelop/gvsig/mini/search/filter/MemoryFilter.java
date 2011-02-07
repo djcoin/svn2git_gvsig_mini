@@ -128,15 +128,15 @@ public class MemoryFilter extends SimpleFilter {
 					minLonLat[0], maxLonLat[1], maxLonLat[0]);
 			list = (ArrayList) index.getList(rect);
 
-			POICategoryDistanceQuickSort q = new POICategoryDistanceQuickSort(
-					new Point(xy[0], xy[1]));
-			Object[] ordered = q.sort(list);
-			final int length = ordered.length;
-
-			list = new ArrayList();
-			for (int i = 0; i < length; i++) {
-				list.add(ordered[i]);
-			}
+//			POICategoryDistanceQuickSort q = new POICategoryDistanceQuickSort(
+//					new Point(xy[0], xy[1]));
+//			Object[] ordered = q.sort(list);
+//			final int length = ordered.length;
+//
+//			list = new ArrayList();
+//			for (int i = 0; i < length; i++) {
+//				list.add(ordered[i]);
+//			}
 		} else {
 			list = activity.getResultsList();
 		}

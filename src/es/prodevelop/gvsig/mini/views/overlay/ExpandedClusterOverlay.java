@@ -117,6 +117,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 			Cancellable cancellable) {
 		if (checkRemove())
 			return;
+		setNodeExpanded(true);
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), (ArrayList) pois, cancellable);
 		this.setPoints((ArrayList) pois);

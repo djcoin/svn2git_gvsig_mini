@@ -70,19 +70,21 @@ public class ResultSearchActivity extends SearchActivity {
 
 			setProvider(POIProviderManager.getInstance().getPOIProvider());
 
-			getListView().setOnItemClickListener(new OpenPOIDetailsItemClickListener(this));
+			getListView().setOnItemClickListener(
+					new OpenPOIDetailsItemClickListener(this));
 
 			listener = new POIItemClickContextListener(this, R.drawable.pois,
 					R.string.NameFinderActivity_0, true);
-			getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+			getListView().setOnItemLongClickListener(
+					new OnItemLongClickListener() {
 
-				@Override
-				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					return getPOItemClickListener().onPOIClick(arg2,
-							(POI) getListAdapter().getItem(arg2), arg1);
-				}
-			});
+						@Override
+						public boolean onItemLongClick(AdapterView<?> arg0,
+								View arg1, int arg2, long arg3) {
+							return getPOItemClickListener().onPOIClick(arg2,
+									(POI) getListAdapter().getItem(arg2), arg1);
+						}
+					});
 
 			this.getSearchOptions().clearCategories();
 			this.getSearchOptions().clearSubcategories();
@@ -122,9 +124,9 @@ public class ResultSearchActivity extends SearchActivity {
 			onTextChanged(query, 0, 0, 0);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
-		}		
+		}
 	}
-	
+
 	public void attachSectionedAdapter() {
 		this.getListView().setAdapter(listAdapter);
 		// ((PinnedHeaderListAdapter) listAdapter).updateIndexer();
@@ -156,13 +158,18 @@ public class ResultSearchActivity extends SearchActivity {
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		((Filterable) getListView().getAdapter()).getFilter().filter(
-				arg0.toString());
-		Log.d("onTextChanged", arg0.toString());
-		this.setTitle(R.string.please_wait);
-		setProgressBarIndeterminateVisibility(true);
-		// if (arg0.length() == 0)
-		// enableSpinner(arg0.toString());
+		try {
+			((Filterable) getListView().getAdapter()).getFilter().filter(
+					arg0.toString());
+			Log.d("onTextChanged", arg0.toString());
+			this.setTitle(R.string.please_wait);
+			setProgressBarIndeterminateVisibility(true);
+			// if (arg0.length() == 0)
+			// enableSpinner(arg0.toString());
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+		}
 	}
 
 	@Override

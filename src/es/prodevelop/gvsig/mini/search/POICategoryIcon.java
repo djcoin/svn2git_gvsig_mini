@@ -46,228 +46,330 @@ import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 
 public class POICategoryIcon {
-	
+
+	private final static int DEFAULT_ICON_ID = R.drawable.pois;
+
 	public static Bitmap getBitmap16ForCategory(String category) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_accommodation_hotel_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_accommodation_hotel_16);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16);
 		else if (category.compareTo(POICategories.FOOD) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_health_hospital_16);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_public_buildings_tourist_monument_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_recreation_sport_playground_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_recreation_sport_playground_16);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_route_tourist_castle2_16);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_shops_shopping_supermarket_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_shops_shopping_supermarket_16);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_tourism_tourist_attraction_16);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_tourism_tourist_attraction_16);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
-		else return null;
+			return ResourceLoader
+					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
+		else
+			return ResourceLoader.getBitmap(DEFAULT_ICON_ID);
 	}
-	
-	public static Drawable getDrawable16ForCategory(String category, Context context) {
+
+	public static Drawable getDrawable16ForCategory(String category,
+			Context context) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_accommodation_hotel_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_accommodation_hotel_16);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_arts_culture_tourist_theatre_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_arts_culture_tourist_theatre_16);
 		else if (category.compareTo(POICategories.FOOD) == 0)
-			return context.getResources().getDrawable(R.drawable.p_food_restaurant_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_food_restaurant_16);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
-			return context.getResources().getDrawable(R.drawable.p_health_hospital_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_health_hospital_16);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_public_buildings_tourist_monument_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_public_buildings_tourist_monument_16);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_recreation_sport_playground_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_recreation_sport_playground_16);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_route_tourist_castle2_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_route_tourist_castle2_16);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_shops_shopping_supermarket_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_shops_shopping_supermarket_16);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return context.getResources().getDrawable(R.drawable.p_tourism_tourist_attraction_16);
+			return context.getResources().getDrawable(
+					R.drawable.p_tourism_tourist_attraction_16);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_transportation_transport_bus_stop_16);
-		else return null;
+			return context.getResources().getDrawable(
+					R.drawable.p_transportation_transport_bus_stop_16);
+		else
+			return context.getResources().getDrawable(DEFAULT_ICON_ID);
 	}
-	
+
 	public static Bitmap getBitmap32ForCategory(String category) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_accommodation_hotel_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_accommodation_hotel_32);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_arts_culture_tourist_theatre_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_32);
 		else if (category.compareTo(POICategories.FOOD) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_food_restaurant_32);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_health_hospital_32);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_32);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_public_buildings_tourist_monument_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_public_buildings_tourist_monument_32);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_recreation_sport_playground_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_recreation_sport_playground_32);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_route_tourist_castle2_32);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_shops_shopping_supermarket_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_shops_shopping_supermarket_32);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_32);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_tourism_tourist_attraction_32);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_tourism_tourist_attraction_32);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_transportation_transport_bus_stop_32);
-		else return null;
+			return ResourceLoader
+					.getBitmap(R.drawable.p_transportation_transport_bus_stop_32);
+		else
+			return ResourceLoader.getBitmap(DEFAULT_ICON_ID);
 	}
-	
-	public static Drawable getDrawable32ForCategory(String category, Context context) {
+
+	public static Drawable getDrawable32ForCategory(String category,
+			Context context) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_accommodation_hotel_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_accommodation_hotel_32);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_arts_culture_tourist_theatre_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_arts_culture_tourist_theatre_32);
 		else if (category.compareTo(POICategories.FOOD) == 0)
-			return context.getResources().getDrawable(R.drawable.p_food_restaurant_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_food_restaurant_32);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
-			return context.getResources().getDrawable(R.drawable.p_health_hospital_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_health_hospital_32);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_32);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_public_buildings_tourist_monument_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_public_buildings_tourist_monument_32);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_recreation_sport_playground_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_recreation_sport_playground_32);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_route_tourist_castle2_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_route_tourist_castle2_32);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_shops_shopping_supermarket_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_shops_shopping_supermarket_32);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_32);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return context.getResources().getDrawable(R.drawable.p_tourism_tourist_attraction_32);
+			return context.getResources().getDrawable(
+					R.drawable.p_tourism_tourist_attraction_32);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_transportation_transport_bus_stop_32);
-		else return null;
+			return context.getResources().getDrawable(
+					R.drawable.p_transportation_transport_bus_stop_32);
+		else
+			return context.getResources().getDrawable(DEFAULT_ICON_ID);
 	}
-	
+
 	public static Bitmap getBitmapFavForCategory(String category) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_accommodation_hotel_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_accommodation_hotel_16f);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16f);
 		else if (category.compareTo(POICategories.FOOD) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16f);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_health_hospital_16f);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16f);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_public_buildings_tourist_monument_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16f);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_recreation_sport_playground_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_recreation_sport_playground_16f);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_route_tourist_castle2_16f);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_shops_shopping_supermarket_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_shops_shopping_supermarket_16f);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16f);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_tourism_tourist_attraction_16f);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_tourism_tourist_attraction_16f);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_transportation_transport_bus_stop_16f);
-		else return null;
+			return ResourceLoader
+					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16f);
+		else
+			return ResourceLoader.getBitmap(DEFAULT_ICON_ID);
 	}
-	
-	public static Drawable getDrawableFavForCategory(String category, Context context) {
+
+	public static Drawable getDrawableFavForCategory(String category,
+			Context context) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_accommodation_hotel_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_accommodation_hotel_16f);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_arts_culture_tourist_theatre_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_arts_culture_tourist_theatre_16f);
 		else if (category.compareTo(POICategories.FOOD) == 0)
-			return context.getResources().getDrawable(R.drawable.p_food_restaurant_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_food_restaurant_16f);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
-			return context.getResources().getDrawable(R.drawable.p_health_hospital_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_health_hospital_16f);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16f);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_public_buildings_tourist_monument_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_public_buildings_tourist_monument_16f);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_recreation_sport_playground_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_recreation_sport_playground_16f);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_route_tourist_castle2_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_route_tourist_castle2_16f);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_shops_shopping_supermarket_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_shops_shopping_supermarket_16f);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16f);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return context.getResources().getDrawable(R.drawable.p_tourism_tourist_attraction_16f);
+			return context.getResources().getDrawable(
+					R.drawable.p_tourism_tourist_attraction_16f);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_transportation_transport_bus_stop_16f);
-		else return null;
+			return context.getResources().getDrawable(
+					R.drawable.p_transportation_transport_bus_stop_16f);
+		else
+			return context.getResources().getDrawable(DEFAULT_ICON_ID);
 	}
-	
+
 	public static Bitmap getBitmapSearchCategory(String category) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_accommodation_hotel_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_accommodation_hotel_16s);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16s);
 		else if (category.compareTo(POICategories.FOOD) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16s);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
 			return ResourceLoader.getBitmap(R.drawable.p_health_hospital_16s);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16s);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_public_buildings_tourist_monument_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_public_buildings_tourist_monument_16s);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_recreation_sport_playground_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_recreation_sport_playground_16s);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_route_tourist_castle2_16s);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_shops_shopping_supermarket_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_shops_shopping_supermarket_16s);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_places_poi_place_city_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_places_poi_place_city_16s);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_tourism_tourist_attraction_16s);
+			return ResourceLoader
+					.getBitmap(R.drawable.p_tourism_tourist_attraction_16s);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return ResourceLoader.getBitmap(R.drawable.p_transportation_transport_bus_stop_16s);
-		else return null;
+			return ResourceLoader
+					.getBitmap(R.drawable.p_transportation_transport_bus_stop_16s);
+		else
+			return ResourceLoader.getBitmap(DEFAULT_ICON_ID);
 	}
-	
-	public static Drawable getDrawableSearchForCategory(String category, Context context) {
+
+	public static Drawable getDrawableSearchForCategory(String category,
+			Context context) {
 		if (category.compareTo(POICategories.ACCOMODATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_accommodation_hotel_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_accommodation_hotel_16s);
 		else if (category.compareTo(POICategories.ARTS_CULTURE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_arts_culture_tourist_theatre_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_arts_culture_tourist_theatre_16s);
 		else if (category.compareTo(POICategories.FOOD) == 0)
-			return context.getResources().getDrawable(R.drawable.p_food_restaurant_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_food_restaurant_16s);
 		else if (category.compareTo(POICategories.HEALTH_EMERGENCY) == 0)
-			return context.getResources().getDrawable(R.drawable.p_health_hospital_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_health_hospital_16s);
 		else if (category.compareTo(POICategories.PLACES) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16s);
 		else if (category.compareTo(POICategories.PUBLIC_BUILDINGS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_public_buildings_tourist_monument_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_public_buildings_tourist_monument_16s);
 		else if (category.compareTo(POICategories.RECREATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_recreation_sport_playground_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_recreation_sport_playground_16s);
 		else if (category.compareTo(POICategories.ROUTE) == 0)
-			return context.getResources().getDrawable(R.drawable.p_route_tourist_castle2_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_route_tourist_castle2_16s);
 		else if (category.compareTo(POICategories.SHOPS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_shops_shopping_supermarket_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_shops_shopping_supermarket_16s);
 		else if (category.compareTo(POICategories.STREETS) == 0)
-			return context.getResources().getDrawable(R.drawable.p_places_poi_place_city_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_places_poi_place_city_16s);
 		else if (category.compareTo(POICategories.TOURISM) == 0)
-			return context.getResources().getDrawable(R.drawable.p_tourism_tourist_attraction_16s);
+			return context.getResources().getDrawable(
+					R.drawable.p_tourism_tourist_attraction_16s);
 		else if (category.compareTo(POICategories.TRANSPORTATION) == 0)
-			return context.getResources().getDrawable(R.drawable.p_transportation_transport_bus_stop_16s);
-		else return null;
+			return context.getResources().getDrawable(
+					R.drawable.p_transportation_transport_bus_stop_16s);
+		else
+			return context.getResources().getDrawable(DEFAULT_ICON_ID);
 	}
 }

@@ -168,6 +168,8 @@ public class SimpleFilter extends Filter {
 			activity.getListView().setFastScrollEnabled(false);
 			((PinnedHeaderListAdapter) activity.getListAdapter())
 					.setIndexer(indexer);
+			if (results == null)
+				return;
 			if (results.count <= 0) {
 				activity.setResultsList(null);
 				((PinnedHeaderListAdapter) activity.getListAdapter())

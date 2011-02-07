@@ -56,6 +56,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
@@ -579,11 +583,87 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	public void onPOIProviderFail() {
 		sliding.setVisibility(View.INVISIBLE);
 		poiProviderEnabled = false;
+		// instantiateActionBar();
 	}
 
 	@Override
 	public void onNewPOIProvider() {
 		sliding.setVisibility(View.VISIBLE);
 		poiProviderEnabled = true;
+		// instantiateActionBar();
+	}
+
+	public void addLayersActivityAction() {
+		try {
+			// if (poiProviderEnabled)
+			getActionbar().addAction(new POISlideAction());
+			super.addLayersActivityAction();
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null) {
+				Log.e("", e.getMessage());
+			}
+		}
+	}
+
+	public void addSearchAction() {
+		// if (poiProviderEnabled)
+		getActionbar().addAction(new SearchAction());
+	}
+
+	// public void instantiateActionBar() {
+	// try {
+	// ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+	//
+	// actionBar.setTitle(R.string.action_bar_title);
+	// setActionbar(actionBar);
+	//
+	// addMyLocationAction();
+	// addLayersActivityAction();
+	// addSearchAction();
+	// } catch (Exception e) {
+	// if (e != null && e.getMessage() != null) {
+	// Log.e("", e.getMessage());
+	// }
+	// }
+	// }
+
+	private class POISlideAction extends AbstractAction {
+
+		public POISlideAction() {
+			super(R.drawable.gd_action_bar_locate);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				MapPOI.this.sliding.open();
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null) {
+					Log.e("", e.getMessage());
+				}
+			}
+		}
+	}
+
+	private class SearchAction extends AbstractAction {
+
+		public SearchAction() {
+			super(R.drawable.gd_action_bar_search);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Intent mainIntent = new Intent(MapPOI.this,
+						SearchExpandableActivity.class);
+				// Point center = this.osmap.getMRendererInfo().getCenter();
+				fillSearchCenter(mainIntent);
+				MapPOI.this.startActivity(mainIntent);
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null) {
+					Log.e("", e.getMessage());
+				}
+			}
+		}
 	}
 }
