@@ -62,8 +62,15 @@ import java.util.logging.Logger;
 import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
+import org.apache.http.impl.client.RequestWrapper;
+import org.xmlpull.v1.XmlPullParser;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
@@ -80,8 +87,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Xml;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -89,10 +99,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -210,7 +224,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private TextView totalTiles;
 	private TextView totalMB;
 	private TextView totalZoom;
-
 	private TileDownloadWaiterDelegate tileWaiter;
 	public static String twituser = null;
 	public static String twitpass = null;
@@ -319,6 +332,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
 
+				// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				// setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+				// requestWindowFeature(Window.FEATURE_NO_TITLE);
+				// getWindow().setFlags(
+				// WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				// WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 				// PowerManager pm = (PowerManager)
 				// getSystemService(Context.POWER_SERVICE);
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
@@ -340,6 +360,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			// nameFinderTask = new NameFinderTask(this, handler);
 			rl = new RelativeLayout(this);
+
 			// TMSRenderer t = TMSRenderer.getTMSRenderer(
 			// "http://www.idee.es/wms-c/PNOA/PNOA/1.0.0/PNOA/");
 			loadSettings(savedInstanceState);
@@ -384,8 +405,31 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							.getMapnikRenderer());
 				}
 			}
-
 			this.setContentView(rl);
+
+			LayoutInflater inflater = getLayoutInflater();
+			getWindow().addContentView(
+					inflater.inflate(R.layout.actionbars, null),
+					new ViewGroup.LayoutParams(
+							ViewGroup.LayoutParams.FILL_PARENT,
+							ViewGroup.LayoutParams.FILL_PARENT));
+
+			ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+			
+			/*
+			 * Add items and set the contentbar title 
+			 */
+			
+			actionBar.setTitle("gvSIG Mini");
+			
+			/*
+			 * Set Actions
+			 */
+			
+			actionBar.addAction(new MyCenterLocation());
+			actionBar.addAction(new MyCenterUbication());
+
+			// this.addContentView(actionbar, R.layout.pruebas);
 			// if (isSaved) setContentView(null);
 			// enableAcelerometer(savedInstanceState);
 
@@ -731,6 +775,56 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				CRSFactory.getCRS("EPSG:900913"));
 		i.putExtra("lon", lonlat[0]);
 		i.putExtra("lat", lonlat[1]);
+	}
+
+	private class MyCenterLocation extends AbstractAction {
+
+		public MyCenterLocation() {
+			super(R.drawable.gd_action_bar_locate_normal);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.osmap
+						.adjustViewToAccuracyIfNavigationMode(Map.this.mMyLocationOverlay.mLocation.acc);
+				Map.this.osmap
+						.setMapCenterFromLonLat(
+								Map.this.mMyLocationOverlay.mLocation
+										.getLongitudeE6() / 1E6,
+								Map.this.mMyLocationOverlay.mLocation
+										.getLatitudeE6() / 1E6);
+				Map.this.osmap.setZoomLevel(15);
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
+
+	}
+
+	private class MyCenterUbication extends AbstractAction {
+
+		public MyCenterUbication() {
+			super(R.drawable.gd_action_bar_locate_myself_normal);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.osmap
+						.adjustViewToAccuracyIfNavigationMode(Map.this.mMyLocationOverlay.mLocation.acc);
+				Map.this.osmap
+						.setMapCenterFromLonLat(
+								Map.this.mMyLocationOverlay.mLocation
+										.getLongitudeE6() / 1E6,
+								Map.this.mMyLocationOverlay.mLocation
+										.getLatitudeE6() / 1E6);
+
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
+
 	}
 
 	@Override
@@ -1754,7 +1848,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			});
 
 			rl.addView(s, slideParams);
-
+			
 			/* Controls */
 			{
 
@@ -2218,38 +2312,38 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			// this.onSearchRequested();
 			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_3);
 			final EditText input = new EditText(this);
-			alert.setView(input);
 
-			alert.setPositiveButton(R.string.alert_dialog_text_search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = input.getText();
-								// Call to NameFinder with the text
-								searchInNameFinder(value.toString(), false);
+			// new AlertDialog.Builder(
+			// new ContextThemeWrapper(this,
+			// R.style.AlertDialogCustom))
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setIcon(R.drawable.menu00)
+					.setTitle(R.string.Map_3)
+					.setView(input)
+					.setPositiveButton(R.string.alert_dialog_text_search,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									try {
+										Editable value = input.getText();
+										// Call to NameFinder with the text
+										searchInNameFinder(value.toString(),
+												false);
 
-							} catch (Exception e) {
-								log.log(Level.SEVERE,
-										"clickNameFinderAddress: ", e);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
+									} catch (Exception e) {
+										log.log(Level.SEVERE,
+												"clickNameFinderAddress: ", e);
+									}
+									return;
+								}
+							})
+					.setNegativeButton(R.string.alert_dialog_text_cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+								}
+							}).show();
 
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
