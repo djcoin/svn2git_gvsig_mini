@@ -1348,8 +1348,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				}
 
-				// if (!acetateTouch)
-				map.switchSlideBar();
+				if (acetate.getPopupVisibility() == View.VISIBLE)
+					acetate.setPopupVisibility(View.INVISIBLE);
+				else
+					map.switchSlideBar();
 			} catch (Exception ex) {
 				log.log(Level.SEVERE, "singletapconfirmed", ex);
 
