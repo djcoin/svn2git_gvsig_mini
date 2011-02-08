@@ -353,6 +353,7 @@
 	<string name="show_advanced_options">Show advanced options</string>
 	
 	<string name="action_bar_title">gvSIG Mini</string>
+	<string name="no_poi_database">There is no POI database loaded. Go to Maps/Layers and load one of your guides</string>
 </resources>
 
 

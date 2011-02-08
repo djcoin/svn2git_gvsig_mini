@@ -66,25 +66,25 @@ public class OsmPOISymbolSelector extends SymbolSelector {
 	public OsmPOISymbolSelector() {
 
 		TRANSPORTATION = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop);
 		TOURISM = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_16);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction);
 		RECREATION = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_16);
-		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16);
+				.getBitmap(R.drawable.p_recreation_sport_playground);
+		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant);
 		PUBLIC_BUILDINGS = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_16);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument);
 		ARTS_CULTURE = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre);
 		SHOPS = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_16);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket);
 		HEALTH_EMERGENCY = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_16);
+				.getBitmap(R.drawable.p_health_hospital);
 		ACCOMODATION = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_16);
-		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2_16);
+				.getBitmap(R.drawable.p_accommodation_hotel);
+		ROUTE = ResourceLoader.getBitmap(R.drawable.p_route_tourist_castle2);
 		PLACES = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_16);
+				.getBitmap(R.drawable.p_places_poi_place_city);
 
 		if (PLACES != null) {
 			midIcon[0] = PLACES.getWidth() / 2;

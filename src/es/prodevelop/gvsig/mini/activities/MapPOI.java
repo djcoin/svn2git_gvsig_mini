@@ -636,7 +636,11 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 		@Override
 		public void performAction(View view) {
 			try {
-				MapPOI.this.sliding.open();
+				if (poiProviderEnabled)
+					MapPOI.this.sliding.open();
+				else
+					Toast.makeText(MapPOI.this, R.string.no_poi_database,
+							Toast.LENGTH_LONG).show();
 			} catch (Exception e) {
 				if (e != null && e.getMessage() != null) {
 					Log.e("", e.getMessage());
@@ -654,11 +658,17 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 		@Override
 		public void performAction(View view) {
 			try {
-				Intent mainIntent = new Intent(MapPOI.this,
-						SearchExpandableActivity.class);
-				// Point center = this.osmap.getMRendererInfo().getCenter();
-				fillSearchCenter(mainIntent);
-				MapPOI.this.startActivity(mainIntent);
+				if (poiProviderEnabled) {
+					Intent mainIntent = new Intent(MapPOI.this,
+							SearchExpandableActivity.class);
+					// Point center = this.osmap.getMRendererInfo().getCenter();
+					fillSearchCenter(mainIntent);
+					MapPOI.this.startActivity(mainIntent);
+				} else {
+					Toast.makeText(MapPOI.this, R.string.no_poi_database,
+							Toast.LENGTH_LONG).show();
+				}
+
 			} catch (Exception e) {
 				if (e != null && e.getMessage() != null) {
 					Log.e("", e.getMessage());
