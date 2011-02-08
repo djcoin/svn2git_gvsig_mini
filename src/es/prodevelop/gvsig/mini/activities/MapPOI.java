@@ -637,7 +637,10 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 		public void performAction(View view) {
 			try {
 				if (poiProviderEnabled)
-					MapPOI.this.sliding.open();
+					if (MapPOI.this.isPOISlideShown)
+						MapPOI.this.sliding.close();
+					else
+						MapPOI.this.sliding.open();
 				else
 					Toast.makeText(MapPOI.this, R.string.no_poi_database,
 							Toast.LENGTH_LONG).show();
