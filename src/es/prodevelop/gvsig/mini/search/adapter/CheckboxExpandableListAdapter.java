@@ -339,8 +339,10 @@ public class CheckboxExpandableListAdapter extends SimpleExpandableListAdapter {
 
 		check.setChecked(parentChecked[groupPosition]);
 
-		if (controller != null)
-			v.setLayoutAnimation(controller);
+		// if (controller != null)
+//		if (v.getLayoutAnimation() != null)
+//			controller = null;
+//		v.setLayoutAnimation(controller);
 
 		return v;
 	}

@@ -205,6 +205,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 					advButton.setVisibility(View.GONE);
 					l.findViewById(android.R.id.list).setVisibility(
 							View.VISIBLE);
+//					l.setLayoutAnimation(null);
 				}
 			});
 
@@ -375,43 +376,56 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 
 	private ArrayList getSelectedCategoriesAndSubcategories() {
 		ArrayList list = new ArrayList();
-		final boolean[] groups = expListAdapter.parentChecked;
-		final int length = groups.length;
+		try {
+			final boolean[] groups = expListAdapter.parentChecked;
+			final int length = groups.length;
 
-		final boolean[][] childs = expListAdapter.childChecked;
-		// final int cLength = childs.length;
+			final boolean[][] childs = expListAdapter.childChecked;
+			// final int cLength = childs.length;
 
-		// iterate categories
-		for (int i = 0; i < length; i++) {
-			// if is checked iterate subcategories
-			if (groups[i]) {
-				ArrayList subc = new ArrayList();
-				// for (int n = 0; n < cLength; n++) {
-				final int ccLength = subcategories[i].length;
-				boolean allChecked = true;
-				for (int j = 0; j < ccLength; j++) {
-					if (!childs[i][j]) {
-						allChecked = false;
+			// iterate categories
+			for (int i = 0; i < length; i++) {
+				// if is checked iterate subcategories
+				if (groups[i]) {
+					ArrayList subc = new ArrayList();
+					// for (int n = 0; n < cLength; n++) {
+					final int ccLength = childs[i].length;
+					boolean allChecked = true;
+					for (int j = 0; j < ccLength; j++) {
+						try {
+							if (!childs[i][j]) {
+								allChecked = false;
+							} else {
+								subc.add(this.subcategories[i][j]);
+							}
+						} catch (Exception e) {
+							if (e != null && e.getMessage() != null)
+								Log.e("", e.getMessage());
+						}
+					}
+					// if are all checked add the category,
+					// else add the subcategories checked
+					if (allChecked) {
+						if (this.categories[i] != null) {
+							Log.d("", "Added category: " + this.categories[i]);
+							list.add(this.categories[i]);
+						}
 					} else {
-						subc.add(this.subcategories[i][j]);
+						final int size = subc.size();
+						for (int m = 0; m < size; m++) {
+							Log.d("", "Added subcategory: "
+									+ subc.get(m).toString());
+							list.add(subc.get(m).toString());
+						}
 					}
+					// }
 				}
-				// if are all checked add the category,
-				// else add the subcategories checked
-				if (allChecked) {
-					Log.d("", "Added category: " + this.categories[i]);
-					list.add(this.categories[i]);
-				} else {
-					final int size = subc.size();
-					for (int m = 0; m < size; m++) {
-						Log.d("", "Added subcategory: "
-								+ subc.get(m).toString());
-						list.add(subc.get(m).toString());
-					}
-				}
-				// }
 			}
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
 		}
+
 		return list;
 	}
 
