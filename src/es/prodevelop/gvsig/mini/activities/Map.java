@@ -57,6 +57,14 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
+import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
+import org.anddev.android.weatherforecast.weather.WeatherSet;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+import com.markupartist.android.widget.ActionBar.IntentAction;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -81,6 +89,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -95,9 +104,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+// <<<<<<< HEAD
 import es.prodevelop.gvsig.mini.app.SplashActivity;
+// =======
+import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
+import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
+// >>>>>>> master
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.IEvent;
@@ -301,6 +319,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	ProgressBar downloadTilesPB;
 
 	public final static int SEARCH_EXP_CODE = 444;
+	private ItemContext overlayContext;
+	private ActionBar actionBar;
 
 	private IFactoryContext factoryContext = new FactoryContext();
 	/**
@@ -385,8 +405,28 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							.getMapnikRenderer());
 				}
 			}
-
 			this.setContentView(rl);
+
+			LayoutInflater inflater = getLayoutInflater();
+			getWindow().addContentView(
+					inflater.inflate(R.layout.actionbars, null),
+					new ViewGroup.LayoutParams(
+							ViewGroup.LayoutParams.FILL_PARENT,
+							ViewGroup.LayoutParams.WRAP_CONTENT));
+
+			actionBar = (ActionBar) findViewById(R.id.actionbar);
+
+			/*
+			 * Add items and set the contentbar title
+			 */
+
+			actionBar.setTitle(R.string.action_bar_title);
+
+			addLayersActivityAction();
+			addMyLocationAction();			
+			addSearchAction();
+
+			// this.addContentView(actionbar, R.layout.pruebas);
 			// if (isSaved) setContentView(null);
 			// enableAcelerometer(savedInstanceState);
 
@@ -419,6 +459,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		} finally {
 			// this.obtainCellLocation();
 		}
+	}
+
+	public void addMyLocationAction() {
+		actionBar.addAction(new MyCenterLocation());
+	}
+
+	public void addLayersActivityAction() {
+		actionBar.addAction(new LayersActivityAction());
+	}
+
+	public void addSearchAction() {
+		actionBar.addAction(new SearchAction());
 	}
 
 	public void processActionSearch(Intent i) {
@@ -711,7 +763,567 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		i.putExtra("lat", lonlat[1]);
 	}
 
+	private class MyCenterLocation extends AbstractAction {
+
+		public MyCenterLocation() {
+			super(R.drawable.gd_action_bar_locate_myself);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.osmap
+						.adjustViewToAccuracyIfNavigationMode(Map.this.mMyLocationOverlay.mLocation.acc);
+				Map.this.osmap
+						.setMapCenterFromLonLat(
+								Map.this.mMyLocationOverlay.mLocation
+										.getLongitudeE6() / 1E6,
+								Map.this.mMyLocationOverlay.mLocation
+										.getLatitudeE6() / 1E6);
+				Map.this.osmap.setZoomLevel(15);
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
+
+	}
+
+	private class SearchAction extends AbstractAction {
+
+		public SearchAction() {
+			super(R.drawable.gd_action_bar_search);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.onSearchRequested();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
+
+	}
+
+	private class LayersActivityAction extends AbstractAction {
+
+		public LayersActivityAction() {
+			super(R.drawable.gd_action_bar_sort_by_size);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				Map.this.viewLayers();
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "My location: ", e);
+			}
+		}
+
+	}
+
 	@Override
+// <<<<<<< HEAD FIXME !!! should not be here
+// =======
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		boolean result = true;
+		try {
+			result = super.onMenuItemSelected(featureId, item);
+			switch (item.getItemId()) {
+			case 0:
+				try {
+					Map.this.showSearchDialog();
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "showAddressDialog: ", e);
+				}
+				break;
+			case 1:
+				//
+
+				break;
+			case 2:
+				try {
+
+					// recenterOnGPS = !recenterOnGPS;
+					// // osmap.switchPanMode();
+					//
+					// if (recenterOnGPS) {
+					// log.log(Level.FINE,
+					// "recentering on GPS after check MyLocation on");
+					// myLocation.setIcon(R.drawable.menu01);
+					//
+					// } else {
+					// log
+					// .log(Level.FINE,
+					// "stop recentering on GPS after check MyLocation off"
+					// );
+					// myLocation.setIcon(R.drawable.menu01_2);
+					// }
+					//
+					// if (this.mMyLocationOverlay.mLocation != null &&
+					// recenterOnGPS) {
+					log.log(Level.FINE, "click on my location menu item");
+					if (this.mMyLocationOverlay.mLocation == null
+							|| (this.mMyLocationOverlay.mLocation
+									.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
+									.getLongitudeE6() == 0)) {
+						Toast.makeText(this, R.string.Map_24, Toast.LENGTH_LONG)
+								.show();
+						return true;
+					}
+					this.osmap
+							.adjustViewToAccuracyIfNavigationMode(this.mMyLocationOverlay.mLocation.acc);
+					this.osmap
+							.setMapCenterFromLonLat(
+									this.mMyLocationOverlay.mLocation
+											.getLongitudeE6() / 1E6,
+									this.mMyLocationOverlay.mLocation
+											.getLatitudeE6() / 1E6);
+					// }
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "My location: ", e);
+				}
+				break;
+			case 3:
+				viewLayers();
+				break;
+			case 4:
+				if (Utils.isSDMounted()) {
+					if (osmap.getMRendererInfo().allowsMassiveDownload()) {
+						Map.this.showDownloadTilesDialog();
+					} else {
+
+						this.showOKDialog(getText(R.string.not_download_tiles)
+								.toString(), R.string.warning, false);
+					}
+				}
+
+				else
+					Toast.makeText(this, R.string.LayersActivity_1,
+							Toast.LENGTH_LONG).show();
+				// try {
+				// log.log(Level.FINE, "switch pan mode");
+				// osmap.switchPanMode();
+				// if (osmap.isPanMode()) {
+				// item.setIcon(R.drawable.mv_rectangle).setTitle(
+				// R.string.Map_6);
+				// } else {
+				// item.setIcon(R.drawable.mv_pan)
+				// .setTitle(R.string.Map_7);
+				// }
+				// } catch (Exception e) {
+				// log.log(Level.SEVERE,"switchPanMode: ", e);
+				// }
+				break;
+			case 6:
+				// try {
+				// showDownloadDialog();
+				// } catch (Exception e) {
+				// log.log(Level.SEVERE, "OpenWebsite: ", e);
+				// }
+				break;
+			case 5:
+				try {
+					recenterOnGPS = !recenterOnGPS;
+
+					if (myLocationButton != null)
+						myLocationButton.setEnabled(!recenterOnGPS);
+					if (myZoomRectangle != null)
+						myZoomRectangle.setEnabled(!recenterOnGPS);
+					if (myDownloadLayers != null)
+						myDownloadLayers.setEnabled(!recenterOnGPS);
+					if (mySearchDirection != null)
+						mySearchDirection.setEnabled(!recenterOnGPS);
+					if (mySettings != null)
+						mySettings.setEnabled(!recenterOnGPS);
+
+					// myGPSButton.setEnabled(!recenterOnGPS);
+
+					if (!recenterOnGPS) {
+						log.log(Level.FINE,
+								"recentering on GPS after check MyLocation on");
+						z.setVisibility(View.VISIBLE);
+						myNavigator.setIcon(R.drawable.menu_navigation);
+
+					} else {
+						log.log(Level.FINE,
+								"stop recentering on GPS after check MyLocation off");//
+						z.setVisibility(View.INVISIBLE);
+						myNavigator.setIcon(R.drawable.menu_navigation_off);
+					}
+					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
+					// ) {
+					// log.log(Level.FINE,
+					// "recentering on GPS after check MyLocation on");
+					// myNavigator.setIcon(R.drawable.menu_navigation_off);
+					//
+					// } else {
+					// log
+					// .log(Level.FINE,
+					// "stop recentering on GPS after check MyLocation off"
+					// );
+					// myNavigator.setIcon(R.drawable.menu_navigation);
+					// }
+					//
+					if (!navigation) {
+						// wl.acquire();
+						// setRequestedOrientation(ActivityInfo.
+						// SCREEN_ORIENTATION_PORTRAIT);
+						// navigation = true;
+						this.initializeSensor(this, true);
+						this.showNavigationModeAlert();
+					} else {
+						try {
+							if (Settings.getInstance().getBooleanValue(
+									getText(R.string.settings_key_orientation)
+											.toString()))
+								this.stopSensor(this);
+						} catch (Exception e) {
+							log.log(Level.SEVERE, "navigation mode off", e);
+						}
+
+						log.log(Level.FINE, "navigation mode off");
+						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+						navigation = false;
+						osmap.setKeepScreenOn(false);
+					}
+
+					//
+					// osmap.switchPanMode();
+					// if (osmap.isPanMode()) {
+					// item.setIcon(R.drawable.mv_rectangle).setTitle(
+					// R.string.Map_6);
+					// } else {
+					// item.setIcon(R.drawable.mv_pan).setTitle(R.string.Map_7);
+					// }
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "switchPanMode: ", e);
+				}
+				break;
+			case 7:
+				Intent i = new Intent(this, SettingsActivity.class);
+				startActivity(i);
+				break;
+			case 8:
+				try {
+					showWhatsNew();
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 9:
+				try {
+					showLicense();
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 10:
+				try {
+					showAboutDialog();
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 11:
+				try {
+					Intent mainIntent = new Intent(this,
+							SearchExpandableActivity.class);
+					// Point center = this.osmap.getMRendererInfo().getCenter();
+					fillSearchCenter(mainIntent);
+					this.startActivity(mainIntent);
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			case 12:
+				try {
+					Point center = mMyLocationOverlay.getLocationLonLat();
+					double[] lonlat = ConversionCoords.reproject(center.getX(),
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
+					InvokeIntents.launchListBookmarks(this, lonlat);
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "OpenWebsite: ", e);
+				}
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}
+		return result;
+	}
+
+	protected void showNavigationModeAlert() {
+		try {
+			RadioGroup r = new RadioGroup(this);
+			RadioButton r1 = new RadioButton(this);
+			r1.setText(R.string.portrait);
+			r1.setId(0);
+			RadioButton r2 = new RadioButton(this);
+			r2.setText(R.string.landscape);
+			r2.setId(1);
+			r.addView(r1);
+			r.addView(r2);
+			r.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+				@Override
+				public void onCheckedChanged(RadioGroup arg0, int arg1) {
+					try {
+						centerOnGPSLocation();
+						osmap.setKeepScreenOn(true);
+						navigation = true;
+						osmap.onLayerChanged(osmap.getMRendererInfo()
+								.getFullNAME());
+						// final MapRenderer r =
+						// Map.this.osmap.getMRendererInfo();
+						Map.this.osmap.setZoomLevel(17, true);
+						switch (arg1) {
+						case 0:
+							log.log(Level.FINE, "navifation mode vertical on");
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							break;
+						case 1:
+							log.log(Level.FINE, "navifation mode horizontal on");
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							break;
+						default:
+							break;
+						}
+					} catch (Exception e) {
+						log.log(Level.SEVERE, "onCheckedChanged", e);
+					}
+				}
+
+			});
+			AlertDialog.Builder alertCache = new AlertDialog.Builder(this);
+			alertCache
+					.setView(r)
+					.setIcon(R.drawable.menu_navigation)
+					.setTitle(R.string.Map_Navigator)
+					.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+								}
+
+							}).create();
+			alertCache.show();
+			r1.setChecked(true);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}
+	}
+
+	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {
+		// GPSPoint center = this.osmap.getMapCenter();
+		// Point centerDouble = new Point(center.getLongitudeE6() / 1E6, center
+		// .getLatitudeE6() / 1E6);
+		// centerDouble = TileConversor.latLonToMercator(centerDouble.getX(),
+		// centerDouble.getY());
+		// // Point a = new Point(-0.43, 39.4);
+		// // Point b = new Point(-0.3, 39.53);
+		// Extent e = ViewPort.calculateExtent(centerDouble,
+		// Tags.RESOLUTIONS[this.osmap.getZoomLevel()], this.osmap
+		// .getWidth(), this.osmap.getHeight());
+		//
+		// // Extent e = new Extent(-20037508.3427892430765884088807,
+		// // -20037508.3427892430765884088807,
+		// // 20037508.3427892430765884088807,
+		// // 20037508.3427892430765884088807);
+		// // Extent e = new Extent(-5037508.3427892430765884088807,
+		// // -5037508.3427892430765884088807,
+		// // 37508.3427892430765884088807, 37508.3427892430765884088807);
+		// OSMHandler handler = new OSMHandler();
+		// handler.setURL(new String[] { mr.getBASEURL() });
+		//
+		// // YahooHandler h = new YahooHandler();
+		// // h.setURL(new
+		// // String[]{"http://png.maps.yimg.com/png?t=m&v=4.1&s=256&f=j"});
+		//
+		// // String layerName = this.osmap.getMRendererInfo().getNAME();
+		// String layerName = "estoesunaprueba2";
+		//
+		// try {
+		// es.prodevelop.gvsig.mini.phonecache.Cancellable c =
+		// es.prodevelop.gvsig.mini.phonecache.Utilities
+		// .getNewCancellable();
+		// Grid g = new Grid(handler, e, Tags.RESOLUTIONS[minZoom],
+		// Tags.RESOLUTIONS[maxZoom], layerName, c);
+		// g.addDownloadWaiter(this);
+		//
+		// ThreadPool.getInstance().assign(g);
+		// } catch (IOException exc) {
+		// Log.e("", exc.getMessage());
+		// }
+	}
+
+	/**
+	 * Shows an AlertDialog with the results from WeatherFunctionality
+	 * 
+	 * @param ws
+	 *            The results from WeatherFunctionality
+	 */
+	public void showWeather(WeatherSet ws) {
+		try {
+			log.log(Level.FINE, "showWeather");
+			if (ws == null) {
+				log.log(Level.FINE,
+						"ws == null: Can't get weather. Check another location");
+				Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
+						.show();
+				return;
+			}
+			if (ws.getWeatherCurrentCondition() == null) {
+				dialog2.dismiss();
+				AlertDialog.Builder alertW = new AlertDialog.Builder(this);
+				alertW.setCancelable(true);
+				alertW.setIcon(R.drawable.menu03);
+				alertW.setTitle(R.string.error);
+				if (ws.place == null || ws.place.compareTo("") == 0) {
+					ws.place = this.getResources().getString(R.string.Map_9);
+				}
+
+				log.log(Level.FINE, "The weather in " + ws.place
+						+ " is not available");
+				alertW.setMessage(String.format(
+						this.getResources().getString(R.string.Map_10),
+						ws.place));
+
+				alertW.setNegativeButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+							}
+						});
+				alertW.show();
+				return;
+			}
+
+			AlertDialog.Builder alertW = new AlertDialog.Builder(this);
+			alertW.setCancelable(true);
+			alertW.setIcon(R.drawable.menu03);
+			alertW.setTitle(this.getResources().getString(R.string.Map_11)
+					+ " " + ws.place);
+
+			final ListView lv = new ListView(this);
+
+			BulletedTextListAdapter adapter = new BulletedTextListAdapter(this);
+
+			WeatherCurrentCondition wc = ws.getWeatherCurrentCondition();
+
+			adapter.addItem(new BulletedText(new StringBuffer()
+					.append(this.getResources().getString(R.string.Map_12))
+					.append(" - ").append(wc.getTempCelcius()).append(" C")
+					.append("\n").append(wc.getCondition()).append("\n")
+					.append(wc.getWindCondition()).append("\n")
+					.append(wc.getHumidity()).toString(), BulletedText
+					.getRemoteImage(new URL("http://www.google.com"
+							+ wc.getIconURL()))).setSelectable(false));
+
+			ArrayList<WeatherForecastCondition> l = ws
+					.getWeatherForecastConditions();
+
+			WeatherForecastCondition temp;
+			for (int i = 0; i < l.size(); i++) {
+				try {
+					temp = l.get(i);
+					adapter.addItem(new BulletedText(new StringBuffer()
+							.append(temp.getDayofWeek()).append(" - ")
+							.append(temp.getTempMinCelsius()).append(" C")
+							.append("/").append(temp.getTempMaxCelsius())
+							.append(" C").append("\n")
+							.append(temp.getCondition()).toString(),
+							BulletedText
+									.getRemoteImage(new URL(
+											"http://www.google.com"
+													+ temp.getIconURL())))
+							.setSelectable(false));
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "showWeather: ", e);
+				}
+			}
+
+			lv.setAdapter(adapter);
+			lv.setPadding(10, 0, 10, 0);
+
+			alertW.setView(lv);
+
+			alertW.setNegativeButton(
+					this.getResources().getString(R.string.back),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alertW.show();
+			dialog2.dismiss();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showWeather: ", e);
+		} finally {
+		}
+	}
+
+	/**
+	 * Launches the WeatherFunctionality
+	 * 
+	 * @param x
+	 *            The x coordinate
+	 * @param y
+	 *            The y coordinate
+	 * @param SRS
+	 *            The SRS in which the coordinates are expressed
+	 */
+	public void getWeather(double x, double y, String SRS) {
+		try {
+			log.log(Level.FINE, "Launching weather functionality");
+			double[] coords = ConversionCoords.reproject(x, y,
+					CRSFactory.getCRS(SRS), CRSFactory.getCRS("EPSG:4326"));
+
+			WeatherFunctionality w = new WeatherFunctionality(this, 0,
+					coords[1], coords[0]);
+			w.onClick(null);
+			userContext.setUsedWeather(true);
+			userContext.setLastExecWeather();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "getWeather: ", e);
+		}
+	}
+
+	/**
+	 * Shows an AlertDialog indicating that the route calculation has failed
+	 */
+	public void showRouteError() {
+		try {
+			log.log(Level.FINE, "Show route error");
+			dialog2.dismiss();
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setIcon(R.drawable.routes);
+			alert.setTitle(R.string.error);
+			alert.setMessage(R.string.Map_13);
+
+			alert.setNegativeButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showRouteError: ", e);
+		}
+	}
+
+	@Override
+// >>>>>>> master
 	public void onDestroy() {
 		try {
 			super.onDestroy();
@@ -1608,6 +2220,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			return;
 		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
 			this.calculateRoute();
+			i.putExtra(RouteManager.ROUTE_MODIFIED, false);
 		}
 	}
 
@@ -1745,48 +2358,76 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			if (context == null)
 				return;
 
-			LayoutInflater factory = LayoutInflater.from(this);
-			final int[] viewsID = context.getViewsId();
-			final int size = viewsID.length;
+			showCircularView(context);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showContext: ", e);
+		}
+	}
 
-			HashMap h = context.getFunctionalities();
+	public void showCircularView(ItemContext context) {
+		LayoutInflater factory = LayoutInflater.from(this);
+		final int[] viewsID = context.getViewsId();
+		final int size = viewsID.length;
 
-			int id;
-			View view;
-			Functionality func;
-			c = new CircularRouleteView(this, true);
+		HashMap h = context.getFunctionalities();
 
-			for (int i = 0; i < size; i++) {
-				try {
-					id = viewsID[i];
-					view = (View) factory.inflate(id, null);
-					func = (Functionality) h.get(id);
-					if (func != null)
-						view.setOnClickListener(func);
-					c.addView(view);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "show context", e);
+		if (h == null)
+			return;
 
-				}
+		int id;
+		View view;
+		Functionality func;
+		c = new CircularRouleteView(this, true);
+
+		for (int i = 0; i < size; i++) {
+			try {
+				id = viewsID[i];
+				view = (View) factory.inflate(id, null);
+				func = (Functionality) h.get(id);
+				if (func != null)
+					view.setOnClickListener(func);
+				c.addView(view);
+			} catch (Exception e) {
+				log.log(Level.SEVERE, "show context", e);
+
 			}
+		}
 
-			c.setVisibility(View.VISIBLE);
-			final int count = rl.getChildCount();
-			View v;
-			for (int i = 0; i < count; i++) {
-				v = rl.getChildAt(i);
-				if (v instanceof CircularRouleteView) {
-					rl.removeView(v);
-				}
+		c.setVisibility(View.VISIBLE);
+		final int count = rl.getChildCount();
+		View v;
+		for (int i = 0; i < count; i++) {
+			v = rl.getChildAt(i);
+			if (v instanceof CircularRouleteView) {
+				rl.removeView(v);
 			}
-			rl.addView(c);
+		}
+		rl.addView(c);
 
-			// Change user context to store that the CircularRouleteView has
-			// been
-			// shown once at least
-			userContext.setUsedCircleMenu(true);
-			userContext.setLastExecCircle();
-			backpressedroulette = true;
+		// Change user context to store that the CircularRouleteView has
+		// been
+		// shown once at least
+		userContext.setUsedCircleMenu(true);
+		userContext.setLastExecCircle();
+		backpressedroulette = true;
+	}
+
+	/**
+	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
+	 * 
+	 * @param context
+	 *            The ItemContext that contains the IDs of the Drawables to
+	 *            instantiate buttons and associate Functionalities to it
+	 */
+	public void showOverlayContext() {
+		try {
+			final ItemContext context = this.overlayContext;
+
+			if (context == null)
+				return;
+
+			showCircularView(context);
+
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "showContext: ", e);
 		}
@@ -2151,7 +2792,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private void processOfflineIntentActoin(Intent i) throws Exception {
 		Log.d("Map", "OFFLINE_INTENT_ACTION");
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
+// <<<<<<< HEAD
 		// '&gt;' => '>'
+// =======
+		if (completeURLString == null)
+			return;
+		i.removeExtra(Constants.URL_STRING);
+// >>>>>>> master
 		completeURLString = completeURLString.replaceAll("&gt;",
 				MapRenderer.NAME_SEPARATOR);
 		String urlString = completeURLString.split(";")[1];
@@ -2159,10 +2806,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		MapRenderer renderer = MapRendererManager.getInstance()
 				.getMapRendererFactory()
 				.getMapRenderer(layerName, urlString.split(","));
-		if (renderer.isOffline())
-			renderer.setNAME(renderer.getNAME() + MapRenderer.NAME_SEPARATOR
-					+ renderer.getOfflineLayerName());
-		Layers.getInstance().addLayer(renderer.toString());
+		// if (renderer.isOffline())
+		// renderer.setNAME(renderer.getNAME() + MapRenderer.NAME_SEPARATOR
+		// + renderer.getOfflineLayerName());
+		Layers.getInstance().addLayer(completeURLString);
 		Layers.getInstance().persist();
 		Log.d("Map", renderer.getFullNAME());
 		osmap.onLayerChanged(renderer.getFullNAME());
@@ -2174,6 +2821,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		final int zoom = i.getIntExtra("zoom", -1);
 		if (zoom == -1)
 			return;
+		i.putExtra("zoom", -1);
 
 		final double lat = i.getDoubleExtra("lat", 0);
 		final double lon = i.getDoubleExtra("lon", 0);
@@ -2195,10 +2843,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 				setIntent(i);
 				processGeoAction(i);
-				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
-					Log.d("Map", "onCreate with NULL !");
-					onCreate(null);
-				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+// <<<<<<< HEAD
+//				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
+//					Log.d("Map", "onCreate with NULL !");
+//					onCreate(null);
+//				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+// =======
+				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+// >>>>>>> master
 					processActionSearch(i);
 					return;
 				} else {
@@ -2733,6 +3385,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "getWeather: ", e);
 		}
 	}
+//<<<<<<< HEAD
 	*/
 
 	/**
@@ -2760,4 +3413,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.SEVERE, "showRouteError: ", e);
 		}
 	}*/
+// =======
+
+	public void setOverlayContext(ItemContext context) {
+		this.overlayContext = context;
+	}
+
+	public ActionBar getActionbar() {
+		return this.actionBar;
+	}
+	
+	public void setActionbar(ActionBar actionbar) {
+		this.actionBar = actionbar;
+	}
+// >>>>>>> master
 }

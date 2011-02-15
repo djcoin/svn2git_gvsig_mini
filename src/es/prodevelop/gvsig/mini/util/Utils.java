@@ -67,7 +67,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.MapPOI;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 
@@ -96,7 +96,7 @@ public class Utils implements GeoUtils {
 	public final static int MIN_ROTATION = 10;
 	public final static int REPAINT_TIME = 200;
 
-	public static Class DEFAULT_MAP_CLASS = MapPOI.class;
+	public static Class DEFAULT_MAP_CLASS = Map.class;
 
 	public static int[] getMapTileFromCoordinates(final int aLat,
 			final int aLon, final int zoom, final int[] reuse) {

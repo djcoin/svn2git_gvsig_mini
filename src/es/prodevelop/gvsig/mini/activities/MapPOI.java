@@ -56,6 +56,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.AbstractAction;
+
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
@@ -104,6 +108,8 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	MenuItem favItem;
 	MenuItem nearLocItem;
 
+	private boolean poiProviderEnabled = false;
+
 	/**
 	 * Instantiates the UI: TileRaster, ZoomControls, SlideBar in a
 	 * RelativeLayout
@@ -125,6 +131,8 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 								.setBackgroundResource(R.drawable.slide_down_icon);
 						isPOISlideShown = true;
 						osmap.pauseDraw();
+						if (MapPOI.this.c != null)
+							c.setVisibility(View.GONE);
 						z.setVisibility(View.INVISIBLE);
 						if (s.getVisibility() == View.VISIBLE) {
 							wasScaleBarVisible = true;
@@ -359,11 +367,10 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 				break;
 			case FAV_MENU:
 				try {
-					Point center = this.osmap.getMRendererInfo().getCenter();
+					Point center = mMyLocationOverlay.getLocationLonLat();
 					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS(this.osmap
-									.getMRendererInfo().getSRS()), CRSFactory
-									.getCRS("EPSG:900913"));
+							center.getY(), CRSFactory.getCRS("EPSG:4326"),
+							CRSFactory.getCRS("EPSG:900913"));
 					InvokeIntents.launchListBookmarks(this, lonlat);
 				} catch (Exception e) {
 
@@ -377,9 +384,9 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 							.show();
 				} else {
 					Point p = new Point(
-							locOv.mLocation.getLongitudeE6() / 1E6,
-							locOv.mLocation.getLatitudeE6() / 1E6);
-					InvokeIntents.findPOISNear(this, p.toShortString(2));
+							this.mMyLocationOverlay.mLocation.getLongitudeE6() / 1E6,
+							this.mMyLocationOverlay.mLocation.getLatitudeE6() / 1E6);
+					InvokeIntents.findPOISNear(this, p.toShortString(6));
 				}
 				break;
 			case SETTINGS_MENU:
@@ -472,15 +479,37 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		try {
+			if (favItem != null)
+				favItem.setEnabled(poiProviderEnabled);
+
+			if (nearLocItem != null)
+				nearLocItem.setEnabled(poiProviderEnabled);
+
+			if (searchItem != null)
+				searchItem.setEnabled(poiProviderEnabled);
+
+			if (advSearchItem != null)
+				advSearchItem.setEnabled(poiProviderEnabled);
+			return super.onPrepareOptionsMenu(menu);
+		} catch (Exception e) {
+			Log.e("", "Error on prepare menu");
+			return false;
+		}
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu pMenu) {
 		try {
 
-			searchItem = pMenu.add(0, SEARCH_MENU, SEARCH_MENU,
-					R.string.alert_dialog_text_search).setIcon(
-					R.drawable.menu00);
+			// searchItem = pMenu.add(0, SEARCH_MENU, SEARCH_MENU,
+			// R.string.alert_dialog_text_search).setIcon(
+			// R.drawable.menu00);
 
 			advSearchItem = pMenu.add(0, ADV_SEARCH_MENU, ADV_SEARCH_MENU,
-					R.string.advanced_search).setIcon(R.drawable.menu00);
+					R.string.alert_dialog_text_search).setIcon(
+					R.drawable.menu00);
 
 			locationItem = pMenu.add(0, MY_LOC_MENU, MY_LOC_MENU,
 					R.string.Map_4).setIcon(R.drawable.menu_location);
@@ -489,7 +518,7 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 					.setIcon(R.drawable.bookmark_38);// .setEnabled(connection);
 
 			nearLocItem = pMenu.add(0, NEAR_LOC_MENU, NEAR_LOC_MENU,
-					R.string.nearest_places).setIcon(R.drawable.menu00);
+					R.string.nearest_places).setIcon(R.drawable.poi_near);
 
 			settingsItem = pMenu.add(0, SETTINGS_MENU, SETTINGS_MENU,
 					R.string.Map_31).setIcon(
@@ -555,18 +584,101 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 	@Override
 	public void onPOIProviderFail() {
 		sliding.setVisibility(View.INVISIBLE);
-		favItem.setEnabled(false);
-		nearLocItem.setEnabled(false);
-		searchItem.setEnabled(false);
-		advSearchItem.setEnabled(false);
+		poiProviderEnabled = false;
+		// instantiateActionBar();
 	}
 
 	@Override
 	public void onNewPOIProvider() {
 		sliding.setVisibility(View.VISIBLE);
-		favItem.setEnabled(true);
-		nearLocItem.setEnabled(true);
-		searchItem.setEnabled(true);
-		advSearchItem.setEnabled(true);
+		poiProviderEnabled = true;
+		// instantiateActionBar();
+	}
+
+	public void addLayersActivityAction() {
+		try {
+			// if (poiProviderEnabled)
+			getActionbar().addAction(new POISlideAction());
+			super.addLayersActivityAction();
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null) {
+				Log.e("", e.getMessage());
+			}
+		}
+	}
+
+	public void addSearchAction() {
+		// if (poiProviderEnabled)
+		getActionbar().addAction(new SearchAction());
+	}
+
+	// public void instantiateActionBar() {
+	// try {
+	// ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+	//
+	// actionBar.setTitle(R.string.action_bar_title);
+	// setActionbar(actionBar);
+	//
+	// addMyLocationAction();
+	// addLayersActivityAction();
+	// addSearchAction();
+	// } catch (Exception e) {
+	// if (e != null && e.getMessage() != null) {
+	// Log.e("", e.getMessage());
+	// }
+	// }
+	// }
+
+	private class POISlideAction extends AbstractAction {
+
+		public POISlideAction() {
+			super(R.drawable.gd_action_bar_locate);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				if (poiProviderEnabled)
+					if (MapPOI.this.isPOISlideShown)
+						MapPOI.this.sliding.close();
+					else
+						MapPOI.this.sliding.open();
+				else
+					Toast.makeText(MapPOI.this, R.string.no_poi_database,
+							Toast.LENGTH_LONG).show();
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null) {
+					Log.e("", e.getMessage());
+				}
+			}
+		}
+	}
+
+	private class SearchAction extends AbstractAction {
+
+		public SearchAction() {
+			super(R.drawable.gd_action_bar_search);
+		}
+
+		@Override
+		public void performAction(View view) {
+			try {
+				if (poiProviderEnabled) {
+					Intent mainIntent = new Intent(MapPOI.this,
+							SearchExpandableActivity.class);
+					// Point center = this.osmap.getMRendererInfo().getCenter();
+					fillSearchCenter(mainIntent);
+					MapPOI.this.startActivity(mainIntent);
+				} else {
+					Toast.makeText(MapPOI.this, R.string.no_poi_database,
+							Toast.LENGTH_LONG).show();
+				}
+
+			} catch (Exception e) {
+				if (e != null && e.getMessage() != null) {
+					Log.e("", e.getMessage());
+				}
+			}
+		}
 	}
 }

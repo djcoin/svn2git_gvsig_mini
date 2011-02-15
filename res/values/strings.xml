@@ -347,10 +347,13 @@
 	<string name="zoom_to_expand">Zoom in to show more POIs</string>
 	<string name="cluster_elements">%s points. Tap to expand</string>
 	<string name="num_results_found">%s results found</string>
-	<string name="nearest_places">Nearest places</string>
+	<string name="nearest_places">Nearby places</string>
 	<string name="my_guides">My guides</string>
 	<string name="other_maps">Other maps</string>
 	<string name="show_advanced_options">Show advanced options</string>
+	
+	<string name="action_bar_title">gvSIG Mini</string>
+	<string name="no_poi_database">There is no POI database loaded. Go to Maps/Layers and load one of your guides</string>
 </resources>
 
 

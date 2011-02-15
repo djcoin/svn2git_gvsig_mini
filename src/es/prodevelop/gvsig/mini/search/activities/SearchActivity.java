@@ -204,7 +204,7 @@ public abstract class SearchActivity extends ListActivity implements
 			Log.e("", e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
@@ -212,7 +212,7 @@ public abstract class SearchActivity extends ListActivity implements
 				return true;
 			}
 			return super.onKeyDown(keyCode, event);
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -272,15 +272,20 @@ public abstract class SearchActivity extends ListActivity implements
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		((Filterable) getListView().getAdapter()).getFilter().filter(
-				arg0.toString().toLowerCase());
-		getAutoCompleteAdapter().getFilter().filter(
-				arg0.toString().toLowerCase());
-		Log.d("onTextChanged", arg0.toString());
-		this.setTitle(R.string.please_wait);
-		setProgressBarIndeterminateVisibility(true);
-		if (arg0.length() == 0)
-			enableSpinner(arg0.toString());
+		try {
+			((Filterable) getListView().getAdapter()).getFilter().filter(
+					arg0.toString().toLowerCase());
+			getAutoCompleteAdapter().getFilter().filter(
+					arg0.toString().toLowerCase());
+			Log.d("onTextChanged", arg0.toString());
+			this.setTitle(R.string.please_wait);
+			setProgressBarIndeterminateVisibility(true);
+			if (arg0.length() == 0)
+				enableSpinner(arg0.toString());
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+		}
 	}
 
 	public void enableSpinner() {
@@ -359,21 +364,21 @@ public abstract class SearchActivity extends ListActivity implements
 		super.onDestroy();
 		try {
 			// ((PerstOsmPOIClusterProvider)provider).getHelper().close();
-			((PinnedHeaderListAdapter)listAdapter).onDestroy();
-//			final ArrayList list = resultsList;
-//			final int size = list.size();
-//
-//			POI p;
-//			for (int i = 0; i < size; i++) {
-//				try {
-//					p = ((POI) list.get(i));
-//					if (p != null)
-//						p.destroy();
-//				} catch (Exception ignore) {
-//
-//				}
-//			}
-//			((PerstOsmPOIClusterProvider) provider).getHelper().rollback();
+			((PinnedHeaderListAdapter) listAdapter).onDestroy();
+			// final ArrayList list = resultsList;
+			// final int size = list.size();
+			//
+			// POI p;
+			// for (int i = 0; i < size; i++) {
+			// try {
+			// p = ((POI) list.get(i));
+			// if (p != null)
+			// p.destroy();
+			// } catch (Exception ignore) {
+			//
+			// }
+			// }
+			// ((PerstOsmPOIClusterProvider) provider).getHelper().rollback();
 		} catch (Exception e) {
 			Log.e("", e.getMessage() != null ? e.getMessage() : "Fail");
 		}

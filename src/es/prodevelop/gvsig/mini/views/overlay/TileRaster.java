@@ -86,6 +86,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.Toast;
 import es.prodevelop.android.spatialindex.poi.POICategories;
+import es.prodevelop.android.spatialindex.quadtree.provide.BookmarkProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
@@ -710,15 +711,17 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					&& TileRaster.this.mTouchMapOffsetX > -ResourceLoader.MIN_PAN
 					&& TileRaster.this.mTouchMapOffsetY > -ResourceLoader.MIN_PAN) {
 
-				for (IMapOverlay osmvo : this.mOverlays)
-					if (osmvo.onLongPress(e, this)) {
-						map.showContext(osmvo.getItemContext());
-						return true;
-					}
-
 				double[] coords = TileRaster.this.getMRendererInfo()
 						.fromPixels(
 								new int[] { (int) e.getX(), (int) e.getY() });
+
+				for (MapOverlay osmvo : this.mOverlays)
+					if (osmvo.onLongPress(e, this)) {
+						map.setOverlayContext(osmvo.getItemContext());
+						map.showOverlayContext();
+						this.animateTo(coords[0], coords[1]);
+						return true;
+					}
 
 				this.animateTo(coords[0], coords[1]);
 				map.showContext(map.getItemContext());
@@ -1352,8 +1355,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 				}
 
-				// if (!acetateTouch)
-				map.switchSlideBar();
+				if (acetate.getPopupVisibility() == View.VISIBLE)
+					acetate.setPopupVisibility(View.INVISIBLE);
+				else
+					map.switchSlideBar();
 			} catch (Exception ex) {
 				log.log(Level.SEVERE, "singletapconfirmed", ex);
 
@@ -1609,6 +1614,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					bookmarkProvider.getHelper().closeDatabase();
 				} catch (BaseException e) {
 					Log.e("", e.getMessage());
+				} catch (Exception e) {
+					Log.e("", e.getMessage());
 				}
 
 				try {
@@ -1630,11 +1637,19 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					POIProviderManager.getInstance().registerPOIProvider(
 							provider);
 
-					POIProviderManager.getInstance().getPOIProvider()
-							.loadCategories(POICategories.CATEGORIES, null);
+					POIProviderManager
+							.getInstance()
+							.getPOIProvider()
+							.loadCategories(POICategories.CATEGORIES,
+									poiOverlay);
 
 					provider.setCurrentZoomLevel(getZoomLevel());
 
+					POIProviderManager
+							.getInstance()
+							.getBookmarkProvider()
+							.setQuadtreeProviderListener(
+									(BookmarkProviderListener) getOverlay(BookmarkOverlay.DEFAULT_NAME));
 					POIProviderManager
 							.getInstance()
 							.getPOIProvider()
@@ -1651,8 +1666,14 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			try {
 				PerstOsmPOIClusterProvider provider = POIProviderManager
 						.getInstance().getPOIProvider();
-				if (this.poiProviderFailListener != null) {
-					poiProviderFailListener.onNewPOIProvider();
+				if (provider != null) {
+					if (this.poiProviderFailListener != null) {
+						poiProviderFailListener.onNewPOIProvider();
+					}
+				} else {
+					if (this.poiProviderFailListener != null) {
+						poiProviderFailListener.onPOIProviderFail();
+					}
 				}
 			} catch (BaseException e) {
 				if (this.poiProviderFailListener != null) {
@@ -1670,8 +1691,16 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			LayerChangedListener overlay;
 			for (int i = 0; i < length; i++) {
-				overlay = overlays.get(i);
-				overlay.onLayerChanged(layerName);
+				try {
+					overlay = overlays.get(i);
+					if (overlay instanceof ExpandedClusterOverlay)
+						this.removeOverlay(((ExpandedClusterOverlay) overlay)
+								.getName());
+					else
+						overlay.onLayerChanged(layerName);
+				} catch (Exception ignore) {
+
+				}
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onlayerchanged:", e);

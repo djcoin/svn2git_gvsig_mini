@@ -67,26 +67,26 @@ public class BookmarkSymbolSelector extends SymbolSelector {
 	public BookmarkSymbolSelector() {
 
 		TRANSPORTATION = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_16f);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_f);
 		TOURISM = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_16f);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_f);
 		RECREATION = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_16f);
-		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_16f);
+				.getBitmap(R.drawable.p_recreation_sport_playground_f);
+		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_f);
 		PUBLIC_BUILDINGS = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_16f);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_f);
 		ARTS_CULTURE = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_16f);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_f);
 		SHOPS = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_16f);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_f);
 		HEALTH_EMERGENCY = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_16f);
+				.getBitmap(R.drawable.p_health_hospital_f);
 		ACCOMODATION = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_16f);
+				.getBitmap(R.drawable.p_accommodation_hotel_f);
 		ROUTE = ResourceLoader
-				.getBitmap(R.drawable.p_route_tourist_castle2_16f);
+				.getBitmap(R.drawable.p_route_tourist_castle2_f);
 		PLACES = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_16f);
+				.getBitmap(R.drawable.p_places_poi_place_city_f);
 
 		if (PLACES != null) {
 			midIcon[1] = PLACES.getHeight();

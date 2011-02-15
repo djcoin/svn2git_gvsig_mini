@@ -50,8 +50,8 @@ import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 
 public class FindPOISNearActivity extends ResultSearchActivity {
 
-	protected final static int DEFAULT_DISTANCE = 500;
-	
+	protected final static int DEFAULT_DISTANCE = 1000;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +60,7 @@ public class FindPOISNearActivity extends ResultSearchActivity {
 					R.string.NameFinderActivity_0, false);
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
-		}		
+		}
 	}
 
 	@Override

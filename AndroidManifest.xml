@@ -6,8 +6,10 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="true">
+	<application 
+		android:icon="@drawable/icon" android:label="@string/app_name"
+		android:debuggable="true"
+		>
 
 		<activity android:name=".search.activities.StreetSearchActivity"
 			android:label="@string/app_name" android:launchMode="singleTop">

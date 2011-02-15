@@ -54,6 +54,7 @@ import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.util.Utils;
 
+
 /**
  * Base activity to manage log feedback
  * @author aromeu

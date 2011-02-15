@@ -63,7 +63,7 @@ import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
-public class PointOverlay extends MapOverlay {
+public abstract class PointOverlay extends MapOverlay {
 
 	private SymbolSelector selector;
 	private ArrayList points;
@@ -75,11 +75,6 @@ public class PointOverlay extends MapOverlay {
 		super(context, tileRaster, name);
 		renderer = tileRaster.getMRendererInfo();
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public ItemContext getItemContext() {
-		return new RoutePOIContext(getTileRaster().map);
 	}
 
 	protected void convertCoordinates(final String srsFrom, final String srsTo,
@@ -298,7 +293,8 @@ public class PointOverlay extends MapOverlay {
 	@Override
 	public boolean onSingleTapUp(MotionEvent e, TileRaster osmtile) {
 		try {
-			if (!isVisible()) return false;
+			if (!isVisible())
+				return false;
 			super.onSingleTapUp(e, osmtile);
 
 			if (getSelectedIndex() == -1) {

@@ -50,12 +50,14 @@ import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.android.spatialindex.quadtree.memory.cluster.ClusterNode;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
-import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.context.ItemContext;
+import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
 import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Pixel;
+import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.OsmPOISymbolSelector;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
@@ -115,6 +117,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 			Cancellable cancellable) {
 		if (checkRemove())
 			return;
+		setNodeExpanded(true);
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), (ArrayList) pois, cancellable);
 		this.setPoints((ArrayList) pois);
@@ -240,6 +243,18 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	public void destroy() {
 		super.destroy();
 		setNodeExpanded(false);
+	}
+	
+	@Override
+	public ItemContext getItemContext() {
+		try {
+			return new OSMPOIContext(getTileRaster().map, false, false,
+					(Point) getPoints().get(getSelectedIndex()));
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+			return null;
+		}
 	}
 
 	// @Override

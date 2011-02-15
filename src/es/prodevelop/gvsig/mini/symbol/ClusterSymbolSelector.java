@@ -96,70 +96,70 @@ public class ClusterSymbolSelector extends SymbolSelector {
 		this.overlay = overlay;
 		STREET = null;
 		TRANSPORTATION = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_22b);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_m);
 		TOURISM = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_22b);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_m);
 		RECREATION = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_22b);
-		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_22b);
+				.getBitmap(R.drawable.p_recreation_sport_playground_m);
+		FOOD = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_m);
 		PUBLIC_BUILDINGS = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_22b);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_m);
 		ARTS_CULTURE = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_22b);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_m);
 		SHOPS = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_22b);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_m);
 		HEALTH_EMERGENCY = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_22b);
+				.getBitmap(R.drawable.p_health_hospital_m);
 		ACCOMODATION = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_22b);
+				.getBitmap(R.drawable.p_accommodation_hotel_m);
 		ROUTE = ResourceLoader
-				.getBitmap(R.drawable.p_route_tourist_castle2_22b);
+				.getBitmap(R.drawable.p_route_tourist_castle2_m);
 		PLACES = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_22b);
+				.getBitmap(R.drawable.p_places_poi_place_city_m);
 
 		TRANSPORTATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_28b);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_h);
 		TOURISM_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_28b);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_h);
 		RECREATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_28b);
-		FOOD_BIG = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_28b);
+				.getBitmap(R.drawable.p_recreation_sport_playground_h);
+		FOOD_BIG = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_h);
 		PUBLIC_BUILDINGS_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_28b);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_h);
 		ARTS_CULTURE_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_28b);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_h);
 		SHOPS_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_28b);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_h);
 		HEALTH_EMERGENCY_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_28b);
+				.getBitmap(R.drawable.p_health_hospital_h);
 		ACCOMODATION_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_28b);
+				.getBitmap(R.drawable.p_accommodation_hotel_h);
 		ROUTE_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_route_tourist_castle2_28b);
+				.getBitmap(R.drawable.p_route_tourist_castle2_h);
 		PLACES_BIG = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_28b);
+				.getBitmap(R.drawable.p_places_poi_place_city_h);
 
 		TRANSPORTATION_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_transportation_transport_bus_stop_18b);
+				.getBitmap(R.drawable.p_transportation_transport_bus_stop_l);
 		TOURISM_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_tourism_tourist_attraction_18b);
+				.getBitmap(R.drawable.p_tourism_tourist_attraction_l);
 		RECREATION_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_recreation_sport_playground_18b);
-		FOOD_SMALL = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_18b);
+				.getBitmap(R.drawable.p_recreation_sport_playground_l);
+		FOOD_SMALL = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_l);
 		PUBLIC_BUILDINGS_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_public_buildings_tourist_monument_18b);
+				.getBitmap(R.drawable.p_public_buildings_tourist_monument_l);
 		ARTS_CULTURE_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_18b);
+				.getBitmap(R.drawable.p_arts_culture_tourist_theatre_l);
 		SHOPS_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_shops_shopping_supermarket_18b);
+				.getBitmap(R.drawable.p_shops_shopping_supermarket_l);
 		HEALTH_EMERGENCY_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_health_hospital_18b);
+				.getBitmap(R.drawable.p_health_hospital_l);
 		ACCOMODATION_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_accommodation_hotel_18b);
+				.getBitmap(R.drawable.p_accommodation_hotel_l);
 		ROUTE_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_route_tourist_castle2_18b);
+				.getBitmap(R.drawable.p_route_tourist_castle2_l);
 		PLACES_SMALL = ResourceLoader
-				.getBitmap(R.drawable.p_places_poi_place_city_18b);
+				.getBitmap(R.drawable.p_places_poi_place_city_l);
 
 		if (PLACES != null) {
 			midIconMedium[0] = PLACES.getWidth();

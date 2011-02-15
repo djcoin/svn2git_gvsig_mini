@@ -47,10 +47,10 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ExpandableListActivity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -63,6 +63,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -103,6 +104,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 		super.onCreate(icicle);
 		// setContentView(R.layout.search_expandable_main);
 		try {
+			setTitle(R.string.search_hint);
 			setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
 			expListAdapter = new CheckboxExpandableListAdapter(this,
@@ -203,6 +205,7 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 					advButton.setVisibility(View.GONE);
 					l.findViewById(android.R.id.list).setVisibility(
 							View.VISIBLE);
+//					l.setLayoutAnimation(null);
 				}
 			});
 
@@ -242,6 +245,35 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 			handleIntent(getIntent());
 		} catch (Exception e) {
 			Log.e("", e.getMessage());
+		} finally {
+			if (autoCompleteTextView != null) {
+				autoCompleteTextView
+						.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+							@Override
+							public void onFocusChange(View v, boolean hasFocus) {
+								if (hasFocus) {
+									// getWindow()
+									// .setSoftInputMode(
+									// WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+									InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									// only will trigger it if no physical
+									// keyboard is open
+									mgr.showSoftInput(autoCompleteTextView,
+											InputMethodManager.SHOW_IMPLICIT);
+								} else {
+									// getWindow()
+									// .setSoftInputMode(
+									// WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+									InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+									mgr.hideSoftInputFromWindow(
+											autoCompleteTextView
+													.getWindowToken(), 0);
+								}
+							}
+						});
+				autoCompleteTextView.clearFocus();
+				autoCompleteTextView.requestFocus();
+			}
 		}
 	}
 
@@ -344,43 +376,56 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 
 	private ArrayList getSelectedCategoriesAndSubcategories() {
 		ArrayList list = new ArrayList();
-		final boolean[] groups = expListAdapter.parentChecked;
-		final int length = groups.length;
+		try {
+			final boolean[] groups = expListAdapter.parentChecked;
+			final int length = groups.length;
 
-		final boolean[][] childs = expListAdapter.childChecked;
-		// final int cLength = childs.length;
+			final boolean[][] childs = expListAdapter.childChecked;
+			// final int cLength = childs.length;
 
-		// iterate categories
-		for (int i = 0; i < length; i++) {
-			// if is checked iterate subcategories
-			if (groups[i]) {
-				ArrayList subc = new ArrayList();
-				// for (int n = 0; n < cLength; n++) {
-				final int ccLength = subcategories[i].length;
-				boolean allChecked = true;
-				for (int j = 0; j < ccLength; j++) {
-					if (!childs[i][j]) {
-						allChecked = false;
+			// iterate categories
+			for (int i = 0; i < length; i++) {
+				// if is checked iterate subcategories
+				if (groups[i]) {
+					ArrayList subc = new ArrayList();
+					// for (int n = 0; n < cLength; n++) {
+					final int ccLength = childs[i].length;
+					boolean allChecked = true;
+					for (int j = 0; j < ccLength; j++) {
+						try {
+							if (!childs[i][j]) {
+								allChecked = false;
+							} else {
+								subc.add(this.subcategories[i][j]);
+							}
+						} catch (Exception e) {
+							if (e != null && e.getMessage() != null)
+								Log.e("", e.getMessage());
+						}
+					}
+					// if are all checked add the category,
+					// else add the subcategories checked
+					if (allChecked) {
+						if (this.categories[i] != null) {
+							Log.d("", "Added category: " + this.categories[i]);
+							list.add(this.categories[i]);
+						}
 					} else {
-						subc.add(this.subcategories[i][j]);
+						final int size = subc.size();
+						for (int m = 0; m < size; m++) {
+							Log.d("", "Added subcategory: "
+									+ subc.get(m).toString());
+							list.add(subc.get(m).toString());
+						}
 					}
+					// }
 				}
-				// if are all checked add the category,
-				// else add the subcategories checked
-				if (allChecked) {
-					Log.d("", "Added category: " + this.categories[i]);
-					list.add(this.categories[i]);
-				} else {
-					final int size = subc.size();
-					for (int m = 0; m < size; m++) {
-						Log.d("", "Added subcategory: "
-								+ subc.get(m).toString());
-						list.add(subc.get(m).toString());
-					}
-				}
-				// }
 			}
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
 		}
+
 		return list;
 	}
 
@@ -477,7 +522,12 @@ public class SearchExpandableActivity extends ExpandableListActivity implements
 	@Override
 	public void onTextChanged(final CharSequence arg0, int arg1, int arg2,
 			int arg3) {
-		filter(arg0.toString());
+		try {
+			filter(arg0.toString());
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+		}
 	}
 
 	public void filter(String text) {

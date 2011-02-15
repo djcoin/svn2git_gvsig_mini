@@ -33,7 +33,7 @@
 		android:orientation="vertical" android:gravity="center_horizontal">
 		<Button android:id="@+id/advanced_button" android:text="@string/show_advanced_options"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:clickable="true" android:gravity="center_horizontal" />
+			android:gravity="center_horizontal" />
 	</LinearLayout>
 	<LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -41,6 +41,7 @@
 		android:orientation="vertical" android:gravity="bottom">
 		<ExpandableListView android:id="@+id/android:list"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:clickable="true" android:visibility="gone" />
+			android:visibility="gone" android:focusable="true"
+			android:focusableInTouchMode="true" />
 	</LinearLayout>
 </LinearLayout>

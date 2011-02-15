@@ -40,32 +40,24 @@ package es.prodevelop.gvsig.mini.views.overlay;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import es.prodevelop.android.spatialindex.cluster.Cluster;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
-import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.provide.BookmarkProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
-import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini.context.ItemContext;
+import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
-import es.prodevelop.gvsig.mini.geom.Extent;
 import es.prodevelop.gvsig.mini.geom.Feature;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.geom.Point;
-import es.prodevelop.gvsig.mini.namefinder.Named;
-import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.symbol.BookmarkSymbolSelector;
-import es.prodevelop.gvsig.mini.symbol.SymbolSelector;
-import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 
@@ -83,6 +75,8 @@ public class BookmarkOverlay extends PointOverlay implements
 	public BookmarkOverlay(Context context, TileRaster tileRaster, String name) {
 		super(context, tileRaster, name);
 		setSymbolSelector(new BookmarkSymbolSelector());
+		refreshPOIs();
+		refreshStreets();
 	}
 
 	public void refreshPOIs() {
@@ -107,13 +101,8 @@ public class BookmarkOverlay extends PointOverlay implements
 
 	@Override
 	protected void onDraw(Canvas c, TileRaster maps) {
-		super.onDraw(c, maps);
+		// super.onDraw(c, maps);
 		final MapRenderer renderer = this.getTileRaster().getMRendererInfo();
-
-		if (pois == null && streets == null) {
-			refreshPOIs();
-			refreshStreets();
-		}
 
 		draw(pois, renderer, c);
 		draw(streets, renderer, c);
@@ -122,7 +111,8 @@ public class BookmarkOverlay extends PointOverlay implements
 	@Override
 	public Feature getNearestFeature(Pixel pixel) {
 		try {
-			if (!isVisible()) return null;
+			if (!isVisible())
+				return null;
 
 			final ArrayList pois = this.pois;
 			final ArrayList streets = this.streets;
@@ -242,7 +232,8 @@ public class BookmarkOverlay extends PointOverlay implements
 	@Override
 	public void onPOISRetrieved(Collection pois, boolean clearPrevious,
 			Cancellable cancellable) {
-		this.pois = (ArrayList) pois;
+		if (pois != null && pois.size() > 0)
+			this.pois = (ArrayList) pois;
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo()
 				.getSRS(), this.pois, null);
 		getTileRaster().resumeDraw();
@@ -283,7 +274,23 @@ public class BookmarkOverlay extends PointOverlay implements
 	public void onClusterExpanded(Collection pois, boolean clearPrevious,
 			Cancellable cancellable, Cluster clusterExpanded) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public ItemContext getItemContext() {
+		try {
+			Point p = null;
+			if (isSelectedPOI)
+				p = (Point) pois.get(getSelectedIndex());
+			else
+				p = (Point) streets.get(getSelectedIndex());
+			return new OSMPOIContext(getTileRaster().map, true, false, p);
+		} catch (Exception e) {
+			if (e != null && e.getMessage() != null)
+				Log.e("", e.getMessage());
+			return null;
+		}
 	}
 
 }

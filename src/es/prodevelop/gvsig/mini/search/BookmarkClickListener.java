@@ -42,12 +42,15 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.search.activities.SearchActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.BookmarkManagerTask;
+import es.prodevelop.gvsig.mini.util.ActionItem;
+import es.prodevelop.gvsig.mini.util.QuickAction;
 
 public class BookmarkClickListener extends POIItemClickContextListener {
 
@@ -62,10 +65,27 @@ public class BookmarkClickListener extends POIItemClickContextListener {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void addBookmark() {
-		adapter.addItem(new BulletedText(activity.getResources().getString(
-				R.string.remove_bookmark), activity.getResources().getDrawable(
-				R.drawable.bt_star_remove)));
+	public void addBookmark(final POI p, final QuickAction qa) {
+		final ActionItem bookmarkItem = new ActionItem();
+
+		bookmarkItem.setTitle(activity.getResources().getString(
+				R.string.remove_bookmark));
+		bookmarkItem.setIcon(activity.getResources().getDrawable(
+				R.drawable.bt_star_remove_s));
+		bookmarkItem.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					// bookmark
+					processBookmark(p);
+					qa.dismiss();
+				} catch (Exception e) {
+					Log.e("", "Error on streets near");
+				}
+			}
+		});
+
+		qa.addActionItem(bookmarkItem);
 	}
 
 	public void processBookmark(POI p) {
