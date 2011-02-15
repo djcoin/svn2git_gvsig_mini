@@ -149,6 +149,9 @@ import es.prodevelop.gvsig.mini.views.overlay.RouteOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlideBar;
 import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.factory.FactoryOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.factory.IFactoryOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.factory.LocationOverlay;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.IDownloadWaiter;
@@ -186,7 +189,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	// TODO should be changed ; customized etc. // MapState and so much!
 	public ShowController showCtrl = ShowController.getInstance(this);
 	public TileRaster osmap;
-	public ViewSimpleLocationOverlay mMyLocationOverlay; // special overlays used when location are shown
+	public LocationOverlay locationOverlay; // special overlays used when location are shown
+	
+	// Use the creation of this factory to set up the overlays you prefer (typically, the StubLocationOverlay)
+	private IFactoryOverlay factoryLocationOverlay = new FactoryOverlay();
+	
 	
 	// private SensorManager mSensorManager;
 	public Handler mHandler;
@@ -641,7 +648,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE,
 					"onLocationChanged (lon, lat): " + pLoc.getLongitude()
 							+ ", " + pLoc.getLatitude());
-			this.mMyLocationOverlay.setLocation(
+			this.locationOverlay.setLocation(
 					MapLocation.locationToGeoPoint(pLoc), pLoc.getAccuracy(),
 					pLoc.getProvider());
 			if (recenterOnGPS && pLoc.getLatitude() != 0
@@ -655,7 +662,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			}
 			// osmap.animateTo(pLoc.getLongitude(), pLoc
 			// .getLatitude());
-			if (mMyLocationOverlay.mLocation != null) {
+			if (locationOverlay.mLocation != null) {
 				connection = true;
 				MenuHelper.getInstance(this).prepareNavigator(connection);
 			}
@@ -693,7 +700,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	
 	public void fillSearchCenter(Intent i) {
-		Point center = this.mMyLocationOverlay.getLocationLonLat();
+		Point center = this.locationOverlay.getLocationLonLat();
 		double[] lonlat = ConversionCoords.reproject(center.getX(),
 				center.getY(), CRSFactory.getCRS("EPSG:4326"),
 				CRSFactory.getCRS("EPSG:900913"));
@@ -1147,7 +1154,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// metrics.widthPixels,
 			// metrics.heightPixels);
 			osmap.onLayerChanged(mapLayer);
-			this.mMyLocationOverlay.loadState(outState);
+			this.locationOverlay.loadState(outState);
 			log.log(Level.FINE, "map loaded");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "loadMap: ", e);
@@ -1235,7 +1242,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "save map to bundle");
 			outState.putString("maplayer", osmap.getMRendererInfo()
 					.getFullNAME());
-			this.mMyLocationOverlay.saveState(outState);
+			this.locationOverlay.saveState(outState);
 			ItemContext context = this.getItemContext();
 			if (context != null)
 				outState.putString("contextClassName", context.getClass()
@@ -1277,6 +1284,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 * 
 	 * @param savedInstanceState
 	 */
+	// TODO move all this ? is it responsible for creating all this stuff ?
 	public void loadUI(Bundle savedInstanceState) {
 		try {
 			log.log(Level.FINE, "load UI");
@@ -1293,14 +1301,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			/* Creating the main Overlay */
 			{
-				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
+				// default name... hum
+				this.locationOverlay = factoryLocationOverlay.createLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
 
 				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
 						NameFinderOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(new RouteOverlay(this, osmap,
 						RouteOverlay.DEFAULT_NAME));
-				this.osmap.addOverlay(mMyLocationOverlay);
+				this.osmap.addOverlay(locationOverlay);
 			}
 
 			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
@@ -1790,7 +1799,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void onSensorChanged(SensorEvent event) {
 		try {
 			boolean repaint = osmap.getMRendererInfo().getCurrentExtent()
-					.contains(this.mMyLocationOverlay.reprojectedCoordinates);
+					.contains(this.locationOverlay.reprojectedCoordinates);
 
 			this.osmap.mBearing = (int) event.values[0];
 			long current = System.currentTimeMillis();
@@ -2156,11 +2165,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			super.onConfigurationChanged(config);
 			log.log(Level.FINE, "onConfigurationChanged");
 			if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-				this.mMyLocationOverlay
-						.setOffsetOrientation(ViewSimpleLocationOverlay.PORTRAIT_OFFSET_ORIENTATION);
+				this.locationOverlay
+						.setOffsetOrientation(LocationOverlay.PORTRAIT_OFFSET_ORIENTATION);
 			} else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				this.mMyLocationOverlay
-						.setOffsetOrientation(ViewSimpleLocationOverlay.LANDSCAPE_OFFSET_ORIENTATION);
+				this.locationOverlay
+						.setOffsetOrientation(LocationOverlay.LANDSCAPE_OFFSET_ORIENTATION);
 			}
 			DisplayMetrics metrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -2375,13 +2384,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
-	public ViewSimpleLocationOverlay getmMyLocationOverlay() {
-		return mMyLocationOverlay;
+	public LocationOverlay getmMyLocationOverlay() {
+		return locationOverlay;
 	}
 
 	public void setmMyLocationOverlay(
-			ViewSimpleLocationOverlay mMyLocationOverlay) {
-		this.mMyLocationOverlay = mMyLocationOverlay;
+			LocationOverlay mMyLocationOverlay) {
+		this.locationOverlay = mMyLocationOverlay;
 	}
 
 	/**
@@ -2389,7 +2398,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void centerOnGPSLocation() {
 		try {
-			final GPSPoint location = this.mMyLocationOverlay.mLocation;
+			final GPSPoint location = this.locationOverlay.mLocation;
 			if (location != null) {
 				this.osmap.setMapCenter(location);
 			}

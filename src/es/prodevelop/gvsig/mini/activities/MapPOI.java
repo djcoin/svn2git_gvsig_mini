@@ -74,6 +74,7 @@ import es.prodevelop.gvsig.mini.views.overlay.ResultSearchOverlay;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerCloseListener;
 import es.prodevelop.gvsig.mini.views.overlay.SlidingDrawer2.OnDrawerOpenListener;
+import es.prodevelop.gvsig.mini.views.overlay.factory.LocationOverlay;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.layers.Layers;
 
@@ -311,6 +312,7 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		LocationOverlay locOv = this.locationOverlay;
 		boolean result = true;
 		try {
 			switch (item.getItemId()) {
@@ -334,21 +336,21 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 				break;
 			case MY_LOC_MENU:
 				try {
-					if (this.mMyLocationOverlay.mLocation == null
-							|| (this.mMyLocationOverlay.mLocation
-									.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
+					if (this.locationOverlay.mLocation == null
+							|| (this.locationOverlay.mLocation
+									.getLatitudeE6() == 0 && this.locationOverlay.mLocation
 									.getLongitudeE6() == 0)) {
 						Toast.makeText(this, R.string.Map_24, Toast.LENGTH_LONG)
 								.show();
 						return true;
 					}
 					this.osmap
-							.adjustViewToAccuracyIfNavigationMode(this.mMyLocationOverlay.mLocation.acc);
+							.adjustViewToAccuracyIfNavigationMode(locOv.mLocation.acc);
 					this.osmap
 							.setMapCenterFromLonLat(
-									this.mMyLocationOverlay.mLocation
+									locOv.mLocation
 											.getLongitudeE6() / 1E6,
-									this.mMyLocationOverlay.mLocation
+											locOv.mLocation
 											.getLatitudeE6() / 1E6);
 
 				} catch (Exception e) {
@@ -368,15 +370,15 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 				}
 				break;
 			case NEAR_LOC_MENU:
-				if (this.mMyLocationOverlay.mLocation == null
-						|| (this.mMyLocationOverlay.mLocation.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
+				if (locOv.mLocation == null
+						|| (locOv.mLocation.getLatitudeE6() == 0 && locOv.mLocation
 								.getLongitudeE6() == 0)) {
 					Toast.makeText(this, R.string.Map_24, Toast.LENGTH_LONG)
 							.show();
 				} else {
 					Point p = new Point(
-							this.mMyLocationOverlay.mLocation.getLongitudeE6() / 1E6,
-							this.mMyLocationOverlay.mLocation.getLatitudeE6() / 1E6);
+							locOv.mLocation.getLongitudeE6() / 1E6,
+							locOv.mLocation.getLatitudeE6() / 1E6);
 					InvokeIntents.findPOISNear(this, p.toShortString(2));
 				}
 				break;

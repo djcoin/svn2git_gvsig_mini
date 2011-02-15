@@ -28,12 +28,12 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
  *   2009.
- *   author Rubén Blanco rblanco@prodevelop.es
+ *   author Rubï¿½n Blanco rblanco@prodevelop.es
  *
  *
  * Original version of the code made by Nicolas Gramlich.
@@ -50,7 +50,7 @@
  * 
  */
 
-package es.prodevelop.gvsig.mini.views.overlay;
+package es.prodevelop.gvsig.mini.views.overlay.factory;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -66,6 +66,7 @@ import es.prodevelop.gvsig.mini.map.ExtentChangedListener;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.LayerChangedListener;
 import es.prodevelop.gvsig.mini.map.ViewPort;
+import es.prodevelop.gvsig.mini.views.overlay.TileRaster;
 
 /**
  * A very very simple abstraction of a GIS Layer
@@ -74,8 +75,7 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
  * @author rblanco
  * 
  */
-public abstract class MapOverlay implements GeoUtils, Contextable,
-		ExtentChangedListener, LayerChangedListener {
+public abstract class MapOverlay implements IMapOverlay {
 
 	private TileRaster tileRaster;
 	private Context context;

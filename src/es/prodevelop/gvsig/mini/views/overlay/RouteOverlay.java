@@ -54,6 +54,7 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Pixel;
 import es.prodevelop.gvsig.mini.map.ViewPort;
+import es.prodevelop.gvsig.mini.views.overlay.factory.MapOverlay;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 
 /**

@@ -147,21 +147,21 @@ public class MenuHelper {
 					// if (map.mMyLocationOverlay.mLocation != null &&
 					// recenterOnGPS) {
 					log.log(Level.FINE, "click on my location menu item");
-					if (map.mMyLocationOverlay.mLocation == null
-							|| (map.mMyLocationOverlay.mLocation
-									.getLatitudeE6() == 0 && map.mMyLocationOverlay.mLocation
+					if (map.locationOverlay.mLocation == null
+							|| (map.locationOverlay.mLocation
+									.getLatitudeE6() == 0 && map.locationOverlay.mLocation
 									.getLongitudeE6() == 0)) {
 						Toast.makeText(map, R.string.Map_24, Toast.LENGTH_LONG)
 						.show();
 						return true;
 					}
 					map.osmap
-					.adjustViewToAccuracyIfNavigationMode(map.mMyLocationOverlay.mLocation.acc);
+					.adjustViewToAccuracyIfNavigationMode(map.locationOverlay.mLocation.acc);
 					map.osmap
 					.setMapCenterFromLonLat(
-							map.mMyLocationOverlay.mLocation
+							map.locationOverlay.mLocation
 							.getLongitudeE6() / 1E6,
-							map.mMyLocationOverlay.mLocation
+							map.locationOverlay.mLocation
 							.getLatitudeE6() / 1E6);
 					// }
 				} catch (Exception e) {

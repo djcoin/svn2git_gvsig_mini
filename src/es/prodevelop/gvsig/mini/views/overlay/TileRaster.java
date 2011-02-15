@@ -123,6 +123,7 @@ import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Cancellable;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
+import es.prodevelop.gvsig.mini.views.overlay.factory.IMapOverlay;
 import es.prodevelop.gvsig.mini.yours.Route;
 import es.prodevelop.gvsig.mini.yours.RouteManager;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
@@ -200,7 +201,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	protected final GestureDetector mGestureDetector = new GestureDetector(
 			new OpenStreetMapViewGestureDetectorListener());
 
-	protected final List<MapOverlay> mOverlays = new ArrayList<MapOverlay>();
+	protected final List<IMapOverlay> mOverlays = new ArrayList<IMapOverlay>();
 
 	private int previousRotation = 999;
 	public int pixelX;
@@ -298,11 +299,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	}
 
 	public boolean containsOverlay(String name) {
-		final List<MapOverlay> overlays = this.mOverlays;
+		final List<IMapOverlay> overlays = this.mOverlays;
 
 		final int size = overlays.size();
 
-		MapOverlay overlay;
+		IMapOverlay overlay;
 		for (int i = 0; i < size; i++) {
 			overlay = overlays.get(i);
 			if (overlay.getName().compareTo(name) == 0) {
@@ -312,7 +313,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		return false;
 	}
 
-	public void addOverlay(MapOverlay overlay) {
+	public void addOverlay(IMapOverlay overlay) {
 		if (containsOverlay(overlay.getName())) {
 			overlay.onLayerChanged("");
 		} else {
@@ -327,9 +328,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	}
 
 	public void removeOverlay(String name) {
-		final List<MapOverlay> overlays = this.mOverlays;
+		final List<IMapOverlay> overlays = this.mOverlays;
 
-		List<MapOverlay> copyOverlays = new ArrayList();
+		List<IMapOverlay> copyOverlays = new ArrayList();
 
 		int size = overlays.size();
 
@@ -337,9 +338,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			copyOverlays.add(mOverlays.get(i));
 		}
 
-		Iterator<MapOverlay> it = copyOverlays.iterator();
+		Iterator<IMapOverlay> it = copyOverlays.iterator();
 
-		MapOverlay overlay;
+		IMapOverlay overlay;
 
 		while (it.hasNext()) {
 			try {
@@ -362,12 +363,12 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		// copyOverlays = null;
 	}
 
-	public MapOverlay getOverlay(String name) {
-		final List<MapOverlay> overlays = this.mOverlays;
+	public IMapOverlay getOverlay(String name) {
+		final List<IMapOverlay> overlays = this.mOverlays;
 
 		final int size = overlays.size();
 
-		MapOverlay overlay;
+		IMapOverlay overlay;
 		for (int i = 0; i < size; i++) {
 			overlay = overlays.get(i);
 			if (overlay.getName().compareTo(name) == 0) {
@@ -709,7 +710,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					&& TileRaster.this.mTouchMapOffsetX > -ResourceLoader.MIN_PAN
 					&& TileRaster.this.mTouchMapOffsetY > -ResourceLoader.MIN_PAN) {
 
-				for (MapOverlay osmvo : this.mOverlays)
+				for (IMapOverlay osmvo : this.mOverlays)
 					if (osmvo.onLongPress(e, this)) {
 						map.showContext(osmvo.getItemContext());
 						return true;
@@ -735,7 +736,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		try {
-			for (MapOverlay osmvo : this.mOverlays)
+			for (IMapOverlay osmvo : this.mOverlays)
 				if (osmvo.onKeyDown(keyCode, event, this))
 					return true;
 
@@ -748,7 +749,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		try {
-			for (MapOverlay osmvo : this.mOverlays)
+			for (IMapOverlay osmvo : this.mOverlays)
 				if (osmvo.onKeyUp(keyCode, event, this))
 					return true;
 		} catch (Exception e) {
@@ -769,7 +770,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 									(int) centerPixelY + y });
 			System.out.println("x, y: " + coords[0] + ", " + coords[1]);
 			this.setMapCenter(coords[0], coords[1]);
-			for (MapOverlay osmvo : this.mOverlays)
+			for (IMapOverlay osmvo : this.mOverlays)
 				osmvo.onTrackballEvent(event, this);
 			// return true;
 		} catch (Exception e) {
@@ -783,7 +784,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		try {
 			final int size = this.mOverlays.size();
 			int i = 0;
-			MapOverlay overlay;
+			IMapOverlay overlay;
 
 			resumeDraw();
 			if (map.isPOISlideShown())
@@ -1129,10 +1130,10 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						.getZoomLevel());
 			}
 
-			final ArrayList<MapOverlay> overlays = (ArrayList<MapOverlay>) this.mOverlays;
+			final ArrayList<IMapOverlay> overlays = (ArrayList<IMapOverlay>) this.mOverlays;
 			final int numLayers = overlays.size();
 
-			MapOverlay o;
+			IMapOverlay o;
 			for (int i = 0; i < numLayers; i++) {
 				try {
 					o = overlays.get(i);
@@ -1340,7 +1341,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					return true;
 
 				try {
-					for (MapOverlay osmvo : TileRaster.this.mOverlays)
+					for (IMapOverlay osmvo : TileRaster.this.mOverlays)
 						try {
 							if (osmvo.onSingleTapUp(e, TileRaster.this))
 								return true;
@@ -1663,7 +1664,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// this.poiOverlay.getPoiProvider())
 			// .execute(POICategories.CATEGORIES);
 
-			final List<MapOverlay> overlays = this.mOverlays;
+			final List<IMapOverlay> overlays = this.mOverlays;
 
 			final int length = overlays.size();
 
@@ -1698,9 +1699,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	}
 
 	public void removeExpanded(String cat) {
-		final List<MapOverlay> overlays = this.mOverlays;
+		final List<IMapOverlay> overlays = this.mOverlays;
 
-		List<MapOverlay> copyOverlays = new ArrayList();
+		List<IMapOverlay> copyOverlays = new ArrayList();
 
 		int size = overlays.size();
 
@@ -1708,9 +1709,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			copyOverlays.add(mOverlays.get(i));
 		}
 
-		MapOverlay overlay;
+		IMapOverlay overlay;
 
-		Iterator<MapOverlay> it = copyOverlays.iterator();
+		Iterator<IMapOverlay> it = copyOverlays.iterator();
 
 		while (it.hasNext()) {
 			overlay = it.next();
@@ -1729,9 +1730,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 	public boolean removeExpanded() {
 		try {
-			final List<MapOverlay> overlays = this.mOverlays;
+			final List<IMapOverlay> overlays = this.mOverlays;
 
-			List<MapOverlay> copyOverlays = new ArrayList();
+			List<IMapOverlay> copyOverlays = new ArrayList();
 
 			int size = overlays.size();
 
@@ -1739,9 +1740,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				copyOverlays.add(mOverlays.get(i));
 			}
 
-			MapOverlay overlay;
+			IMapOverlay overlay;
 
-			Iterator<MapOverlay> it = copyOverlays.iterator();
+			Iterator<IMapOverlay> it = copyOverlays.iterator();
 
 			while (it.hasNext()) {
 				overlay = it.next();
@@ -2488,7 +2489,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			acetate.destroy();
 			mTileProvider.destroy();
 
-			for (MapOverlay m : mOverlays) {
+			for (IMapOverlay m : mOverlays) {
 				m.destroy();
 			}
 

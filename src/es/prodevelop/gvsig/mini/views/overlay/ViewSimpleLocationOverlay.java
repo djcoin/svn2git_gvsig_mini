@@ -80,6 +80,8 @@ import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.Tags;
+import es.prodevelop.gvsig.mini.views.overlay.factory.LocationOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.factory.MapOverlay;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 import es.prodevelop.tilecache.renderer.MapRenderer;
 import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
@@ -91,10 +93,12 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
  * @author rblanco
  * 
  */
-public class ViewSimpleLocationOverlay extends MapOverlay {
+public class ViewSimpleLocationOverlay extends LocationOverlay {
 
 	public final static String DEFAULT_NAME = "LOCATION";
-
+	private int offsetOrientation = PORTRAIT_OFFSET_ORIENTATION;
+	private int navigationOrientation = NAVIGATION_MODE;
+	
 	protected Bitmap ob = null;
 	protected Bitmap PERSON_ICON = null;
 	public int rotation;
@@ -110,12 +114,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 	protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(
 			18, 18);
 
-	public GPSPoint mLocation;
-	private int offsetOrientation = PORTRAIT_OFFSET_ORIENTATION;
-	private int navigationOrientation = NAVIGATION_MODE;
-	public final static int PORTRAIT_OFFSET_ORIENTATION = 0;
-	public final static int LANDSCAPE_OFFSET_ORIENTATION = 90;
-	public final static int NAVIGATION_MODE = 0;
+	public GPSPoint mLocation;	
 	Path p;
 	public double[] reprojectedCoordinates;
 

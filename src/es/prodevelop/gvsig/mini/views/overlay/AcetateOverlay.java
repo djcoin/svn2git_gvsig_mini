@@ -66,6 +66,7 @@ import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.search.activities.POIDetailsActivity;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
+import es.prodevelop.gvsig.mini.views.overlay.factory.MapOverlay;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 /**
@@ -346,9 +347,13 @@ public class AcetateOverlay extends MapOverlay {
 				if (f.getGeometry() instanceof OsmPOI) {
 					Intent i = new Intent(getContext(),
 							POIDetailsActivity.class);
+					
+					// FIX THIS -> check if some LocationOverlay is present... or check if Location is enabled
+					// But not by NAME!
 					Point center = ((ViewSimpleLocationOverlay) (getTileRaster()
 							.getOverlay(ViewSimpleLocationOverlay.DEFAULT_NAME)))
 							.getLocationLonLat();
+					
 					double[] xy = ConversionCoords.reproject(center.getX(),
 							center.getY(), CRSFactory.getCRS("EPSG:4326"),
 							CRSFactory.getCRS("EPSG:900913"));

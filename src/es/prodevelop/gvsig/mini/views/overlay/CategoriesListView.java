@@ -77,6 +77,8 @@ import es.prodevelop.gvsig.mini.search.activities.StreetSearchActivity;
 import es.prodevelop.gvsig.mini.search.view.PinnedHeaderListView;
 import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.views.overlay.factory.IMapOverlay;
+import es.prodevelop.gvsig.mini.views.overlay.factory.MapOverlay;
 import es.prodevelop.gvsig.mobile.fmap.proj.CRSFactory;
 
 public class CategoriesListView extends PinnedHeaderListView {
@@ -307,7 +309,7 @@ public class CategoriesListView extends PinnedHeaderListView {
 								Intent i = new Intent(context,
 										ResultSearchActivity.class);
 								((Map) context).fillSearchCenter(i);
-								MapOverlay overlay = ((Map) context).osmap
+								IMapOverlay overlay = ((Map) context).osmap
 										.getOverlay(ResultSearchOverlay.DEFAULT_NAME);
 								String query = "";
 								if (overlay != null) {

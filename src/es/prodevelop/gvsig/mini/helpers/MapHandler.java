@@ -40,7 +40,7 @@ import es.prodevelop.gvsig.mini.yours.RouteManager;
 public class MapHandler extends Handler {
 	
 	private Map map;
-	private TileRaster osmap;
+	// private TileRaster osmap;
 	private ProgressDialog dialog2; // TODO do something about this ; rename etc.
 
 	private static MapHandler instance = null;
@@ -56,7 +56,7 @@ public class MapHandler extends Handler {
 	public MapHandler(Map m) {
 		super();
 		map = m;
-		osmap = map.osmap;
+		// osmap = map.osmap; // not has it may change
 		dialog2 = m.dialog2; // FIXME
 	}
 	
@@ -183,15 +183,15 @@ public class MapHandler extends Handler {
 			case Map.ROUTE_SUCCEEDED:
 				log.log(Level.FINE, "ROUTE_SUCCEEDED");
 				// ivCleanRoute.setVisibility(View.VISIBLE);
-				osmap.CLEAR_ROUTE = true;
+				map.osmap.CLEAR_ROUTE = true;
 				if (dialog2 != null)
 					dialog2.dismiss();
-				osmap.getMRendererInfo().reprojectGeometryCoordinates(
+				map.osmap.getMRendererInfo().reprojectGeometryCoordinates(
 						RouteManager.getInstance().getRegisteredRoute()
 								.getRoute().getFeatureAt(0).getGeometry(),
 						"EPSG:4326");
 				map.updateContext(Map.ROUTE_SUCCEEDED);
-				osmap.resumeDraw();
+				map.osmap.resumeDraw();
 				break;
 			case Map.ROUTE_NO_CALCULATED:
 				log.log(Level.FINE, "ROUTE_NO_CALCULATED");
@@ -206,7 +206,7 @@ public class MapHandler extends Handler {
 				Functionality nf = map.getItemContext().getExecutingFunctionality();
 				if (nf instanceof NameFinderFunc) {
 					NameFinderFunc n = (NameFinderFunc) nf;
-					osmap.getMRendererInfo().reprojectGeometryCoordinates(
+					map.osmap.getMRendererInfo().reprojectGeometryCoordinates(
 							n.nm, "EPSG:4326");
 					boolean update = map.showPOIs(n.desc, n.nm);
 					if (update)
@@ -249,7 +249,7 @@ public class MapHandler extends Handler {
 				// ivCleanRoute.setVisibility(View.INVISIBLE);
 				Toast.makeText(map, R.string.Map_18, Toast.LENGTH_LONG)
 						.show();
-				osmap.postInvalidate();
+				map.osmap.postInvalidate();
 				break;
 			case Map.POI_CANCELED:
 				log.log(Level.FINE, "POI_CANCELED");
@@ -260,7 +260,7 @@ public class MapHandler extends Handler {
 				Toast.makeText(map, R.string.task_canceled,
 						Toast.LENGTH_LONG).show();
 				map.nameds = null;
-				osmap.postInvalidate();
+				map.osmap.postInvalidate();
 				break;
 			case Map.CALCULATE_ROUTE:
 				log.log(Level.FINE, "CALCULATE_ROUTE");
@@ -335,7 +335,7 @@ public class MapHandler extends Handler {
 		} finally {
 			try {
 				map.clearContext();
-				osmap.invalidate();
+				map.osmap.invalidate();
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "", e);
 			}

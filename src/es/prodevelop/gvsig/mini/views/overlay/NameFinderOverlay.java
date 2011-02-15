@@ -62,6 +62,7 @@ import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
+import es.prodevelop.gvsig.mini.views.overlay.factory.MapOverlay;
 
 /**
  * A MapOverlay that manages draw of NameFinder MultiPoint
