@@ -134,6 +134,7 @@ import es.prodevelop.gvsig.mini.geom.FeatureCollection;
 import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
+import es.prodevelop.gvsig.mini.helpers.MenuHelper;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
@@ -235,16 +236,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private AlertDialog alertP;
 	SensorEventListener mTop = null;
 	// private SensorManager mSensorManager;
-	private MenuItem myNavigator;
-	private MenuItem myLocationButton;
-	private MenuItem myZoomRectangle;
-	private MenuItem mySearchDirection;
-	private MenuItem myDownloadLayers;
-	private MenuItem myDownloadTiles;
-	private MenuItem mySettings;
-	private MenuItem myAbout;
-	private MenuItem myWhats;
-	private MenuItem myLicense;
 	public Handler mHandler;
 	public static ViewPort vp;
 	int nearopt = 0;
@@ -669,8 +660,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// .getLatitude());
 			if (mMyLocationOverlay.mLocation != null) {
 				connection = true;
-				if (myNavigator != null)
-					myNavigator.setEnabled(connection);
+				MenuHelper.getInstance(this).updateNavigator(connection);
 			}
 
 		} catch (Exception e) {
@@ -679,7 +669,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 		}
 	}
+	
 
+	/* <MENU> */
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		try {
@@ -692,42 +684,17 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu pMenu) {
-		try {
-			mySearchDirection = pMenu.add(0, 0, 0, R.string.Map_3).setIcon(
-					R.drawable.menu00);
-			// pMenu.add(0, 1, 1, "Mock provider options");
-			myLocationButton = pMenu.add(0, 2, 2, R.string.Map_4).setIcon(
-					R.drawable.menu_location);
-			pMenu.add(0, 3, 3, R.string.Map_5).setIcon(R.drawable.menu02);
-			myDownloadTiles = pMenu.add(0, 4, 4, R.string.download_tiles_14)
-					.setIcon(R.drawable.layerdonwload);
-			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
-			// R.drawable.mv_rectangle);
-			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
-			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);
-			myNavigator = pMenu.add(0, 5, 5, R.string.Map_Navigator)
-					.setIcon(R.drawable.menu_navigation).setEnabled(connection);
-			// myDownloadLayers = pMenu.add(0, 6, 6, R.string.download_tiles_01)
-			// .setIcon(R.drawable.menu_download);
-			// myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
-			// R.drawable.menu_location).setCheckable(true).setChecked(
-			// true);
-			mySettings = pMenu.add(0, 7, 7, R.string.Map_31).setIcon(
-					android.R.drawable.ic_menu_preferences);
-			myWhats = pMenu.add(0, 8, 8, R.string.Map_30).setIcon(
-					R.drawable.menu_location);
-			myLicense = pMenu.add(0, 9, 9, R.string.Map_29).setIcon(
-					R.drawable.menu_location);
-			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
-					R.drawable.menu_location);
-			// pMenu.add(0, 11, 11, R.string.search_local);
-			// pMenu.add(0, 12, 12, R.string.bookmarks);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
-		}
-		return true;
+		return MenuHelper.getInstance(this).onCreateOptionsMenu(pMenu);
 	}
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		return MenuHelper.getInstance(this).onMenuItemSelected(featureId, item);	
+	}
+	/* </MENU> */
 
+	
+	
 	public void fillSearchCenter(Intent i) {
 		Point center = this.mMyLocationOverlay.getLocationLonLat();
 		double[] lonlat = ConversionCoords.reproject(center.getX(),
@@ -737,240 +704,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		i.putExtra("lat", lonlat[1]);
 	}
 
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		boolean result = true;
-		try {
-			result = super.onMenuItemSelected(featureId, item);
-			switch (item.getItemId()) {
-			case 0:
-				try {
-					Map.this.showSearchDialog();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "showAddressDialog: ", e);
-				}
-				break;
-			case 1:
-				//
-
-				break;
-			case 2:
-				try {
-
-					// recenterOnGPS = !recenterOnGPS;
-					// // osmap.switchPanMode();
-					//
-					// if (recenterOnGPS) {
-					// log.log(Level.FINE,
-					// "recentering on GPS after check MyLocation on");
-					// myLocation.setIcon(R.drawable.menu01);
-					//
-					// } else {
-					// log
-					// .log(Level.FINE,
-					// "stop recentering on GPS after check MyLocation off"
-					// );
-					// myLocation.setIcon(R.drawable.menu01_2);
-					// }
-					//
-					// if (this.mMyLocationOverlay.mLocation != null &&
-					// recenterOnGPS) {
-					log.log(Level.FINE, "click on my location menu item");
-					if (this.mMyLocationOverlay.mLocation == null
-							|| (this.mMyLocationOverlay.mLocation
-									.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
-									.getLongitudeE6() == 0)) {
-						Toast.makeText(this, R.string.Map_24, Toast.LENGTH_LONG)
-								.show();
-						return true;
-					}
-					this.osmap
-							.adjustViewToAccuracyIfNavigationMode(this.mMyLocationOverlay.mLocation.acc);
-					this.osmap
-							.setMapCenterFromLonLat(
-									this.mMyLocationOverlay.mLocation
-											.getLongitudeE6() / 1E6,
-									this.mMyLocationOverlay.mLocation
-											.getLatitudeE6() / 1E6);
-					// }
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "My location: ", e);
-				}
-				break;
-			case 3:
-				viewLayers();
-				break;
-			case 4:
-				if (Utils.isSDMounted()) {
-					if (osmap.getMRendererInfo().allowsMassiveDownload()) {
-						Map.this.showDownloadTilesDialog();
-					} else {
-
-						this.showOKDialog(getText(R.string.not_download_tiles)
-								.toString(), R.string.warning, false);
-					}
-				}
-
-				else
-					Toast.makeText(this, R.string.LayersActivity_1,
-							Toast.LENGTH_LONG).show();
-				// try {
-				// log.log(Level.FINE, "switch pan mode");
-				// osmap.switchPanMode();
-				// if (osmap.isPanMode()) {
-				// item.setIcon(R.drawable.mv_rectangle).setTitle(
-				// R.string.Map_6);
-				// } else {
-				// item.setIcon(R.drawable.mv_pan)
-				// .setTitle(R.string.Map_7);
-				// }
-				// } catch (Exception e) {
-				// log.log(Level.SEVERE,"switchPanMode: ", e);
-				// }
-				break;
-			case 6:
-				// try {
-				// showDownloadDialog();
-				// } catch (Exception e) {
-				// log.log(Level.SEVERE, "OpenWebsite: ", e);
-				// }
-				break;
-			case 5:
-				try {
-					recenterOnGPS = !recenterOnGPS;
-
-					if (myLocationButton != null)
-						myLocationButton.setEnabled(!recenterOnGPS);
-					if (myZoomRectangle != null)
-						myZoomRectangle.setEnabled(!recenterOnGPS);
-					if (myDownloadLayers != null)
-						myDownloadLayers.setEnabled(!recenterOnGPS);
-					if (mySearchDirection != null)
-						mySearchDirection.setEnabled(!recenterOnGPS);
-					if (mySettings != null)
-						mySettings.setEnabled(!recenterOnGPS);
-
-					// myGPSButton.setEnabled(!recenterOnGPS);
-
-					if (!recenterOnGPS) {
-						log.log(Level.FINE,
-								"recentering on GPS after check MyLocation on");
-						z.setVisibility(View.VISIBLE);
-						myNavigator.setIcon(R.drawable.menu_navigation);
-
-					} else {
-						log.log(Level.FINE,
-								"stop recentering on GPS after check MyLocation off");//
-						z.setVisibility(View.INVISIBLE);
-						myNavigator.setIcon(R.drawable.menu_navigation_off);
-					}
-					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
-					// ) {
-					// log.log(Level.FINE,
-					// "recentering on GPS after check MyLocation on");
-					// myNavigator.setIcon(R.drawable.menu_navigation_off);
-					//
-					// } else {
-					// log
-					// .log(Level.FINE,
-					// "stop recentering on GPS after check MyLocation off"
-					// );
-					// myNavigator.setIcon(R.drawable.menu_navigation);
-					// }
-					//
-					if (!navigation) {
-						// wl.acquire();
-						// setRequestedOrientation(ActivityInfo.
-						// SCREEN_ORIENTATION_PORTRAIT);
-						// navigation = true;
-						this.initializeSensor(this, true);
-						this.showNavigationModeAlert();
-					} else {
-						try {
-							if (Settings.getInstance().getBooleanValue(
-									getText(R.string.settings_key_orientation)
-											.toString()))
-								this.stopSensor(this);
-						} catch (Exception e) {
-							log.log(Level.SEVERE, "navigation mode off", e);
-						}
-
-						log.log(Level.FINE, "navigation mode off");
-						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-						navigation = false;
-						osmap.setKeepScreenOn(false);
-					}
-
-					//
-					// osmap.switchPanMode();
-					// if (osmap.isPanMode()) {
-					// item.setIcon(R.drawable.mv_rectangle).setTitle(
-					// R.string.Map_6);
-					// } else {
-					// item.setIcon(R.drawable.mv_pan).setTitle(R.string.Map_7);
-					// }
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "switchPanMode: ", e);
-				}
-				break;
-			case 7:
-				Intent i = new Intent(this, SettingsActivity.class);
-				startActivity(i);
-				break;
-			case 8:
-				try {
-					showWhatsNew();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 9:
-				try {
-					showLicense();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 10:
-				try {
-					showAboutDialog();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 11:
-				try {
-					Intent mainIntent = new Intent(this,
-							SearchExpandableActivity.class);
-					// Point center = this.osmap.getMRendererInfo().getCenter();
-					fillSearchCenter(mainIntent);
-					this.startActivity(mainIntent);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 12:
-				try {
-					Point center = this.osmap.getMRendererInfo().getCenter();
-					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS(this.osmap
-									.getMRendererInfo().getSRS()), CRSFactory
-									.getCRS("EPSG:900913"));
-					InvokeIntents.launchListBookmarks(this, lonlat);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			default:
-				break;
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-		return result;
-	}
-
-	protected void showNavigationModeAlert() {
+	public void showNavigationModeAlert() {
 		try {
 			RadioGroup r = new RadioGroup(this);
 			RadioButton r1 = new RadioButton(this);
@@ -2668,7 +2402,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	// what the fuck does this do ?
 	private ItemContext updateContextWMS(ItemContext context) {
-		Log.d("MAP", "Context WAS " + context.toString());
 		try {
 			if (this.osmap.getMRendererInfo().getType() != MapRenderer.WMS_RENDERER) {
 				if (context instanceof WMSRoutePOIContext)
@@ -2727,7 +2460,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				}
 
 			this.setContext(context);
-			Log.d("MAP", "Context NOW IS " + context.toString());
 			return context;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -2745,8 +2477,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void showContext(ItemContext context) {
 		try {
 			log.log(Level.FINE, "show context");
-
+			
+			Log.d("MAP", "Context WAS " + context == null ? "NULL" : context.getClass().getName());			
 			context = updateContextWMS(context);
+			Log.d("MAP", "Context NOW IS " +  context == null ? "NULL" : context.getClass().getName());
+			
 			if (context == null)
 				return;
 
@@ -3364,12 +3099,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "enableGPS");
 			super.enableGPS();
-			boolean enabled = this.isLocationHandlerEnabled();
-
-			if (myLocationButton != null && myNavigator != null) {
-				this.myLocationButton.setEnabled(enabled);
-				this.myNavigator.setEnabled(enabled);
-			}
+			MenuHelper.getInstance(this).updateGps(this.isLocationHandlerEnabled());
 			// this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3384,11 +3114,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "disableGPS");
 			super.disableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
-
-			if (myLocationButton != null && myNavigator != null) {
-				this.myLocationButton.setEnabled(enabled);
-				this.myNavigator.setEnabled(enabled);
-			}
+			MenuHelper.getInstance(this).updateGps(this.isLocationHandlerEnabled());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
