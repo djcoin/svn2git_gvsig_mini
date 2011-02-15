@@ -115,6 +115,8 @@ import es.prodevelop.gvsig.mini.app.SplashActivity;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
 import es.prodevelop.gvsig.mini.common.IEvent;
+import es.prodevelop.gvsig.mini.context.FactoryContext;
+import es.prodevelop.gvsig.mini.context.IFactoryContext;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.DefaultContext;
 import es.prodevelop.gvsig.mini.context.map.GPSItemContext;
@@ -303,6 +305,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	public final static int SEARCH_EXP_CODE = 444;
 
+	private IFactoryContext factoryContext = new FactoryContext();
 	/**
 	 * Called when the activity is first created.
 	 * */
@@ -337,7 +340,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			}
 
 			mapState = new MapState(this);
-			this.setContext(new DefaultContext(this));
+			this.setContext(factoryContext.createDefaultContext(this));
 
 			// nameFinderTask = new NameFinderTask(this, handler);
 			rl = new RelativeLayout(this);
@@ -1615,7 +1618,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						.getName());
 			else
 				outState.putString("contextClassName",
-						DefaultContext.class.getName());
+						factoryContext.createDefaultContext(this).getClass().getName());
 			log.log(Level.FINE, "map saved");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "saveMap: ", e);
@@ -2688,7 +2691,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									.getState() == Tags.ROUTE_WITH_2_POINT) {
 						context = new RouteContext(this);
 					} else {
-						context = new DefaultContext(this);
+						context = factoryContext.createDefaultContext(this);
 					}
 				else if (context instanceof POIContext)
 					if (RouteManager.getInstance().getRegisteredRoute() != null
@@ -2713,8 +2716,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				} else {
 					context = new WMSPOIContext(this);
 				}
-			else if (context instanceof DefaultContext
-					|| context instanceof GPSItemContext)
+			// FIXME!! UNCHANGED ! factoryContext.createDefaultContext().getClass()			
+			else if (context instanceof DefaultContext || context instanceof GPSItemContext)
 				if (RouteManager.getInstance().getRegisteredRoute() != null
 						&& RouteManager.getInstance().getRegisteredRoute()
 								.getState() == Tags.ROUTE_WITH_2_POINT) {
@@ -2838,7 +2841,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void setContext(ItemContext context) {
 		try {
 			if (context == null) {
-				this.setContext(new DefaultContext(this));
+				this.setContext(factoryContext.createDefaultContext(this));
 				log.log(Level.FINE, "setContext: " + "DefaultContext");
 			} else {
 				try {
@@ -3027,7 +3030,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			switch (state) {
 			case Map.VOID:
 				log.log(Level.FINE, "VOID");
-				this.setContext(new DefaultContext(this));
+				this.setContext(factoryContext.createDefaultContext(this));
 				break;
 			case Map.ROUTE_SUCCEEDED:
 				log.log(Level.FINE, "ROUTE_SUCEEDED");
@@ -3053,7 +3056,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								.getState() == Tags.ROUTE_WITH_2_POINT) {
 					this.setContext(new RouteContext(this));
 				} else {
-					this.setContext(new DefaultContext(this));
+					this.setContext(factoryContext.createDefaultContext(this));
 				}
 				break;
 			case Map.ROUTE_CLEARED:
@@ -3061,7 +3064,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				if (nameds != null && nameds.getNumPoints() > 0) {
 					this.setContext(new POIContext(this));
 				} else {
-					this.setContext(new DefaultContext(this));
+					this.setContext(factoryContext.createDefaultContext(this));
 				}
 				break;
 			}
