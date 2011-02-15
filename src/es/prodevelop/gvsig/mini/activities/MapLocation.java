@@ -259,41 +259,6 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 		}
 	}
 
-	public void showDownloadDialog() {
-		try {
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			// alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.download_tiles_01);
-			TextView text = new TextView(this);
-			text.setText(R.string.download_tiles_02);
-
-			alert.setView(text);
-
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Utils.downloadLayerFile(MapLocation.this);
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "", e);
-							}
-						}
-					});
-
-			alert.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
 
 	public GPSPoint getLastLocation() {
 		try {

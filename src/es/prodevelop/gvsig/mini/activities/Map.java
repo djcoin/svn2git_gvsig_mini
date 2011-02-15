@@ -53,23 +53,16 @@
 
 package es.prodevelop.gvsig.mini.activities;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
-import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
-import org.anddev.android.weatherforecast.weather.WeatherSet;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -79,7 +72,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -92,25 +84,19 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
-import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.app.SplashActivity;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.common.IContext;
@@ -135,20 +121,16 @@ import es.prodevelop.gvsig.mini.geom.LineString;
 import es.prodevelop.gvsig.mini.geom.Point;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
 import es.prodevelop.gvsig.mini.helpers.MenuHelper;
+import es.prodevelop.gvsig.mini.helpers.ShowController;
 import es.prodevelop.gvsig.mini.location.LocationTimer;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 import es.prodevelop.gvsig.mini.map.MapState;
 import es.prodevelop.gvsig.mini.map.ViewPort;
 import es.prodevelop.gvsig.mini.namefinder.Named;
 import es.prodevelop.gvsig.mini.namefinder.NamedMultiPoint;
-import es.prodevelop.gvsig.mini.search.POIProviderManager;
 import es.prodevelop.gvsig.mini.search.PlaceSearcher;
-import es.prodevelop.gvsig.mini.search.activities.SearchExpandableActivity;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
-import es.prodevelop.gvsig.mini.tasks.TaskHandler;
 import es.prodevelop.gvsig.mini.tasks.map.GetCellLocationFunc;
-import es.prodevelop.gvsig.mini.tasks.namefinder.NameFinderFunc;
-import es.prodevelop.gvsig.mini.tasks.poi.InvokeIntents;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadCallbackHandler;
 import es.prodevelop.gvsig.mini.tasks.tiledownloader.TileDownloadWaiter;
 import es.prodevelop.gvsig.mini.tasks.weather.WeatherFunctionality;
@@ -182,6 +164,7 @@ import es.prodevelop.tilecache.renderer.OSMMercatorRenderer;
 import es.prodevelop.tilecache.renderer.wms.OSRenderer;
 import es.prodevelop.tilecache.util.ConstantsTileCache;
 import es.prodevelop.tilecache.util.Utilities;
+import es.prodevelop.gvsig.mini.helpers.MapHandler;
 
 /**
  * The main activity of the application. Consists on a RelativeLayout with some
@@ -199,30 +182,44 @@ import es.prodevelop.tilecache.util.Utilities;
  */
 public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		OnSettingsChangedListener {
+
+	// TODO should be changed ; customized etc. // MapState and so much!
+	public ShowController showCtrl = ShowController.getInstance(this);
+	public TileRaster osmap;
+	public ViewSimpleLocationOverlay mMyLocationOverlay; // special overlays used when location are shown
+	
+	// private SensorManager mSensorManager;
+	public Handler mHandler;
+	public static ViewPort vp;
+	
+	public AlertDialog downloadTileAlert;
+	
+	// USED IN SHOW HELPER
+	public TileDownloaderTask t;		
+	public SeekBar downTilesSeekBar;
+	public TextView totalTiles;
+	public TextView totalMB;
+	public TextView totalZoom;
+	
+	private TileDownloadWaiterDelegate tileWaiter;
+	
+	
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
 
 	public final static int CODE_SETTINGS = 3215;
 
-	AlertDialog downloadTileAlert;
 	Cancellable downloadCancellable;
 	Button downloadTilesButton;
-	private TileDownloaderTask t;
-	private SeekBar downTilesSeekBar;
-	private TextView totalTiles;
-	private TextView totalMB;
-	private TextView totalZoom;
-
-	private TileDownloadWaiterDelegate tileWaiter;
+	
+	public NamedMultiPoint nameds;
 	public static String twituser = null;
 	public static String twitpass = null;
-	public ViewSimpleLocationOverlay mMyLocationOverlay;
-	public TileRaster osmap;
-	public NamedMultiPoint nameds;
 	private Point nearestPOI;
 	private int indexNP;
 	String datalog = null;
+	
 	public float datatransfer2 = 0;
 	public RelativeLayout rl;
 
@@ -235,9 +232,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public boolean backpressedroulette = false;
 	private AlertDialog alertP;
 	SensorEventListener mTop = null;
-	// private SensorManager mSensorManager;
-	public Handler mHandler;
-	public static ViewPort vp;
+
 	int nearopt = 0;
 	public static final int ROUTE_CANCELED = 100;
 	public static final int ROUTE_INITED = 101;
@@ -286,11 +281,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	boolean mUpdatingAnimation;
 	// PowerManager.WakeLock wl;
-	MapHandler handler = new MapHandler();
+	MapHandler handler = MapHandler.getInstance(this);
 	private final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
-	private UserContext userContext;
+	//changed visibility
+	public UserContext userContext;
+	
 	LinearLayout downloadTilesLayout;
 	ProgressBar downloadTilesPB;
 
@@ -660,7 +657,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			// .getLatitude());
 			if (mMyLocationOverlay.mLocation != null) {
 				connection = true;
-				MenuHelper.getInstance(this).updateNavigator(connection);
+				MenuHelper.getInstance(this).prepareNavigator(connection);
 			}
 
 		} catch (Exception e) {
@@ -689,11 +686,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		return MenuHelper.getInstance(this).onMenuItemSelected(featureId, item);	
+		final boolean b = super.onMenuItemSelected(featureId, item);
+		return MenuHelper.getInstance(this).onMenuItemSelected(featureId, item, b);	
 	}
 	/* </MENU> */
 
-	
 	
 	public void fillSearchCenter(Intent i) {
 		Point center = this.mMyLocationOverlay.getLocationLonLat();
@@ -810,113 +807,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		// } catch (IOException exc) {
 		// Log.e("", exc.getMessage());
 		// }
-	}
-
-	/**
-	 * Shows an AlertDialog with the results from WeatherFunctionality
-	 * 
-	 * @param ws
-	 *            The results from WeatherFunctionality
-	 */
-	public void showWeather(WeatherSet ws) {
-		try {
-			log.log(Level.FINE, "showWeather");
-			if (ws == null) {
-				log.log(Level.FINE,
-						"ws == null: Can't get weather. Check another location");
-				Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
-						.show();
-				return;
-			}
-			if (ws.getWeatherCurrentCondition() == null) {
-				dialog2.dismiss();
-				AlertDialog.Builder alertW = new AlertDialog.Builder(this);
-				alertW.setCancelable(true);
-				alertW.setIcon(R.drawable.menu03);
-				alertW.setTitle(R.string.error);
-				if (ws.place == null || ws.place.compareTo("") == 0) {
-					ws.place = this.getResources().getString(R.string.Map_9);
-				}
-
-				log.log(Level.FINE, "The weather in " + ws.place
-						+ " is not available");
-				alertW.setMessage(String.format(
-						this.getResources().getString(R.string.Map_10),
-						ws.place));
-
-				alertW.setNegativeButton(R.string.ok,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-							}
-						});
-				alertW.show();
-				return;
-			}
-
-			AlertDialog.Builder alertW = new AlertDialog.Builder(this);
-			alertW.setCancelable(true);
-			alertW.setIcon(R.drawable.menu03);
-			alertW.setTitle(this.getResources().getString(R.string.Map_11)
-					+ " " + ws.place);
-
-			final ListView lv = new ListView(this);
-
-			BulletedTextListAdapter adapter = new BulletedTextListAdapter(this);
-
-			WeatherCurrentCondition wc = ws.getWeatherCurrentCondition();
-
-			adapter.addItem(new BulletedText(new StringBuffer()
-					.append(this.getResources().getString(R.string.Map_12))
-					.append(" - ").append(wc.getTempCelcius()).append(" C")
-					.append("\n").append(wc.getCondition()).append("\n")
-					.append(wc.getWindCondition()).append("\n")
-					.append(wc.getHumidity()).toString(), BulletedText
-					.getRemoteImage(new URL("http://www.google.com"
-							+ wc.getIconURL()))).setSelectable(false));
-
-			ArrayList<WeatherForecastCondition> l = ws
-					.getWeatherForecastConditions();
-
-			WeatherForecastCondition temp;
-			for (int i = 0; i < l.size(); i++) {
-				try {
-					temp = l.get(i);
-					adapter.addItem(new BulletedText(new StringBuffer()
-							.append(temp.getDayofWeek()).append(" - ")
-							.append(temp.getTempMinCelsius()).append(" C")
-							.append("/").append(temp.getTempMaxCelsius())
-							.append(" C").append("\n")
-							.append(temp.getCondition()).toString(),
-							BulletedText
-									.getRemoteImage(new URL(
-											"http://www.google.com"
-													+ temp.getIconURL())))
-							.setSelectable(false));
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "showWeather: ", e);
-				}
-			}
-
-			lv.setAdapter(adapter);
-			lv.setPadding(10, 0, 10, 0);
-
-			alertW.setView(lv);
-
-			alertW.setNegativeButton(
-					this.getResources().getString(R.string.back),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alertW.show();
-			dialog2.dismiss();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showWeather: ", e);
-		} finally {
-		}
 	}
 
 	/**
@@ -1611,397 +1501,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	}
 
-	/**
-	 * This class Handles messages from Functionalities
-	 * 
-	 * @author aromeu
-	 * @author rblanco
-	 * 
-	 */
-	class MapHandler extends Handler {
-		@Override
-		public void handleMessage(final Message msg) {
-			try {
-				log.log(Level.FINE, "MapHandler -> handleMessage");
-				final int what = msg.what;
-				switch (what) {
-				case Map.SHOW_LOADING:
-					setLoadingVisible(true);
-					break;
-				case Map.HIDE_LOADING:
-					setLoadingVisible(false);
-					break;
-				case TaskHandler.NO_RESPONSE:
-					log.log(Level.FINE, "task handler NO_RESPONSE");
-					if (dialog2 != null)
-						dialog2.dismiss();
-					Toast.makeText(Map.this, R.string.Map_22, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case Map.SHOW_TOAST:
-					log.log(Level.FINE, "SHOW_TOAST");
-					Toast t = Toast.makeText(Map.this, msg.obj.toString(),
-							Toast.LENGTH_LONG);
-					t.show();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case Map.SHOW_OK_DIALOG:
-					log.log(Level.FINE, "SHOW_OK_DIALOG");
-					if (dialog2 != null)
-						dialog2.dismiss();
-					Map.this.showOKDialog(msg.obj.toString(),
-							R.string.getFeatureInfo, true);
-					break;
-				case Map.POI_LIST:
-					log.log(Level.FINE, "POI_LIST");
-					Map.this.viewLastPOIs();
-					break;
-				case Map.POI_CLEARED:
-					log.log(Level.FINE, "POI_CLEARED");
-					Map.this.updateContext(Map.POI_CLEARED);
-					break;
-				case Map.ROUTE_CLEARED:
-					log.log(Level.FINE, "ROUTE_CLEARED");
-					Map.this.updateContext(Map.ROUTE_CLEARED);
-					break;
-				case Map.WEATHER_INITED:
-					log.log(Level.FINE, "WEATHER_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
-							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_14),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.menu03);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								log.log(Level.FINE, "weather canceled");
-								Map.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case Map.GETFEATURE_INITED:
-					log.log(Level.FINE, "GETFEATURE_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
-							.getResources().getString(R.string.please_wait),
-							"GetFeatureInfo...", true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.infobutton);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								log.log(Level.FINE, "getFeature canceled");
-								Map.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-
-				case Map.WEATHER_CANCELED:
-					log.log(Level.FINE, "WEATHER_CANCELED");
-					Toast.makeText(Map.this, R.string.Map_15, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case Map.WEATHER_ERROR:
-					log.log(Level.FINE, "WEATHER_ERROR");
-					Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
-							.show();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case Map.WEATHER_SHOW:
-					log.log(Level.FINE, "WEATHER_SHOW");
-					Functionality f = Map.this.getItemContext()
-							.getExecutingFunctionality();
-					if (f instanceof WeatherFunctionality)
-						Map.this.showWeather(((WeatherFunctionality) f).ws);
-					else {
-						log.log(Level.FINE, "Nof found Weather functionality");
-					}
-					break;
-				case Map.ROUTE_NO_RESPONSE:
-					log.log(Level.FINE, "ROUTE_NO_RESPONSE");
-					Toast.makeText(Map.this, R.string.server_busy,
-							Toast.LENGTH_LONG).show();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case Map.ROUTE_SUCCEEDED:
-					log.log(Level.FINE, "ROUTE_SUCCEEDED");
-					// ivCleanRoute.setVisibility(View.VISIBLE);
-					osmap.CLEAR_ROUTE = true;
-					if (dialog2 != null)
-						dialog2.dismiss();
-					osmap.getMRendererInfo().reprojectGeometryCoordinates(
-							RouteManager.getInstance().getRegisteredRoute()
-									.getRoute().getFeatureAt(0).getGeometry(),
-							"EPSG:4326");
-					Map.this.updateContext(Map.ROUTE_SUCCEEDED);
-					osmap.resumeDraw();
-					break;
-				case Map.ROUTE_NO_CALCULATED:
-					log.log(Level.FINE, "ROUTE_NO_CALCULATED");
-					Toast.makeText(Map.this, R.string.Map_16, Toast.LENGTH_LONG)
-							.show();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case Map.POI_SHOW:
-					log.log(Level.FINE, "POI_SHOW");
-					Functionality nf = getItemContext()
-							.getExecutingFunctionality();
-					if (nf instanceof NameFinderFunc) {
-						NameFinderFunc n = (NameFinderFunc) nf;
-						osmap.getMRendererInfo().reprojectGeometryCoordinates(
-								n.nm, "EPSG:4326");
-						boolean update = Map.this.showPOIs(n.desc, n.nm);
-						if (update)
-							Map.this.updateContext(Map.POI_SUCCEEDED);
-					} else {
-						log.log(Level.FINE,
-								"Nof found NameFinder functionality");
-					}
-					break;
-				case Map.POI_INITED:
-					log.log(Level.FINE, "POI_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
-							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_17),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.pois);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								Map.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case Map.ROUTE_CANCELED:
-					log.log(Level.FINE, "ROUTE_CANCELED");
-					RouteManager.getInstance().getRegisteredRoute()
-							.deleteRoute(false);
-					// route.deleteEndPoint();
-					// route.deleteStartPoint();
-					// yoursFunc.cancel();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					Toast.makeText(Map.this, R.string.Map_18, Toast.LENGTH_LONG)
-							.show();
-					osmap.postInvalidate();
-					break;
-				case Map.POI_CANCELED:
-					log.log(Level.FINE, "POI_CANCELED");
-					// ivCleanPois.setVisibility(View.INVISIBLE);
-					// ivShowList.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					Toast.makeText(Map.this, R.string.task_canceled,
-							Toast.LENGTH_LONG).show();
-					nameds = null;
-					osmap.postInvalidate();
-					break;
-				case Map.CALCULATE_ROUTE:
-					log.log(Level.FINE, "CALCULATE_ROUTE");
-					Map.this.calculateRoute();
-					break;
-				case Map.ROUTE_INITED:
-					log.log(Level.FINE, "ROUTE_INITED");
-					RouteManager.getInstance().getRegisteredRoute()
-							.deleteRoute(false);
-					dialog2 = ProgressDialog.show(Map.this, Map.this
-							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_19),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.routes);
-
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								RouteManager.getInstance().getRegisteredRoute()
-										.deleteRoute(false);
-								// ivCleanRoute.setVisibility(View.INVISIBLE);
-								osmap.resumeDraw();
-								Map.this.getItemContext().cancelCurrentTask();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case Map.TWEET_SENT:
-					log.log(Level.FINE, "TWEET_SENT");
-					Toast.makeText(Map.this, R.string.Map_20, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case Map.TWEET_ERROR:
-					log.log(Level.FINE, "TWEET_ERROR");
-					Toast t1 = Toast.makeText(Map.this, msg.obj.toString(),
-							Toast.LENGTH_LONG);
-					t1.show();
-					break;
-				case Map.SHOW_TWEET_DIALOG:
-					log.log(Level.FINE, "SHOW_TWEET_DIALOG");
-					Map.this.showTweetDialog();
-					break;
-				case Map.SHOW_TWEET_DIALOG_SETTINGS:
-					log.log(Level.FINE, "SHOW_TWEET_DIALOG_SETTINGS");
-					Map.this.showTweetDialogSettings();
-					break;
-				case Map.SHOW_POI_DIALOG:
-					log.log(Level.FINE, "SHOW_POI_DIALOG");
-					Map.this.showPOIDialog();
-					break;
-				case Map.SHOW_ADDRESS_DIALOG:
-					log.log(Level.FINE, "SHOW_ADDRESS_DIALOG");
-					Map.this.showSearchDialog();
-					break;
-				case Map.VOID:
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				}
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "handleMessage: ", e);
-				if (dialog2 != null)
-					dialog2.dismiss();
-				// Toast.makeText(Map.this,
-				// "Operation could not finish. Please try again.",
-				// 2000).show();
-			} finally {
-				try {
-					Map.this.clearContext();
-					osmap.invalidate();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "", e);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input the query string for NameFinder
-	 * 
-	 * @deprecated
-	 */
-	public void showPOIDialog() {
-		try {
-			log.log(Level.FINE, "showPOIDialog");
-			AlertDialog.Builder alertPOI = new AlertDialog.Builder(this);
-
-			alertPOI.setIcon(R.drawable.poismenu);
-			alertPOI.setTitle(R.string.Map_21);
-
-			final EditText inputPOI = new EditText(this);
-
-			alertPOI.setView(inputPOI);
-
-			alertPOI.setPositiveButton(R.string.search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = inputPOI.getText();
-								// Call to NameFinder with the text
-								searchInNameFinder(value.toString(), true);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "clickNameFinder: ", e);
-							}
-							return;
-						}
-					});
-
-			alertPOI.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alertPOI.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	/**
-	 * Show an AlertDialog to the user to input the query string for NameFinder
-	 * addresses
-	 */
-	public void showSearchDialog() {
-		try {
-			// this.onSearchRequested();
-			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_3);
-			final EditText input = new EditText(this);
-			alert.setView(input);
-
-			alert.setPositiveButton(R.string.alert_dialog_text_search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = input.getText();
-								// Call to NameFinder with the text
-								searchInNameFinder(value.toString(), false);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE,
-										"clickNameFinderAddress: ", e);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
-
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
 	/*
 	 * Perform a search for all types of different searches (POI, address,
 	 * search manager,...) using the NameFinder consumer It acts as a fa�ade
 	 * for all searches launched from Map activity to be resolved by the
 	 * NameFinder query: text to be sought
 	 */
-	private void searchInNameFinder(String query, boolean nearOfCenter) {
+	// changed visibility
+	public void searchInNameFinder(String query, boolean nearOfCenter) {
 		try {
 			if (!query.trim().equals("")) {
 				PlaceSearcher search;
@@ -2028,7 +1535,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	}
 
-	private void instantiateTileDownloaderTask(LinearLayout l, int progress) {
+	public void instantiateTileDownloaderTask(LinearLayout l, int progress) {
 		try {
 			final boolean updateTiles = ((CheckBox) l
 					.findViewById(R.id.download_tiles_overwrite_check))
@@ -2137,109 +1644,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
-	/**
-	 * Show an AlertDialog to the user to input the query string for NameFinder
-	 * addresses
-	 */
-	public void showDownloadTilesDialog() {
-		try {
-			this.osmap.pauseDraw();
-			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-			final LinearLayout l = (LinearLayout) this.getLayoutInflater()
-					.inflate(R.layout.download_tiles, null);
-			this.totalMB = (TextView) l
-					.findViewById(R.id.download_total_transfer_text);
-			this.totalTiles = (TextView) l
-					.findViewById(R.id.download_total_tiles_text);
-			this.totalZoom = (TextView) l
-					.findViewById(R.id.download_zoom_level_text);
-			this.downTilesSeekBar = (SeekBar) l
-					.findViewById(R.id.download_zoom_level_seekbar);
-			this.downTilesSeekBar
-					.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-						@Override
-						public void onProgressChanged(SeekBar arg0,
-								int progress, boolean arg2) {
-							try {
-								Map.this.instantiateTileDownloaderTask(l,
-										progress);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, e.getMessage());
-							}
-						}
-
-						@Override
-						public void onStartTrackingTouch(SeekBar seekBar) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void onStopTrackingTouch(SeekBar seekBar) {
-							// TODO Auto-generated method stub
-
-						}
-					});
-			alert.setIcon(R.drawable.layerdonwload);
-			alert.setTitle(R.string.download_tiles_14);
-			this.downTilesSeekBar.setProgress(50);
-			((CheckBox) l.findViewById(R.id.download_tiles_overwrite_check))
-					.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View arg0) {
-							Map.this.instantiateTileDownloaderTask(l,
-									Map.this.downTilesSeekBar.getProgress());
-						}
-					});
-
-			alert.setView(l);
-
-			alert.setPositiveButton(R.string.download_tiles_14,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Map.this.resetCounter();
-								Map.this.downloadTileAlert = Map.this
-										.getDownloadTilesDialog();
-								Map.this.downloadTileAlert.show();
-								WorkQueue.getExclusiveInstance().execute(t);
-							} catch (Exception e) {
-								log.log(Level.SEVERE,
-										"clickNameFinderAddress: ", e);
-							} finally {
-								// setRequestedOrientation(ActivityInfo.
-								// SCREEN_ORIENTATION_SENSOR);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							// setRequestedOrientation(ActivityInfo.
-							// SCREEN_ORIENTATION_SENSOR);
-							Map.this.osmap.resumeDraw();
-							Map.this.reloadLayerAfterDownload();
-						}
-					});
-
-			// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			alert.show();
-		} catch (Exception e) {
-			this.osmap.resumeDraw();
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	private AlertDialog getDownloadTilesDialog() {
+	// changed to public
+	public AlertDialog getDownloadTilesDialog() {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setOnKeyListener(new OnKeyListener() {
@@ -2606,106 +2013,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public ItemContext getItemContext() {
 		return context;
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input his/her twitter account
-	 * credentials
-	 * 
-	 * @deprecated
-	 */
-	public void showTweetDialog() {
-		try {
-			log.log(Level.FINE, "showTweetDialog");
-			LayoutInflater factory = LayoutInflater.from(this);
-			final View textEntryView = factory.inflate(
-					R.layout.alert_dialog_text_entry, null);
-			AlertDialog.Builder alertTweet = new AlertDialog.Builder(this);
-			alertTweet
-					.setView(textEntryView)
-					.setIcon(R.drawable.menu04)
-					.setTitle(R.string.alert_dialog_text_entry)
-					.setPositiveButton(R.string.alert_dialog_tweet,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									try {
-
-										EditText etrUserName = (EditText) textEntryView
-												.findViewById(R.id.username_edit);
-										String userName = etrUserName.getText()
-												.toString();
-										EditText etrUserPass = (EditText) textEntryView
-												.findViewById(R.id.password_edit);
-										String userPass = etrUserPass.getText()
-												.toString();
-
-										Map.twituser = userName;
-										Map.twitpass = userPass;
-										getItemContext().getFunctionalityByID(
-												R.layout.twitter_image_button)
-												.onClick(null);
-									} catch (Exception e) {
-										log.log(Level.SEVERE, "twitter: ", e);
-									}
-								}
-							})
-					.setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).create();
-			alertTweet.show();
-			userContext.setUsedTwitter(true);
-			userContext.setLastExecTwitter();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showTweetDialog: ", e);
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input his/her twitter account
-	 * credentials
-	 * 
-	 */
-	public void showTweetDialogSettings() {
-		try {
-			log.log(Level.FINE, "showTweetDialogSettings");
-			LayoutInflater factory = LayoutInflater.from(this);
-			TextView t = new TextView(this);
-			t.setText(R.string.twitter_go_settings);
-			AlertDialog.Builder alertTweet = new AlertDialog.Builder(this);
-			alertTweet
-					.setView(t)
-					.setIcon(R.drawable.menu04)
-					.setTitle(R.string.alert_dialog_text_entry)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									try {
-										Intent i = new Intent(Map.this,
-												SettingsActivity.class);
-										i.putExtra("twitter", true);
-										startActivityForResult(i, CODE_SETTINGS);
-									} catch (Exception e) {
-										log.log(Level.SEVERE, "twitter: ", e);
-									}
-								}
-							})
-					.setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).create();
-			alertTweet.show();
-			userContext.setUsedTwitter(true);
-			userContext.setLastExecTwitter();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showTweetDialog: ", e);
-		}
 	}
 
 	/**
@@ -3099,7 +2406,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "enableGPS");
 			super.enableGPS();
-			MenuHelper.getInstance(this).updateGps(this.isLocationHandlerEnabled());
+			MenuHelper.getInstance(this).prepareGps(this.isLocationHandlerEnabled());
 			// this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3114,7 +2421,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			log.log(Level.FINE, "disableGPS");
 			super.disableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
-			MenuHelper.getInstance(this).updateGps(this.isLocationHandlerEnabled());
+			MenuHelper.getInstance(this).prepareGps(this.isLocationHandlerEnabled());
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
@@ -3271,7 +2578,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		});
 	}
 
-	private void reloadLayerAfterDownload() {
+	// changed to public
+	public void reloadLayerAfterDownload() {
 		Map.this.osmap.resumeDraw();
 		Map.this.osmap.onLayerChanged(Map.this.osmap.getMRendererInfo()
 				.getFullNAME());
@@ -3410,6 +2718,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
+	// TODO: bof... mais générique !
 	public void showOKDialog(String textBody, int title, boolean editView) {
 		try {
 			log.log(Level.FINE, "show ok dialog");

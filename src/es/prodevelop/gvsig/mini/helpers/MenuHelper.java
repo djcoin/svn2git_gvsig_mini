@@ -20,10 +20,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+/**
+ *
+ * MenuHelper : take input from the Map menu and controls the map back.
+ * @author sim
+ *
+ */
 public class MenuHelper {
+	
+	private static MenuHelper instance = null;
 	
 	private Map map;
 	private final static Logger log = Logger.getLogger(Map.class.getName());
+	ShowController showCtrl;
+	
 	
 	private MenuItem myNavigator;
 	private MenuItem myLocationButton;
@@ -35,12 +45,10 @@ public class MenuHelper {
 	private MenuItem myAbout;
 	private MenuItem myWhats;
 	private MenuItem myLicense;
-	
-	private static MenuHelper instance = null;
-	
+
 	private MenuHelper(Map m){
 		this.map = m;
-		
+		showCtrl = ShowController.getInstance(m);
 	}
 	
 	public static MenuHelper getInstance(Map m){
@@ -48,6 +56,19 @@ public class MenuHelper {
 			instance = new MenuHelper(m);
 		}
 		return instance;
+	}
+	
+	// FixME on prepareMenu...
+	public void prepareGps(Boolean enabled) {
+		if (myLocationButton != null && myNavigator != null) {
+			this.myLocationButton.setEnabled(enabled);
+			this.myNavigator.setEnabled(enabled);
+		}
+	}
+
+	public void prepareNavigator(boolean connection) {
+		if (myNavigator != null)
+			myNavigator.setEnabled(connection);
 	}
 	
 	public boolean onCreateOptionsMenu(Menu pMenu) {
@@ -88,14 +109,14 @@ public class MenuHelper {
 	}
 
 
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onMenuItemSelected(int featureId, MenuItem item, Boolean resultMap) {
 		boolean result = true;
 		try {
-			result = map.onMenuItemSelected(featureId, item);
+			result = resultMap;
 			switch (item.getItemId()) {
 			case 0:
 				try {
-					this.map.showSearchDialog();
+					showCtrl.showSearchDialog();
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "showAddressDialog: ", e);
 				}
@@ -153,9 +174,9 @@ public class MenuHelper {
 			case 4:
 				if (Utils.isSDMounted()) {
 					if (map.osmap.getMRendererInfo().allowsMassiveDownload()) {
-						map.showDownloadTilesDialog();
+						showCtrl.showDownloadTilesDialog();
 					} else {
-
+//TODO
 						map.showOKDialog(map.getText(R.string.not_download_tiles).toString(), R.string.warning, false);
 					}
 				}
@@ -179,7 +200,7 @@ public class MenuHelper {
 				break;
 			case 6:
 				try {
-					map.showDownloadDialog();
+					showCtrl.showDownloadDialog();
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "OpenWebsite: ", e);
 				}
@@ -317,16 +338,5 @@ public class MenuHelper {
 		return result;
 	}
 
-	// FixME on prepareMenu...
-	public void updateGps(Boolean enabled) {
-		if (myLocationButton != null && myNavigator != null) {
-			this.myLocationButton.setEnabled(enabled);
-			this.myNavigator.setEnabled(enabled);
-		}
-	}
-
-	public void updateNavigator(boolean connection) {
-		if (myNavigator != null)
-			myNavigator.setEnabled(connection);
-	}
+	
 }
