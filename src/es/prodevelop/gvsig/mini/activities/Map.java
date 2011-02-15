@@ -323,6 +323,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
 				// "Prueba de ScreenPower");
 
+				if (getIntent() != null)
+					Log.d("Map", "Action: " + getIntent().getAction() + "/ scheme: " + getIntent().getScheme() + "/ getData: " + getIntent().getData());
 				// if (getIntent() != null
 				// && getIntent().getAction().compareTo(
 				// SplashActivity.OFFLINE_INTENT_ACTION) != 0)
@@ -2661,7 +2663,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
+	// what the fuck does this do ?
 	private ItemContext updateContextWMS(ItemContext context) {
+		Log.d("MAP", "Context WAS " + context.toString());
 		try {
 			if (this.osmap.getMRendererInfo().getType() != MapRenderer.WMS_RENDERER) {
 				if (context instanceof WMSRoutePOIContext)
@@ -2720,6 +2724,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				}
 
 			this.setContext(context);
+			Log.d("MAP", "Context NOW IS " + context.toString());
 			return context;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3246,6 +3251,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	private void processOfflineIntentActoin(Intent i) throws Exception {
 		Log.d("Map", "OFFLINE_INTENT_ACTION");
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
+		// '&gt;' => '>'
 		completeURLString = completeURLString.replaceAll("&gt;",
 				MapRenderer.NAME_SEPARATOR);
 		String urlString = completeURLString.split(";")[1];
@@ -3290,6 +3296,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				setIntent(i);
 				processGeoAction(i);
 				if (SplashActivity.OFFLINE_INTENT_ACTION.equals(i.getAction())) {
+					Log.d("Map", "onCreate with NULL !");
 					onCreate(null);
 				} else if (Intent.ACTION_SEARCH.equals(i.getAction())) {
 					processActionSearch(i);

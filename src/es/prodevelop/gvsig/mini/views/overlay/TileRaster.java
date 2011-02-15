@@ -157,7 +157,7 @@ import es.prodevelop.tilecache.util.Utilities;
 public class TileRaster extends SurfaceView implements GeoUtils,
 		OnClickListener, OnLongClickListener, LayerChangedListener,
 		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
-
+	// tous les overlays notamment
 	private ArrayList extentChangedListeners = new ArrayList();
 
 	private POIProviderChangedListener poiProviderFailListener;
@@ -270,12 +270,17 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					getResources(), false);
 			log.setLevel(Utils.LOG_LEVEL);
 			// log.setClientID(this.toString());
-			this.mScaler = new Scaler(context, new LinearInterpolator());
+			
+			// two main components : renderer and TileProvider
 			this.instantiateTileProviderfromSettings();
 			this.setRenderer(aRendererInfo);
-			geomDrawer = new AndroidGeometryDrawer(this, context);
-			acetate = new AcetateOverlay(context, this,
-					AcetateOverlay.DEFAULT_NAME);
+			
+			// default overlays
+			this.mScaler = new Scaler(context, new LinearInterpolator());
+			acetate = new AcetateOverlay(context, this, AcetateOverlay.DEFAULT_NAME);
+			
+			geomDrawer = new AndroidGeometryDrawer(this, context);			
+			
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
 					false, false);
 			this.setFocusable(true);
@@ -1279,7 +1284,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		@Override
 		public void onLongPress(MotionEvent e) {
 			try {
-				if (TileRaster.this.map.isPOISlideShown())
+				// always false // FIXME ?
+				if (TileRaster.this.map.isPOISlideShown()) 
 					return;
 				TileRaster.this.onLongPress(e);
 			} catch (Exception est) {
@@ -1360,7 +1366,9 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		}
 	}
-
+	// End of OpenStreetMapViewGestureDetectorListener
+	
+	
 	@Override
 	public void onClick(View view) {
 		try {
@@ -1444,6 +1452,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
 		t.setTileNameSuffix(tileSuffix);
 
+		// mode = TileProvider.MODE_OFFLINE; // always provide offline maps
 		this.mTileProvider = new AndroidTileProvider(this.androidContext,
 				new HandlerAndroid(lh), mapWidth, mapHeight, 256, mode, t);
 	}

@@ -115,6 +115,7 @@ public class SplashActivity extends Activity {
 		try {
 			Log.d("Splash", "onNewIntent");
 			super.onNewIntent(intent);
+			Log.d("Splash", "Intent:" + intent.getAction() + "/" + intent.getCategories().toString());
 			if (intent != null
 					&& intent.getAction().compareTo(OFFLINE_INTENT_ACTION) == 0) {
 				Log.d("", "OFFLINE_INTENT_ACTION");
@@ -123,7 +124,8 @@ public class SplashActivity extends Activity {
 					android.content.Intent.ACTION_VIEW)) {
 				setIntent(intent);
 			}
-
+			
+			// Maybe used when the application is not launched for the first time
 			if (Initializer.isInitialized) {
 				new Handler().postDelayed(new Runnable() {
 					@Override
@@ -243,14 +245,31 @@ public class SplashActivity extends Activity {
 			return true;
 		}
 	}
-
+	
+	// Fill an intent base on its own intent
 	private void fillIntent(Intent mainIntent) {
 		Intent activityIntent = this.getIntent();
-		if (activityIntent == null)
+		if (activityIntent == null) {
+			Log.d("Splash", "Intent of splash is null:");
 			return;
+		}
+		mainIntent.setAction(SplashActivity.OFFLINE_INTENT_ACTION);
+		mainIntent.putExtra("lat", 0);
+		mainIntent.putExtra("lon", 0);
+		mainIntent.putExtra("zoom", 0);
+		// Map.processOffline...
+		// String URL="OPEN STREET MAP;0,http://a.tile.openstreetmap.org/>http://b.tile.openstreetmap.org/>http://c.tile.openstreetmap.org/,png,18,0,256,-2.0037508342789244E7,-2.0037508342789244E7,-2.0037508342789244E7,-2.0037508342789244E7,2.0037508342789244E7,2.0037508342789244E7,EPSG:900913,156543.03392804096153584694438047:78271.516964020480767923472190235:39135.758482010240383961736095118:19567.879241005120191980868047559:9783.9396205025600959904340237794:4891.9698102512800479952170118897:2445.9849051256400239976085059448:1222.9924525628200119988042529724:611.49622628141000599940212648621:305.74811314070500299970106324311:152.87405657035250149985053162155:76.437028285176250749925265810776:38.218514142588125374962632905388:19.109257071294062687481316452694:9.5546285356470313437406582263471:4.7773142678235156718703291131735:2.3886571339117578359351645565868:1.1943285669558789179675822782934:0.59716428347793945898379113914669:0.29858214173896972949189556957335:0.14929107086948486474594778478667:0.074645535434742432372973892393336:0.037322767717371216186486946196668:0.018661383858685608093243473098334:0.009330691929342804046621736549167";
+		// taken from layers.txt
+		String URL="OPEN STREET MAP;0[],http://a.tile.openstreetmap.org/>http://b.tile.openstreetmap.org/>http://c.tile.openstreetmap.org/,png,18,0,256,-2.0037508342789244E7,-2.0037508342789244E7,-2.0037508342789244E7,-2.0037508342789244E7,2.0037508342789244E7,2.0037508342789244E7,EPSG:900913,156543.03392804096153584694438047:78271.516964020480767923472190235:39135.758482010240383961736095118:19567.879241005120191980868047559:9783.9396205025600959904340237794:4891.9698102512800479952170118897:2445.9849051256400239976085059448:1222.9924525628200119988042529724:611.49622628141000599940212648621:305.74811314070500299970106324311:152.87405657035250149985053162155:76.437028285176250749925265810776:38.218514142588125374962632905388:19.109257071294062687481316452694:9.5546285356470313437406582263471:4.7773142678235156718703291131735:2.3886571339117578359351645565868:1.1943285669558789179675822782934:0.59716428347793945898379113914669:0.29858214173896972949189556957335:0.14929107086948486474594778478667:0.074645535434742432372973892393336:0.037322767717371216186486946196668:0.018661383858685608093243473098334:0.009330691929342804046621736549167";
+		mainIntent.putExtra(Constants.URL_STRING, URL);
+		if (true)
+			return;
+		
 		final Uri data = activityIntent.getData();
 		if (data != null && data.getScheme().equals("geo")) {
-
+			
+			Log.d("Splash", "Intent content:" + activityIntent.getData().toString());
+			
 			final String coordsString = activityIntent.getData()
 					.getSchemeSpecificPart();
 			if (coordsString.length() > 0) {
@@ -276,10 +295,9 @@ public class SplashActivity extends Activity {
 		mainIntent.putExtra("lat", lat);
 		mainIntent.putExtra("lon", lon);
 		mainIntent.putExtra("zoom", z);
-		if (activityIntent == null)
-			return;
 
-		String URL = activityIntent.getStringExtra(Constants.URL_STRING);
+		// FIXME
+		// String URL = activityIntent.getStringExtra(Constants.URL_STRING);
 
 		if (URL != null) {
 			mainIntent.putExtra(Constants.URL_STRING, URL);
