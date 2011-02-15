@@ -177,7 +177,7 @@ public class MenuHelper {
 						showCtrl.showDownloadTilesDialog();
 					} else {
 //TODO
-						map.showOKDialog(map.getText(R.string.not_download_tiles).toString(), R.string.warning, false);
+						map.showCtrl.showOKDialog(map.getText(R.string.not_download_tiles).toString(), R.string.warning, false);
 					}
 				}
 
@@ -254,7 +254,7 @@ public class MenuHelper {
 						// SCREEN_ORIENTATION_PORTRAIT);
 						// navigation = true;
 						map.initializeSensor(map, true);
-						map.showNavigationModeAlert();
+						map.showCtrl.showNavigationModeAlert();
 					} else {
 						try {
 							if (Settings.getInstance().getBooleanValue(map.getText(R.string.settings_key_orientation).toString()))

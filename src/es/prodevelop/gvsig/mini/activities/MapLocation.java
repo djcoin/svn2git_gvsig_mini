@@ -103,7 +103,7 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 			CompatManager.getInstance().getRegisteredLogHandler()
 					.configureLogger(log);
 			Config.setContext(this);
-
+			
 			locationHandler = new LocationHandler(
 					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 					this, this);

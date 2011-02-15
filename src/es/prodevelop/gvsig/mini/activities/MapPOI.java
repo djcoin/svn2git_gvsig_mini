@@ -421,7 +421,7 @@ public class MapPOI extends Map implements POIProviderChangedListener {
 					if (!navigation) {
 
 						this.initializeSensor(this, true);
-						this.showNavigationModeAlert();
+						this.showCtrl.showNavigationModeAlert();
 					} else {
 						try {
 							if (Settings.getInstance().getBooleanValue(

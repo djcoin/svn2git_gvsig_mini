@@ -137,6 +137,7 @@ public class AcetateOverlay extends MapOverlay {
 					lastFeature = feature;
 				}
 
+				// FIXME ! lastFeature... set by over overlays, only used here. Not readable
 				IGeometry f = lastFeature.getGeometry();
 
 				if (f != null && f instanceof Point) {

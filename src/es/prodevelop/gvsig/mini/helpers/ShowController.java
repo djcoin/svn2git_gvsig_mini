@@ -12,17 +12,22 @@ import org.anddev.android.weatherforecast.weather.WeatherSet;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import es.prodevelop.gvsig.mini.R;
 import es.prodevelop.gvsig.mini.activities.Map;
@@ -32,6 +37,7 @@ import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.util.Utils;
 import es.prodevelop.gvsig.mini.utiles.WorkQueue;
+import es.prodevelop.gvsig.mini.views.overlay.LongTextAdapter;
 
 public class ShowController {
 	
@@ -320,7 +326,8 @@ public class ShowController {
 				return;
 			}
 			if (ws.getWeatherCurrentCondition() == null) {
-				map.dialog2.dismiss();
+				if (map.dialog2 != null)
+					map.dialog2.dismiss();
 				AlertDialog.Builder alertW = new AlertDialog.Builder(map);
 				alertW.setCancelable(true);
 				alertW.setIcon(R.drawable.menu03);
@@ -403,7 +410,8 @@ public class ShowController {
 					});
 
 			alertW.show();
-			map.dialog2.dismiss();
+			if (map.dialog2 != null)
+				map.dialog2.dismiss();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "showWeather: ", e);
 		} finally {
@@ -492,4 +500,135 @@ public class ShowController {
 			log.log(Level.SEVERE, "showTweetDialog: ", e);
 		}
 	}
+	
+	public void showNavigationModeAlert() {
+		try {
+			RadioGroup r = new RadioGroup(map);
+			RadioButton r1 = new RadioButton(map);
+			r1.setText(R.string.portrait);
+			r1.setId(0);
+			RadioButton r2 = new RadioButton(map);
+			r2.setText(R.string.landscape);
+			r2.setId(1);
+			r.addView(r1);
+			r.addView(r2);
+			r.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+				@Override
+				public void onCheckedChanged(RadioGroup arg0, int arg1) {
+					try {
+						map.centerOnGPSLocation();
+						map.osmap.setKeepScreenOn(true);
+						map.navigation = true;
+						map.osmap.onLayerChanged(map.osmap.getMRendererInfo()
+								.getFullNAME());
+						// final MapRenderer r =
+						// Map.this.osmap.getMRendererInfo();
+						map.osmap.setZoomLevel(17, true);
+						switch (arg1) {
+						case 0:
+							log.log(Level.FINE, "navifation mode vertical on");
+							map.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							break;
+						case 1:
+							log.log(Level.FINE, "navifation mode horizontal on");
+							map.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							break;
+						default:
+							break;
+						}
+					} catch (Exception e) {
+						log.log(Level.SEVERE, "onCheckedChanged", e);
+					}
+				}
+
+			});
+			AlertDialog.Builder alertCache = new AlertDialog.Builder(map);
+			alertCache
+					.setView(r)
+					.setIcon(R.drawable.menu_navigation)
+					.setTitle(R.string.Map_Navigator)
+					.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+								}
+
+							}).create();
+			alertCache.show();
+			r1.setChecked(true);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		}
+	}
+
+	public void showOKDialog(String textBody, int title, boolean editView) {
+		try {
+			log.log(Level.FINE, "show ok dialog");
+			AlertDialog.Builder alert = new AlertDialog.Builder(map);
+
+			if (textBody.length() > 1000) {
+				Toast.makeText(map, R.string.Map_25, Toast.LENGTH_LONG).show();
+				return;
+			}
+
+			if (textBody.contains("<html")) {
+				try {
+					WebView wv = new WebView(map);
+					String html = textBody.substring(textBody.indexOf("<html"),
+							textBody.indexOf("html>") + 5);
+
+					wv.loadData(html, "text/html", "UTF-8");
+					alert.setView(wv);
+				} catch (Exception e) {
+					log.log(Level.SEVERE, "", e);
+					ListView l = new ListView(map);
+					l.setAdapter(new LongTextAdapter(map, textBody, editView));
+					l.setClickable(false);
+					l.setLongClickable(false);
+					l.setFocusable(false);
+					alert.setView(l);
+				} catch (OutOfMemoryError oe) {
+					map.onLowMemory();
+					log.log(Level.SEVERE, "", oe);
+					map.showToast(R.string.MapLocation_3);
+				}
+
+			} else {
+				ListView l = new ListView(map);
+				l.setAdapter(new LongTextAdapter(map, textBody, editView));
+				l.setClickable(false);
+				l.setLongClickable(false);
+				l.setFocusable(false);
+				alert.setView(l);
+			}
+
+			alert.setTitle(title);
+
+			alert.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							try {
+
+							} catch (Exception e) {
+								log.log(Level.SEVERE, "", e);
+							}
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "", e);
+		} catch (OutOfMemoryError oe) {
+			map.onLowMemory();
+			log.log(Level.SEVERE, "", oe);
+			map.showToast(R.string.MapLocation_3);
+		}
+	}
+
 }

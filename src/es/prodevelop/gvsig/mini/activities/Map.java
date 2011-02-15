@@ -220,7 +220,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	Cancellable downloadCancellable;
 	Button downloadTilesButton;
 	
+	// FIXME : remove this
 	public NamedMultiPoint nameds;
+	
 	public static String twituser = null;
 	public static String twitpass = null;
 	private Point nearestPOI;
@@ -457,7 +459,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				log.log(Level.FINE, "show pois with nm null, returning...");
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-				dialog2.dismiss();
+				if (dialog2 != null)
+					dialog2.dismiss();
 				Toast.makeText(this, R.string.Map_1, Toast.LENGTH_LONG).show();
 				// alert.setIcon(R.drawable.pois);
 				// alert.setTitle("Error");
@@ -706,165 +709,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				CRSFactory.getCRS("EPSG:900913"));
 		i.putExtra("lon", lonlat[0]);
 		i.putExtra("lat", lonlat[1]);
-	}
-
-	public void showNavigationModeAlert() {
-		try {
-			RadioGroup r = new RadioGroup(this);
-			RadioButton r1 = new RadioButton(this);
-			r1.setText(R.string.portrait);
-			r1.setId(0);
-			RadioButton r2 = new RadioButton(this);
-			r2.setText(R.string.landscape);
-			r2.setId(1);
-			r.addView(r1);
-			r.addView(r2);
-			r.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-				@Override
-				public void onCheckedChanged(RadioGroup arg0, int arg1) {
-					try {
-						centerOnGPSLocation();
-						osmap.setKeepScreenOn(true);
-						navigation = true;
-						osmap.onLayerChanged(osmap.getMRendererInfo()
-								.getFullNAME());
-						// final MapRenderer r =
-						// Map.this.osmap.getMRendererInfo();
-						Map.this.osmap.setZoomLevel(17, true);
-						switch (arg1) {
-						case 0:
-							log.log(Level.FINE, "navifation mode vertical on");
-							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-							break;
-						case 1:
-							log.log(Level.FINE, "navifation mode horizontal on");
-							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-							break;
-						default:
-							break;
-						}
-					} catch (Exception e) {
-						log.log(Level.SEVERE, "onCheckedChanged", e);
-					}
-				}
-
-			});
-			AlertDialog.Builder alertCache = new AlertDialog.Builder(this);
-			alertCache
-					.setView(r)
-					.setIcon(R.drawable.menu_navigation)
-					.setTitle(R.string.Map_Navigator)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO Auto-generated method stub
-
-								}
-
-							}).create();
-			alertCache.show();
-			r1.setChecked(true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {
-		// GPSPoint center = this.osmap.getMapCenter();
-		// Point centerDouble = new Point(center.getLongitudeE6() / 1E6, center
-		// .getLatitudeE6() / 1E6);
-		// centerDouble = TileConversor.latLonToMercator(centerDouble.getX(),
-		// centerDouble.getY());
-		// // Point a = new Point(-0.43, 39.4);
-		// // Point b = new Point(-0.3, 39.53);
-		// Extent e = ViewPort.calculateExtent(centerDouble,
-		// Tags.RESOLUTIONS[this.osmap.getZoomLevel()], this.osmap
-		// .getWidth(), this.osmap.getHeight());
-		//
-		// // Extent e = new Extent(-20037508.3427892430765884088807,
-		// // -20037508.3427892430765884088807,
-		// // 20037508.3427892430765884088807,
-		// // 20037508.3427892430765884088807);
-		// // Extent e = new Extent(-5037508.3427892430765884088807,
-		// // -5037508.3427892430765884088807,
-		// // 37508.3427892430765884088807, 37508.3427892430765884088807);
-		// OSMHandler handler = new OSMHandler();
-		// handler.setURL(new String[] { mr.getBASEURL() });
-		//
-		// // YahooHandler h = new YahooHandler();
-		// // h.setURL(new
-		// // String[]{"http://png.maps.yimg.com/png?t=m&v=4.1&s=256&f=j"});
-		//
-		// // String layerName = this.osmap.getMRendererInfo().getNAME();
-		// String layerName = "estoesunaprueba2";
-		//
-		// try {
-		// es.prodevelop.gvsig.mini.phonecache.Cancellable c =
-		// es.prodevelop.gvsig.mini.phonecache.Utilities
-		// .getNewCancellable();
-		// Grid g = new Grid(handler, e, Tags.RESOLUTIONS[minZoom],
-		// Tags.RESOLUTIONS[maxZoom], layerName, c);
-		// g.addDownloadWaiter(this);
-		//
-		// ThreadPool.getInstance().assign(g);
-		// } catch (IOException exc) {
-		// Log.e("", exc.getMessage());
-		// }
-	}
-
-	/**
-	 * Launches the WeatherFunctionality
-	 * 
-	 * @param x
-	 *            The x coordinate
-	 * @param y
-	 *            The y coordinate
-	 * @param SRS
-	 *            The SRS in which the coordinates are expressed
-	 */
-	public void getWeather(double x, double y, String SRS) {
-		try {
-			log.log(Level.FINE, "Launching weather functionality");
-			double[] coords = ConversionCoords.reproject(x, y,
-					CRSFactory.getCRS(SRS), CRSFactory.getCRS("EPSG:4326"));
-
-			WeatherFunctionality w = new WeatherFunctionality(this, 0,
-					coords[1], coords[0]);
-			w.onClick(null);
-			userContext.setUsedWeather(true);
-			userContext.setLastExecWeather();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "getWeather: ", e);
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog indicating that the route calculation has failed
-	 */
-	public void showRouteError() {
-		try {
-			log.log(Level.FINE, "Show route error");
-			dialog2.dismiss();
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setIcon(R.drawable.routes);
-			alert.setTitle(R.string.error);
-			alert.setMessage(R.string.Map_13);
-
-			alert.setNegativeButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showRouteError: ", e);
-		}
 	}
 
 	@Override
@@ -2192,6 +2036,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					return true;
 				}
 
+				// FIXME ? remove access to acetate ?
 				if (osmap.acetate.getPopupVisibility() == View.VISIBLE) {
 					osmap.acetate.setPopupVisibility(View.INVISIBLE);
 					return true;
@@ -2302,6 +2147,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
+	// document this !
 	private void processOfflineIntentActoin(Intent i) throws Exception {
 		Log.d("Map", "OFFLINE_INTENT_ACTION");
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
@@ -2716,6 +2562,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 	}
 
+	// Let this here for the moment...
 	public void showToast(int resId) {
 		try {
 			Message m = new Message();
@@ -2724,72 +2571,6 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			this.getMapHandler().sendMessage(m);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	// TODO: bof... mais générique !
-	public void showOKDialog(String textBody, int title, boolean editView) {
-		try {
-			log.log(Level.FINE, "show ok dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			if (textBody.length() > 1000) {
-				Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
-				return;
-			}
-
-			if (textBody.contains("<html")) {
-				try {
-					WebView wv = new WebView(this);
-					String html = textBody.substring(textBody.indexOf("<html"),
-							textBody.indexOf("html>") + 5);
-
-					wv.loadData(html, "text/html", "UTF-8");
-					alert.setView(wv);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "", e);
-					ListView l = new ListView(this);
-					l.setAdapter(new LongTextAdapter(this, textBody, editView));
-					l.setClickable(false);
-					l.setLongClickable(false);
-					l.setFocusable(false);
-					alert.setView(l);
-				} catch (OutOfMemoryError oe) {
-					onLowMemory();
-					log.log(Level.SEVERE, "", oe);
-					showToast(R.string.MapLocation_3);
-				}
-
-			} else {
-				ListView l = new ListView(this);
-				l.setAdapter(new LongTextAdapter(this, textBody, editView));
-				l.setClickable(false);
-				l.setLongClickable(false);
-				l.setFocusable(false);
-				alert.setView(l);
-			}
-
-			alert.setTitle(title);
-
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "", e);
-							}
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		} catch (OutOfMemoryError oe) {
-			onLowMemory();
-			log.log(Level.SEVERE, "", oe);
-			showToast(R.string.MapLocation_3);
 		}
 	}
 
@@ -2874,7 +2655,109 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
-	private void updateModeTileProvider() {
+	
+	
+	// ** UNUSED **
+//	private void updateModeTileProvider() {
+//
+//	}
+//	
+	
+	/*
+	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {
+		// GPSPoint center = this.osmap.getMapCenter();
+		// Point centerDouble = new Point(center.getLongitudeE6() / 1E6, center
+		// .getLatitudeE6() / 1E6);
+		// centerDouble = TileConversor.latLonToMercator(centerDouble.getX(),
+		// centerDouble.getY());
+		// // Point a = new Point(-0.43, 39.4);
+		// // Point b = new Point(-0.3, 39.53);
+		// Extent e = ViewPort.calculateExtent(centerDouble,
+		// Tags.RESOLUTIONS[this.osmap.getZoomLevel()], this.osmap
+		// .getWidth(), this.osmap.getHeight());
+		//
+		// // Extent e = new Extent(-20037508.3427892430765884088807,
+		// // -20037508.3427892430765884088807,
+		// // 20037508.3427892430765884088807,
+		// // 20037508.3427892430765884088807);
+		// // Extent e = new Extent(-5037508.3427892430765884088807,
+		// // -5037508.3427892430765884088807,
+		// // 37508.3427892430765884088807, 37508.3427892430765884088807);
+		// OSMHandler handler = new OSMHandler();
+		// handler.setURL(new String[] { mr.getBASEURL() });
+		//
+		// // YahooHandler h = new YahooHandler();
+		// // h.setURL(new
+		// // String[]{"http://png.maps.yimg.com/png?t=m&v=4.1&s=256&f=j"});
+		//
+		// // String layerName = this.osmap.getMRendererInfo().getNAME();
+		// String layerName = "estoesunaprueba2";
+		//
+		// try {
+		// es.prodevelop.gvsig.mini.phonecache.Cancellable c =
+		// es.prodevelop.gvsig.mini.phonecache.Utilities
+		// .getNewCancellable();
+		// Grid g = new Grid(handler, e, Tags.RESOLUTIONS[minZoom],
+		// Tags.RESOLUTIONS[maxZoom], layerName, c);
+		// g.addDownloadWaiter(this);
+		//
+		// ThreadPool.getInstance().assign(g);
+		// } catch (IOException exc) {
+		// Log.e("", exc.getMessage());
+		// }
+	}*/
 
+	/**
+	 * Launches the WeatherFunctionality
+	 * 
+	 * @param x
+	 *            The x coordinate
+	 * @param y
+	 *            The y coordinate
+	 * @param SRS
+	 *            The SRS in which the coordinates are expressed
+	 */
+	/* ** UNUSED **
+	public void getWeather(double x, double y, String SRS) {
+		try {
+			log.log(Level.FINE, "Launching weather functionality");
+			double[] coords = ConversionCoords.reproject(x, y,
+					CRSFactory.getCRS(SRS), CRSFactory.getCRS("EPSG:4326"));
+
+			WeatherFunctionality w = new WeatherFunctionality(this, 0,
+					coords[1], coords[0]);
+			w.onClick(null);
+			userContext.setUsedWeather(true);
+			userContext.setLastExecWeather();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "getWeather: ", e);
+		}
 	}
+	*/
+
+	/**
+	 * Shows an AlertDialog indicating that the route calculation has failed
+	 */
+	/*  ** UNUSED **
+	public void showRouteError() {
+		try {
+			log.log(Level.FINE, "Show route error");
+			dialog2.dismiss();
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setIcon(R.drawable.routes);
+			alert.setTitle(R.string.error);
+			alert.setMessage(R.string.Map_13);
+
+			alert.setNegativeButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					});
+
+			alert.show();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "showRouteError: ", e);
+		}
+	}*/
 }
