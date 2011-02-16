@@ -133,6 +133,49 @@
 
 		</activity>
 
+
+
+
+<activity android:name=".activities._MapPOI"
+			android:screenOrientation="sensor" android:theme="@android:style/Theme.NoTitleBar"
+			android:configChanges="orientation" android:launchMode="singleTask">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+
+			<!-- <intent-filter android:icon="@drawable/icon_twitter" -->
+			<!-- android:label="@string/minitwitter"> -->
+<!---->
+			<!-- <action android:name="android.intent.action.SEND" /> -->
+			<!-- <action android:name="android.intent.action.VIEW" /> -->
+			<!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+			<!-- <data android:mimeType="text/plain" /> -->
+			<!-- <category android:name="android.intent.category.DEFAULT" /> -->
+<!---->
+			<!-- </intent-filter> -->
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+			<meta-data android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+
+
+		</activity>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		<activity android:name=".activities.NameFinderActivity"
 			android:theme="@android:style/Theme.NoTitleBar">
 		</activity>
