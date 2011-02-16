@@ -1281,6 +1281,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 		@Override
 		public void onLongPress(MotionEvent e) {
+			
+			System.out.println("TileRaster: renderer.getSRS() " + TileRaster.this.getMRendererInfo().getSRS());
+			double[] p = getCenterLonLat();
+			System.out.println("Center is: " + p[0] + "/" + p[1]);			
+			
 			try {
 				if (TileRaster.this.map.isPOISlideShown())
 					return;
@@ -1444,7 +1449,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		} catch (NoSuchFieldError e) {
 
 		}
-
+		
 		String tileSuffix = dot + tileName;
 		t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
 		t.setTileNameSuffix(tileSuffix);

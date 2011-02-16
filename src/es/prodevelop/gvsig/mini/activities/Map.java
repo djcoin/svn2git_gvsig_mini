@@ -302,7 +302,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	boolean mUpdatingAnimation;
 	// PowerManager.WakeLock wl;
 	MapHandler handler = new MapHandler();
-	private final static Logger log = Logger.getLogger(Map.class.getName());
+	protected final static Logger log = Logger.getLogger(Map.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
 	private UserContext userContext;

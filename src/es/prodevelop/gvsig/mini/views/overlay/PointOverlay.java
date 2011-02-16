@@ -126,7 +126,8 @@ public abstract class PointOverlay extends MapOverlay {
 				c.drawBitmap(icon, coords[0] - midIcon[0], coords[1]
 						- midIcon[1], Paints.mPaintR);
 		} catch (Exception e) {
-			Log.e("", e.getMessage());
+			Log.e("PointOverlay draw", e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -150,7 +151,8 @@ public abstract class PointOverlay extends MapOverlay {
 			renderer = newRenderer;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.e("", e.getMessage());
+			Log.e("PointOverlay onLayerChanged", e.getMessage());
+			// Log.e("", e.getMessage());
 		}
 	}
 
@@ -160,7 +162,8 @@ public abstract class PointOverlay extends MapOverlay {
 			if (isVisible())
 				draw(getPoints(), maps.getMRendererInfo(), c);
 		} catch (Exception e) {
-			Log.e("", e.getMessage());
+			Log.d("PointOverlay onDraw", e.getMessage());
+			// Log.e("", e.getMessage());
 		}
 	}
 
