@@ -32,11 +32,12 @@ public class FakeLocationSource {
 	}
 	
 	public Location getNextLocation() {
-		if (cpt + 1 > location_ll.length)
+		if (cpt + 1 > location_ll.length){
 			if (!loop)
 				return null; // no more location
 			cpt = 0;
-
+		}
+		
 		l.setLongitude(location_ll[cpt]);
 		l.setLatitude(location_ll[cpt+1]);		
 		l.setAltitude(0);		

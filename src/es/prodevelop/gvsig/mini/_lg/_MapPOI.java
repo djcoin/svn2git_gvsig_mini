@@ -64,8 +64,8 @@ public class _MapPOI extends Map implements IAreaEventListener {
 		super.onCreate(savedInstanceState);
 		
 		// starting the mock... | this (map should not be here);
-		// mock = SimpleMockLocationProvider.makeInstance((LocationManager) this.getSystemService(this.LOCATION_SERVICE), this);
-		// mock.start(new FakeLocationSource(mock.mockLocationProvider, true)); // start playing fake GPS every two seconds AND LOOP
+		mock = SimpleMockLocationProvider.makeInstance((LocationManager) this.getSystemService(this.LOCATION_SERVICE), this);
+		mock.start(new FakeLocationSource(mock.mockLocationProvider, true)); // start playing fake GPS every two seconds AND LOOP
 		
 		Thread t = new Thread(
 				new Runnable() {
@@ -88,6 +88,7 @@ public class _MapPOI extends Map implements IAreaEventListener {
 	@Override
 	public void onLocationChanged(Location pLoc) {		
 		super.onLocationChanged(pLoc);
+		osmap.resumeDraw();
 	}
 	
 	@Override
