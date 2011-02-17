@@ -67,9 +67,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini._lg._MapPOI;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.MapPOI;
-import es.prodevelop.gvsig.mini.activities._MapPOI;
 import es.prodevelop.gvsig.mini.map.GeoMath;
 import es.prodevelop.gvsig.mini.map.GeoUtils;
 

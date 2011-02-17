@@ -36,40 +36,73 @@
  *   author Alberto Romeu aromeu@prodevelop.es
  */
 
-package es.prodevelop.gvsig.mini.symbol;
+package es.prodevelop.gvsig.mini._lg;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.poi.POICategories;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini._lg.LgPOI;
 import es.prodevelop.gvsig.mini.geom.Point;
+import es.prodevelop.gvsig.mini.symbol.SymbolSelector;
 import es.prodevelop.gvsig.mini.util.ResourceLoader;
 import es.prodevelop.gvsig.mini.utiles.Utilities;
 import es.prodevelop.gvsig.mini.views.overlay.BookmarkOverlay;
 
 public class LgSymbolSelector extends SymbolSelector {
 
+	final static private String TAG = LgSymbolSelector.class.getName();
+	
 	private int[] midIcon = new int[] { 0, 36 };
 
-	private Bitmap DEFAULT;
+	private Bitmap NOTVISITED, VISITED, DEFAULT, WRONG;
+
 
 	public LgSymbolSelector() {
-		DEFAULT = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_f);
+		NOTVISITED = ResourceLoader.getBitmap(R.drawable.p_food_restaurant_f);
+		VISITED = ResourceLoader.getBitmap(R.drawable.p_health_hospital);
+		WRONG = ResourceLoader.getBitmap(R.drawable.p_accommodation_hotel);
+		DEFAULT = NOTVISITED;
 	}
 
 	@Override
-	public Bitmap getSymbol(Point point) {
-		return DEFAULT;
+	public Bitmap getSymbol(Point p) {
+		LgPOI lgpoi;
+		Bitmap bm = DEFAULT;
+
+		if (p instanceof LgPOI){
+			lgpoi = (LgPOI) p;
+
+			switch (lgpoi.getState()) {
+			case NOTVISITED:
+					Log.d(TAG, "The state of POI is NOTVISITED!");
+					bm = this.NOTVISITED;
+				break;
+			case VISITED:
+					Log.d(TAG, "The state of POI is VISITED!");
+					bm = this.VISITED;
+				break;
+			default:
+				Log.d(TAG, "The state of POI could not be determine" + lgpoi.getState());
+					bm = this.WRONG;
+				break;
+			}
+		} else {
+			Log.d(TAG, "Pointis NOT a LGPoi.");
+		}
+		return bm;
 	}
 
 	@Override
 	public String getText(Point p) {
 		String text = "Default description !";
-		if (p instanceof OsmPOI)
-			text = ((OsmPOI) p).getDescription();
-		else if (p instanceof OsmPOIStreet)
-			text = ((OsmPOIStreet) p).getDescription();		
+		if (p instanceof LgPOI){
+			LgPOI lgpoi = (LgPOI) p;
+			text = lgpoi.getDescription();
+		}
+	
 		return Utilities.capitalizeFirstLetters(text);
 	}
 

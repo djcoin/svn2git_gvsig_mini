@@ -136,7 +136,7 @@
 
 
 
-<activity android:name=".activities._MapPOI"
+<activity android:name="._lg._MapPOI"
 			android:screenOrientation="sensor" android:theme="@android:style/Theme.NoTitleBar"
 			android:configChanges="orientation" android:launchMode="singleTask">
 			<intent-filter>
