@@ -118,6 +118,7 @@ import com.markupartist.android.widget.ActionBar.AbstractAction;
 
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.LogFeedbackActivity;
 import es.prodevelop.gvsig.mini.activities.MapLocation;
 import es.prodevelop.gvsig.mini.activities.OnSettingsChangedListener;
 import es.prodevelop.gvsig.mini.activities.Settings;
@@ -206,8 +207,7 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter,
-		OnSettingsChangedListener, IMap {
+public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter, IMap {
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
@@ -244,50 +244,9 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	public boolean backpressedroulette = false;
 	private AlertDialog alertP;
 	SensorEventListener mTop = null;
-	// private SensorManager mSensorManager;
-	private MenuItem myNavigator;
-	private MenuItem myLocationButton;
-	private MenuItem myZoomRectangle;
-	private MenuItem mySearchDirection;
-	private MenuItem myDownloadLayers;
-	private MenuItem myDownloadTiles;
-	private MenuItem mySettings;
-	private MenuItem myAbout;
-	private MenuItem myWhats;
-	private MenuItem myLicense;
 	public Handler mHandler;
 	public static ViewPort vp;
 	int nearopt = 0;
-	public static final int ROUTE_CANCELED = 100;
-	public static final int ROUTE_INITED = 101;
-	public static final int WEATHER_INITED = 102;
-	public static final int TWEET_SENT = 103;
-	public static final int SHOW_TWEET_DIALOG = 104;
-	public static final int POI_INITED = 105;
-	public static final int SHOW_POI_DIALOG = 106;
-	public static final int SHOW_ADDRESS_DIALOG = 107;
-	public static final int ROUTE_CLEARED = 108;
-	public static final int POI_LIST = 109;
-	public static final int VOID = 110;
-	public static final int POI_CLEARED = 111;
-	public static final int TWEET_ERROR = 112;
-	public static final int SHOW_TOAST = 113;
-	public static final int SHOW_OK_DIALOG = 114;
-	public static final int GETFEATURE_INITED = 115;
-	public static final int SHOW_TWEET_DIALOG_SETTINGS = 116;
-	public static final int SHOW_LOADING = 117;
-	public static final int HIDE_LOADING = 118;
-	public static final int POI_CANCELED = 1;
-	public static final int POI_SUCCEEDED = 2;
-	public static final int ROUTE_SUCCEEDED = 3;
-	public static final int ROUTE_NO_RESPONSE = 4;
-	public static final int ROUTE_NO_CALCULATED = 5;
-	public static final int POI_SHOW = 6;
-	public static final int ROUTE_ORIENTATION_CHANGED = 7;
-	public static final int WEATHER_SHOW = 8;
-	public static final int WEATHER_CANCELED = 9;
-	public static final int WEATHER_ERROR = 10;
-	public static final int CALCULATE_ROUTE = 11;
 	TextView reportView;
 	int cacheCounter = 0;
 	MapState mapState;
@@ -328,7 +287,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 				setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 				CompatManager.getInstance().getRegisteredLogHandler()
 						.configureLogger(log);
-				Settings.getInstance().addOnSettingsChangedListener(this);
+				// Settings.getInstance().addOnSettingsChangedListener(this);
 				tileWaiter = new TileDownloadWaiterDelegate(this);
 				log.log(Level.FINE, "on create");
 
@@ -379,8 +338,8 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 
 			if (isSaved) {
 				log.log(Level.FINE, "Restoring from previous state");
-				loadRoute(savedInstanceState);
-				loadPois(savedInstanceState);
+//				loadRoute(savedInstanceState);
+//				loadPois(savedInstanceState);
 				loadUI(savedInstanceState);
 				loadMap(savedInstanceState);
 				loadCenter(savedInstanceState);
@@ -414,9 +373,9 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 
 			actionBar.setTitle(R.string.action_bar_title);
 
-			addLayersActivityAction();
-			addMyLocationAction();			
-			addSearchAction();
+//			addLayersActivityAction();
+//			addMyLocationAction();			
+//			addSearchAction();
 
 			// this.addContentView(actionbar, R.layout.pruebas);
 			// if (isSaved) setContentView(null);
@@ -434,7 +393,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			// dialog, towards the application
 			Intent i = getIntent();
 
-			this.processActionSearch(i);
+			// this.processActionSearch(i);
 			this.processGeoAction(i);
 			this.processOfflineIntentActoin(i);
 
@@ -453,237 +412,29 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		}
 	}
 
-	public void addMyLocationAction() {
-		actionBar.addAction(new MyCenterLocation());
-	}
-
-	public void addLayersActivityAction() {
-		actionBar.addAction(new LayersActivityAction());
-	}
-
-	public void addSearchAction() {
-		actionBar.addAction(new SearchAction());
-	}
-
-	public void processActionSearch(Intent i) {
-		if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-			String q = i.getStringExtra(SearchManager.QUERY);
-			if (q == null)
-				q = i.getDataString();
-			final String query = q;
-			searchInNameFinder(query, false);
-			// Intent newIntent = new Intent(this, ResultSearchActivity.class);
-			// newIntent.putExtra(SearchActivity.HIDE_AUTOTEXTVIEW, true);
-			// newIntent.putExtra(ResultSearchActivity.QUERY, query.toString());
-			// fillSearchCenter(newIntent);
-			// startActivity(newIntent);
-			// return;
-		}
-	}
-
-	/**
-	 * Starts the NameFinderActivity after the NameFinderFunc has finished
-	 * 
-	 * @param descr
-	 *            An array with the description of the results of the NameFinder
-	 *            service
-	 * @param nm
-	 *            A NamedMultiPoint with the full results of the service
-	 * @return True if the activity is started, false if the results were not
-	 *         correct
-	 */
-	public boolean showPOIs(String[] descr, NamedMultiPoint nm) {
-		try {
-			if (descr == null) {
-				log.log(Level.FINE, "show pois with descr null, returning...");
-				return false;
-			}
-
-			if (nm == null || nm.getNumPoints() <= 0) {
-				log.log(Level.FINE, "show pois with nm null, returning...");
-				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-				dialog2.dismiss();
-				Toast.makeText(this, R.string.Map_1, Toast.LENGTH_LONG).show();
-				// alert.setIcon(R.drawable.pois);
-				// alert.setTitle("Error");
-				// alert.setMessage("No results were found");
-				//
-				// alert.setNegativeButton("OK",
-				// new DialogInterface.OnClickListener() {
-				// public void onClick(DialogInterface dialog,
-				// int whichButton) {
-				// }
-				// });
-				//
-				// alert.show();
-				return false;
-			}
-
-			Intent intent = new Intent(this, NameFinderActivity.class);
-			String[] res = new String[nm.getPoints().length];
-
-			for (int i = 0; i < nm.getNumPoints(); i++) {
-				res[i] = ((Named) nm.getPoint(i)).description;
-			}
-			intent.putExtra("test", res);
-
-			startActivityForResult(intent, 0);
-
-			this.nameds = nm;
-			dialog2.dismiss();
-			return true;
-
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showPOIS: ", e);
-			return false;
-		} finally {
-			if (dialog2 != null)
-				dialog2.dismiss();
-		}
-	}
-
-	/**
-	 * Calls {@link #showPOIs(String[], NamedMultiPoint)} with the last results
-	 */
-	public void viewLastPOIs() {
-		try {
-			log.log(Level.FINE, "view last pois");
-			String[] desc = new String[nameds.getNumPoints()];
-
-			for (int i = 0; i < nameds.getNumPoints(); i++) {
-				desc[i] = ((Named) nameds.getPoint(i)).description;
-			}
-			showPOIs(desc, nameds);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "viewLastPOIS: ", e);
-		}
-	}
-
-	/**
-	 * Starts the LayersActivity with the MapState.gvTilesPath file
-	 */
-	public void viewLayers() {
-		try {
-			log.log(Level.FINE, "Launching load layers activity");
-			Intent intent = new Intent(this, LayersActivity.class);
-
-			intent.putExtra("loadLayers", true);
-			intent.putExtra("gvtiles", mapState.gvTilesPath);
-
-			startActivityForResult(intent, 1);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "viewLayers: ", e);
-		}
-	}
-
-	/**
-	 * Checks that the route can be calculated and launches route calculation
-	 */
-	public void calculateRoute() {
-		try {
-			log.log(Level.FINE, "calculate route");
-			if (RouteManager.getInstance().getRegisteredRoute().canCalculate()) {
-				this.launchRouteCalculation();
-				// User context update
-				this.userContext.setUsedRoutes(true);
-				this.userContext.setLastExecRoutes();
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "calculateRoute: ", e);
-			Toast t = Toast.makeText(this, R.string.Map_2, Toast.LENGTH_LONG);
-			t.show();
-		} finally {
-		}
-	}
-
-	/**
-	 * Launches YOURSFunctionality
-	 */
-	public void launchRouteCalculation() {
-		try {
-			log.log(Level.FINE, "launching route calculation");
-			RouteManager.getInstance().getRegisteredRoute().iscancelled = false;
-			YOURSFunctionality yoursFunc = new YOURSFunctionality(this, 0);
-			yoursFunc.onClick(null);
-			userContext.setUsedRoutes(true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "launchRouteCalculation: ", e);
-		}
-	}
+//	public void addMyLocationAction() {
+//	}
+//	public void addLayersActivityAction() {
+//	}
+//	public void addSearchAction() {
+//	}
+//	public void processActionSearch(Intent i) {
+//	}
+//	public boolean showPOIs(String[] descr, NamedMultiPoint nm) {
+//	}
+//	public void viewLastPOIs() {
+//	}
+//	public void viewLayers() {
+//	}
+//	public void calculateRoute() {
+//	}
+//	public void launchRouteCalculation() {
+//	}
 
 	/**
 	 * Manages the results of the NameFinderActivity, LayersActivity
 	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		try {
-			super.onActivityResult(requestCode, resultCode, intent);
-			processGeoAction(intent);
-			log.log(Level.FINE, "onActivityResult (code, resultCode): "
-					+ requestCode + ", " + resultCode);
-			if (requestCode != CODE_SETTINGS && intent == null) {
-				log.log(Level.FINE,
-						"intent was null, returning from onActivityResult");
-				return;
-			}
-
-			switch (requestCode) {
-			case 0:
-				switch (resultCode) {
-				case 0:
-					log.log(Level.FINE,
-							"from NameFinderActivity: route from here");
-					int pos = Integer.parseInt(intent.getExtras()
-							.get("selected").toString());
-					Named p = (Named) nameds.getPoint(pos);
-					RouteManager.getInstance().getRegisteredRoute()
-							.setStartPoint(new Point(p.getX(), p.getY()));
-					calculateRoute();
-					osmap.setMapCenter(p.projectedCoordinates.getX(),
-							p.projectedCoordinates.getY());
-					break;
-				case 1:
-					log.log(Level.FINE,
-							"from NameFinderActivity: route to here");
-					int pos1 = Integer.parseInt(intent.getExtras()
-							.get("selected").toString());
-					Named p1 = (Named) nameds.getPoint(pos1);
-					RouteManager.getInstance().getRegisteredRoute()
-							.setEndPoint(new Point(p1.getX(), p1.getY()));
-					calculateRoute();
-					osmap.setMapCenter(p1.projectedCoordinates.getX(),
-							p1.projectedCoordinates.getY());
-					break;
-				case 2:
-					log.log(Level.FINE,
-							"from NameFinderActivity: set map center");
-					int pos2 = Integer.parseInt(intent.getExtras()
-							.get("selected").toString());
-					Named p2 = (Named) this.nameds.getPoint(pos2);
-					osmap.setMapCenterFromLonLat(p2.getX(), p2.getY());
-					if (osmap.getMRendererInfo() instanceof OSMMercatorRenderer)
-						osmap.setZoomLevel(p2.zoom);
-					break;
-				}
-
-				break;
-			case 1:
-				switch (resultCode) {
-				case RESULT_OK:
-					log.log(Level.FINE, "from LayersActivity");
-					String layerName = intent.getStringExtra("layer");
-					mapState.gvTilesPath = intent.getStringExtra("gvtiles");
-					if (layerName != null) {
-						log.log(Level.FINE, "load layer: " + layerName);
-						this.osmap.onLayerChanged(layerName);
-					}
-					break;
-				}
-				break;
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "Map onActivityResult: ", e);
-		}
 	}
 
 	@Override
@@ -710,8 +461,8 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			// .getLatitude());
 			if (mMyLocationOverlay.mLocation != null) {
 				connection = true;
-				if (myNavigator != null)
-					myNavigator.setEnabled(connection);
+//				if (myNavigator != null)
+//					myNavigator.setEnabled(connection);
 			}
 
 		} catch (Exception e) {
@@ -733,40 +484,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu pMenu) {
-		try {
-			mySearchDirection = pMenu.add(0, 0, 0, R.string.Map_3).setIcon(
-					R.drawable.menu00);
-			// pMenu.add(0, 1, 1, "Mock provider options");
-			myLocationButton = pMenu.add(0, 2, 2, R.string.Map_4).setIcon(
-					R.drawable.menu_location);
-			pMenu.add(0, 3, 3, R.string.Map_5).setIcon(R.drawable.menu02);
-			myDownloadTiles = pMenu.add(0, 4, 4, R.string.download_tiles_14)
-					.setIcon(R.drawable.layerdonwload);
-			// myZoomRectangle = pMenu.add(0, 4, 4, R.string.Map_6).setIcon(
-			// R.drawable.mv_rectangle);
-			// pMenu.add(0, 4, 4, "Weather").setIcon(R.drawable.menu03);
-			// pMenu.add(0, 5, 5, "Tweetme").setIcon(R.drawable.menu04);
-			myNavigator = pMenu.add(0, 5, 5, R.string.Map_Navigator)
-					.setIcon(R.drawable.menu_navigation).setEnabled(connection);
-			// myDownloadLayers = pMenu.add(0, 6, 6, R.string.download_tiles_01)
-			// .setIcon(R.drawable.menu_download);
-			// myGPSButton = pMenu.add(0, 7, 7, R.string.Map_27).setIcon(
-			// R.drawable.menu_location).setCheckable(true).setChecked(
-			// true);
-			mySettings = pMenu.add(0, 7, 7, R.string.Map_31).setIcon(
-					android.R.drawable.ic_menu_preferences);
-			myWhats = pMenu.add(0, 8, 8, R.string.Map_30).setIcon(
-					R.drawable.menu_location);
-			myLicense = pMenu.add(0, 9, 9, R.string.Map_29).setIcon(
-					R.drawable.menu_location);
-			myAbout = pMenu.add(0, 10, 10, R.string.Map_28).setIcon(
-					R.drawable.menu_location);
-			// pMenu.add(0, 11, 11, R.string.search_local);
-			// pMenu.add(0, 12, 12, R.string.bookmarks);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "onCreateOptionsMenu: ", e);
-		}
-		return true;
+		return false;
 	}
 
 	public void fillSearchCenter(Intent i) {
@@ -778,563 +496,38 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		i.putExtra("lat", lonlat[1]);
 	}
 
-	private class MyCenterLocation extends AbstractAction {
-
-		public MyCenterLocation() {
-			super(R.drawable.gd_action_bar_locate_myself);
-		}
-
-		@Override
-		public void performAction(View view) {
-			try {
-				VanillaMap.this.osmap
-						.adjustViewToAccuracyIfNavigationMode(VanillaMap.this.mMyLocationOverlay.mLocation.acc);
-				VanillaMap.this.osmap
-						.setMapCenterFromLonLat(
-								VanillaMap.this.mMyLocationOverlay.mLocation
-										.getLongitudeE6() / 1E6,
-								VanillaMap.this.mMyLocationOverlay.mLocation
-										.getLatitudeE6() / 1E6);
-				VanillaMap.this.osmap.setZoomLevel(15);
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "My location: ", e);
-			}
-		}
-
-	}
-
-	private class SearchAction extends AbstractAction {
-
-		public SearchAction() {
-			super(R.drawable.gd_action_bar_search);
-		}
-
-		@Override
-		public void performAction(View view) {
-			try {
-				VanillaMap.this.onSearchRequested();
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "My location: ", e);
-			}
-		}
-
-	}
-
-	private class LayersActivityAction extends AbstractAction {
-
-		public LayersActivityAction() {
-			super(R.drawable.gd_action_bar_sort_by_size);
-		}
-
-		@Override
-		public void performAction(View view) {
-			try {
-				VanillaMap.this.viewLayers();
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "My location: ", e);
-			}
-		}
-
-	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		boolean result = true;
-		try {
-			result = super.onMenuItemSelected(featureId, item);
-			switch (item.getItemId()) {
-			case 0:
-				try {
-					VanillaMap.this.showSearchDialog();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "showAddressDialog: ", e);
-				}
-				break;
-			case 1:
-				//
-
-				break;
-			case 2:
-				try {
-
-					// recenterOnGPS = !recenterOnGPS;
-					// // osmap.switchPanMode();
-					//
-					// if (recenterOnGPS) {
-					// log.log(Level.FINE,
-					// "recentering on GPS after check MyLocation on");
-					// myLocation.setIcon(R.drawable.menu01);
-					//
-					// } else {
-					// log
-					// .log(Level.FINE,
-					// "stop recentering on GPS after check MyLocation off"
-					// );
-					// myLocation.setIcon(R.drawable.menu01_2);
-					// }
-					//
-					// if (this.mMyLocationOverlay.mLocation != null &&
-					// recenterOnGPS) {
-					log.log(Level.FINE, "click on my location menu item");
-					if (this.mMyLocationOverlay.mLocation == null
-							|| (this.mMyLocationOverlay.mLocation
-									.getLatitudeE6() == 0 && this.mMyLocationOverlay.mLocation
-									.getLongitudeE6() == 0)) {
-						Toast.makeText(this, R.string.Map_24, Toast.LENGTH_LONG)
-								.show();
-						return true;
-					}
-					this.osmap
-							.adjustViewToAccuracyIfNavigationMode(this.mMyLocationOverlay.mLocation.acc);
-					this.osmap
-							.setMapCenterFromLonLat(
-									this.mMyLocationOverlay.mLocation
-											.getLongitudeE6() / 1E6,
-									this.mMyLocationOverlay.mLocation
-											.getLatitudeE6() / 1E6);
-					// }
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "My location: ", e);
-				}
-				break;
-			case 3:
-				viewLayers();
-				break;
-			case 4:
-				if (Utils.isSDMounted()) {
-					if (osmap.getMRendererInfo().allowsMassiveDownload()) {
-						VanillaMap.this.showDownloadTilesDialog();
-					} else {
-
-						this.showOKDialog(getText(R.string.not_download_tiles)
-								.toString(), R.string.warning, false);
-					}
-				}
-
-				else
-					Toast.makeText(this, R.string.LayersActivity_1,
-							Toast.LENGTH_LONG).show();
-				// try {
-				// log.log(Level.FINE, "switch pan mode");
-				// osmap.switchPanMode();
-				// if (osmap.isPanMode()) {
-				// item.setIcon(R.drawable.mv_rectangle).setTitle(
-				// R.string.Map_6);
-				// } else {
-				// item.setIcon(R.drawable.mv_pan)
-				// .setTitle(R.string.Map_7);
-				// }
-				// } catch (Exception e) {
-				// log.log(Level.SEVERE,"switchPanMode: ", e);
-				// }
-				break;
-			case 6:
-				// try {
-				// showDownloadDialog();
-				// } catch (Exception e) {
-				// log.log(Level.SEVERE, "OpenWebsite: ", e);
-				// }
-				break;
-			case 5:
-				try {
-					recenterOnGPS = !recenterOnGPS;
-
-					if (myLocationButton != null)
-						myLocationButton.setEnabled(!recenterOnGPS);
-					if (myZoomRectangle != null)
-						myZoomRectangle.setEnabled(!recenterOnGPS);
-					if (myDownloadLayers != null)
-						myDownloadLayers.setEnabled(!recenterOnGPS);
-					if (mySearchDirection != null)
-						mySearchDirection.setEnabled(!recenterOnGPS);
-					if (mySettings != null)
-						mySettings.setEnabled(!recenterOnGPS);
-
-					// myGPSButton.setEnabled(!recenterOnGPS);
-
-					if (!recenterOnGPS) {
-						log.log(Level.FINE,
-								"recentering on GPS after check MyLocation on");
-						z.setVisibility(View.VISIBLE);
-						myNavigator.setIcon(R.drawable.menu_navigation);
-
-					} else {
-						log.log(Level.FINE,
-								"stop recentering on GPS after check MyLocation off");//
-						z.setVisibility(View.INVISIBLE);
-						myNavigator.setIcon(R.drawable.menu_navigation_off);
-					}
-					// if (recenterOnGPS || mMyLocationOverlay.mLocation != null
-					// ) {
-					// log.log(Level.FINE,
-					// "recentering on GPS after check MyLocation on");
-					// myNavigator.setIcon(R.drawable.menu_navigation_off);
-					//
-					// } else {
-					// log
-					// .log(Level.FINE,
-					// "stop recentering on GPS after check MyLocation off"
-					// );
-					// myNavigator.setIcon(R.drawable.menu_navigation);
-					// }
-					//
-					if (!navigation) {
-						// wl.acquire();
-						// setRequestedOrientation(ActivityInfo.
-						// SCREEN_ORIENTATION_PORTRAIT);
-						// navigation = true;
-						this.initializeSensor(this, true);
-						this.showNavigationModeAlert();
-					} else {
-						try {
-							if (Settings.getInstance().getBooleanValue(
-									getText(R.string.settings_key_orientation)
-											.toString()))
-								this.stopSensor(this);
-						} catch (Exception e) {
-							log.log(Level.SEVERE, "navigation mode off", e);
-						}
-
-						log.log(Level.FINE, "navigation mode off");
-						setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-						navigation = false;
-						osmap.setKeepScreenOn(false);
-					}
-
-					//
-					// osmap.switchPanMode();
-					// if (osmap.isPanMode()) {
-					// item.setIcon(R.drawable.mv_rectangle).setTitle(
-					// R.string.Map_6);
-					// } else {
-					// item.setIcon(R.drawable.mv_pan).setTitle(R.string.Map_7);
-					// }
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "switchPanMode: ", e);
-				}
-				break;
-			case 7:
-				Intent i = new Intent(this, SettingsActivity.class);
-				startActivity(i);
-				break;
-			case 8:
-				try {
-					showWhatsNew();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 9:
-				try {
-					showLicense();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 10:
-				try {
-					showAboutDialog();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 11:
-				try {
-					Intent mainIntent = new Intent(this,
-							SearchExpandableActivity.class);
-					// Point center = this.osmap.getMRendererInfo().getCenter();
-					fillSearchCenter(mainIntent);
-					this.startActivity(mainIntent);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			case 12:
-				try {
-					Point center = mMyLocationOverlay.getLocationLonLat();
-					double[] lonlat = ConversionCoords.reproject(center.getX(),
-							center.getY(), CRSFactory.getCRS("EPSG:4326"),
-							CRSFactory.getCRS("EPSG:900913"));
-					InvokeIntents.launchListBookmarks(this, lonlat);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "OpenWebsite: ", e);
-				}
-				break;
-			default:
-				break;
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-		return result;
-	}
-
-	protected void showNavigationModeAlert() {
-		try {
-			RadioGroup r = new RadioGroup(this);
-			RadioButton r1 = new RadioButton(this);
-			r1.setText(R.string.portrait);
-			r1.setId(0);
-			RadioButton r2 = new RadioButton(this);
-			r2.setText(R.string.landscape);
-			r2.setId(1);
-			r.addView(r1);
-			r.addView(r2);
-			r.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-				@Override
-				public void onCheckedChanged(RadioGroup arg0, int arg1) {
-					try {
-						centerOnGPSLocation();
-						osmap.setKeepScreenOn(true);
-						navigation = true;
-						osmap.onLayerChanged(osmap.getMRendererInfo()
-								.getFullNAME());
-						// final MapRenderer r =
-						// Map.this.osmap.getMRendererInfo();
-						VanillaMap.this.osmap.setZoomLevel(17, true);
-						switch (arg1) {
-						case 0:
-							log.log(Level.FINE, "navifation mode vertical on");
-							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-							break;
-						case 1:
-							log.log(Level.FINE, "navifation mode horizontal on");
-							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-							break;
-						default:
-							break;
-						}
-					} catch (Exception e) {
-						log.log(Level.SEVERE, "onCheckedChanged", e);
-					}
-				}
-
-			});
-			AlertDialog.Builder alertCache = new AlertDialog.Builder(this);
-			alertCache
-					.setView(r)
-					.setIcon(R.drawable.menu_navigation)
-					.setTitle(R.string.Map_Navigator)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO Auto-generated method stub
-
-								}
-
-							}).create();
-			alertCache.show();
-			r1.setChecked(true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {
-		// GPSPoint center = this.osmap.getMapCenter();
-		// Point centerDouble = new Point(center.getLongitudeE6() / 1E6, center
-		// .getLatitudeE6() / 1E6);
-		// centerDouble = TileConversor.latLonToMercator(centerDouble.getX(),
-		// centerDouble.getY());
-		// // Point a = new Point(-0.43, 39.4);
-		// // Point b = new Point(-0.3, 39.53);
-		// Extent e = ViewPort.calculateExtent(centerDouble,
-		// Tags.RESOLUTIONS[this.osmap.getZoomLevel()], this.osmap
-		// .getWidth(), this.osmap.getHeight());
-		//
-		// // Extent e = new Extent(-20037508.3427892430765884088807,
-		// // -20037508.3427892430765884088807,
-		// // 20037508.3427892430765884088807,
-		// // 20037508.3427892430765884088807);
-		// // Extent e = new Extent(-5037508.3427892430765884088807,
-		// // -5037508.3427892430765884088807,
-		// // 37508.3427892430765884088807, 37508.3427892430765884088807);
-		// OSMHandler handler = new OSMHandler();
-		// handler.setURL(new String[] { mr.getBASEURL() });
-		//
-		// // YahooHandler h = new YahooHandler();
-		// // h.setURL(new
-		// // String[]{"http://png.maps.yimg.com/png?t=m&v=4.1&s=256&f=j"});
-		//
-		// // String layerName = this.osmap.getMRendererInfo().getNAME();
-		// String layerName = "estoesunaprueba2";
-		//
-		// try {
-		// es.prodevelop.gvsig.mini.phonecache.Cancellable c =
-		// es.prodevelop.gvsig.mini.phonecache.Utilities
-		// .getNewCancellable();
-		// Grid g = new Grid(handler, e, Tags.RESOLUTIONS[minZoom],
-		// Tags.RESOLUTIONS[maxZoom], layerName, c);
-		// g.addDownloadWaiter(this);
-		//
-		// ThreadPool.getInstance().assign(g);
-		// } catch (IOException exc) {
-		// Log.e("", exc.getMessage());
-		// }
-	}
-
-	/**
-	 * Shows an AlertDialog with the results from WeatherFunctionality
-	 * 
-	 * @param ws
-	 *            The results from WeatherFunctionality
-	 */
-	public void showWeather(WeatherSet ws) {
-		try {
-			log.log(Level.FINE, "showWeather");
-			if (ws == null) {
-				log.log(Level.FINE,
-						"ws == null: Can't get weather. Check another location");
-				Toast.makeText(VanillaMap.this, R.string.Map_8, Toast.LENGTH_LONG)
-						.show();
-				return;
-			}
-			if (ws.getWeatherCurrentCondition() == null) {
-				dialog2.dismiss();
-				AlertDialog.Builder alertW = new AlertDialog.Builder(this);
-				alertW.setCancelable(true);
-				alertW.setIcon(R.drawable.menu03);
-				alertW.setTitle(R.string.error);
-				if (ws.place == null || ws.place.compareTo("") == 0) {
-					ws.place = this.getResources().getString(R.string.Map_9);
-				}
-
-				log.log(Level.FINE, "The weather in " + ws.place
-						+ " is not available");
-				alertW.setMessage(String.format(
-						this.getResources().getString(R.string.Map_10),
-						ws.place));
-
-				alertW.setNegativeButton(R.string.ok,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-							}
-						});
-				alertW.show();
-				return;
-			}
-
-			AlertDialog.Builder alertW = new AlertDialog.Builder(this);
-			alertW.setCancelable(true);
-			alertW.setIcon(R.drawable.menu03);
-			alertW.setTitle(this.getResources().getString(R.string.Map_11)
-					+ " " + ws.place);
-
-			final ListView lv = new ListView(this);
-
-			BulletedTextListAdapter adapter = new BulletedTextListAdapter(this);
-
-			WeatherCurrentCondition wc = ws.getWeatherCurrentCondition();
-
-			adapter.addItem(new BulletedText(new StringBuffer()
-					.append(this.getResources().getString(R.string.Map_12))
-					.append(" - ").append(wc.getTempCelcius()).append(" C")
-					.append("\n").append(wc.getCondition()).append("\n")
-					.append(wc.getWindCondition()).append("\n")
-					.append(wc.getHumidity()).toString(), BulletedText
-					.getRemoteImage(new URL("http://www.google.com"
-							+ wc.getIconURL()))).setSelectable(false));
-
-			ArrayList<WeatherForecastCondition> l = ws
-					.getWeatherForecastConditions();
-
-			WeatherForecastCondition temp;
-			for (int i = 0; i < l.size(); i++) {
-				try {
-					temp = l.get(i);
-					adapter.addItem(new BulletedText(new StringBuffer()
-							.append(temp.getDayofWeek()).append(" - ")
-							.append(temp.getTempMinCelsius()).append(" C")
-							.append("/").append(temp.getTempMaxCelsius())
-							.append(" C").append("\n")
-							.append(temp.getCondition()).toString(),
-							BulletedText
-									.getRemoteImage(new URL(
-											"http://www.google.com"
-													+ temp.getIconURL())))
-							.setSelectable(false));
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "showWeather: ", e);
-				}
-			}
-
-			lv.setAdapter(adapter);
-			lv.setPadding(10, 0, 10, 0);
-
-			alertW.setView(lv);
-
-			alertW.setNegativeButton(
-					this.getResources().getString(R.string.back),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alertW.show();
-			dialog2.dismiss();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showWeather: ", e);
-		} finally {
-		}
-	}
-
-	/**
-	 * Launches the WeatherFunctionality
-	 * 
-	 * @param x
-	 *            The x coordinate
-	 * @param y
-	 *            The y coordinate
-	 * @param SRS
-	 *            The SRS in which the coordinates are expressed
-	 */
-	public void getWeather(double x, double y, String SRS) {
-		try {
-			log.log(Level.FINE, "Launching weather functionality");
-			double[] coords = ConversionCoords.reproject(x, y,
-					CRSFactory.getCRS(SRS), CRSFactory.getCRS("EPSG:4326"));
-
-			WeatherFunctionality w = new WeatherFunctionality(this, 0,
-					coords[1], coords[0]);
-			w.onClick(null);
-			userContext.setUsedWeather(true);
-			userContext.setLastExecWeather();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "getWeather: ", e);
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog indicating that the route calculation has failed
-	 */
-	public void showRouteError() {
-		try {
-			log.log(Level.FINE, "Show route error");
-			dialog2.dismiss();
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setIcon(R.drawable.routes);
-			alert.setTitle(R.string.error);
-			alert.setMessage(R.string.Map_13);
-
-			alert.setNegativeButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showRouteError: ", e);
-		}
-	}
-
+//	private class MyCenterLocation extends AbstractAction {
+//	}
+//
+//	private class SearchAction extends AbstractAction {
+//	}
+//
+//	private class LayersActivityAction extends AbstractAction {
+//	}
+//
+//	public boolean onMenuItemSelected(int featureId, MenuItem item) {	
+//	}
+//	protected void showNavigationModeAlert() {		
+//	}
+//	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {	
+//	}
+//	public void showWeather(WeatherSet ws) {
+//	}
+//	public void getWeather(double x, double y, String SRS) {
+//	}
+//	public void showRouteError() {
+//	}
+//	public void loadPois(Bundle outState) {	
+//	}
+//	public void savePois(Bundle outState) {
+//	}
+//	public void loadRoute(Bundle outState) {
+//	}
+//	public void saveRoute(Bundle outState) {	
+//	}
+	
+	
+	
 	@Override
 	public void onDestroy() {
 		try {
@@ -1393,214 +586,11 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		try {
 			log.log(Level.FINE, "destroy");
 			osmap.destroy();
-			// route.destroy();
-			// nameds.destroy();
-			// osmap = null;
-			// nameds = null;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "destroy", e);
 		}
 	}
 
-	/**
-	 * Load pois stored on a Bundle when the configuration has changed or the
-	 * Activity has been restarted
-	 * 
-	 * @param outState
-	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
-	 */
-	public void loadPois(Bundle outState) {
-		try {
-			log.log(Level.FINE, "loadPOIS from saved instance");
-			int poisSize = outState.getInt("PoisSize");
-			Named[] points = new Named[poisSize];
-			Named n;
-			for (int i = 0; i < poisSize; i++) {
-				try {
-					n = new Named(outState.getDouble("X" + i),
-							outState.getDouble("Y" + i));
-					n.description = outState.getString("Description" + i);
-					n.type = outState.getString("Type" + i);
-					n.id = outState.getInt("Id" + i);
-					n.name = outState.getString("Name" + i);
-					n.category = outState.getString("Category" + i);
-					n.info = outState.getString("Info" + i);
-					n.rank = outState.getInt("Rank" + i);
-					n.id = outState.getInt("In" + i);
-					n.distance = outState.getDouble("Distance" + i);
-					n.projectedCoordinates = new Point(outState.getDouble("PX"
-							+ i), outState.getDouble("PY" + i));
-					points[i] = n;
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "loadPois: ", e);
-				}
-			}
-
-			if (nameds == null) {
-				nameds = new NamedMultiPoint(points);
-			} else {
-				nameds.setPoints(points);
-			}
-
-			cleanVisible = outState.getBoolean("cleanPoisVisible", false);
-			listVisible = outState.getBoolean("listPoisVisible", false);
-			log.log(Level.FINE, "POIS loaded");
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "loadPOIS: ", e);
-		}
-	}
-
-	/**
-	 * Save pois when the configuration has changed or the Activity has been
-	 * restarted
-	 * 
-	 * @param outState
-	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
-	 */
-	public void savePois(Bundle outState) {
-		try {
-			log.log(Level.FINE, "Save POIS to bundle");
-			int pointNumber = this.nameds.getNumPoints();
-			outState.putInt("PoisSize", pointNumber);
-			Named n;
-			for (int i = 0; i < pointNumber; i++) {
-				try {
-					n = (Named) this.nameds.getPoint(i);
-					outState.putString("Type" + i, n.type);
-					outState.putInt("Id" + i, n.id);
-					outState.putString("Name" + i, n.name);
-					outState.putString("Category" + i, n.category);
-					outState.putString("Info" + i, n.info);
-					outState.putInt("Rank" + i, n.rank);
-					outState.putString("In" + i, n.isIn);
-					outState.putDouble("Distance" + i, n.distance);
-					outState.putString("Description" + i, n.description);
-					outState.putDouble("X" + i, n.getX());
-					outState.putDouble("Y" + i, n.getY());
-					outState.putDouble("PX" + i, n.projectedCoordinates.getX());
-					outState.putDouble("PY" + i, n.projectedCoordinates.getY());
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "savePOIS: ", e);
-				}
-			}
-
-			if (pointNumber > 0) {
-				outState.putBoolean("cleanPoisVisible", true);
-				outState.putBoolean("listPoisVisible", true);
-			}
-			log.log(Level.FINE, "POIS saved");
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "savePOIS: ", e);
-		}
-	}
-
-	/**
-	 * Load route stored on a Bundle when the configuration has changed or the
-	 * Activity has been restarted
-	 * 
-	 * @param outState
-	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
-	 */
-	public void loadRoute(Bundle outState) {
-		try {
-			log.log(Level.FINE, "load route from saved instance");
-			boolean isDone = outState.getBoolean("isDone", true);
-
-			double startPointX = outState.getDouble("StartPointX");
-			double startPointY = outState.getDouble("StartPointY");
-			double endPointX = outState.getDouble("EndPointX");
-			double endPointY = outState.getDouble("EndPointY");
-			Point starPoint = new Point(startPointX, startPointY);
-			Point endPoint = new Point(endPointX, endPointY);
-
-			if (starPoint.equals(endPoint)) {
-				log.log(Level.FINE,
-						"start and end point equals. The route will not be loaded"
-								+ "return");
-			}
-
-			RouteManager.getInstance().getRegisteredRoute()
-					.setStartPoint(starPoint);
-			RouteManager.getInstance().getRegisteredRoute()
-					.setEndPoint(endPoint);
-			if (!isDone) {
-				log.log(Level.FINE,
-						"Route was calculating before saving instance: Relaunch it");
-				this.launchRouteCalculation();
-				// return;
-			}
-			log.log(Level.FINE, "Loading route points");
-			int routeSize = outState.getInt("RouteSize");
-			double[] xCoords = new double[routeSize];
-			double[] yCoords = new double[routeSize];
-			for (int i = 0; i < routeSize; i++) {
-				xCoords[i] = outState.getDouble("RX" + i);
-				yCoords[i] = outState.getDouble("RY" + i);
-			}
-			LineString line = new LineString(xCoords, yCoords);
-			FeatureCollection f = new FeatureCollection();
-			f.addFeature(new Feature(line));
-			RouteManager.getInstance().getRegisteredRoute().setRoute(f);
-
-			cleanRoute = outState.getBoolean("cleanRouteVisible", false);
-			log.log(Level.FINE, "route loaded");
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "loadRoute: ", e);
-		}
-	}
-
-	/**
-	 * Save route when the configuration has changed or the Activity has been
-	 * restarted
-	 * 
-	 * @param outState
-	 *            The Bundle @see {@link #onSaveInstanceState(Bundle)}
-	 */
-	public void saveRoute(Bundle outState) {
-		try {
-			Point routeStart = RouteManager.getInstance().getRegisteredRoute()
-					.getStartPoint();
-			Point routeEnd = RouteManager.getInstance().getRegisteredRoute()
-					.getEndPoint();
-			FeatureCollection r = RouteManager.getInstance()
-					.getRegisteredRoute().getRoute();
-
-			boolean isDone = true;
-			try {
-				Functionality yoursF = getItemContext()
-						.getExecutingFunctionality();
-				if (yoursF != null && yoursF instanceof YOURSFunctionality) {
-					isDone = !yoursF.isActive();
-				}
-				outState.putBoolean("isDone", isDone);
-			} catch (Exception e) {
-
-			}
-			outState.putDouble("StartPointX", routeStart.getX());
-			outState.putDouble("StartPointY", routeStart.getY());
-			outState.putDouble("EndPointX", routeEnd.getX());
-			outState.putDouble("EndPointY", routeEnd.getY());
-
-			boolean save = false;
-			if (r != null && r.getSize() > 0) {
-				Feature f = r.getFeatureAt(0);
-				LineString l = (LineString) f.getGeometry();
-				outState.putInt("RouteSize", l.getXCoords().length);
-				for (int i = 0; i < l.getXCoords().length; i++) {
-					save = true;
-					outState.putDouble("RX" + i, l.getXCoords()[i]);
-					outState.putDouble("RY" + i, l.getYCoords()[i]);
-				}
-			}
-
-			if (save)
-				outState.putBoolean("cleanRouteVisible", true);
-
-			log.log(Level.FINE, "route saved");
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "savRoute: ", e);
-		}
-	}
 
 	/**
 	 * Load map info stored on a Bundle when the configuration has changed or
@@ -1960,441 +950,24 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
-		if (false) {
-		try {
-			saveRoute(outState);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-		try {
-			savePois(outState);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-		}
+//		if (false) {
+//		try {
+//			saveRoute(outState);
+//		} catch (Exception e) {
+//			log.log(Level.SEVERE, "", e);
+//		}
+//		try {
+//			savePois(outState);
+//		} catch (Exception e) {
+//			log.log(Level.SEVERE, "", e);
+//		}
+//		}
 	}
 
 	public void setLoadingVisible(boolean visible) {
-
 	}
-
-	/**
-	 * This class Handles messages from Functionalities
-	 * 
-	 * @author aromeu
-	 * @author rblanco
-	 * 
-	 */
-	class MapHandler extends Handler {
-		@Override
-		public void handleMessage(final Message msg) {
-			try {
-				log.log(Level.FINE, "MapHandler -> handleMessage");
-				final int what = msg.what;
-				switch (what) {
-				case VanillaMap.SHOW_LOADING:
-					setLoadingVisible(true);
-					break;
-				case VanillaMap.HIDE_LOADING:
-					setLoadingVisible(false);
-					break;
-				case TaskHandler.NO_RESPONSE:
-					log.log(Level.FINE, "task handler NO_RESPONSE");
-					if (dialog2 != null)
-						dialog2.dismiss();
-					Toast.makeText(VanillaMap.this, R.string.Map_22, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case VanillaMap.SHOW_TOAST:
-					log.log(Level.FINE, "SHOW_TOAST");
-					Toast t = Toast.makeText(VanillaMap.this, msg.obj.toString(),
-							Toast.LENGTH_LONG);
-					t.show();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case VanillaMap.SHOW_OK_DIALOG:
-					log.log(Level.FINE, "SHOW_OK_DIALOG");
-					if (dialog2 != null)
-						dialog2.dismiss();
-					VanillaMap.this.showOKDialog(msg.obj.toString(),
-							R.string.getFeatureInfo, true);
-					break;
-				case VanillaMap.POI_LIST:
-					log.log(Level.FINE, "POI_LIST");
-					VanillaMap.this.viewLastPOIs();
-					break;
-				case VanillaMap.POI_CLEARED:
-					log.log(Level.FINE, "POI_CLEARED");
-					VanillaMap.this.updateContext(VanillaMap.POI_CLEARED);
-					break;
-				case VanillaMap.ROUTE_CLEARED:
-					log.log(Level.FINE, "ROUTE_CLEARED");
-					VanillaMap.this.updateContext(VanillaMap.ROUTE_CLEARED);
-					break;
-				case VanillaMap.WEATHER_INITED:
-					log.log(Level.FINE, "WEATHER_INITED");
-					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
-							.getResources().getString(R.string.please_wait),
-							VanillaMap.this.getResources().getString(R.string.Map_14),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.menu03);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								log.log(Level.FINE, "weather canceled");
-								VanillaMap.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case VanillaMap.GETFEATURE_INITED:
-					log.log(Level.FINE, "GETFEATURE_INITED");
-					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
-							.getResources().getString(R.string.please_wait),
-							"GetFeatureInfo...", true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.infobutton);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								log.log(Level.FINE, "getFeature canceled");
-								VanillaMap.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-
-				case VanillaMap.WEATHER_CANCELED:
-					log.log(Level.FINE, "WEATHER_CANCELED");
-					Toast.makeText(VanillaMap.this, R.string.Map_15, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case VanillaMap.WEATHER_ERROR:
-					log.log(Level.FINE, "WEATHER_ERROR");
-					Toast.makeText(VanillaMap.this, R.string.Map_8, Toast.LENGTH_LONG)
-							.show();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case VanillaMap.WEATHER_SHOW:
-					log.log(Level.FINE, "WEATHER_SHOW");
-					Functionality f = VanillaMap.this.getItemContext()
-							.getExecutingFunctionality();
-					if (f instanceof WeatherFunctionality)
-						VanillaMap.this.showWeather(((WeatherFunctionality) f).ws);
-					else {
-						log.log(Level.FINE, "Nof found Weather functionality");
-					}
-					break;
-				case VanillaMap.ROUTE_NO_RESPONSE:
-					log.log(Level.FINE, "ROUTE_NO_RESPONSE");
-					Toast.makeText(VanillaMap.this, R.string.server_busy,
-							Toast.LENGTH_LONG).show();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case VanillaMap.ROUTE_SUCCEEDED:
-					log.log(Level.FINE, "ROUTE_SUCCEEDED");
-					// ivCleanRoute.setVisibility(View.VISIBLE);
-					osmap.CLEAR_ROUTE = true;
-					if (dialog2 != null)
-						dialog2.dismiss();
-					osmap.getMRendererInfo().reprojectGeometryCoordinates(
-							RouteManager.getInstance().getRegisteredRoute()
-									.getRoute().getFeatureAt(0).getGeometry(),
-							"EPSG:4326");
-					VanillaMap.this.updateContext(VanillaMap.ROUTE_SUCCEEDED);
-					osmap.resumeDraw();
-					break;
-				case VanillaMap.ROUTE_NO_CALCULATED:
-					log.log(Level.FINE, "ROUTE_NO_CALCULATED");
-					Toast.makeText(VanillaMap.this, R.string.Map_16, Toast.LENGTH_LONG)
-							.show();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				case VanillaMap.POI_SHOW:
-					log.log(Level.FINE, "POI_SHOW");
-					Functionality nf = getItemContext()
-							.getExecutingFunctionality();
-					if (nf instanceof NameFinderFunc) {
-						NameFinderFunc n = (NameFinderFunc) nf;
-						osmap.getMRendererInfo().reprojectGeometryCoordinates(
-								n.nm, "EPSG:4326");
-						boolean update = VanillaMap.this.showPOIs(n.desc, n.nm);
-						if (update)
-							VanillaMap.this.updateContext(VanillaMap.POI_SUCCEEDED);
-					} else {
-						log.log(Level.FINE,
-								"Nof found NameFinder functionality");
-					}
-					break;
-				case VanillaMap.POI_INITED:
-					log.log(Level.FINE, "POI_INITED");
-					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
-							.getResources().getString(R.string.please_wait),
-							VanillaMap.this.getResources().getString(R.string.Map_17),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.pois);
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								VanillaMap.this.getItemContext().cancelCurrentTask();
-								dialog2.dismiss();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case VanillaMap.ROUTE_CANCELED:
-					log.log(Level.FINE, "ROUTE_CANCELED");
-					RouteManager.getInstance().getRegisteredRoute()
-							.deleteRoute(false);
-					// route.deleteEndPoint();
-					// route.deleteStartPoint();
-					// yoursFunc.cancel();
-					if (dialog2 != null)
-						dialog2.dismiss();
-					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					Toast.makeText(VanillaMap.this, R.string.Map_18, Toast.LENGTH_LONG)
-							.show();
-					osmap.postInvalidate();
-					break;
-				case VanillaMap.POI_CANCELED:
-					log.log(Level.FINE, "POI_CANCELED");
-					// ivCleanPois.setVisibility(View.INVISIBLE);
-					// ivShowList.setVisibility(View.INVISIBLE);
-					if (dialog2 != null)
-						dialog2.dismiss();
-					Toast.makeText(VanillaMap.this, R.string.task_canceled,
-							Toast.LENGTH_LONG).show();
-					nameds = null;
-					osmap.postInvalidate();
-					break;
-				case VanillaMap.CALCULATE_ROUTE:
-					log.log(Level.FINE, "CALCULATE_ROUTE");
-					VanillaMap.this.calculateRoute();
-					break;
-				case VanillaMap.ROUTE_INITED:
-					log.log(Level.FINE, "ROUTE_INITED");
-					RouteManager.getInstance().getRegisteredRoute()
-							.deleteRoute(false);
-					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
-							.getResources().getString(R.string.please_wait),
-							VanillaMap.this.getResources().getString(R.string.Map_19),
-							true);
-					dialog2.setCancelable(true);
-					dialog2.setCanceledOnTouchOutside(true);
-					dialog2.setIcon(R.drawable.routes);
-
-					dialog2.setOnCancelListener(new OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog2) {
-							try {
-								RouteManager.getInstance().getRegisteredRoute()
-										.deleteRoute(false);
-								// ivCleanRoute.setVisibility(View.INVISIBLE);
-								osmap.resumeDraw();
-								VanillaMap.this.getItemContext().cancelCurrentTask();
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "onCancelDialog: ", e);
-							}
-						}
-					});
-					break;
-				case VanillaMap.TWEET_SENT:
-					log.log(Level.FINE, "TWEET_SENT");
-					Toast.makeText(VanillaMap.this, R.string.Map_20, Toast.LENGTH_LONG)
-							.show();
-					break;
-				case VanillaMap.TWEET_ERROR:
-					log.log(Level.FINE, "TWEET_ERROR");
-					Toast t1 = Toast.makeText(VanillaMap.this, msg.obj.toString(),
-							Toast.LENGTH_LONG);
-					t1.show();
-					break;
-				case VanillaMap.SHOW_TWEET_DIALOG:
-					log.log(Level.FINE, "SHOW_TWEET_DIALOG");
-					VanillaMap.this.showTweetDialog();
-					break;
-				case VanillaMap.SHOW_TWEET_DIALOG_SETTINGS:
-					log.log(Level.FINE, "SHOW_TWEET_DIALOG_SETTINGS");
-					VanillaMap.this.showTweetDialogSettings();
-					break;
-				case VanillaMap.SHOW_POI_DIALOG:
-					log.log(Level.FINE, "SHOW_POI_DIALOG");
-					VanillaMap.this.showPOIDialog();
-					break;
-				case VanillaMap.SHOW_ADDRESS_DIALOG:
-					log.log(Level.FINE, "SHOW_ADDRESS_DIALOG");
-					VanillaMap.this.showSearchDialog();
-					break;
-				case VanillaMap.VOID:
-					if (dialog2 != null)
-						dialog2.dismiss();
-					break;
-				}
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "handleMessage: ", e);
-				if (dialog2 != null)
-					dialog2.dismiss();
-				// Toast.makeText(Map.this,
-				// "Operation could not finish. Please try again.",
-				// 2000).show();
-			} finally {
-				try {
-					VanillaMap.this.clearContext();
-					osmap.invalidate();
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "", e);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input the query string for NameFinder
-	 * 
-	 * @deprecated
-	 */
-	public void showPOIDialog() {
-		try {
-			log.log(Level.FINE, "showPOIDialog");
-			AlertDialog.Builder alertPOI = new AlertDialog.Builder(this);
-
-			alertPOI.setIcon(R.drawable.poismenu);
-			alertPOI.setTitle(R.string.Map_21);
-
-			final EditText inputPOI = new EditText(this);
-
-			alertPOI.setView(inputPOI);
-
-			alertPOI.setPositiveButton(R.string.search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = inputPOI.getText();
-								// Call to NameFinder with the text
-								searchInNameFinder(value.toString(), true);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "clickNameFinder: ", e);
-							}
-							return;
-						}
-					});
-
-			alertPOI.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alertPOI.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	/**
-	 * Show an AlertDialog to the user to input the query string for NameFinder
-	 * addresses
-	 */
-	public void showSearchDialog() {
-		try {
-			// this.onSearchRequested();
-			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setIcon(R.drawable.menu00);
-			alert.setTitle(R.string.Map_3);
-			final EditText input = new EditText(this);
-			alert.setView(input);
-
-			alert.setPositiveButton(R.string.alert_dialog_text_search,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								Editable value = input.getText();
-								// Call to NameFinder with the text
-								searchInNameFinder(value.toString(), false);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE,
-										"clickNameFinderAddress: ", e);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					});
-
-			alert.show();
-
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	/*
-	 * Perform a search for all types of different searches (POI, address,
-	 * search manager,...) using the NameFinder consumer It acts as a fa�ade
-	 * for all searches launched from Map activity to be resolved by the
-	 * NameFinder query: text to be sought
-	 */
-	private void searchInNameFinder(String query, boolean nearOfCenter) {
-		try {
-			if (!query.trim().equals("")) {
-				PlaceSearcher search;
-
-				if (!nearOfCenter) {
-					search = new PlaceSearcher(this, query);
-				} else {
-					double[] center = osmap.getCenterLonLat();
-					search = new PlaceSearcher(this, query, center[0],
-							center[1]);
-				}
-				/*
-				 * if (nearopt != 0) { NameFinder.parms = query; } else {
-				 * double[] center = osmap.getCenterLonLat(); NameFinder.parms =
-				 * query + " near " + center[1] + "," + center[0]; }
-				 * NameFinderFunc func = new NameFinderFunc( Map.this, 0);
-				 * func.onClick(null);
-				 */
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "searchWithNameFinder: ", e);
-		}
-		return;
-
-	}
-
+	
+	
 	private void instantiateTileDownloaderTask(LinearLayout l, int progress) {
 		try {
 			final boolean updateTiles = ((CheckBox) l
@@ -2696,7 +1269,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			super.onResume();
 			osmap.resumeDraw();
 			processGeoAction(getIntent());
-			processRouteAction(getIntent());
+			// processRouteAction(getIntent());
 			processOfflineIntentActoin(getIntent());
 			if (navigation && recenterOnGPS)
 				osmap.setKeepScreenOn(true);
@@ -2710,14 +1283,8 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		}
 	}
 
-	private void processRouteAction(Intent i) {
-		if (i == null)
-			return;
-		if (i.getBooleanExtra(RouteManager.ROUTE_MODIFIED, false)) {
-			this.calculateRoute();
-			i.putExtra(RouteManager.ROUTE_MODIFIED, false);
-		}
-	}
+//	private void processRouteAction(Intent i) {
+//	}
 
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
@@ -2768,196 +1335,36 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		}
 	}
 
+	// context stuff that are directly link to a representation : we dont want those
 	private ItemContext updateContextWMS(ItemContext context) {
-		try {
-			if (this.osmap.getMRendererInfo().getType() != MapRenderer.WMS_RENDERER) {
-				if (context instanceof WMSRoutePOIContext)
-					context = new RoutePOIContext(this);
-				else if (context instanceof WMSRouteContext)
-					context = new RouteContext(this);
-				else if (context instanceof WMSPOIContext) {
-					if (RouteManager.getInstance().getRegisteredRoute() != null
-							&& RouteManager.getInstance().getRegisteredRoute()
-									.getState() == Tags.ROUTE_WITH_2_POINT) {
-						context = new RoutePOIContext(this);
-					} else {
-						context = new POIContext(this);
-					}
-				}
-
-				else if (context instanceof WMSGPSItemContext)
-					if (RouteManager.getInstance().getRegisteredRoute() != null
-							&& RouteManager.getInstance().getRegisteredRoute()
-									.getState() == Tags.ROUTE_WITH_2_POINT) {
-						context = new RouteContext(this);
-					} else {
-						context = new DefaultContext(this);
-					}
-				else if (context instanceof POIContext)
-					if (RouteManager.getInstance().getRegisteredRoute() != null
-							&& RouteManager.getInstance().getRegisteredRoute()
-									.getState() == Tags.ROUTE_WITH_2_POINT) {
-						context = new RoutePOIContext(this);
-					}
-
-				this.setContext(context);
-				return context;
-			}
-
-			if (context instanceof RoutePOIContext)
-				context = new WMSRoutePOIContext(this);
-			else if (context instanceof RouteContext)
-				context = new WMSRouteContext(this);
-			else if (context instanceof POIContext)
-				if (RouteManager.getInstance().getRegisteredRoute() != null
-						&& RouteManager.getInstance().getRegisteredRoute()
-								.getState() == Tags.ROUTE_WITH_2_POINT) {
-					context = new WMSRoutePOIContext(this);
-				} else {
-					context = new WMSPOIContext(this);
-				}
-			else if (context instanceof DefaultContext
-					|| context instanceof GPSItemContext)
-				if (RouteManager.getInstance().getRegisteredRoute() != null
-						&& RouteManager.getInstance().getRegisteredRoute()
-								.getState() == Tags.ROUTE_WITH_2_POINT) {
-					context = new WMSRouteContext(this);
-				} else {
-					context = new WMSGPSItemContext(this);
-				}
-
-			this.setContext(context);
-			return context;
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-			return null;
-		}
+		return context;	
 	}
-
-	/**
-	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
-	 * 
-	 * @param context
-	 *            The ItemContext that contains the IDs of the Drawables to
-	 *            instantiate buttons and associate Functionalities to it
-	 */
-	public void showContext(ItemContext context) {
-		try {
-			log.log(Level.FINE, "show context");
-
-			context = updateContextWMS(context);
-			if (context == null)
-				return;
-
-			showCircularView(context);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showContext: ", e);
-		}
+	public void showContext(ItemContext context) {	
 	}
-
-	public void showCircularView(ItemContext context) {
-		LayoutInflater factory = LayoutInflater.from(this);
-		final int[] viewsID = context.getViewsId();
-		final int size = viewsID.length;
-
-		HashMap h = context.getFunctionalities();
-
-		if (h == null)
-			return;
-
-		int id;
-		View view;
-		Functionality func;
-		c = new CircularRouleteView(this, true);
-
-		for (int i = 0; i < size; i++) {
-			try {
-				id = viewsID[i];
-				view = (View) factory.inflate(id, null);
-				func = (Functionality) h.get(id);
-				if (func != null)
-					view.setOnClickListener(func);
-				c.addView(view);
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "show context", e);
-
-			}
-		}
-
-		c.setVisibility(View.VISIBLE);
-		final int count = rl.getChildCount();
-		View v;
-		for (int i = 0; i < count; i++) {
-			v = rl.getChildAt(i);
-			if (v instanceof CircularRouleteView) {
-				rl.removeView(v);
-			}
-		}
-		rl.addView(c);
-
-		// Change user context to store that the CircularRouleteView has
-		// been
-		// shown once at least
-		userContext.setUsedCircleMenu(true);
-		userContext.setLastExecCircle();
-		backpressedroulette = true;
+	public void showCircularView(ItemContext context) {		
 	}
-
-	/**
-	 * Instantiates a CircularRouleteView @see Contextable, ItemContext
-	 * 
-	 * @param context
-	 *            The ItemContext that contains the IDs of the Drawables to
-	 *            instantiate buttons and associate Functionalities to it
-	 */
-	public void showOverlayContext() {
-		try {
-			final ItemContext context = this.overlayContext;
-
-			if (context == null)
-				return;
-
-			showCircularView(context);
-
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showContext: ", e);
-		}
+	public void showOverlayContext() {		
 	}
-
-	/**
-	 * Removes the current CircularRouleteView from the RouleteLayout
-	 */
 	public void clearContext() {
-		try {
-			if (c == null)
-				return;
-			final int size = c.getChildCount();
-
-			View child = null;
-			for (int i = 0; i < size; i++) {
-				try {
-					child = c.getChildAt(i);
-					if (child != null)
-						child.getBackground().setCallback(null);
-					child = null;
-				} catch (Exception e) {
-
-				}
-			}
-
-			rl.removeView(c);
-			// switchSlideBar();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "clearContext: ", e);
-		}
+	}
+	public ItemContext getItemContext() {
+		return context;
+	}
+	private int state = 0; //VanillaMap.VOID;
+	public void updateContext(int state) {
 	}
 
+	
 	/**
 	 * @see MapHandler
 	 * @return The MapHandler
 	 */
 	public Handler getMapHandler() {
 		return handler;
+	}
+	
+	class MapHandler extends Handler {
+	
 	}
 
 	/**
@@ -2991,114 +1398,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		}
 	}
 
-	/**
-	 * Gets the current ItemContext of the application
-	 * 
-	 * @return
-	 */
-	public ItemContext getItemContext() {
-		return context;
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input his/her twitter account
-	 * credentials
-	 * 
-	 * @deprecated
-	 */
-	public void showTweetDialog() {
-		try {
-			log.log(Level.FINE, "showTweetDialog");
-			LayoutInflater factory = LayoutInflater.from(this);
-			final View textEntryView = factory.inflate(
-					R.layout.alert_dialog_text_entry, null);
-			AlertDialog.Builder alertTweet = new AlertDialog.Builder(this);
-			alertTweet
-					.setView(textEntryView)
-					.setIcon(R.drawable.menu04)
-					.setTitle(R.string.alert_dialog_text_entry)
-					.setPositiveButton(R.string.alert_dialog_tweet,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									try {
-
-										EditText etrUserName = (EditText) textEntryView
-												.findViewById(R.id.username_edit);
-										String userName = etrUserName.getText()
-												.toString();
-										EditText etrUserPass = (EditText) textEntryView
-												.findViewById(R.id.password_edit);
-										String userPass = etrUserPass.getText()
-												.toString();
-
-										VanillaMap.twituser = userName;
-										VanillaMap.twitpass = userPass;
-										getItemContext().getFunctionalityByID(
-												R.layout.twitter_image_button)
-												.onClick(null);
-									} catch (Exception e) {
-										log.log(Level.SEVERE, "twitter: ", e);
-									}
-								}
-							})
-					.setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).create();
-			alertTweet.show();
-			userContext.setUsedTwitter(true);
-			userContext.setLastExecTwitter();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showTweetDialog: ", e);
-		}
-	}
-
-	/**
-	 * Shows an AlertDialog to the user to input his/her twitter account
-	 * credentials
-	 * 
-	 */
-	public void showTweetDialogSettings() {
-		try {
-			log.log(Level.FINE, "showTweetDialogSettings");
-			LayoutInflater factory = LayoutInflater.from(this);
-			TextView t = new TextView(this);
-			t.setText(R.string.twitter_go_settings);
-			AlertDialog.Builder alertTweet = new AlertDialog.Builder(this);
-			alertTweet
-					.setView(t)
-					.setIcon(R.drawable.menu04)
-					.setTitle(R.string.alert_dialog_text_entry)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									try {
-										Intent i = new Intent(VanillaMap.this,
-												SettingsActivity.class);
-										i.putExtra("twitter", true);
-										startActivityForResult(i, CODE_SETTINGS);
-									} catch (Exception e) {
-										log.log(Level.SEVERE, "twitter: ", e);
-									}
-								}
-							})
-					.setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).create();
-			alertTweet.show();
-			userContext.setUsedTwitter(true);
-			userContext.setLastExecTwitter();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "showTweetDialog: ", e);
-		}
-	}
+	// deleted twitter stuff
 
 	/**
 	 * This method sinchronizes the SlideBar position with the current
@@ -3138,66 +1438,6 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			this.updateZoomControl();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "updateSlider: ", e);
-		}
-	}
-
-	private int state = VanillaMap.VOID;
-
-	/**
-	 * This method applies some logic to update the ItemContext from the current
-	 * Map state Map.VOID: No route and pois calculated Map.ROUTE_SUCCEEDED:
-	 * Route calculated Map.POI_SUCCEEDED: POI calculated Map.POI_CLEARED: POI
-	 * has been cleared Map.ROUTE_CLEARED: Route has been cleared
-	 * 
-	 * @param state
-	 */
-	public void updateContext(int state) {
-		try {
-			log.log(Level.FINE, "updateContext");
-			switch (state) {
-			case VanillaMap.VOID:
-				log.log(Level.FINE, "VOID");
-				this.setContext(new DefaultContext(this));
-				break;
-			case VanillaMap.ROUTE_SUCCEEDED:
-				log.log(Level.FINE, "ROUTE_SUCEEDED");
-				if (nameds != null && nameds.getNumPoints() > 0)
-					this.setContext(new RoutePOIContext(this));
-				else
-					this.setContext(new RouteContext(this));
-				break;
-			case VanillaMap.POI_SUCCEEDED:
-				log.log(Level.FINE, "POI_SUCCEEDED");
-				if (RouteManager.getInstance().getRegisteredRoute() != null
-						&& RouteManager.getInstance().getRegisteredRoute()
-								.getState() == Tags.ROUTE_WITH_2_POINT) {
-					this.setContext(new RoutePOIContext(this));
-				} else {
-					this.setContext(new POIContext(this));
-				}
-				break;
-			case VanillaMap.POI_CLEARED:
-				log.log(Level.FINE, "POI_CLEARED");
-				if (RouteManager.getInstance().getRegisteredRoute() != null
-						&& RouteManager.getInstance().getRegisteredRoute()
-								.getState() == Tags.ROUTE_WITH_2_POINT) {
-					this.setContext(new RouteContext(this));
-				} else {
-					this.setContext(new DefaultContext(this));
-				}
-				break;
-			case VanillaMap.ROUTE_CLEARED:
-				log.log(Level.FINE, "ROUTE_CLEARED");
-				if (nameds != null && nameds.getNumPoints() > 0) {
-					this.setContext(new POIContext(this));
-				} else {
-					this.setContext(new DefaultContext(this));
-				}
-				break;
-			}
-			updateContextWMS(this.context);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "updateContext: ", e);
 		}
 	}
 
@@ -3352,8 +1592,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	 */
 	public void obtainCellLocation() {
 		try {
-			GetCellLocationFunc cellLocationFunc = new GetCellLocationFunc(
-					this, 0);
+			GetCellLocationFunc cellLocationFunc = new GetCellLocationFunc(this, 0);
 			cellLocationFunc.launch();
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3428,17 +1667,17 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 
 				setIntent(i);
 				processGeoAction(i);
-				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-					processActionSearch(i);
-					return;
-				} else {
+//				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
+//					processActionSearch(i);
+//					return;
+//				} else {
 					String mapLayer = i.getStringExtra("layer");
 					log.log(Level.FINE, "previous layer: " + mapLayer);
 					if (mapLayer != null) {
 						osmap.onLayerChanged(mapLayer);
 						log.log(Level.FINE, "map loaded");
 					}
-				}
+//				}
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "onNewIntent", e);
 
@@ -3493,10 +1732,11 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			super.enableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
 
-			if (myLocationButton != null && myNavigator != null) {
-				this.myLocationButton.setEnabled(enabled);
-				this.myNavigator.setEnabled(enabled);
-			}
+// MenuItem : presentation related stuff
+//			if (myLocationButton != null && myNavigator != null) {
+//				this.myLocationButton.setEnabled(enabled);
+//				this.myNavigator.setEnabled(enabled);
+//			}
 			// this.myGPSButton.setTitle(R.string.Map_27);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
@@ -3512,10 +1752,10 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			super.disableGPS();
 			boolean enabled = this.isLocationHandlerEnabled();
 
-			if (myLocationButton != null && myNavigator != null) {
-				this.myLocationButton.setEnabled(enabled);
-				this.myNavigator.setEnabled(enabled);
-			}
+//			if (myLocationButton != null && myNavigator != null) {
+//				this.myLocationButton.setEnabled(enabled);
+//				this.myNavigator.setEnabled(enabled);
+//			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		}
@@ -3811,4 +2051,5 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	public void setActionbar(ActionBar actionbar) {
 		this.actionBar = actionbar;
 	}
+
 }
