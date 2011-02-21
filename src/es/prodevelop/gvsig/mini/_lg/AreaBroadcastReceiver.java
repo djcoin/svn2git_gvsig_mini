@@ -22,7 +22,7 @@ public class AreaBroadcastReceiver extends BroadcastReceiver {
 		Bundle b = intent.getExtras();
 		String area_name = b.getString("area");
 		String type = b.getString("type");			
-		System.out.println("Receiving AreaManager Intent: " + area_name );
+		System.out.println("AreaBroadcastReceiver MAP: Receiving AreaManager Intent: " + area_name + "/" + type);
 		System.out.println("------------------------------------");
 	}
 

@@ -28,6 +28,8 @@ public class _PointOverlay extends PointOverlay {
 		setVisible(true);
 		setSymbolSelector(new LgSymbolSelector());
 		
+		if (factory == null)
+			System.out.println("FACTORY IS NULL!!!");
 		ArrayList<LgPOI> pois = factory.makePoints();
 		if (pois != null && pois.size() > 0)
 			this.pois = (ArrayList<LgPOI>) pois;
@@ -36,7 +38,7 @@ public class _PointOverlay extends PointOverlay {
 		convertCoordinates("EPSG:4326", getTileRaster().getMRendererInfo().getSRS(), this.pois, null);
 		this.setPoints(this.pois);
 		
-		getTileRaster().resumeDraw();
+		// getTileRaster().resumeDraw();
 	}
 
 	@Override

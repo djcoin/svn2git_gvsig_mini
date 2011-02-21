@@ -157,15 +157,17 @@ public abstract class MapLocation extends AboutActivity implements GeoUtils,
 	public void initializeSensor(Context context, boolean forceNavigationMode) {
 		try {
 
-			try {
-				if (!Settings.getInstance().getBooleanValue(
-						getText(R.string.settings_key_orientation).toString())
-						&& !forceNavigationMode) {
-					log.log(Level.FINE, "Orientation is disabled in settings");
-					return;
+			if (false){
+				try {
+					if (!Settings.getInstance().getBooleanValue(
+							getText(R.string.settings_key_orientation).toString())
+							&& !forceNavigationMode) {
+						log.log(Level.FINE, "Orientation is disabled in settings");
+						return;
+					}
+				} catch (NoSuchFieldError e) {
+					log.log(Level.SEVERE, "", e);
 				}
-			} catch (NoSuchFieldError e) {
-				log.log(Level.SEVERE, "", e);
 			}
 
 			log.log(Level.FINE, "initialize sensor");

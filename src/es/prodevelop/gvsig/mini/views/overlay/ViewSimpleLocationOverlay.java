@@ -110,7 +110,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(
 			18, 18);
-
+	
 	public GPSPoint mLocation;
 	private int offsetOrientation = PORTRAIT_OFFSET_ORIENTATION;
 	private int navigationOrientation = NAVIGATION_MODE;
@@ -159,18 +159,19 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	private void drawOrientation(Canvas c, TileRaster osmv, int[] coords) {
 		try {
-			try {
-//				if (!noOrientation)
-//					return;
-				if (!Settings.getInstance().getBooleanValue(
-						osmv.map.getText(R.string.settings_key_orientation)
-								.toString())) {
-					log.log(Level.FINE, "orientation is disabled in settings");
-					return;
+			if (!noOrientation){					
+				try {
+					
+					if (!Settings.getInstance().getBooleanValue(
+							osmv.map.getText(R.string.settings_key_orientation)
+									.toString())) {
+						log.log(Level.FINE, "orientation is disabled in settings");
+						return;
+					}
+				} catch (NoSuchFieldError e) {
+					noOrientation = true;
+					log.log(Level.SEVERE, "", e);
 				}
-			} catch (NoSuchFieldError e) {
-				noOrientation = true;
-				log.log(Level.SEVERE, "", e);
 			}
 
 			if (!osmv.map.navigation) {

@@ -118,6 +118,10 @@ import com.markupartist.android.widget.ActionBar.AbstractAction;
 
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.MapLocation;
+import es.prodevelop.gvsig.mini.activities.OnSettingsChangedListener;
+import es.prodevelop.gvsig.mini.activities.Settings;
+import es.prodevelop.gvsig.mini.activities.SettingsActivity;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.common.CompatManager;
@@ -202,7 +206,7 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
+public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter,
 		OnSettingsChangedListener {
 	SlideBar s;
 
@@ -302,7 +306,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	boolean mUpdatingAnimation;
 	// PowerManager.WakeLock wl;
 	MapHandler handler = new MapHandler();
-	protected final static Logger log = Logger.getLogger(Map.class.getName());
+	protected final static Logger log = Logger.getLogger(VanillaMap.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
 	private UserContext userContext;
@@ -783,15 +787,15 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		@Override
 		public void performAction(View view) {
 			try {
-				Map.this.osmap
-						.adjustViewToAccuracyIfNavigationMode(Map.this.mMyLocationOverlay.mLocation.acc);
-				Map.this.osmap
+				VanillaMap.this.osmap
+						.adjustViewToAccuracyIfNavigationMode(VanillaMap.this.mMyLocationOverlay.mLocation.acc);
+				VanillaMap.this.osmap
 						.setMapCenterFromLonLat(
-								Map.this.mMyLocationOverlay.mLocation
+								VanillaMap.this.mMyLocationOverlay.mLocation
 										.getLongitudeE6() / 1E6,
-								Map.this.mMyLocationOverlay.mLocation
+								VanillaMap.this.mMyLocationOverlay.mLocation
 										.getLatitudeE6() / 1E6);
-				Map.this.osmap.setZoomLevel(15);
+				VanillaMap.this.osmap.setZoomLevel(15);
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "My location: ", e);
 			}
@@ -808,7 +812,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		@Override
 		public void performAction(View view) {
 			try {
-				Map.this.onSearchRequested();
+				VanillaMap.this.onSearchRequested();
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "My location: ", e);
 			}
@@ -825,7 +829,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		@Override
 		public void performAction(View view) {
 			try {
-				Map.this.viewLayers();
+				VanillaMap.this.viewLayers();
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "My location: ", e);
 			}
@@ -841,7 +845,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			switch (item.getItemId()) {
 			case 0:
 				try {
-					Map.this.showSearchDialog();
+					VanillaMap.this.showSearchDialog();
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "showAddressDialog: ", e);
 				}
@@ -899,7 +903,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			case 4:
 				if (Utils.isSDMounted()) {
 					if (osmap.getMRendererInfo().allowsMassiveDownload()) {
-						Map.this.showDownloadTilesDialog();
+						VanillaMap.this.showDownloadTilesDialog();
 					} else {
 
 						this.showOKDialog(getText(R.string.not_download_tiles)
@@ -1088,7 +1092,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								.getFullNAME());
 						// final MapRenderer r =
 						// Map.this.osmap.getMRendererInfo();
-						Map.this.osmap.setZoomLevel(17, true);
+						VanillaMap.this.osmap.setZoomLevel(17, true);
 						switch (arg1) {
 						case 0:
 							log.log(Level.FINE, "navifation mode vertical on");
@@ -1185,7 +1189,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			if (ws == null) {
 				log.log(Level.FINE,
 						"ws == null: Can't get weather. Check another location");
-				Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
+				Toast.makeText(VanillaMap.this, R.string.Map_8, Toast.LENGTH_LONG)
 						.show();
 				return;
 			}
@@ -1725,7 +1729,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	 */
 	public void updateZoomControl() {
 		try {
-			MapRenderer r = Map.this.osmap.getMRendererInfo();
+			MapRenderer r = VanillaMap.this.osmap.getMRendererInfo();
 
 			if (r.getZoomLevel() > r.getZoomMinLevel())
 				z.setIsZoomOutEnabled(true);
@@ -1787,7 +1791,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				@Override
 				public void onClick(View v) {
 					try {
-						Map.this.osmap.zoomIn();
+						VanillaMap.this.osmap.zoomIn();
 
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "onZoomInClick: ", e);
@@ -1798,7 +1802,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				@Override
 				public void onClick(View v) {
 					try {
-						Map.this.osmap.zoomOut();
+						VanillaMap.this.osmap.zoomOut();
 						// Map.this.osmap.switchPanMode();
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "onZoomOutClick: ", e);
@@ -1824,8 +1828,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				public void onProgressChanged(SeekBar seekBar, int progress,
 						boolean fromUser) {
 					int zoom = (int) Math.floor(progress
-							* (Map.this.osmap.getMRendererInfo()
-									.getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+							* (VanillaMap.this.osmap.getMRendererInfo()
+									.getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
 									.getMRendererInfo().getZoomMinLevel())
 							/ 100);
 					osmap.drawZoomRectangle(zoom);
@@ -1839,14 +1843,14 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				public void onStopTrackingTouch(SeekBar seekBar) {
 					try {
 						int zoom = (int) Math.floor(seekBar.getProgress()
-								* (Map.this.osmap.getMRendererInfo()
-										.getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+								* (VanillaMap.this.osmap.getMRendererInfo()
+										.getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
 										.getMRendererInfo().getZoomMinLevel())
 								/ 100);
 						// int zoom = ((SlideBar)seekBar).portions;
-						Map.this.updateSlider(zoom);
-						Map.this.osmap.setZoomLevel(zoom, true);
-						Map.this.osmap.cleanZoomRectangle();
+						VanillaMap.this.updateSlider(zoom);
+						VanillaMap.this.osmap.setZoomLevel(zoom, true);
+						VanillaMap.this.osmap.cleanZoomRectangle();
 					} catch (Exception e) {
 						log.log(Level.SEVERE, "onStopTrackingTouch: ", e);
 					}
@@ -1988,51 +1992,51 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				log.log(Level.FINE, "MapHandler -> handleMessage");
 				final int what = msg.what;
 				switch (what) {
-				case Map.SHOW_LOADING:
+				case VanillaMap.SHOW_LOADING:
 					setLoadingVisible(true);
 					break;
-				case Map.HIDE_LOADING:
+				case VanillaMap.HIDE_LOADING:
 					setLoadingVisible(false);
 					break;
 				case TaskHandler.NO_RESPONSE:
 					log.log(Level.FINE, "task handler NO_RESPONSE");
 					if (dialog2 != null)
 						dialog2.dismiss();
-					Toast.makeText(Map.this, R.string.Map_22, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_22, Toast.LENGTH_LONG)
 							.show();
 					break;
-				case Map.SHOW_TOAST:
+				case VanillaMap.SHOW_TOAST:
 					log.log(Level.FINE, "SHOW_TOAST");
-					Toast t = Toast.makeText(Map.this, msg.obj.toString(),
+					Toast t = Toast.makeText(VanillaMap.this, msg.obj.toString(),
 							Toast.LENGTH_LONG);
 					t.show();
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
-				case Map.SHOW_OK_DIALOG:
+				case VanillaMap.SHOW_OK_DIALOG:
 					log.log(Level.FINE, "SHOW_OK_DIALOG");
 					if (dialog2 != null)
 						dialog2.dismiss();
-					Map.this.showOKDialog(msg.obj.toString(),
+					VanillaMap.this.showOKDialog(msg.obj.toString(),
 							R.string.getFeatureInfo, true);
 					break;
-				case Map.POI_LIST:
+				case VanillaMap.POI_LIST:
 					log.log(Level.FINE, "POI_LIST");
-					Map.this.viewLastPOIs();
+					VanillaMap.this.viewLastPOIs();
 					break;
-				case Map.POI_CLEARED:
+				case VanillaMap.POI_CLEARED:
 					log.log(Level.FINE, "POI_CLEARED");
-					Map.this.updateContext(Map.POI_CLEARED);
+					VanillaMap.this.updateContext(VanillaMap.POI_CLEARED);
 					break;
-				case Map.ROUTE_CLEARED:
+				case VanillaMap.ROUTE_CLEARED:
 					log.log(Level.FINE, "ROUTE_CLEARED");
-					Map.this.updateContext(Map.ROUTE_CLEARED);
+					VanillaMap.this.updateContext(VanillaMap.ROUTE_CLEARED);
 					break;
-				case Map.WEATHER_INITED:
+				case VanillaMap.WEATHER_INITED:
 					log.log(Level.FINE, "WEATHER_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
+					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
 							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_14),
+							VanillaMap.this.getResources().getString(R.string.Map_14),
 							true);
 					dialog2.setCancelable(true);
 					dialog2.setCanceledOnTouchOutside(true);
@@ -2042,7 +2046,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						public void onCancel(DialogInterface dialog2) {
 							try {
 								log.log(Level.FINE, "weather canceled");
-								Map.this.getItemContext().cancelCurrentTask();
+								VanillaMap.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "onCancelDialog: ", e);
@@ -2050,9 +2054,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						}
 					});
 					break;
-				case Map.GETFEATURE_INITED:
+				case VanillaMap.GETFEATURE_INITED:
 					log.log(Level.FINE, "GETFEATURE_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
+					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
 							.getResources().getString(R.string.please_wait),
 							"GetFeatureInfo...", true);
 					dialog2.setCancelable(true);
@@ -2063,7 +2067,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						public void onCancel(DialogInterface dialog2) {
 							try {
 								log.log(Level.FINE, "getFeature canceled");
-								Map.this.getItemContext().cancelCurrentTask();
+								VanillaMap.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "onCancelDialog: ", e);
@@ -2072,37 +2076,37 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					});
 					break;
 
-				case Map.WEATHER_CANCELED:
+				case VanillaMap.WEATHER_CANCELED:
 					log.log(Level.FINE, "WEATHER_CANCELED");
-					Toast.makeText(Map.this, R.string.Map_15, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_15, Toast.LENGTH_LONG)
 							.show();
 					break;
-				case Map.WEATHER_ERROR:
+				case VanillaMap.WEATHER_ERROR:
 					log.log(Level.FINE, "WEATHER_ERROR");
-					Toast.makeText(Map.this, R.string.Map_8, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_8, Toast.LENGTH_LONG)
 							.show();
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
-				case Map.WEATHER_SHOW:
+				case VanillaMap.WEATHER_SHOW:
 					log.log(Level.FINE, "WEATHER_SHOW");
-					Functionality f = Map.this.getItemContext()
+					Functionality f = VanillaMap.this.getItemContext()
 							.getExecutingFunctionality();
 					if (f instanceof WeatherFunctionality)
-						Map.this.showWeather(((WeatherFunctionality) f).ws);
+						VanillaMap.this.showWeather(((WeatherFunctionality) f).ws);
 					else {
 						log.log(Level.FINE, "Nof found Weather functionality");
 					}
 					break;
-				case Map.ROUTE_NO_RESPONSE:
+				case VanillaMap.ROUTE_NO_RESPONSE:
 					log.log(Level.FINE, "ROUTE_NO_RESPONSE");
-					Toast.makeText(Map.this, R.string.server_busy,
+					Toast.makeText(VanillaMap.this, R.string.server_busy,
 							Toast.LENGTH_LONG).show();
 					// ivCleanRoute.setVisibility(View.INVISIBLE);
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
-				case Map.ROUTE_SUCCEEDED:
+				case VanillaMap.ROUTE_SUCCEEDED:
 					log.log(Level.FINE, "ROUTE_SUCCEEDED");
 					// ivCleanRoute.setVisibility(View.VISIBLE);
 					osmap.CLEAR_ROUTE = true;
@@ -2112,18 +2116,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 							RouteManager.getInstance().getRegisteredRoute()
 									.getRoute().getFeatureAt(0).getGeometry(),
 							"EPSG:4326");
-					Map.this.updateContext(Map.ROUTE_SUCCEEDED);
+					VanillaMap.this.updateContext(VanillaMap.ROUTE_SUCCEEDED);
 					osmap.resumeDraw();
 					break;
-				case Map.ROUTE_NO_CALCULATED:
+				case VanillaMap.ROUTE_NO_CALCULATED:
 					log.log(Level.FINE, "ROUTE_NO_CALCULATED");
-					Toast.makeText(Map.this, R.string.Map_16, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_16, Toast.LENGTH_LONG)
 							.show();
 					// ivCleanRoute.setVisibility(View.INVISIBLE);
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
-				case Map.POI_SHOW:
+				case VanillaMap.POI_SHOW:
 					log.log(Level.FINE, "POI_SHOW");
 					Functionality nf = getItemContext()
 							.getExecutingFunctionality();
@@ -2131,19 +2135,19 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						NameFinderFunc n = (NameFinderFunc) nf;
 						osmap.getMRendererInfo().reprojectGeometryCoordinates(
 								n.nm, "EPSG:4326");
-						boolean update = Map.this.showPOIs(n.desc, n.nm);
+						boolean update = VanillaMap.this.showPOIs(n.desc, n.nm);
 						if (update)
-							Map.this.updateContext(Map.POI_SUCCEEDED);
+							VanillaMap.this.updateContext(VanillaMap.POI_SUCCEEDED);
 					} else {
 						log.log(Level.FINE,
 								"Nof found NameFinder functionality");
 					}
 					break;
-				case Map.POI_INITED:
+				case VanillaMap.POI_INITED:
 					log.log(Level.FINE, "POI_INITED");
-					dialog2 = ProgressDialog.show(Map.this, Map.this
+					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
 							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_17),
+							VanillaMap.this.getResources().getString(R.string.Map_17),
 							true);
 					dialog2.setCancelable(true);
 					dialog2.setCanceledOnTouchOutside(true);
@@ -2152,7 +2156,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						@Override
 						public void onCancel(DialogInterface dialog2) {
 							try {
-								Map.this.getItemContext().cancelCurrentTask();
+								VanillaMap.this.getItemContext().cancelCurrentTask();
 								dialog2.dismiss();
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "onCancelDialog: ", e);
@@ -2160,7 +2164,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						}
 					});
 					break;
-				case Map.ROUTE_CANCELED:
+				case VanillaMap.ROUTE_CANCELED:
 					log.log(Level.FINE, "ROUTE_CANCELED");
 					RouteManager.getInstance().getRegisteredRoute()
 							.deleteRoute(false);
@@ -2170,32 +2174,32 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					if (dialog2 != null)
 						dialog2.dismiss();
 					// ivCleanRoute.setVisibility(View.INVISIBLE);
-					Toast.makeText(Map.this, R.string.Map_18, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_18, Toast.LENGTH_LONG)
 							.show();
 					osmap.postInvalidate();
 					break;
-				case Map.POI_CANCELED:
+				case VanillaMap.POI_CANCELED:
 					log.log(Level.FINE, "POI_CANCELED");
 					// ivCleanPois.setVisibility(View.INVISIBLE);
 					// ivShowList.setVisibility(View.INVISIBLE);
 					if (dialog2 != null)
 						dialog2.dismiss();
-					Toast.makeText(Map.this, R.string.task_canceled,
+					Toast.makeText(VanillaMap.this, R.string.task_canceled,
 							Toast.LENGTH_LONG).show();
 					nameds = null;
 					osmap.postInvalidate();
 					break;
-				case Map.CALCULATE_ROUTE:
+				case VanillaMap.CALCULATE_ROUTE:
 					log.log(Level.FINE, "CALCULATE_ROUTE");
-					Map.this.calculateRoute();
+					VanillaMap.this.calculateRoute();
 					break;
-				case Map.ROUTE_INITED:
+				case VanillaMap.ROUTE_INITED:
 					log.log(Level.FINE, "ROUTE_INITED");
 					RouteManager.getInstance().getRegisteredRoute()
 							.deleteRoute(false);
-					dialog2 = ProgressDialog.show(Map.this, Map.this
+					dialog2 = ProgressDialog.show(VanillaMap.this, VanillaMap.this
 							.getResources().getString(R.string.please_wait),
-							Map.this.getResources().getString(R.string.Map_19),
+							VanillaMap.this.getResources().getString(R.string.Map_19),
 							true);
 					dialog2.setCancelable(true);
 					dialog2.setCanceledOnTouchOutside(true);
@@ -2209,41 +2213,41 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 										.deleteRoute(false);
 								// ivCleanRoute.setVisibility(View.INVISIBLE);
 								osmap.resumeDraw();
-								Map.this.getItemContext().cancelCurrentTask();
+								VanillaMap.this.getItemContext().cancelCurrentTask();
 							} catch (Exception e) {
 								log.log(Level.SEVERE, "onCancelDialog: ", e);
 							}
 						}
 					});
 					break;
-				case Map.TWEET_SENT:
+				case VanillaMap.TWEET_SENT:
 					log.log(Level.FINE, "TWEET_SENT");
-					Toast.makeText(Map.this, R.string.Map_20, Toast.LENGTH_LONG)
+					Toast.makeText(VanillaMap.this, R.string.Map_20, Toast.LENGTH_LONG)
 							.show();
 					break;
-				case Map.TWEET_ERROR:
+				case VanillaMap.TWEET_ERROR:
 					log.log(Level.FINE, "TWEET_ERROR");
-					Toast t1 = Toast.makeText(Map.this, msg.obj.toString(),
+					Toast t1 = Toast.makeText(VanillaMap.this, msg.obj.toString(),
 							Toast.LENGTH_LONG);
 					t1.show();
 					break;
-				case Map.SHOW_TWEET_DIALOG:
+				case VanillaMap.SHOW_TWEET_DIALOG:
 					log.log(Level.FINE, "SHOW_TWEET_DIALOG");
-					Map.this.showTweetDialog();
+					VanillaMap.this.showTweetDialog();
 					break;
-				case Map.SHOW_TWEET_DIALOG_SETTINGS:
+				case VanillaMap.SHOW_TWEET_DIALOG_SETTINGS:
 					log.log(Level.FINE, "SHOW_TWEET_DIALOG_SETTINGS");
-					Map.this.showTweetDialogSettings();
+					VanillaMap.this.showTweetDialogSettings();
 					break;
-				case Map.SHOW_POI_DIALOG:
+				case VanillaMap.SHOW_POI_DIALOG:
 					log.log(Level.FINE, "SHOW_POI_DIALOG");
-					Map.this.showPOIDialog();
+					VanillaMap.this.showPOIDialog();
 					break;
-				case Map.SHOW_ADDRESS_DIALOG:
+				case VanillaMap.SHOW_ADDRESS_DIALOG:
 					log.log(Level.FINE, "SHOW_ADDRESS_DIALOG");
-					Map.this.showSearchDialog();
+					VanillaMap.this.showSearchDialog();
 					break;
-				case Map.VOID:
+				case VanillaMap.VOID:
 					if (dialog2 != null)
 						dialog2.dismiss();
 					break;
@@ -2257,7 +2261,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 				// 2000).show();
 			} finally {
 				try {
-					Map.this.clearContext();
+					VanillaMap.this.clearContext();
 					osmap.invalidate();
 				} catch (Exception e) {
 					log.log(Level.SEVERE, "", e);
@@ -2397,7 +2401,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					.findViewById(R.id.download_tiles_overwrite_check))
 					.isChecked();
 
-			MapRenderer currentRenderer = Map.this.osmap.getMRendererInfo();
+			MapRenderer currentRenderer = VanillaMap.this.osmap.getMRendererInfo();
 			MapRenderer renderer = Layers.getInstance().getRenderer(
 					currentRenderer.getNAME());
 
@@ -2439,7 +2443,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			int toZoomLevel = (totalZoomLevels * progress / 100)
 					+ fromZoomLevel;
 
-			Map.this.totalZoom.setText(Map.this
+			VanillaMap.this.totalZoom.setText(VanillaMap.this
 					.getText(R.string.download_tiles_05)
 					+ " "
 					+ fromZoomLevel
@@ -2473,7 +2477,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			 */
 
 			TileDownloadCallbackHandler callBackHandler = new TileDownloadCallbackHandler(
-					Map.this);
+					VanillaMap.this);
 			ConstantsTileCache.DEFAULT_NUM_THREADS = 4;
 
 			/*
@@ -2527,7 +2531,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						public void onProgressChanged(SeekBar arg0,
 								int progress, boolean arg2) {
 							try {
-								Map.this.instantiateTileDownloaderTask(l,
+								VanillaMap.this.instantiateTileDownloaderTask(l,
 										progress);
 
 							} catch (Exception e) {
@@ -2555,8 +2559,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 						@Override
 						public void onClick(View arg0) {
-							Map.this.instantiateTileDownloaderTask(l,
-									Map.this.downTilesSeekBar.getProgress());
+							VanillaMap.this.instantiateTileDownloaderTask(l,
+									VanillaMap.this.downTilesSeekBar.getProgress());
 						}
 					});
 
@@ -2567,10 +2571,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
 							try {
-								Map.this.resetCounter();
-								Map.this.downloadTileAlert = Map.this
+								VanillaMap.this.resetCounter();
+								VanillaMap.this.downloadTileAlert = VanillaMap.this
 										.getDownloadTilesDialog();
-								Map.this.downloadTileAlert.show();
+								VanillaMap.this.downloadTileAlert.show();
 								WorkQueue.getExclusiveInstance().execute(t);
 							} catch (Exception e) {
 								log.log(Level.SEVERE,
@@ -2589,8 +2593,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								int whichButton) {
 							// setRequestedOrientation(ActivityInfo.
 							// SCREEN_ORIENTATION_SENSOR);
-							Map.this.osmap.resumeDraw();
-							Map.this.reloadLayerAfterDownload();
+							VanillaMap.this.osmap.resumeDraw();
+							VanillaMap.this.reloadLayerAfterDownload();
 						}
 					});
 
@@ -2610,7 +2614,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			@Override
 			public boolean onKey(DialogInterface arg0, int arg1, KeyEvent arg2) {
 				if (arg2.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-					Toast.makeText(Map.this, R.string.download_tiles_13,
+					Toast.makeText(VanillaMap.this, R.string.download_tiles_13,
 							Toast.LENGTH_LONG).show();
 				}
 				return true;
@@ -2634,8 +2638,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 			@Override
 			public void onClick(View arg0) {
-				Map.this.downloadCancellable.setCanceled(true);
-				Map.this.downloadTileAlert.dismiss();
+				VanillaMap.this.downloadCancellable.setCanceled(true);
+				VanillaMap.this.downloadTileAlert.dismiss();
 			}
 		});
 
@@ -3028,8 +3032,8 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 										String userPass = etrUserPass.getText()
 												.toString();
 
-										Map.twituser = userName;
-										Map.twitpass = userPass;
+										VanillaMap.twituser = userName;
+										VanillaMap.twitpass = userPass;
 										getItemContext().getFunctionalityByID(
 												R.layout.twitter_image_button)
 												.onClick(null);
@@ -3073,7 +3077,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									try {
-										Intent i = new Intent(Map.this,
+										Intent i = new Intent(VanillaMap.this,
 												SettingsActivity.class);
 										i.putExtra("twitter", true);
 										startActivityForResult(i, CODE_SETTINGS);
@@ -3105,7 +3109,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 			int progress = Math
 					.round(this.osmap.getTempZoomLevel()
 							* 100
-							/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+							/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
 									.getMRendererInfo().getZoomMinLevel()));
 			// if (progress == 0)
 			// progress = 1;
@@ -3126,7 +3130,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			int progress = zoom
 					* 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - Map.this.osmap
+					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
 							.getMRendererInfo().getZoomMinLevel());
 			// if (progress == 0)
 			// progress = 1;
@@ -3137,7 +3141,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		}
 	}
 
-	private int state = Map.VOID;
+	private int state = VanillaMap.VOID;
 
 	/**
 	 * This method applies some logic to update the ItemContext from the current
@@ -3151,18 +3155,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		try {
 			log.log(Level.FINE, "updateContext");
 			switch (state) {
-			case Map.VOID:
+			case VanillaMap.VOID:
 				log.log(Level.FINE, "VOID");
 				this.setContext(new DefaultContext(this));
 				break;
-			case Map.ROUTE_SUCCEEDED:
+			case VanillaMap.ROUTE_SUCCEEDED:
 				log.log(Level.FINE, "ROUTE_SUCEEDED");
 				if (nameds != null && nameds.getNumPoints() > 0)
 					this.setContext(new RoutePOIContext(this));
 				else
 					this.setContext(new RouteContext(this));
 				break;
-			case Map.POI_SUCCEEDED:
+			case VanillaMap.POI_SUCCEEDED:
 				log.log(Level.FINE, "POI_SUCCEEDED");
 				if (RouteManager.getInstance().getRegisteredRoute() != null
 						&& RouteManager.getInstance().getRegisteredRoute()
@@ -3172,7 +3176,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					this.setContext(new POIContext(this));
 				}
 				break;
-			case Map.POI_CLEARED:
+			case VanillaMap.POI_CLEARED:
 				log.log(Level.FINE, "POI_CLEARED");
 				if (RouteManager.getInstance().getRegisteredRoute() != null
 						&& RouteManager.getInstance().getRegisteredRoute()
@@ -3182,7 +3186,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					this.setContext(new DefaultContext(this));
 				}
 				break;
-			case Map.ROUTE_CLEARED:
+			case VanillaMap.ROUTE_CLEARED:
 				log.log(Level.FINE, "ROUTE_CLEARED");
 				if (nameds != null && nameds.getNumPoints() > 0) {
 					this.setContext(new POIContext(this));
@@ -3533,18 +3537,18 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					if (tileWaiter.getInitDownloadTime() > 0)
 						previousTime = time;
 
-					Map.this.downloadTilesPB.setMax((int) tileWaiter
+					VanillaMap.this.downloadTilesPB.setMax((int) tileWaiter
 							.getTotalTilesToProcess());
-					Map.this.downloadTilesPB.setProgress((int) tileWaiter
+					VanillaMap.this.downloadTilesPB.setProgress((int) tileWaiter
 							.getDownloadedNow());
-					long totalDownloaded = Map.this.tileWaiter
+					long totalDownloaded = VanillaMap.this.tileWaiter
 							.getDownloadedNow();
-					long total = Map.this.tileWaiter.getTotalTilesToProcess();
+					long total = VanillaMap.this.tileWaiter.getTotalTilesToProcess();
 					int perc = 0;
 					if (total != 0)
 						perc = (int) ((double) totalDownloaded / (double) total * 100.0);
 
-					((TextView) Map.this.downloadTilesLayout
+					((TextView) VanillaMap.this.downloadTilesLayout
 							.findViewById(R.id.download_perc_text))
 							.setText(perc + "%" + " - "
 									+ tileWaiter.getTilesDownloaded() + "-"
@@ -3555,16 +3559,16 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 									+ tileWaiter.getTilesNotFound() + "-" + "/"
 									+ total);
 
-					String downloadedMB = String.valueOf(Map.this.tileWaiter
+					String downloadedMB = String.valueOf(VanillaMap.this.tileWaiter
 							.getBytesDownloaded() / 1024 / 1024);
 
 					if (downloadedMB.length() > 4) {
 						downloadedMB = downloadedMB.substring(0, 4);
 					}
 
-					((TextView) Map.this.downloadTilesLayout
+					((TextView) VanillaMap.this.downloadTilesLayout
 							.findViewById(R.id.downloaded_mb_text))
-							.setText(Map.this
+							.setText(VanillaMap.this
 									.getText(R.string.download_tiles_09)
 									+ " "
 									+ downloadedMB + " MB");
@@ -3572,9 +3576,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 					String elapsed = es.prodevelop.gvsig.mini.utiles.Utilities
 							.getTimeHoursMinutesSecondsString(time);
 
-					((TextView) Map.this.downloadTilesLayout
+					((TextView) VanillaMap.this.downloadTilesLayout
 							.findViewById(R.id.download_time_text))
-							.setText(Map.this
+							.setText(VanillaMap.this
 									.getText(R.string.download_tiles_10)
 									+ " "
 									+ elapsed);
@@ -3587,9 +3591,9 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 
 					String estimatedTime = es.prodevelop.gvsig.mini.utiles.Utilities
 							.getTimeHoursMinutesSecondsString(estimated);
-					((TextView) Map.this.downloadTilesLayout
+					((TextView) VanillaMap.this.downloadTilesLayout
 							.findViewById(R.id.download_time_estimated_text))
-							.setText(Map.this
+							.setText(VanillaMap.this
 									.getText(R.string.download_tiles_11)
 									+ " "
 									+ estimatedTime);
@@ -3660,20 +3664,20 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		tileWaiter.onDownloadCanceled();
 		runOnUiThread(new Runnable() {
 			public void run() {
-				Map.this.enableGPS();
-				Toast.makeText(Map.this, R.string.download_tiles_12,
+				VanillaMap.this.enableGPS();
+				Toast.makeText(VanillaMap.this, R.string.download_tiles_12,
 						Toast.LENGTH_LONG).show();
-				Map.this.reloadLayerAfterDownload();
+				VanillaMap.this.reloadLayerAfterDownload();
 			}
 		});
 	}
 
 	private void reloadLayerAfterDownload() {
-		Map.this.osmap.resumeDraw();
-		Map.this.osmap.onLayerChanged(Map.this.osmap.getMRendererInfo()
+		VanillaMap.this.osmap.resumeDraw();
+		VanillaMap.this.osmap.onLayerChanged(VanillaMap.this.osmap.getMRendererInfo()
 				.getFullNAME());
 		try {
-			Map.this.osmap.initializeCanvas(TileRaster.mapWidth,
+			VanillaMap.this.osmap.initializeCanvas(TileRaster.mapWidth,
 					TileRaster.mapHeight);
 		} catch (BaseException e) {
 			// TODO Auto-generated catch block
@@ -3694,11 +3698,11 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void onFinishDownload() {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				Map.this.enableGPS();
+				VanillaMap.this.enableGPS();
 				isDownloadTilesFinished = true;
-				Map.this.downloadTilesButton
+				VanillaMap.this.downloadTilesButton
 						.setText(R.string.alert_dialog_text_ok);
-				Map.this.reloadLayerAfterDownload();
+				VanillaMap.this.reloadLayerAfterDownload();
 			}
 		});
 	}
@@ -3733,7 +3737,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 		tileWaiter.onStartDownload();
 		runOnUiThread(new Runnable() {
 			public void run() {
-				Map.this.downloadTilesButton
+				VanillaMap.this.downloadTilesButton
 						.setText(R.string.alert_dialog_cancel);
 			}
 		});
@@ -3766,13 +3770,13 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void onTotalNumTilesRetrieved(final long totalNumTiles) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				Map.this.tileWaiter.onTotalNumTilesRetrieved(totalNumTiles);
-				Map.this.totalTiles.setText(Map.this
+				VanillaMap.this.tileWaiter.onTotalNumTilesRetrieved(totalNumTiles);
+				VanillaMap.this.totalTiles.setText(VanillaMap.this
 						.getText(R.string.download_tiles_06)
 						+ " "
 						+ totalNumTiles);
 				double totalMB = totalNumTiles * 10 / 1024;
-				Map.this.totalMB.setText(Map.this
+				VanillaMap.this.totalMB.setText(VanillaMap.this
 						.getText(R.string.download_tiles_07) + " " + totalMB);
 			}
 		});
@@ -3799,7 +3803,7 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	public void showToast(int resId) {
 		try {
 			Message m = new Message();
-			m.what = Map.SHOW_TOAST;
+			m.what = VanillaMap.SHOW_TOAST;
 			m.obj = this.getText(resId);
 			this.getMapHandler().sendMessage(m);
 		} catch (Exception e) {
