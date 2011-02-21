@@ -50,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.os.Environment;
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.geom.android.GPSPoint;
@@ -71,7 +72,7 @@ public class MapState {
 	private static final String fileName = "mapstate.txt";
 	private String dirPath;
 	public String gvTilesPath = null;
-	Map map;
+	IMap map;
 	private static final String LAT = "lat";
 	private static final String LON = "lon";
 	private static final String ZOOM = "zoom";
@@ -85,7 +86,7 @@ public class MapState {
 	 * The constructor
 	 * @param map
 	 */
-	public MapState(Map map) {	
+	public MapState(IMap map) {	
 		try {
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(log);
 			this.map = map;

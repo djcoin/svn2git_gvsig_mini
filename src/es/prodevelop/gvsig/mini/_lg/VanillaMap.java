@@ -51,7 +51,7 @@
  * 
  */
 
-package es.prodevelop.gvsig.mini.activities;
+package es.prodevelop.gvsig.mini._lg;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -207,7 +207,7 @@ import es.prodevelop.tilecache.util.Utilities;
  * 
  */
 public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter,
-		OnSettingsChangedListener {
+		OnSettingsChangedListener, IMap {
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
@@ -349,7 +349,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			}
 
 			mapState = new MapState(this);
-			this.setContext(new DefaultContext(this));
+			// this.setContext(new DefaultContext(this)); //CHANGED
 
 			// nameFinderTask = new NameFinderTask(this, handler);
 			rl = new RelativeLayout(this);
@@ -3797,167 +3797,6 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			super(w);
 			// TODO Auto-generated constructor stub
 		}
-
-	}
-
-	public void showToast(int resId) {
-		try {
-			Message m = new Message();
-			m.what = VanillaMap.SHOW_TOAST;
-			m.obj = this.getText(resId);
-			this.getMapHandler().sendMessage(m);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	public void showOKDialog(String textBody, int title, boolean editView) {
-		try {
-			log.log(Level.FINE, "show ok dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			if (textBody.length() > 1000) {
-				Toast.makeText(this, R.string.Map_25, Toast.LENGTH_LONG).show();
-				return;
-			}
-
-			if (textBody.contains("<html")) {
-				try {
-					WebView wv = new WebView(this);
-					String html = textBody.substring(textBody.indexOf("<html"),
-							textBody.indexOf("html>") + 5);
-
-					wv.loadData(html, "text/html", "UTF-8");
-					alert.setView(wv);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "", e);
-					ListView l = new ListView(this);
-					l.setAdapter(new LongTextAdapter(this, textBody, editView));
-					l.setClickable(false);
-					l.setLongClickable(false);
-					l.setFocusable(false);
-					alert.setView(l);
-				} catch (OutOfMemoryError oe) {
-					onLowMemory();
-					log.log(Level.SEVERE, "", oe);
-					showToast(R.string.MapLocation_3);
-				}
-
-			} else {
-				ListView l = new ListView(this);
-				l.setAdapter(new LongTextAdapter(this, textBody, editView));
-				l.setClickable(false);
-				l.setLongClickable(false);
-				l.setFocusable(false);
-				alert.setView(l);
-			}
-
-			alert.setTitle(title);
-
-			alert.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, "", e);
-							}
-						}
-					});
-
-			alert.show();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		} catch (OutOfMemoryError oe) {
-			onLowMemory();
-			log.log(Level.SEVERE, "", oe);
-			showToast(R.string.MapLocation_3);
-		}
-	}
-
-	@Override
-	public void onSettingChange(String key, Object value) {
-		try {
-			if (key.compareTo(getText(R.string.settings_key_gps).toString()) == 0) {
-				if (Boolean.valueOf(value.toString()).booleanValue()) {
-					this.enableGPS();
-				} else {
-					this.disableGPS();
-				}
-			} else if (key.compareTo(getText(R.string.settings_key_orientation)
-					.toString()) == 0) {
-				if (Boolean.valueOf(value.toString()).booleanValue()) {
-					this.initializeSensor(this);
-				} else {
-					this.stopSensor(this);
-				}
-			} else if (key.compareTo(getText(R.string.settings_key_tile_name)
-					.toString()) == 0) {
-				String current = osmap.getMTileProvider().getMFSTileProvider()
-						.getStrategy().getTileNameSuffix();
-
-				// tile suffix has changed
-				if (current.compareTo("." + value.toString()) != 0) {
-					osmap.instantiateTileProviderfromSettings();
-				}
-
-			} else if (key
-					.compareTo(getText(R.string.settings_key_offline_maps)
-							.toString()) == 0) {
-				if (Boolean.valueOf(value.toString()).booleanValue()) {
-					osmap.getMTileProvider().setMode(TileProvider.MODE_OFFLINE);
-				} else {
-					int mode = Settings.getInstance()
-							.getIntValue(
-									getText(R.string.settings_key_list_mode)
-											.toString());
-					osmap.getMTileProvider().setMode(mode);
-				}
-			} else if (key.compareTo(getText(R.string.settings_key_list_mode)
-					.toString()) == 0) {
-				if (Settings.getInstance().getBooleanValue(
-						getText(R.string.settings_key_offline_maps).toString())) {
-					osmap.getMTileProvider().setMode(TileProvider.MODE_OFFLINE);
-				} else {
-					osmap.getMTileProvider().setMode(
-							Integer.valueOf(value.toString()).intValue());
-				}
-			} else if (key.compareTo(getText(
-					R.string.settings_key_list_strategy).toString()) == 0) {
-				osmap.instantiateTileProviderfromSettings();
-			} else if (key.compareTo(getText(R.string.settings_key_os_key)
-					.toString()) == 0
-					|| key.compareTo(getText(R.string.settings_key_os_url)
-							.toString()) == 0
-					|| key.compareTo(getText(R.string.settings_key_os_custom)
-							.toString()) == 0) {
-				if (osmap.getMRendererInfo() instanceof OSRenderer) {
-					OSRenderer osr = (OSRenderer) osmap.getMRendererInfo();
-					OSSettingsUpdater
-							.synchronizeRendererWithSettings(osr, this);
-				}
-			} else if (key.compareTo(getText(R.string.settings_key_gps_dist)
-					.toString()) == 0
-					|| key.compareTo(getText(R.string.settings_key_gps_time)
-							.toString()) == 0) {
-				this.disableGPS();
-				this.enableGPS();
-			} else if (key.compareTo(getText(R.string.settings_key_gps_cell)
-					.toString()) == 0) {
-				if (Boolean.valueOf(value.toString()).booleanValue()) {
-					this.getLocationHandler().setLocationTimer(
-							new LocationTimer(this.getLocationHandler()));
-				} else {
-					this.getLocationHandler().finalizeCellLocation();
-				}
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "onSettingChange", e);
-		}
-	}
-
-	private void updateModeTileProvider() {
 
 	}
 

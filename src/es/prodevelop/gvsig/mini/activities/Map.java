@@ -118,6 +118,7 @@ import com.markupartist.android.widget.ActionBar.AbstractAction;
 
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedText;
 import es.prodevelop.gvsig.mini.activities.NameFinderActivity.BulletedTextListAdapter;
 import es.prodevelop.gvsig.mini.common.CompatManager;
@@ -203,7 +204,7 @@ import es.prodevelop.tilecache.util.Utilities;
  * 
  */
 public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
-		OnSettingsChangedListener {
+		OnSettingsChangedListener, IMap {
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
