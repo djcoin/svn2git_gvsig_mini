@@ -634,10 +634,10 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 				log.log(Level.FINE, "loading previous context: " + contextName);
 				ItemContext context = (ItemContext) Class.forName(contextName)
 						.newInstance();
-				if (context != null) {
-					context.setMap(this);
-					this.setContext(context);
-				}
+//				if (context != null) {
+//					context.setMap(this);
+//					this.setContext(context);
+//				}
 			} catch (IllegalAccessException e) {
 				log.log(Level.SEVERE, "", e);
 			} catch (InstantiationException e) {
@@ -701,13 +701,13 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 			outState.putString("maplayer", osmap.getMRendererInfo()
 					.getFullNAME());
 			this.mMyLocationOverlay.saveState(outState);
-			ItemContext context = this.getItemContext();
-			if (context != null)
-				outState.putString("contextClassName", context.getClass()
-						.getName());
-			else
-				outState.putString("contextClassName",
-						DefaultContext.class.getName());
+//			ItemContext context = this.getItemContext();
+//			if (context != null)
+//				outState.putString("contextClassName", context.getClass()
+//						.getName());
+//			else
+//				outState.putString("contextClassName",
+//						DefaultContext.class.getName());
 			log.log(Level.FINE, "map saved");
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "saveMap: ", e);
@@ -1373,29 +1373,29 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	 * @param context
 	 */
 	public void setContext(ItemContext context) {
-		try {
-			if (context == null) {
-				this.setContext(new DefaultContext(this));
-				log.log(Level.FINE, "setContext: " + "DefaultContext");
-			} else {
-				try {
-					Functionality f = this.getItemContext()
-							.getExecutingFunctionality();
-					if (f != null)
-						context.setExecutingFunctionality(f);
-				} catch (Exception e) {
-					log.log(Level.SEVERE, "setContext", e);
-
-				}
-				this.context = null;
-				this.context = context;
-
-				log.log(Level.FINE, "setContext: "
-						+ context.getClass().getName());
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "setContext: ", e);
-		}
+//		try {
+//			if (context == null) {
+//				this.setContext(new DefaultContext(this));
+//				log.log(Level.FINE, "setContext: " + "DefaultContext");
+//			} else {
+//				try {
+//					Functionality f = this.getItemContext()
+//							.getExecutingFunctionality();
+//					if (f != null)
+//						context.setExecutingFunctionality(f);
+//				} catch (Exception e) {
+//					log.log(Level.SEVERE, "setContext", e);
+//
+//				}
+//				this.context = null;
+//				this.context = context;
+//
+//				log.log(Level.FINE, "setContext: "
+//						+ context.getClass().getName());
+//			}
+//		} catch (Exception e) {
+//			log.log(Level.SEVERE, "setContext: ", e);
+//		}
 	}
 
 	// deleted twitter stuff
@@ -1591,12 +1591,12 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	 * Launches GetCellLocationFunc
 	 */
 	public void obtainCellLocation() {
-		try {
-			GetCellLocationFunc cellLocationFunc = new GetCellLocationFunc(this, 0);
-			cellLocationFunc.launch();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
+//		try {
+//			GetCellLocationFunc cellLocationFunc = new GetCellLocationFunc(this, 0);
+//			cellLocationFunc.launch();
+//		} catch (Exception e) {
+//			log.log(Level.SEVERE, "", e);
+//		}
 	}
 
 	public static int GPS_STATUS;
