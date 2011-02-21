@@ -761,10 +761,10 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
 						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
 
-				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
-						NameFinderOverlay.DEFAULT_NAME));
-				this.osmap.addOverlay(new RouteOverlay(this, osmap,
-						RouteOverlay.DEFAULT_NAME));
+//				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
+//						NameFinderOverlay.DEFAULT_NAME));
+//				this.osmap.addOverlay(new RouteOverlay(this, osmap,
+//						RouteOverlay.DEFAULT_NAME));
 				this.osmap.addOverlay(mMyLocationOverlay);
 			}
 
