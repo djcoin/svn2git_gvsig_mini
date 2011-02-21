@@ -253,7 +253,6 @@ public class Map extends IMap implements GeoUtils, IDownloadWaiter,
 	private MenuItem myWhats;
 	private MenuItem myLicense;
 	public Handler mHandler;
-	public static ViewPort vp;
 	int nearopt = 0;
 	public static final int ROUTE_CANCELED = 100;
 	public static final int ROUTE_INITED = 101;

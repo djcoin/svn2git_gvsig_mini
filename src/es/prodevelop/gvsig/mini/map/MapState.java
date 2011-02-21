@@ -102,7 +102,9 @@ public class MapState {
 	/**
 	 * Persists the map state
 	 */
-	public synchronized void persist() {
+	public synchronized void persist() {		
+		if(true)
+			return;
 		try {
 			if (map != null) {				
 				File f = new File(dirPath + fileName);
@@ -145,7 +147,9 @@ public class MapState {
 		BufferedReader reader = null;
 		try {
 			File f = new File(dirPath + fileName);
+			System.out.println("File: " + f.getAbsolutePath());
 			if (f != null && f.exists()) {
+				System.out.println("File does exist");
 				log.log(Level.FINE, "load map state: " + f.getAbsolutePath());
 				configReader = new FileReader(f);
 				reader = new BufferedReader(configReader);	
@@ -159,6 +163,7 @@ public class MapState {
 			String[] part;
 			HashMap properties = new HashMap();
 			while ((line = reader.readLine()) != null) {
+				System.out.println("Reading: " + line);
 				part = line.split("=");
 				properties.put(part[0], part[1]);
 				log.log(Level.FINE, part[1]);
@@ -190,7 +195,29 @@ public class MapState {
 			return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE,"",e);
-			return false;
+			try {
+				myDefault();
+			} catch (Exception ex) {
+				// TODO: handle exception
+				ex.printStackTrace();
+				return false;
+			}
+			return true;
 		}
+	}
+
+	private void myDefault() {
+		
+		String layer="maze";
+		map.osmap.onLayerChanged(layer);
+		map.osmap.setMapCenter(-181002.93165638, 5976152.5836365);
+		map.osmap.setZoomLevel(17);
+		
+//		zoom=17
+//		layer=maze
+//		x=-181002.93165638
+//		y=5976152.5836365
+//		gvtiles=null
+		
 	}
 }

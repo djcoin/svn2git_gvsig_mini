@@ -230,7 +230,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 	public static String twituser = null;
 	public static String twitpass = null;
 	public ViewSimpleLocationOverlay mMyLocationOverlay;
-	public TileRaster osmap;
 	public NamedMultiPoint nameds;
 	private Point nearestPOI;
 	private int indexNP;
@@ -609,13 +608,19 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		try {
 			Log.d(TAG, "Try loading map from saved instance ; may throw null pointer exception");
 			log.log(Level.FINE, "load map from saved instance");
-			String mapLayer = outState.getString("maplayer");
+			
+			String mapLayer;
+			if(outState != null)
+				mapLayer = outState.getString("maplayer");
+			else
+				mapLayer = "maze";
+			
 			log.log(Level.FINE, "previous layer: " + mapLayer);
 			// OSMMercatorRenderer t = OSMMercatorRenderer.getMapnikRenderer();
 			// this.osmap = new TileRaster(this, aContext, t,
 			// metrics.widthPixels,
 			// metrics.heightPixels);
-			osmap.onLayerChanged(mapLayer);
+			osmap.onLayerChanged(mapLayer); // this IS the null stuff OMG..
 			this.mMyLocationOverlay.loadState(outState);
 			log.log(Level.FINE, "map loaded");
 		} catch (Exception e) {
@@ -625,6 +630,7 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 				this.osmap = new TileRaster(this, CompatManager.getInstance()
 						.getRegisteredContext(), t, metrics.widthPixels,
 						metrics.heightPixels);
+				System.out.println("Just created osmap..!");
 				// osmap.initializeCanvas(metrics.widthPixels,
 				// metrics.heightPixels);
 			} catch (Exception e1) {
@@ -785,6 +791,7 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 				@Override
 				public void onClick(View v) {
 					try {
+						Log.d(TAG, "zooming in !!!");
 						VanillaMap.this.osmap.zoomIn();
 
 					} catch (Exception e) {
@@ -796,6 +803,7 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 				@Override
 				public void onClick(View v) {
 					try {
+						Log.d(TAG, "zooming out !!!");
 						VanillaMap.this.osmap.zoomOut();
 						// Map.this.osmap.switchPanMode();
 					} catch (Exception e) {
@@ -984,7 +992,7 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 
 			String tileName = "tile.gvsig";
 			String dot = ".";
-			String strategy = ITileFileSystemStrategy.QUADKEY;
+			String strategy = ITileFileSystemStrategy.FLATX;
 			ITileFileSystemStrategy ts = FileSystemStrategyManager
 					.getInstance().getStrategyByName(strategy);
 

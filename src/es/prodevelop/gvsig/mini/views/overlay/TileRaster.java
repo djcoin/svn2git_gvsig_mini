@@ -159,6 +159,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		OnClickListener, OnLongClickListener, LayerChangedListener,
 		MultiTouchObjectCanvas<Object>, SurfaceHolder.Callback {
 
+	private static final String TAG = TileRaster.class.getName();
+	
 	private ArrayList extentChangedListeners = new ArrayList();
 
 	private POIProviderChangedListener poiProviderFailListener;
@@ -275,6 +277,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			this.instantiateTileProviderfromSettings();
 			this.setRenderer(aRendererInfo);
 			geomDrawer = new AndroidGeometryDrawer(this, context);
+			// overlay defined in TileRaster
 			acetate = new AcetateOverlay(context, this,
 					AcetateOverlay.DEFAULT_NAME);
 			this.mCurrentAnimationRunner = new LinearAnimationRunner(0, 0,
@@ -631,10 +634,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	 */
 	public void zoomIn() {
 		try {
+			
 			this.mTileProvider.clearPendingQueue();
+			Log.d(TAG, "Zoom before " + tempZoomLevel);
 			tempZoomLevel += 1;
 			// this.setZoomLevel(this.getMRendererInfo().getZoomLevel() + 1);
-
+			Log.d(TAG, "Zooming in after " + tempZoomLevel);
+			
 			if (mScaler.isFinished()) {
 				mScaler.startScale(1.0f, 2.0f, Scaler.DURATION_SHORT);
 				postInvalidate();
@@ -850,8 +856,8 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	private boolean lastTouchEventProcessed = false;
 
 	@Override
-	public void onDraw(final Canvas c) {
 
+	public void onDraw(final Canvas c) {
 		try {
 			// System.out.println(getScrollX() +", " + getScrollY());
 			ViewPort.mapHeight = mapHeight;
@@ -962,10 +968,14 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						centerMapTileCoords[MAPTILE_LATITUDE_INDEX],
 						centerMapTileCoords[MAPTILE_LONGITUDE_INDEX] };
 
-				final int size = (additionalTilesNeededToBottomOfCenter
+				int size = (additionalTilesNeededToBottomOfCenter
 						+ additionalTilesNeededToTopOfCenter + 1)
 						* (additionalTilesNeededToRightOfCenter
 								+ additionalTilesNeededToLeftOfCenter + 1);
+				
+				Log.d(TAG, "======== Size calculated to fit the map " + size);
+				
+				// SIZE is not correctly calculated for level 0 zoom
 				Tile[] tiles = new Tile[size];
 				int cont = 0;
 
@@ -1057,12 +1067,19 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 				// bufferCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
 				for (int j = 0; j < length; j++) {
 					temp = tiles[j];
+					
+					if (temp == null)
+						Log.d(TAG, "Temp Tile is null..!");
+					
 					if (temp != null) {
+						System.out.println("TILERASTER : Trying to draw " + temp.getTileString());
+						
 						currentMapTile = this.mTileProvider.getMapTile(temp,
 								cancellable, null);
+						
 						if (currentMapTile != null) {
-							if (areAllValid
-									&& !((BitmapAndroid) currentMapTile).isValid) {
+							if (!((BitmapAndroid) currentMapTile).isValid) {
+								System.out.println("Invalid MapTile");
 								areAllValid = false;
 							}
 							TileRaster.lastTouchMapOffsetX = 0;
@@ -1104,7 +1121,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 							// temp.destroy();
 							temp = null;
 						} else {
-							// System.out.println("tile null");
+							System.out.println("Current Map Tile retrieved from mTileProvider is null !!!");
 							areAllValid = false;
 							someTileNull = true;
 
@@ -1118,7 +1135,11 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 					}
 				}
 				tiles = null;
+				// hackkkkkk
+				if (size == 9)
+					areAllValid = true;
 			}
+			Log.d(TAG, "out of the for loop that check tiles");
 
 			if (!someTileNull) {
 				TileRaster.lastTouchMapOffsetX = 0;
@@ -1145,11 +1166,14 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			// c.drawBitmap(bufferBitmap, 0, 0, Paints.mPaintR);
 			if (currTouchPoint == null)
 				computeScale();
-
-			if (areAllValid && !scale)
+			
+			if (areAllValid && !scale) {
 				pauseDraw();
-			else
+			}
+			else {
+				Log.d(TAG, "OnDraw: Are all valid ?!: " + areAllValid);
 				resumeDraw();
+			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onDraw", e);
 		}
@@ -1454,6 +1478,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		t = FileSystemStrategyManager.getInstance().getStrategyByName(strategy);
 		t.setTileNameSuffix(tileSuffix);
 
+		
 		this.mTileProvider = new AndroidTileProvider(this.androidContext,
 				new HandlerAndroid(lh), mapWidth, mapHeight, 256, mode, t);
 	}
@@ -2321,7 +2346,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		 * Create a Scaler with the specified interpolator.
 		 */
 		public Scaler(Context context, Interpolator interpolator) {
-			mFinished = true;
+			mFinished = false; // black magic
 			mInterpolator = interpolator;
 		}
 
@@ -2790,22 +2815,26 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	}
 
 	public void pauseDraw() {
+		// Log.d(TAG, "Pause Draw");
 		if (this.surfaceThread != null)
 			this.surfaceThread.pause = true;
 	}
 
 	public void resumeDraw() {
+		// Log.d(TAG, "Resuming Draw");
 		if (this.surfaceThread != null)
 			this.surfaceThread.pause = false;
 	}
 }
 
 class TileRasterThread extends Thread {
+	private static final String TAG = TileRasterThread.class.getName();
+	
 	private SurfaceHolder surfaceHolder;
 	private TileRaster view;
 	private boolean done = false;
 	public boolean pause = false;
-
+	
 	public TileRasterThread(SurfaceHolder surfaceHolder, TileRaster view) {
 		this.surfaceHolder = surfaceHolder;
 		this.view = view;
@@ -2822,7 +2851,7 @@ class TileRasterThread extends Thread {
 	@Override
 	public void run() {
 		Canvas c;
-		while (!done) {
+		while (!done) {		
 			while (pause && view.mScaler.isFinished()) {
 				try {
 					Thread.sleep(100);
@@ -2831,6 +2860,7 @@ class TileRasterThread extends Thread {
 					e.printStackTrace();
 				}
 			}
+			Log.d(TAG, "Pause/Scaler finished" + pause + "/"  + view.mScaler.isFinished());
 			c = null;
 			try {
 				c = surfaceHolder.lockCanvas();
