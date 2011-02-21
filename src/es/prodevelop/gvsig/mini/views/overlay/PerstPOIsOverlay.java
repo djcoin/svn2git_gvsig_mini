@@ -114,7 +114,7 @@ public class PerstPOIsOverlay extends MapOverlay implements
 
 	@Override
 	public ItemContext getItemContext() {
-		return new POIContext(getTileRaster().map);
+		return new POIContext((Map) getTileRaster().map);
 	}
 
 	@Override

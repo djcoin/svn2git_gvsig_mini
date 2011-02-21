@@ -379,7 +379,7 @@ public class ViewSimpleLocationOverlay extends MapOverlay {
 
 	@Override
 	public ItemContext getItemContext() {
-		return new GPSItemContext(getTileRaster().map);
+		return new GPSItemContext((Map)getTileRaster().map);
 	}
 
 	@Override

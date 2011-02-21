@@ -203,8 +203,8 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
-		OnSettingsChangedListener, IMap {
+public class Map extends IMap implements GeoUtils, IDownloadWaiter,
+		OnSettingsChangedListener {
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
@@ -3968,5 +3968,10 @@ public class Map extends MapLocation implements GeoUtils, IDownloadWaiter,
 	
 	public void setActionbar(ActionBar actionbar) {
 		this.actionBar = actionbar;
+	}
+
+	@Override
+	public void setViewPort(ViewPort viewPort) {
+		this.vp = viewPort;
 	}
 }

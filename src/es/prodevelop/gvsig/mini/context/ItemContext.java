@@ -28,7 +28,7 @@
  *   prode@prodevelop.es
  *   http://www.prodevelop.es
  *
- *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeña y
+ *   gvSIG Mini has been partially funded by IMPIVA (Instituto de la Pequeï¿½a y
  *   Mediana Empresa de la Comunidad Valenciana) &
  *   European Union FEDER funds.
  *   
@@ -42,6 +42,7 @@ package es.prodevelop.gvsig.mini.context;
 
 import java.util.HashMap;
 
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.tasks.Functionality;
 
@@ -98,5 +99,5 @@ public interface ItemContext {
 	 * Sets the current Map Activity instance
 	 * @param map A Map instance
 	 */
-	public void setMap(Map map);
+	public void setMap(Map imap);
 }

@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 
 import android.location.Location;
 import android.location.LocationProvider;
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 
@@ -59,13 +60,13 @@ public class LocationTimer extends TimerTask {
 	private long lastTimeCheck = System.currentTimeMillis();
 	private long sendCellPeriod = 60000;
 	private LocationHandler locationHandler;
-	Map map;
+	IMap map;
 	Timer timer;
 
 	public LocationTimer(LocationHandler locationHandler) {
 		try {			
 			CompatManager.getInstance().getRegisteredLogHandler().configureLogger(logger);
-			map = (Map) locationHandler.mContext;
+			map = (IMap) locationHandler.mContext;
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,"",e);
 		}

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 
 import es.prodevelop.android.spatialindex.poi.POI;
 import es.prodevelop.android.spatialindex.quadtree.provide.FullTextSearchListener;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.search.POIProviderManager;
@@ -96,7 +97,7 @@ public class ResultSearchOverlay extends PointOverlay implements
 	@Override
 	public ItemContext getItemContext() {
 		try {
-			return new OSMPOIContext(getTileRaster().map, false, true,
+			return new OSMPOIContext((Map) getTileRaster().map, false, true,
 					(POI) getPoints().get(getSelectedIndex()));
 		} catch (Exception e) {
 			if (e != null && e.getMessage() != null)

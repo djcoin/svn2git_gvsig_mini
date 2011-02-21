@@ -92,7 +92,7 @@ import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkPr
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
-import es.prodevelop.gvsig.mini.activities.Map;
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.OSSettingsUpdater;
 import es.prodevelop.gvsig.mini.activities.Settings;
 import es.prodevelop.gvsig.mini.common.CompatManager;
@@ -213,7 +213,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 	public static int lastTouchMapOffsetX;
 	public static int lastTouchMapOffsetY;
 	String datalog = null;
-	Map map;
+	IMap map;
 	int centerPixelX = 0;
 	int centerPixelY = 0;
 	AndroidGeometryDrawer geomDrawer;
@@ -266,7 +266,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 			init();
 			this.mScroller = new Scroller(context);
 			this.androidContext = androidContext;
-			this.map = (Map) context;
+			this.map = (IMap) context;
 			multiTouchController = new MultiTouchController<Object>(this,
 					getResources(), false);
 			log.setLevel(Utils.LOG_LEVEL);
@@ -434,7 +434,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 		try {
 			log.log(Level.FINE, "set MapRenderer: " + aRenderer.toString());
 			this.mRendererInfo = aRenderer;
-			this.map.vp = new ViewPort();
+			this.map.setViewPort(new ViewPort());
 			this.mRendererInfo.setCenter(aRenderer.getExtent().getCenter()
 					.getX(), aRenderer.getExtent().getCenter().getY());
 			this.map.vp.resolutions = aRenderer.resolutions;
@@ -1470,7 +1470,7 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 
 			if (renderer instanceof OSRenderer)
 				OSSettingsUpdater.synchronizeRendererWithSettings(
-						(OSRenderer) renderer, map);
+						(OSRenderer) renderer, (Context) map);
 
 			Tags.DEFAULT_TILE_SIZE = renderer.getMAPTILE_SIZEPX();
 			es.prodevelop.gvsig.mini.utiles.Tags.DEFAULT_TILE_SIZE = renderer
@@ -1537,13 +1537,13 @@ public class TileRaster extends SurfaceView implements GeoUtils,
 						.updateStringSharedPreference(
 								map.getText(R.string.settings_key_list_strategy)
 										.toString(),
-								ITileFileSystemStrategy.FLATX, map);
+								ITileFileSystemStrategy.FLATX, (Context) map);
 				Settings.getInstance().updateBooleanSharedPreference(
 						map.getText(R.string.settings_key_offline_maps)
-								.toString(), new Boolean(true), map);
+								.toString(), new Boolean(true), (Context) map);
 				instantiateTileProviderfromSettings();
 				Toast.makeText(
-						map,
+						(Context) map,
 						String.format(map.getText(R.string.load_offline)
 								.toString(), renderer.getOfflineLayerName()),
 						Toast.LENGTH_LONG).show();

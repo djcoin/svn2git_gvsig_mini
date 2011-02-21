@@ -52,6 +52,7 @@ import es.prodevelop.android.spatialindex.quadtree.memory.cluster.ClusterNode;
 import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListener;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
@@ -248,7 +249,7 @@ public class ExpandedClusterOverlay extends PointOverlay implements
 	@Override
 	public ItemContext getItemContext() {
 		try {
-			return new OSMPOIContext(getTileRaster().map, false, false,
+			return new OSMPOIContext((Map)getTileRaster().map, false, false,
 					(Point) getPoints().get(getSelectedIndex()));
 		} catch (Exception e) {
 			if (e != null && e.getMessage() != null)

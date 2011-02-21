@@ -45,6 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini._lg.IMap;
 import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.common.CompatManager;
 import es.prodevelop.gvsig.mini.context.ItemContext;
@@ -99,16 +100,18 @@ public class DefaultContext implements ItemContext {
 	public HashMap getFunctionalities() {
 		h = new HashMap();
 		try {			
+			Map mmap = (Map) map;
 			log.log(Level.FINE, "getFunctionalities");
-			ShowStreetView ssv = new ShowStreetView(map,
+			ShowStreetView ssv = new ShowStreetView(mmap,
 					R.layout.streetview_image_button);
-			StartPointFunctionality sp = new StartPointFunctionality(map,
+			StartPointFunctionality sp = new StartPointFunctionality(mmap,
 					R.layout.route_start_image_button);
-			FinishPointFunctionality fp = new FinishPointFunctionality(map,
+			FinishPointFunctionality fp = new FinishPointFunctionality(mmap,
 					R.layout.route_end_image_button);
-			weatherFunc = new WeatherFunctionality(map, R.layout.weather_image_button);
-			ShareMyLocationFunc tp = new ShareMyLocationFunc(map, R.layout.twitter_image_button);
-			ShowNameFinderAddressDialog sn = new ShowNameFinderAddressDialog(map, R.layout.poi_image_button, ShowNameFinderAddressDialog.POI_DIALOG);
+			weatherFunc = new WeatherFunctionality(mmap, R.layout.weather_image_button);
+			ShareMyLocationFunc tp = new ShareMyLocationFunc(mmap, R.layout.twitter_image_button);
+			ShowNameFinderAddressDialog sn = new ShowNameFinderAddressDialog(mmap, R.layout.poi_image_button, ShowNameFinderAddressDialog.POI_DIALOG);
+			
 			h.put(sp.getID(), sp);
 			h.put(fp.getID(), fp);
 			h.put(weatherFunc.getID(), weatherFunc);
@@ -156,6 +159,7 @@ public class DefaultContext implements ItemContext {
 			log.log(Level.SEVERE,"",e);
 		}
 	}
+
 
 	@Override
 	public void setMap(Map map) {

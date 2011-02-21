@@ -207,7 +207,10 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter, IMap {
+public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
+
+	private static final String TAG = VanillaMap.class.getName();
+	
 	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
@@ -245,7 +248,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	private AlertDialog alertP;
 	SensorEventListener mTop = null;
 	public Handler mHandler;
-	public static ViewPort vp;
+	
 	int nearopt = 0;
 	TextView reportView;
 	int cacheCounter = 0;
@@ -604,6 +607,7 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		try {
+			Log.d(TAG, "Try loading map from saved instance ; may throw null pointer exception");
 			log.log(Level.FINE, "load map from saved instance");
 			String mapLayer = outState.getString("maplayer");
 			log.log(Level.FINE, "previous layer: " + mapLayer);
@@ -632,18 +636,18 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 					return;
 				String contextName = outState.getString("contextClassName");
 				log.log(Level.FINE, "loading previous context: " + contextName);
-				ItemContext context = (ItemContext) Class.forName(contextName)
-						.newInstance();
+//				ItemContext context = (ItemContext) Class.forName(contextName)
+//						.newInstance();
 //				if (context != null) {
 //					context.setMap(this);
 //					this.setContext(context);
 //				}
-			} catch (IllegalAccessException e) {
-				log.log(Level.SEVERE, "", e);
-			} catch (InstantiationException e) {
-				log.log(Level.SEVERE, "", e);
-			} catch (ClassNotFoundException e) {
-				log.log(Level.SEVERE, "", e);
+//			} catch (IllegalAccessException e) {
+//				log.log(Level.SEVERE, "", e);
+//			} catch (InstantiationException e) {
+//				log.log(Level.SEVERE, "", e);
+//			} catch (ClassNotFoundException e) {
+//				log.log(Level.SEVERE, "", e);
 			} catch (Exception e) {
 				log.log(Level.SEVERE, "", e);
 			}
@@ -1727,6 +1731,8 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	 */
 	@Override
 	public void enableGPS() {
+		if(true)
+			return;
 		try {
 			log.log(Level.FINE, "enableGPS");
 			super.enableGPS();
@@ -1747,6 +1753,8 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	 * Stops the location handler
 	 */
 	public void disableGPS() {
+		if(true)
+			return;
 		try {
 			log.log(Level.FINE, "disableGPS");
 			super.disableGPS();
@@ -2050,6 +2058,11 @@ public class VanillaMap extends MapLocation implements GeoUtils, IDownloadWaiter
 	
 	public void setActionbar(ActionBar actionbar) {
 		this.actionBar = actionbar;
+	}
+
+	@Override
+	public void setViewPort(ViewPort viewPort) {
+		this.vp = viewPort;
 	}
 
 }

@@ -61,6 +61,7 @@ import es.prodevelop.android.spatialindex.quadtree.provide.QuadtreeProviderListe
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstOsmPOIClusterProvider;
 import es.prodevelop.geodetic.utils.conversion.ConversionCoords;
 import es.prodevelop.gvsig.mini.R;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.activities.MapPOI;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.map.POIContext;
@@ -124,7 +125,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 	public ItemContext getItemContext() {
 		if (isCluster)
 			try {
-				return new OSMPOIContext(getTileRaster().map, false, false,
+				return new OSMPOIContext((Map)getTileRaster().map, false, false,
 						(Point) getPoints().get(getSelectedIndex()));
 			} catch (Exception e) {
 				if (e != null && e.getMessage() != null)
@@ -133,7 +134,7 @@ public class PerstClusterPOIOverlay extends PointOverlay implements
 			}
 		else
 			try {
-				return new OSMPOIContext(getTileRaster().map, false, false,
+				return new OSMPOIContext((Map)getTileRaster().map, false, false,
 						(Point) getPoints().get(getSelectedIndex()));
 			} catch (Exception e) {
 				if (e != null && e.getMessage() != null)

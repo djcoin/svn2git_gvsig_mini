@@ -41,18 +41,18 @@ public class _MapPOI extends VanillaMap {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		areaBroadcastReceiver = new AreaBroadcastReceiver();
-		factory = new ILgPoiFactory.StaticFactory();
-		if (factory == null)
-			System.out.println("FACTORY1 IS NULL!!!");
+//		factory = new ILgPoiFactory.StaticFactory();
+//		if (factory == null)
+//			System.out.println("FACTORY1 IS NULL!!!");
 	};
 	
 	public void loadUI(Bundle savedInstanceState) {
 		try {
 			super.loadUI(savedInstanceState);
-			if (factory == null)
-				System.out.println("FACTOv RY2 IS NULL!!!");
-			ovi = new _PointOverlay(this, osmap, _PointOverlay.DEFAULT_NAME, factory);
-			this.osmap.addOverlay(ovi);
+//			if (factory == null)
+//				System.out.println("FACTOv RY2 IS NULL!!!");
+			// ovi = new _PointOverlay(this, osmap, _PointOverlay.DEFAULT_NAME, factory);
+			// this.osmap.addOverlay(ovi);
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "", e);
 		} catch (OutOfMemoryError ou) {

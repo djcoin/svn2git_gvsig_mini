@@ -50,6 +50,7 @@ import es.prodevelop.android.spatialindex.poi.OsmPOI;
 import es.prodevelop.android.spatialindex.poi.OsmPOIStreet;
 import es.prodevelop.android.spatialindex.quadtree.provide.BookmarkProviderListener;
 import es.prodevelop.android.spatialindex.quadtree.provide.perst.PerstBookmarkProvider;
+import es.prodevelop.gvsig.mini.activities.Map;
 import es.prodevelop.gvsig.mini.context.ItemContext;
 import es.prodevelop.gvsig.mini.context.osmpoi.OSMPOIContext;
 import es.prodevelop.gvsig.mini.exceptions.BaseException;
@@ -285,7 +286,7 @@ public class BookmarkOverlay extends PointOverlay implements
 				p = (Point) pois.get(getSelectedIndex());
 			else
 				p = (Point) streets.get(getSelectedIndex());
-			return new OSMPOIContext(getTileRaster().map, true, false, p);
+			return new OSMPOIContext((Map)getTileRaster().map, true, false, p);
 		} catch (Exception e) {
 			if (e != null && e.getMessage() != null)
 				Log.e("", e.getMessage());

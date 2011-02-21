@@ -162,7 +162,7 @@ public class NameFinderOverlay extends MapOverlay {
 
 	@Override
 	public ItemContext getItemContext() {
-		return new POIContext(getTileRaster().map);
+		return new POIContext((Map)getTileRaster().map);
 	}
 
 	@Override
