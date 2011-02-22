@@ -414,25 +414,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
-//	public void addMyLocationAction() {
-//	}
-//	public void addLayersActivityAction() {
-//	}
-//	public void addSearchAction() {
-//	}
-//	public void processActionSearch(Intent i) {
-//	}
-//	public boolean showPOIs(String[] descr, NamedMultiPoint nm) {
-//	}
-//	public void viewLastPOIs() {
-//	}
-//	public void viewLayers() {
-//	}
-//	public void calculateRoute() {
-//	}
-//	public void launchRouteCalculation() {
-//	}
-
 	/**
 	 * Manages the results of the NameFinderActivity, LayersActivity
 	 */
@@ -498,37 +479,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		i.putExtra("lat", lonlat[1]);
 	}
 
-//	private class MyCenterLocation extends AbstractAction {
-//	}
-//
-//	private class SearchAction extends AbstractAction {
-//	}
-//
-//	private class LayersActivityAction extends AbstractAction {
-//	}
-//
-//	public boolean onMenuItemSelected(int featureId, MenuItem item) {	
-//	}
-//	protected void showNavigationModeAlert() {		
-//	}
-//	private void startCache(MapRenderer mr, int minZoom, int maxZoom) {	
-//	}
-//	public void showWeather(WeatherSet ws) {
-//	}
-//	public void getWeather(double x, double y, String SRS) {
-//	}
-//	public void showRouteError() {
-//	}
-//	public void loadPois(Bundle outState) {	
-//	}
-//	public void savePois(Bundle outState) {
-//	}
-//	public void loadRoute(Bundle outState) {
-//	}
-//	public void saveRoute(Bundle outState) {	
-//	}
-	
-	
 	
 	@Override
 	public void onDestroy() {
