@@ -18,7 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 // YOU NEED TO HAVE YOUR SERVICEAREAMANAGER LAUNCHED !
-public class _MapPOI extends VanillaMap {
+public class _MapPOI extends _MapUI {
 	
 	private static final String TAG = _MapPOI.class.getName();
 	// See ServiceAreaManager project: res.AreaManager.Intent_Action

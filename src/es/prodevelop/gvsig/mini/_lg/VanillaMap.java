@@ -207,28 +207,15 @@ import es.prodevelop.tilecache.util.Utilities;
  * @author rblanco
  * 
  */
-public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
+public abstract class VanillaMap extends IMap implements GeoUtils {
 
 	private static final String TAG = VanillaMap.class.getName();
 	
-	SlideBar s;
 
 	boolean wasScaleBarVisible = false;
 
 	public final static int CODE_SETTINGS = 3215;
 
-	AlertDialog downloadTileAlert;
-	Cancellable downloadCancellable;
-	Button downloadTilesButton;
-	private TileDownloaderTask t;
-	private SeekBar downTilesSeekBar;
-	private TextView totalTiles;
-	private TextView totalMB;
-	private TextView totalZoom;
-
-	private TileDownloadWaiterDelegate tileWaiter;
-	public static String twituser = null;
-	public static String twitpass = null;
 	public ViewSimpleLocationOverlay mMyLocationOverlay;
 	public NamedMultiPoint nameds;
 	private Point nearestPOI;
@@ -258,26 +245,25 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 	public boolean connection = true;
 	boolean listVisible = false;
 	boolean cleanCompassVisible = true;
-	public ZoomControls z = null;
-	public CircularRouleteView c;
 	private ItemContext context;
 	/**
 	 * Whether we currently automatically update the animation.
 	 */
 	boolean mUpdatingAnimation;
 	// PowerManager.WakeLock wl;
-	MapHandler handler = new MapHandler();
 	protected final static Logger log = Logger.getLogger(VanillaMap.class.getName());
 	private UserContextManager contextManager; // singleton with user contexts
 	// list
-	private UserContext userContext;
+	protected UserContext userContext;
 	LinearLayout downloadTilesLayout;
 	ProgressBar downloadTilesPB;
 
 	public final static int SEARCH_EXP_CODE = 444;
 	private ItemContext overlayContext;
-	private ActionBar actionBar;
 
+
+	MapHandler handler = new MapHandler();
+	
 	/**
 	 * Called when the activity is first created.
 	 * */
@@ -290,7 +276,7 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 				CompatManager.getInstance().getRegisteredLogHandler()
 						.configureLogger(log);
 				// Settings.getInstance().addOnSettingsChangedListener(this);
-				tileWaiter = new TileDownloadWaiterDelegate(this);
+				
 				log.log(Level.FINE, "on create");
 
 				// PowerManager pm = (PowerManager)
@@ -313,7 +299,10 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 			// this.setContext(new DefaultContext(this)); //CHANGED
 
 			// nameFinderTask = new NameFinderTask(this, handler);
-			rl = new RelativeLayout(this);
+			
+		
+			preCreate();
+			
 			// TMSRenderer t = TMSRenderer.getTMSRenderer(
 			// "http://www.idee.es/wms-c/PNOA/PNOA/1.0.0/PNOA/");
 			loadSettings(savedInstanceState);
@@ -358,22 +347,10 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 							.getMapnikRenderer());
 				}
 			}
-			this.setContentView(rl);
-
-			LayoutInflater inflater = getLayoutInflater();
-			getWindow().addContentView(
-					inflater.inflate(R.layout.actionbars, null),
-					new ViewGroup.LayoutParams(
-							ViewGroup.LayoutParams.FILL_PARENT,
-							ViewGroup.LayoutParams.WRAP_CONTENT));
-
-			actionBar = (ActionBar) findViewById(R.id.actionbar);
-
-			/*
-			 * Add items and set the contentbar title
-			 */
-
-			actionBar.setTitle(R.string.action_bar_title);
+			
+			// create the ui...
+			postCreate();
+		
 
 //			addLayersActivityAction();
 //			addMyLocationAction();			
@@ -414,6 +391,13 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
+	// used to load UI stuff (copy/pasted) code that was here.
+	protected abstract void preCreate();
+	protected abstract void postCreate();
+	
+	public abstract void loadUI(Bundle savedInstanceState);
+	
+	
 	/**
 	 * Manages the results of the NameFinderActivity, LayersActivity
 	 */
@@ -453,21 +437,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		} finally {
 
 		}
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(final Menu menu) {
-		try {
-			return super.onPrepareOptionsMenu(menu);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-			return false;
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu pMenu) {
-		return false;
 	}
 
 	public void fillSearchCenter(Intent i) {
@@ -674,179 +643,8 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
-	/**
-	 * Synchronize zoomcontrols with TileRaster.MapRenderer zoom level
-	 */
-	public void updateZoomControl() {
-		try {
-			MapRenderer r = VanillaMap.this.osmap.getMRendererInfo();
-
-			if (r.getZoomLevel() > r.getZoomMinLevel())
-				z.setIsZoomOutEnabled(true);
-			else
-				z.setIsZoomOutEnabled(false);
-
-			if (r.getZOOM_MAXLEVEL() > r.getZoomLevel()) {
-				z.setIsZoomInEnabled(true);
-			} else {
-				z.setIsZoomInEnabled(false);
-			}
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "updateZoomControl: ", e);
-		}
-	}
-
-	/**
-	 * Instantiates the UI: TileRaster, ZoomControls, SlideBar in a
-	 * RelativeLayout
-	 * 
-	 * @param savedInstanceState
-	 */
-	public void loadUI(Bundle savedInstanceState) {
-		try {
-			log.log(Level.FINE, "load UI");
-			final LayoutInflater factory = LayoutInflater.from(this);
-			rl.addView(this.osmap, new RelativeLayout.LayoutParams(
-					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-			z = new ZoomControls(this);
-			final TextView l = new TextView(this);
-			final RelativeLayout.LayoutParams sParams = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.FILL_PARENT,
-					RelativeLayout.LayoutParams.FILL_PARENT);
-			//
-			rl.addView(l, sParams);
-
-			/* Creating the main Overlay */
-			{
-				this.mMyLocationOverlay = new ViewSimpleLocationOverlay(this,
-						osmap, ViewSimpleLocationOverlay.DEFAULT_NAME);
-
-//				this.osmap.addOverlay(new NameFinderOverlay(this, osmap,
-//						NameFinderOverlay.DEFAULT_NAME));
-//				this.osmap.addOverlay(new RouteOverlay(this, osmap,
-//						RouteOverlay.DEFAULT_NAME));
-				this.osmap.addOverlay(mMyLocationOverlay);
-			}
-
-			final RelativeLayout.LayoutParams zzParams = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.WRAP_CONTENT,
-					RelativeLayout.LayoutParams.WRAP_CONTENT);
-			zzParams.addRule(RelativeLayout.ALIGN_BOTTOM);
-			zzParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			rl.addView(z, zzParams);
-			z.setId(107);
-			z.setVisibility(View.VISIBLE);
-
-			z.setOnZoomInClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					try {
-						Log.d(TAG, "zooming in !!!");
-						VanillaMap.this.osmap.zoomIn();
-
-					} catch (Exception e) {
-						log.log(Level.SEVERE, "onZoomInClick: ", e);
-					}
-				}
-			});
-			z.setOnZoomOutClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					try {
-						Log.d(TAG, "zooming out !!!");
-						VanillaMap.this.osmap.zoomOut();
-						// Map.this.osmap.switchPanMode();
-					} catch (Exception e) {
-						log.log(Level.SEVERE, "onZoomOutClick: ", e);
-					}
-				}
-			});
-
-			s = new SlideBar(this, this.osmap);
-
-			final RelativeLayout.LayoutParams slideParams = new RelativeLayout.LayoutParams(
-					RelativeLayout.LayoutParams.WRAP_CONTENT,
-					RelativeLayout.LayoutParams.FILL_PARENT);
-			// slideParams.addRule(RelativeLayout.ABOVE,
-			// z.getId());
-			s.setVisibility(View.INVISIBLE);
-			slideParams.addRule(RelativeLayout.ALIGN_TOP);
-			slideParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-			slideParams.addRule(RelativeLayout.ALIGN_RIGHT);
-			slideParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-
-			s.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress,
-						boolean fromUser) {
-					int zoom = (int) Math.floor(progress
-							* (VanillaMap.this.osmap.getMRendererInfo()
-									.getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
-									.getMRendererInfo().getZoomMinLevel())
-							/ 100);
-					osmap.drawZoomRectangle(zoom);
-				}
-
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar) {
-				}
-
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar) {
-					try {
-						int zoom = (int) Math.floor(seekBar.getProgress()
-								* (VanillaMap.this.osmap.getMRendererInfo()
-										.getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
-										.getMRendererInfo().getZoomMinLevel())
-								/ 100);
-						// int zoom = ((SlideBar)seekBar).portions;
-						VanillaMap.this.updateSlider(zoom);
-						VanillaMap.this.osmap.setZoomLevel(zoom, true);
-						VanillaMap.this.osmap.cleanZoomRectangle();
-					} catch (Exception e) {
-						log.log(Level.SEVERE, "onStopTrackingTouch: ", e);
-					}
-				}
-			});
-
-			rl.addView(s, slideParams);
-
-			/* Controls */
-			{
-
-				// View ivLayers = (View) factory.inflate(
-				// R.layout.layers_image_button, null);
-				// ivLayers.setId(117);
-				// final RelativeLayout.LayoutParams layersParams = new
-				// RelativeLayout.LayoutParams(
-				// RelativeLayout.LayoutParams.WRAP_CONTENT,
-				// RelativeLayout.LayoutParams.WRAP_CONTENT);
-				// layersParams.addRule(RelativeLayout.ALIGN_TOP);
-				// layersParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-				//
-				// rl.addView(ivLayers, layersParams);
-				//
-				// ivLayers.setOnClickListener(new OnClickListener() {
-				// @Override
-				// public void onClick(View v) {
-				// try {
-				// viewLayers();
-				// } catch (Exception e) {
-				// log.log(Level.SEVERE, "onLayersClick: ", e);
-				// osmap.postInvalidate();
-				// }
-				// }
-				// });
-				this.updateSlider();
-			}
-			log.log(Level.FINE, "ui loaded");
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		} catch (OutOfMemoryError ou) {
-			System.gc();
-			log.log(Level.SEVERE, "", ou);
-		}
-	}
+	
+	
 
 	/**
 	 * Loads the last map center and zoom level stored on a Bundle when the
@@ -930,259 +728,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 	}
 	
 	
-	private void instantiateTileDownloaderTask(LinearLayout l, int progress) {
-		try {
-			final boolean updateTiles = ((CheckBox) l
-					.findViewById(R.id.download_tiles_overwrite_check))
-					.isChecked();
-
-			MapRenderer currentRenderer = VanillaMap.this.osmap.getMRendererInfo();
-			MapRenderer renderer = Layers.getInstance().getRenderer(
-					currentRenderer.getNAME());
-
-			String tileName = "tile.gvsig";
-			String dot = ".";
-			String strategy = ITileFileSystemStrategy.FLATX;
-			ITileFileSystemStrategy ts = FileSystemStrategyManager
-					.getInstance().getStrategyByName(strategy);
-
-			try {
-				tileName = Settings.getInstance().getStringValue(
-						getText(R.string.settings_key_tile_name).toString());
-			} catch (Exception e) {
-
-			}
-
-			try {
-				strategy = Settings.getInstance()
-						.getStringValue(
-								getText(R.string.settings_key_list_strategy)
-										.toString());
-			} catch (Exception e) {
-
-			}
-
-			String tileSuffix = dot + tileName;
-			ts = FileSystemStrategyManager.getInstance().getStrategyByName(
-					strategy);
-			ts.setTileNameSuffix(tileSuffix);
-
-			int fromZoomLevel = currentRenderer.getZoomLevel();
-
-			int totalZoomLevels = currentRenderer.getZOOM_MAXLEVEL()
-					- fromZoomLevel;
-
-			int z = currentRenderer.getZOOM_MAXLEVEL()
-					- currentRenderer.getZoomMinLevel();
-
-			int toZoomLevel = (totalZoomLevels * progress / 100)
-					+ fromZoomLevel;
-
-			VanillaMap.this.totalZoom.setText(VanillaMap.this
-					.getText(R.string.download_tiles_05)
-					+ " "
-					+ fromZoomLevel
-					+ "/" + toZoomLevel);
-
-			Extent extent = ViewPort
-					.calculateExtent(currentRenderer.getCenter(),
-							currentRenderer.resolutions[currentRenderer
-									.getZoomLevel()], TileRaster.mapWidth,
-							TileRaster.mapHeight);
-
-			if (extent.area() < currentRenderer.getExtent().area())
-				renderer.setExtent(extent);
-
-			/*
-			 * Once we set the extent, we have to update the center of the
-			 * MapRenderer
-			 */
-			renderer.setCenter(renderer.getExtent().getCenter().getX(),
-					renderer.getExtent().getCenter().getY());
-
-			/*
-			 * Get a new Cancellable instance (one different each time the task
-			 * is executed)
-			 */
-			downloadCancellable = Utilities.getNewCancellable();
-
-			/*
-			 * Instantiate the download waiter. The implementation should
-			 * properly update the UI as the task is processing tiles
-			 */
-
-			TileDownloadCallbackHandler callBackHandler = new TileDownloadCallbackHandler(
-					VanillaMap.this);
-			ConstantsTileCache.DEFAULT_NUM_THREADS = 4;
-
-			/*
-			 * Finally instantiate the TileDownloaderTask. Automatically
-			 * launches to the IDownloadWaiter implementation the
-			 * onTotalNumTilesRetrieved event (prior to execute the task)
-			 * 
-			 * This instance will donwload from 0 to 3 zoom level of the whole
-			 * world extent of OSM (Mapnik) server. Not apply any ITileSorter
-			 * nor ITileBufferIntersector and applies the FlatX file system
-			 * strategy with a minimum buffer to fit the map size.
-			 */
-			int mode = TileProvider.MODE_ONLINE;
-			if (updateTiles) {
-				mode = TileProvider.MODE_UPDATE;
-			}
-			t = new TileDownloaderTask(CompatManager.getInstance()
-					.getRegisteredContext(), renderer, fromZoomLevel,
-					toZoomLevel, downloadCancellable, renderer.getExtent(),
-					null, callBackHandler, null, mode, ts,
-					new FitScreenBufferStrategy(), true);
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	/**
-	 * Show an AlertDialog to the user to input the query string for NameFinder
-	 * addresses
-	 */
-	public void showDownloadTilesDialog() {
-		try {
-			this.osmap.pauseDraw();
-			log.log(Level.FINE, "show address dialog");
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			final LinearLayout l = (LinearLayout) this.getLayoutInflater()
-					.inflate(R.layout.download_tiles, null);
-			this.totalMB = (TextView) l
-					.findViewById(R.id.download_total_transfer_text);
-			this.totalTiles = (TextView) l
-					.findViewById(R.id.download_total_tiles_text);
-			this.totalZoom = (TextView) l
-					.findViewById(R.id.download_zoom_level_text);
-			this.downTilesSeekBar = (SeekBar) l
-					.findViewById(R.id.download_zoom_level_seekbar);
-			this.downTilesSeekBar
-					.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-						@Override
-						public void onProgressChanged(SeekBar arg0,
-								int progress, boolean arg2) {
-							try {
-								VanillaMap.this.instantiateTileDownloaderTask(l,
-										progress);
-
-							} catch (Exception e) {
-								log.log(Level.SEVERE, e.getMessage());
-							}
-						}
-
-						@Override
-						public void onStartTrackingTouch(SeekBar seekBar) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void onStopTrackingTouch(SeekBar seekBar) {
-							// TODO Auto-generated method stub
-
-						}
-					});
-			alert.setIcon(R.drawable.layerdonwload);
-			alert.setTitle(R.string.download_tiles_14);
-			this.downTilesSeekBar.setProgress(50);
-			((CheckBox) l.findViewById(R.id.download_tiles_overwrite_check))
-					.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View arg0) {
-							VanillaMap.this.instantiateTileDownloaderTask(l,
-									VanillaMap.this.downTilesSeekBar.getProgress());
-						}
-					});
-
-			alert.setView(l);
-
-			alert.setPositiveButton(R.string.download_tiles_14,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							try {
-								VanillaMap.this.resetCounter();
-								VanillaMap.this.downloadTileAlert = VanillaMap.this
-										.getDownloadTilesDialog();
-								VanillaMap.this.downloadTileAlert.show();
-								WorkQueue.getExclusiveInstance().execute(t);
-							} catch (Exception e) {
-								log.log(Level.SEVERE,
-										"clickNameFinderAddress: ", e);
-							} finally {
-								// setRequestedOrientation(ActivityInfo.
-								// SCREEN_ORIENTATION_SENSOR);
-							}
-							return;
-						}
-					});
-
-			alert.setNegativeButton(R.string.alert_dialog_text_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							// setRequestedOrientation(ActivityInfo.
-							// SCREEN_ORIENTATION_SENSOR);
-							VanillaMap.this.osmap.resumeDraw();
-							VanillaMap.this.reloadLayerAfterDownload();
-						}
-					});
-
-			// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			alert.show();
-		} catch (Exception e) {
-			this.osmap.resumeDraw();
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	private AlertDialog getDownloadTilesDialog() {
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(DialogInterface arg0, int arg1, KeyEvent arg2) {
-				if (arg2.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-					Toast.makeText(VanillaMap.this, R.string.download_tiles_13,
-							Toast.LENGTH_LONG).show();
-				}
-				return true;
-			}
-
-		});
-
-		builder.setIcon(R.drawable.layerdonwload);
-		builder.setTitle(R.string.download_tiles_14);
-
-		this.downloadTilesLayout = (LinearLayout) this.getLayoutInflater()
-				.inflate(R.layout.download_tiles_pd, null);
-
-		downloadTilesPB = (ProgressBar) this.downloadTilesLayout
-				.findViewById(R.id.ProgressBar01);
-
-		downloadTilesButton = (Button) this.downloadTilesLayout
-				.findViewById(R.id.download_tiles_button);
-
-		downloadTilesButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				VanillaMap.this.downloadCancellable.setCanceled(true);
-				VanillaMap.this.downloadTileAlert.dismiss();
-			}
-		});
-
-		builder.setView(this.downloadTilesLayout);
-
-		return builder.create();
-	}
-
 	// public void enableAcelerometer(Bundle savedInstanceState) {
 	// try {
 	// log.log(Level.FINE, "enable accelerometer");
@@ -1362,80 +907,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 
 	// deleted twitter stuff
 
-	/**
-	 * This method sinchronizes the SlideBar position with the current
-	 * TileRaster zoom level
-	 */
-	public void updateSlider() {
-		try {
-			int progress = Math
-					.round(this.osmap.getTempZoomLevel()
-							* 100
-							/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
-									.getMRendererInfo().getZoomMinLevel()));
-			// if (progress == 0)
-			// progress = 1;
-			this.s.setProgress(progress);
-			this.updateZoomControl();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "updateSlider: ", e);
-		}
-	}
-
-	/**
-	 * Forces to update the SlideBar to an specific zoom level
-	 * 
-	 * @param zoom
-	 *            The zoom level
-	 */
-	public void updateSlider(int zoom) {
-		try {
-			int progress = zoom
-					* 100
-					/ (this.osmap.getMRendererInfo().getZOOM_MAXLEVEL() + 1 - VanillaMap.this.osmap
-							.getMRendererInfo().getZoomMinLevel());
-			// if (progress == 0)
-			// progress = 1;
-			this.s.setProgress(progress);
-			this.updateZoomControl();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "updateSlider: ", e);
-		}
-	}
-
-	/**
-	 * Switchs from visible to invisible an viceversa the SlideBar
-	 */
-	public void switchSlideBar() {
-		try {
-			int size = rl.getChildCount();
-			View v;
-			boolean hasCircularView = false;
-			for (int i = 0; i < size; i++) {
-				v = rl.getChildAt(i);
-				if (v instanceof CircularRouleteView) {
-					hasCircularView = true;
-				}
-			}
-			if (hasCircularView) {
-				clearContext();
-				return;
-			}
-
-			if (s.getVisibility() == View.VISIBLE) {
-				s.setVisibility(View.INVISIBLE);
-			} else {
-				s.setVisibility(View.VISIBLE);
-			}
-
-			clearContext();
-			// Update context for the Scale bar has been displayed
-			userContext.setLastExecScaleBar();
-
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "switchSlideBar: ", e);
-		}
-	}
 
 	@Override
 	public void onConfigurationChanged(Configuration config) {
@@ -1579,6 +1050,8 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
+	// Base action to handle offline action: load a specific layer 
+	// from a URL_STRING specified in the Intent
 	private void processOfflineIntentActoin(Intent i) throws Exception {
 		Log.d("Map", "OFFLINE_INTENT_ACTION");
 		String completeURLString = i.getStringExtra(Constants.URL_STRING);
@@ -1614,7 +1087,6 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 
 		osmap.setMapCenterFromLonLat(lon, lat);
 		osmap.setZoomLevel(zoom);
-
 	}
 
 	@Override
@@ -1625,25 +1097,15 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 				return;
 			}
 
-			try {
-
-				setIntent(i);
-				processGeoAction(i);
-//				if (Intent.ACTION_SEARCH.equals(i.getAction())) {
-//					processActionSearch(i);
-//					return;
-//				} else {
-					String mapLayer = i.getStringExtra("layer");
-					log.log(Level.FINE, "previous layer: " + mapLayer);
-					if (mapLayer != null) {
-						osmap.onLayerChanged(mapLayer);
-						log.log(Level.FINE, "map loaded");
-					}
-//				}
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "onNewIntent", e);
-
+			setIntent(i);
+			processGeoAction(i);
+			String mapLayer = i.getStringExtra("layer");
+			log.log(Level.FINE, "previous layer: " + mapLayer);
+			if (mapLayer != null) {
+				osmap.onLayerChanged(mapLayer);
+				log.log(Level.FINE, "map loaded");
 			}
+			
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "onNewIntent", e);
 		}
@@ -1727,296 +1189,10 @@ public class VanillaMap extends IMap implements GeoUtils, IDownloadWaiter {
 		}
 	}
 
-	private int previousTime = 0;
-
-	private synchronized void updateDownloadTilesDialog() {
-		try {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					int time = (int) ((System.currentTimeMillis() - tileWaiter
-							.getInitDownloadTime()) / 1000);
-
-					if (time - previousTime < 1 && !isDownloadTilesFinished) {
-						return;
-					}
-
-					if (tileWaiter.getInitDownloadTime() > 0)
-						previousTime = time;
-
-					VanillaMap.this.downloadTilesPB.setMax((int) tileWaiter
-							.getTotalTilesToProcess());
-					VanillaMap.this.downloadTilesPB.setProgress((int) tileWaiter
-							.getDownloadedNow());
-					long totalDownloaded = VanillaMap.this.tileWaiter
-							.getDownloadedNow();
-					long total = VanillaMap.this.tileWaiter.getTotalTilesToProcess();
-					int perc = 0;
-					if (total != 0)
-						perc = (int) ((double) totalDownloaded / (double) total * 100.0);
-
-					((TextView) VanillaMap.this.downloadTilesLayout
-							.findViewById(R.id.download_perc_text))
-							.setText(perc + "%" + " - "
-									+ tileWaiter.getTilesDownloaded() + "-"
-									+ tileWaiter.getTilesFailed() + "-"
-									+ tileWaiter.getTilesFromFS() + "-"
-									+ tileWaiter.getTilesSkipped() + "-"
-									+ tileWaiter.getTilesDeleted() + "-"
-									+ tileWaiter.getTilesNotFound() + "-" + "/"
-									+ total);
-
-					String downloadedMB = String.valueOf(VanillaMap.this.tileWaiter
-							.getBytesDownloaded() / 1024 / 1024);
-
-					if (downloadedMB.length() > 4) {
-						downloadedMB = downloadedMB.substring(0, 4);
-					}
-
-					((TextView) VanillaMap.this.downloadTilesLayout
-							.findViewById(R.id.downloaded_mb_text))
-							.setText(VanillaMap.this
-									.getText(R.string.download_tiles_09)
-									+ " "
-									+ downloadedMB + " MB");
-
-					String elapsed = es.prodevelop.gvsig.mini.utiles.Utilities
-							.getTimeHoursMinutesSecondsString(time);
-
-					((TextView) VanillaMap.this.downloadTilesLayout
-							.findViewById(R.id.download_time_text))
-							.setText(VanillaMap.this
-									.getText(R.string.download_tiles_10)
-									+ " "
-									+ elapsed);
-
-					if (totalDownloaded == 0)
-						totalDownloaded = 1;
-
-					int estimated = (int) (total * time / totalDownloaded)
-							- time;
-
-					String estimatedTime = es.prodevelop.gvsig.mini.utiles.Utilities
-							.getTimeHoursMinutesSecondsString(estimated);
-					((TextView) VanillaMap.this.downloadTilesLayout
-							.findViewById(R.id.download_time_estimated_text))
-							.setText(VanillaMap.this
-									.getText(R.string.download_tiles_11)
-									+ " "
-									+ estimatedTime);
-				}
-			});
-		} catch (Exception e) {
-			log.log(Level.SEVERE, "", e);
-		}
-	}
-
-	public double getBytesDownloaded() {
-		return tileWaiter.getBytesDownloaded();
-	}
-
-	public IDownloadWaiter getDownloadWaiter() {
-		return tileWaiter.getDownloadWaiter();
-	}
-
-	public long getDownloadedNow() {
-		return tileWaiter.getDownloadedNow();
-	}
-
-	public long getEndDownloadTime() {
-		return tileWaiter.getEndDownloadTime();
-	}
-
-	public Object getHandler() {
-		return tileWaiter.getHandler();
-	}
-
-	public long getInitDownloadTime() {
-		return tileWaiter.getInitDownloadTime();
-	}
-
-	public int getTilesDeleted() {
-		return tileWaiter.getTilesDeleted();
-	}
-
-	public int getTilesDownloaded() {
-		return tileWaiter.getTilesDownloaded();
-	}
-
-	public int getTilesFailed() {
-		return tileWaiter.getTilesFailed();
-	}
-
-	public int getTilesFromFS() {
-		return tileWaiter.getTilesFromFS();
-	}
-
-	public int getTilesNotFound() {
-		return tileWaiter.getTilesNotFound();
-	}
-
-	public int getTilesSkipped() {
-		return tileWaiter.getTilesSkipped();
-	}
-
-	public long getTotalTilesToProcess() {
-		return tileWaiter.getTotalTilesToProcess();
-	}
-
-	public long getTotalTime() {
-		return tileWaiter.getTotalTime();
-	}
-
-	public void onDownloadCanceled() {
-		tileWaiter.onDownloadCanceled();
-		runOnUiThread(new Runnable() {
-			public void run() {
-				VanillaMap.this.enableGPS();
-				Toast.makeText(VanillaMap.this, R.string.download_tiles_12,
-						Toast.LENGTH_LONG).show();
-				VanillaMap.this.reloadLayerAfterDownload();
-			}
-		});
-	}
-
-	private void reloadLayerAfterDownload() {
-		VanillaMap.this.osmap.resumeDraw();
-		VanillaMap.this.osmap.onLayerChanged(VanillaMap.this.osmap.getMRendererInfo()
-				.getFullNAME());
-		try {
-			VanillaMap.this.osmap.initializeCanvas(TileRaster.mapWidth,
-					TileRaster.mapHeight);
-		} catch (BaseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void onFailDownload(IEvent event) {
-		tileWaiter.onFailDownload(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onFatalError(IEvent event) {
-		tileWaiter.onFatalError(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onFinishDownload() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				VanillaMap.this.enableGPS();
-				isDownloadTilesFinished = true;
-				VanillaMap.this.downloadTilesButton
-						.setText(R.string.alert_dialog_text_ok);
-				VanillaMap.this.reloadLayerAfterDownload();
-			}
-		});
-	}
-
-	public void onNewMessage(int ID, IEvent event) {
-		switch (ID) {
-		case IContext.DOWNLOAD_CANCELED:
-			this.onDownloadCanceled();
-			break;
-		case IContext.FINISH_DOWNLOAD:
-			this.onFinishDownload();
-			break;
-		case IContext.START_DOWNLOAD:
-			this.onStartDownload();
-			break;
-		case IContext.TILE_DOWNLOADED:
-			this.onTileDownloaded(event);
-			break;
-		case IContext.TOTAL_TILES_COUNT:
-			this.onTotalNumTilesRetrieved(Integer.valueOf(event.getMessage()));
-			break;
-		}
-	}
-
-	private boolean isDownloadTilesFinished = false;
-
-	public void onStartDownload() {
-		this.osmap.getMTileProvider().clearPendingQueue();
-		this.disableGPS();
-		isDownloadTilesFinished = false;
-		this.previousTime = 0;
-		tileWaiter.onStartDownload();
-		runOnUiThread(new Runnable() {
-			public void run() {
-				VanillaMap.this.downloadTilesButton
-						.setText(R.string.alert_dialog_cancel);
-			}
-		});
-	}
-
-	public void onTileDeleted(IEvent event) {
-		tileWaiter.onTileDeleted(event);
-	}
-
-	public void onTileDownloaded(IEvent event) {
-		tileWaiter.onTileDownloaded(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onTileLoadedFromFileSystem(IEvent event) {
-		tileWaiter.onTileLoadedFromFileSystem(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onTileNotFound(IEvent event) {
-		tileWaiter.onTileNotFound(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onTileSkipped(IEvent event) {
-		tileWaiter.onTileSkipped(event);
-		this.updateDownloadTilesDialog();
-	}
-
-	public void onTotalNumTilesRetrieved(final long totalNumTiles) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				VanillaMap.this.tileWaiter.onTotalNumTilesRetrieved(totalNumTiles);
-				VanillaMap.this.totalTiles.setText(VanillaMap.this
-						.getText(R.string.download_tiles_06)
-						+ " "
-						+ totalNumTiles);
-				double totalMB = totalNumTiles * 10 / 1024;
-				VanillaMap.this.totalMB.setText(VanillaMap.this
-						.getText(R.string.download_tiles_07) + " " + totalMB);
-			}
-		});
-	}
-
-	public void resetCounter() {
-		tileWaiter.resetCounter();
-		this.updateDownloadTilesDialog();
-	}
-
-	public void updateDataTransfer(int size) {
-		tileWaiter.updateDataTransfer(size);
-	}
-
-	private class TileDownloadWaiterDelegate extends TileDownloadWaiter {
-
-		public TileDownloadWaiterDelegate(IDownloadWaiter w) {
-			super(w);
-			// TODO Auto-generated constructor stub
-		}
-
-	}
-
 	public void setOverlayContext(ItemContext context) {
 		this.overlayContext = context;
 	}
 
-	public ActionBar getActionbar() {
-		return this.actionBar;
-	}
-	
-	public void setActionbar(ActionBar actionbar) {
-		this.actionBar = actionbar;
-	}
 
 	@Override
 	public void setViewPort(ViewPort viewPort) {

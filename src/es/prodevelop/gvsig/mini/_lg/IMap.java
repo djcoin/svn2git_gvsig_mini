@@ -13,7 +13,7 @@ import es.prodevelop.gvsig.mini.views.overlay.ViewSimpleLocationOverlay;
 // From the Interface brought by IMap.
 public abstract class IMap extends MapLocation {
 
-	public TileRaster osmap = null;
+	public TileRaster osmap = null; // the real view itself
 	public ViewPort vp = null;
 	public boolean navigation = false;
 	public NamedMultiPoint nameds = null;
