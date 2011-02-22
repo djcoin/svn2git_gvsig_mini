@@ -26,12 +26,13 @@ public class _MapUI extends VanillaMap {
 
 	private static final String TAG = _MapUI.class.getName();
 	
+	protected RelativeLayout rl;
 	// comming from the Map
 	protected ZoomControls z = null;
 	protected CircularRouleteView c;
 	
 	protected SlideBar s;
-	private ActionBar actionBar;
+	protected ActionBar actionBar;
 
 
 	@Override

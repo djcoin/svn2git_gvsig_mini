@@ -55,6 +55,9 @@ public class _MapSpecific extends _MapUI implements IDownloadWaiter {
 	private Cancellable downloadCancellable;
 	private Button downloadTilesButton;
 	
+	private LinearLayout downloadTilesLayout;
+	private ProgressBar downloadTilesPB;
+	
 	
 	private TileDownloadWaiterDelegate tileWaiter;
 

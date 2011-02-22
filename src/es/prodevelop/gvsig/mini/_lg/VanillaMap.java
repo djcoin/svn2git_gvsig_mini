@@ -210,59 +210,51 @@ import es.prodevelop.tilecache.util.Utilities;
 public abstract class VanillaMap extends IMap implements GeoUtils {
 
 	private static final String TAG = VanillaMap.class.getName();
-	
-
-	boolean wasScaleBarVisible = false;
-
-	public final static int CODE_SETTINGS = 3215;
-
+	protected final static Logger log = Logger.getLogger(VanillaMap.class.getName());
+		
 	public ViewSimpleLocationOverlay mMyLocationOverlay;
-	public NamedMultiPoint nameds;
-	private Point nearestPOI;
-	private int indexNP;
-	String datalog = null;
-	public float datatransfer2 = 0;
-	public RelativeLayout rl;
-
-	ImageView ivSwitch;
-	ImageView ivCompassY;
-	ImageView ivCompass;
-	public ProgressDialog dialog2 = null;
+	
+	MapState mapState;
+	MapHandler handler = new MapHandler();	
+	
 	public boolean recenterOnGPS = false;
 	private boolean backpressed = false;
 	public boolean backpressedroulette = false;
-	private AlertDialog alertP;
-	SensorEventListener mTop = null;
-	public Handler mHandler;
-	
-	int nearopt = 0;
-	TextView reportView;
-	int cacheCounter = 0;
-	MapState mapState;
-	boolean cleanVisible = false;
-	boolean cleanRoute = false;
 	public boolean navigation = false;
 	public boolean connection = true;
-	boolean listVisible = false;
-	boolean cleanCompassVisible = true;
-	private ItemContext context;
-	/**
-	 * Whether we currently automatically update the animation.
-	 */
-	boolean mUpdatingAnimation;
-	// PowerManager.WakeLock wl;
-	protected final static Logger log = Logger.getLogger(VanillaMap.class.getName());
+
 	private UserContextManager contextManager; // singleton with user contexts
-	// list
 	protected UserContext userContext;
-	LinearLayout downloadTilesLayout;
-	ProgressBar downloadTilesPB;
-
-	public final static int SEARCH_EXP_CODE = 444;
+	private ItemContext context;
 	private ItemContext overlayContext;
+	
+	public float datatransfer2 = 0;
 
-
-	MapHandler handler = new MapHandler();
+// Unused
+//	boolean wasScaleBarVisible = false; // used in MapPOI
+//	public NamedMultiPoint nameds;
+//	private Point nearestPOI;
+//	private int indexNP;
+//	String datalog = null;
+//	ImageView ivSwitch;
+//	ImageView ivCompassY;
+//	ImageView ivCompass;
+	
+// public ProgressDialog dialog2 = null;
+//	int nearopt = 0;
+	// TextView reportView;
+//	int cacheCounter = 0;
+//	boolean cleanVisible = false;
+//	boolean cleanRoute = false;
+//	public final static int CODE_SETTINGS = 3215;
+//	private AlertDialog alertP;
+//	SensorEventListener mTop = null;
+//	boolean listVisible = false;
+//	boolean cleanCompassVisible = true;
+//	public final static int SEARCH_EXP_CODE = 444;
+// boolean mUpdatingAnimation;
+// PowerManager.WakeLock wl;
+// 	public Handler mHandler;
 	
 	/**
 	 * Called when the activity is first created.
@@ -470,8 +462,8 @@ public abstract class VanillaMap extends IMap implements GeoUtils {
 				log.log(Level.SEVERE, "Persist mapstate: ", e);
 			}
 
-			if (dialog2 != null)
-				dialog2.dismiss();
+//			if (dialog2 != null)
+//				dialog2.dismiss();
 
 			osmap.clearCache();
 			this.stopSensor(this);
@@ -857,6 +849,7 @@ public abstract class VanillaMap extends IMap implements GeoUtils {
 	public ItemContext getItemContext() {
 		return context;
 	}
+	
 	private int state = 0; //VanillaMap.VOID;
 	public void updateContext(int state) {
 	}
